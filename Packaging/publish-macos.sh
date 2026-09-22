@@ -82,6 +82,7 @@ dotnet publish "$PROJECT_FILE" \
     -p:PublishReadyToRun=true \
     --output "$APP_DIR/Contents/MacOS"
 
+mv "$APP_DIR/Contents/MacOS/Hyprism.Desktop" "$APP_DIR/Contents/MacOS/$APP_EXECUTABLE"
 test -x "$APP_DIR/Contents/MacOS/$APP_EXECUTABLE"
 test -x "$APP_DIR/Contents/MacOS/Hyprism.LocalNode"
 file "$APP_DIR/Contents/MacOS/$APP_EXECUTABLE" | grep -q 'Mach-O 64-bit executable arm64'

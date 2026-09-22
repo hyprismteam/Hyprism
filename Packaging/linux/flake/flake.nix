@@ -58,8 +58,7 @@
             runtimeId = "linux-x64";
             dotnet-sdk = pkgs.dotnetCorePackages.sdk_10_0;
             dotnet-runtime = pkgs.dotnetCorePackages.runtime_10_0;
-            dotnetFlags = [ "-p:LauncherAppHostName=Hyprism" ];
-            executables = [ "Hyprism" "Hyprism.LocalNode" ];
+            executables = [ "Hyprism.Desktop" "Hyprism.LocalNode" ];
 
             nativeBuildInputs = [ pkgs.autoPatchelfHook ];
             buildInputs = runtimeLibraries;
@@ -77,7 +76,7 @@
             '';
 
             postFixup = ''
-              mv "$out/bin/Hyprism" "$out/bin/Hyprism Launcher"
+              mv "$out/bin/Hyprism.Desktop" "$out/bin/Hyprism Launcher"
               ln -s "Hyprism Launcher" "$out/bin/hyprism"
             '';
 

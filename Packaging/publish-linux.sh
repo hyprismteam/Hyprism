@@ -193,6 +193,7 @@ if [[ "$contains_native_target" == true ]]; then
         -p:PublishReadyToRun=true \
         --output "$PUBLISH_DIR"
 
+    mv "$PUBLISH_DIR/Hyprism.Desktop" "$PUBLISH_DIR/$APP_EXECUTABLE"
     test -x "$PUBLISH_DIR/$APP_EXECUTABLE"
     test -x "$PUBLISH_DIR/Hyprism.LocalNode"
 fi

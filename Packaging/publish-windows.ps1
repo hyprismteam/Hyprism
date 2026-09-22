@@ -86,6 +86,7 @@ try {
         -p:PublishReadyToRun=true `
         --output $publishDirectory
 
+    Rename-Item -LiteralPath (Join-Path $publishDirectory 'Hyprism.Desktop.exe') -NewName 'Hyprism Launcher.exe'
     $launcherAppHost = Join-Path $publishDirectory 'Hyprism Launcher.exe'
     if (-not (Test-Path $launcherAppHost)) {
         throw 'Expected Windows apphost was not published: Hyprism Launcher.exe'
