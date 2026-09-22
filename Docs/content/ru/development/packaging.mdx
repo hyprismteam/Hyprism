@@ -7,7 +7,9 @@ description: Платформенные пакеты, CI, целевые арт�
 
 `Packaging/` содержит поддерживаемые точки входа релизной сборки. Каждый сценарий создает пакеты из одного автономного publish с Hyprism Launcher и отдельным apphost Local Node
 
-Проект Desktop сохраняет `Hyprism.Desktop` как assembly identity для URI ресурсов Avalonia. Цели сборки и publish переименовывают только native apphost в `Hyprism Launcher`, поэтому имя executable единообразно и встроенные UI-ресурсы не ломаются
+Проект Desktop сохраняет `Hyprism.Desktop` как assembly identity для URI ресурсов Avalonia. Обычные `dotnet build`, `dotnet run` и `dotnet publish` используют стандартное имя apphost от SDK: `Hyprism.Desktop` (`Hyprism.Desktop.exe` в Windows)
+
+Платформенные сценарии переименовывают опубликованный native apphost в `Hyprism Launcher` (`Hyprism Launcher.exe` в Windows) перед подписью или созданием пакетов. Nix flake предоставляет лаунчер под этим именем после создания обёрток исполняемых файлов. Эти шаги упаковки сохраняют managed assembly и пути встроенных ресурсов
 
 ## Целевые платформы
 

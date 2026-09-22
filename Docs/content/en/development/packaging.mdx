@@ -7,7 +7,9 @@ description: Platform publishers, CI workflows, artifact targets, and release ve
 
 `Packaging/` contains the maintained release entry points. Each publisher creates packages from one self-contained publish containing the Hyprism Launcher and the separate Local Node apphost
 
-The Desktop project keeps `Hyprism.Desktop` as its assembly identity for Avalonia resource URIs. Its build and publish targets rename only the native apphost to `Hyprism Launcher`, so the executable name stays consistent without breaking embedded UI resources
+The Desktop project keeps `Hyprism.Desktop` as its assembly identity for Avalonia resource URIs. Ordinary `dotnet build`, `dotnet run`, and `dotnet publish` use the SDK's default apphost name, `Hyprism.Desktop` (`Hyprism.Desktop.exe` on Windows)
+
+The platform publishers rename the published native apphost to `Hyprism Launcher` (`Hyprism Launcher.exe` on Windows) before signing or creating packages. The Nix flake exposes the launcher under that name after creating its executable wrappers. These packaging steps leave the managed assembly and embedded resource paths unchanged
 
 ## Platform targets
 
