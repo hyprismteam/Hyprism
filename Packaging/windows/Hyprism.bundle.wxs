@@ -7,7 +7,7 @@
     xmlns="http://wixtoolset.org/schemas/v4/wxs"
     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
   <Bundle
-      Name="Hyprism"
+      Name="Hyprism Launcher"
       Manufacturer="Hyprism Team"
       Version="$(var.ProductVersion)"
       IconSourceFile="$(var.IconPath)"

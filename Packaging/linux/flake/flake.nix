@@ -58,7 +58,7 @@
             runtimeId = "linux-x64";
             dotnet-sdk = pkgs.dotnetCorePackages.sdk_10_0;
             dotnet-runtime = pkgs.dotnetCorePackages.runtime_10_0;
-            executables = [ "Hyprism.Desktop" ];
+            executables = [ "Hyprism Launcher" "Hyprism.LocalNode" ];
 
             nativeBuildInputs = [ pkgs.autoPatchelfHook ];
             buildInputs = runtimeLibraries;
@@ -66,7 +66,7 @@
 
             postInstall = ''
               install -d "$out/bin"
-              ln -s Hyprism.Desktop "$out/bin/hyprism"
+              ln -s "Hyprism Launcher" "$out/bin/hyprism"
               install -Dm644 Packaging/linux/io.github.hyprismteam.HyPrism.desktop \
                 "$out/share/applications/io.github.hyprismteam.HyPrism.desktop"
               install -Dm644 Sources/Hyprism.Desktop/Assets/Images/logo.svg \

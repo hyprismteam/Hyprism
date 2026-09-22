@@ -13,32 +13,37 @@ SPDX-License-Identifier: GPL-3.0-only
   [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat&logo=discord&logoColor=white&logoWidth=20)](https://discord.com/invite/ekZqTtynjp)
 
 > [!IMPORTANT]
-> Hyprism has no any connection to [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher). Hyprism is an application that is being developed **INDEPENDENTLY** of the PrismLauncher project or its team. Thank you for your understanding
+> Hyprism has no any connection to [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher). Hyprism is an application that is being developed **INDEPENDENTLY** of the PrismLauncher project or its team
 
 > [!NOTE]
 > The launcher is switching to Avalonia UI. The current source code in `main` may contain bugs or errors. If you need the code from a previous version of the launcher, use the latest available [release](https://github.com/hyprismteam/Hyprism/releases)
 
 ## Installation
 
-Downloads are available in [Releases](https://github.com/hyprismteam/Hyprism/releases)
+You can manually download Hyprism via avaliable [Releases](https://github.com/hyprismteam/Hyprism/releases) or via single-line installer for your platform
 
-### Quick Install (Command Line)
-
-You can automatically download, extract, and set up Hyprism (including shortcuts and PATH) using the installation scripts:
-
-**Linux / macOS (Bash / Zsh):**
-```bash
-curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Installer/install.sh | sh
-```
-
-**Windows (PowerShell):**
+**Windows**
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Installer/install.ps1 | iex
-
+irm https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-win.ps1 | iex
 ```
 
-The installer will fetch the latest version, extract it into the local user space (`~/.local/bin` on Linux/macOS or `%LOCALAPPDATA%\HyPrism` on Windows), download the logo, and automatically create Desktop/Application shortcuts
+**Linux**
+```bash
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-linux.sh | sh
+```
+
+**macOS**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-macos.sh | sh
+```
+
+**Nix**
+
+```bash
+nix run 'github:hyprismteam/Hyprism?dir=Packaging/linux/flake#hyprism'
+```
 
 ## Build
 

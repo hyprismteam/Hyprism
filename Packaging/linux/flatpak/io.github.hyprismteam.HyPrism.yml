@@ -19,7 +19,7 @@ modules:
     build-commands:
       - install -d /app/lib/hyprism /app/bin
       - cp -a . /app/lib/hyprism/
-      - ln -s ../lib/hyprism/Hyprism.Desktop /app/bin/hyprism
+      - ln -s '../lib/hyprism/Hyprism Launcher' /app/bin/hyprism
       - install -Dm644 io.github.hyprismteam.HyPrism.desktop /app/share/applications/io.github.hyprismteam.HyPrism.desktop
       - install -Dm644 io.github.hyprismteam.HyPrism.svg /app/share/icons/hicolor/scalable/apps/io.github.hyprismteam.HyPrism.svg
     sources:

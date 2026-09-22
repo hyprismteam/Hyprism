@@ -3,7 +3,7 @@
 
 [Desktop Entry]
 Type=Application
-Name=Hyprism
+Name=Hyprism Launcher
 Comment=Native Hytale launcher
 Exec=hyprism
 Icon=io.github.hyprismteam.HyPrism

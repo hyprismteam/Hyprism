@@ -15,15 +15,54 @@ description: Выбор и установка подходящего пакет�
 | --- | --- | --- |
 | Windows | x64 | установщик EXE, MSI или переносимый ZIP |
 | Linux | x64 | DEB, RPM, AppImage, Flatpak bundle или tar.xz |
+| Linux с Nix | x86_64-linux | Nix flake |
 | macOS | Apple Silicon | DMG |
 
-Пакеты содержат настольный лаунчер и вспомогательный процесс Local Node для автономных локальных профилей
+Пакеты содержат executable Hyprism Launcher и отдельный executable Local Node для автономных локальных профилей
+
+## Установка из командной строки
+
+Однострочные установщики поддерживают Linux x64, Windows x64 и macOS Apple Silicon. Перед установкой они проверяют скачанный пакет по SHA-256
+
+### Linux x64
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-linux.sh | sh
+```
+
+Установщик сохраняет версии в `~/.local/share/hyprism`, создает `~/.local/bin/hyprism` и запись приложения. Если `~/.local/bin` еще не входит в `PATH`, добавьте его вручную
+
+### Windows x64
+
+```powershell
+irm https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-win.ps1 | iex
+```
+
+Установщик сохраняет Hyprism Launcher в `%LOCALAPPDATA%\HyPrism`, создает ярлыки на рабочем столе и в меню «Пуск», а также добавляет каталог установки в пользовательский `PATH`
+
+### macOS Apple Silicon
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-macos.sh | sh
+```
+
+Установщик проверяет DMG, монтирует его и сохраняет Hyprism Launcher в `~/Applications` без запроса `sudo`. Текущие релизы используют ad hoc подпись, поэтому при первом запуске macOS может потребовать разрешение в разделе Privacy & Security
+
+### Linux с Nix
+
+Пользователи Nix могут запустить flake напрямую при включенной поддержке flakes
+
+```bash
+nix run 'github:hyprismteam/HyPrism?dir=Packaging/linux/flake#hyprism'
+```
+
+Flake сейчас предназначен для `x86_64-linux`. На macOS используйте описанный ниже сценарий с DMG
 
 ## Особенности платформ
 
 ### Windows
 
-Для обычной установки выберите EXE или MSI. Переносимый ZIP нужно распаковать в доступный для записи каталог перед запуском `Hyprism.Desktop.exe`
+Для обычной установки выберите EXE или MSI. Переносимый ZIP нужно распаковать в доступный для записи каталог перед запуском `Hyprism Launcher.exe`
 
 ### Linux
 
@@ -42,7 +81,7 @@ flatpak install ./Hyprism-linux-x64-4.0.0.flatpak
 
 ### macOS
 
-Откройте DMG и переместите Hyprism в «Программы». Текущая сборка предназначена для Mac с Apple Silicon
+Используйте установщик выше или откройте DMG и переместите Hyprism Launcher в «Программы». Текущая сборка предназначена для Mac с Apple Silicon
 
 При первом автономном запуске система может запросить разрешение на доверие локальному центру сертификации Hyprism. Отмена запроса прервет запуск игры, но не отключит проверку TLS. Причина описана в разделе [Local Node](/reference/local-node#certificate-trust)
 

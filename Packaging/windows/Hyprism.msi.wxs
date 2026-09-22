@@ -5,7 +5,7 @@
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package
-      Name="Hyprism"
+      Name="Hyprism Launcher"
       Manufacturer="Hyprism Team"
       Version="$(var.ProductVersion)"
       UpgradeCode="1918E4D4-0781-45A5-A1B8-1A79C9A5D77C"

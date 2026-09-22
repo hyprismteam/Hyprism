@@ -5,7 +5,9 @@ description: Платформенные пакеты, CI, целевые арт�
 
 # Упаковка и релизы
 
-`Packaging/` содержит поддерживаемые точки входа релизной сборки. Каждый сценарий создает пакеты из одного автономного publish Desktop, чтобы Desktop и Local Node поставлялись вместе
+`Packaging/` содержит поддерживаемые точки входа релизной сборки. Каждый сценарий создает пакеты из одного автономного publish с Hyprism Launcher и отдельным apphost Local Node
+
+Проект Desktop сохраняет `Hyprism.Desktop` как assembly identity для URI ресурсов Avalonia. Цели сборки и publish переименовывают только native apphost в `Hyprism Launcher`, поэтому имя executable единообразно и встроенные UI-ресурсы не ломаются
 
 ## Целевые платформы
 
@@ -26,15 +28,17 @@ description: Платформенные пакеты, CI, целевые арт�
 ./Packaging/publish-linux.sh all --output dist
 ```
 
+Цель `all` создает DEB, RPM, AppImage, Flatpak и tar.xz. Цель Nix запускается отдельно, потому что пакет предоставляется flake и сохраняется в `/nix/store`
+
 Инструмент AppImage можно задать через `--appimagetool` или `APPIMAGETOOL`. Экспорт Flatpak и bundle используют ветку `stable`
 
 Flatpak сейчас использует бэкенд Avalonia X11 через XWayland, поэтому его манифест выдаёт `--socket=x11` и не выдаёт условный `fallback-x11` или нативный сокет `wayland`. Это позволяет запускать KDE Plasma Wayland до включения нативного Wayland в настольном хосте
 
 Linux-пакеты сохраняют исходный рисунок из `logo.svg` и публикуют его в квадратном SVG viewport, который требуется валидаторам иконок приложений
 
-## NixOS
+## Nix
 
-Репозиторий содержит flake для нативного пакета `x86_64-linux`. Установите Nix с поддержкой flakes, затем собирайте или запускайте Hyprism из корня репозитория
+Репозиторий содержит flake для нативного пакета `x86_64-linux`. Установите Nix с поддержкой flakes, затем собирайте или запускайте Hyprism из корня репозитория или тега релиза
 
 ```bash
 nix build ./Packaging/linux/flake#hyprism
@@ -43,6 +47,8 @@ nix run ./Packaging/linux/flake#hyprism
 ```
 
 Flake закрепляет nixpkgs и восстанавливает NuGet-зависимости из `Packaging/linux/flake/nix/deps.json`. Обновляйте этот файл при изменении ссылок на .NET-пакеты
+
+Пакет предоставляет стабильную команду `hyprism` и включает executable `Hyprism Launcher` и отдельный executable `Hyprism.LocalNode` в результате
 
 Nix сохраняет результат в `/nix/store`, параметр `--output` относится только к нативным пакетам
 
@@ -61,19 +67,19 @@ nix build ./Packaging/linux/flake#hyprism.fetch-deps
 pwsh Packaging/publish-windows.ps1 all --output dist
 ```
 
-Перед созданием пакетов проверяется наличие `Hyprism.Desktop.exe` и `Hyprism.LocalNode.exe`. ZIP содержит те же файлы приложения, что и установщики
+Перед созданием пакетов проверяется наличие `Hyprism Launcher.exe` и отдельного `Hyprism.LocalNode.exe`. ZIP содержит те же файлы приложения, что и установщики
 
 Windows apphost использует многомасштабный ресурс `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico`. WiX использует ту же иконку для записи MSI в списке приложений и для EXE-bootstrapper
 
 ## macOS
 
-В app bundle macOS входит сгенерированная из `logo.svg` иконка `Packaging/macos/Hyprism.icns`, на которую ссылается `Info.plist`. Сценарий macOS использует `plutil`, `hdiutil`, `codesign` и `file`
+В app bundle macOS входит сгенерированная из `logo.svg` иконка `Packaging/macos/Hyprism.icns`, а executable и отображаемое имя используют `Hyprism Launcher`. Сценарий macOS использует `plutil`, `hdiutil`, `codesign` и `file`
 
 ```bash
 ./Packaging/publish-macos.sh dmg --output dist
 ```
 
-Он создает app bundle для Apple Silicon, проверяет архитектуру Local Node, применяет и проверяет ad hoc подпись, затем создает DMG. Такая подпись не является нотарификацией
+Он создает app bundle для Apple Silicon, проверяет архитектуры apphost Hyprism Launcher и Local Node, применяет и проверяет ad hoc подпись, затем создает DMG. Такая подпись не является нотарификацией
 
 ## Источник версии
 
