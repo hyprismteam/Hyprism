@@ -51,9 +51,9 @@ jobs:
             --runtime osx-arm64 \
             --self-contained true \
             --output "$RUNNER_TEMP/hyprism-osx-arm64"
-          test -x "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism.Desktop"
+          test -x "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism Launcher"
           test -x "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism.LocalNode"
-          file "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism.Desktop" | grep -q 'Mach-O 64-bit executable arm64'
+          file "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism Launcher" | grep -q 'Mach-O 64-bit executable arm64'
           file "$RUNNER_TEMP/hyprism-osx-arm64/Hyprism.LocalNode" | grep -q 'Mach-O 64-bit executable arm64'
 
       - name: Verify trusted Local Node HTTPS

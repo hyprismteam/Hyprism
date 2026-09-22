@@ -9,7 +9,9 @@ PACKAGING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$PACKAGING_DIR/.." && pwd)"
 PROJECT_FILE="$PROJECT_ROOT/Sources/Hyprism.Desktop/Hyprism.Desktop.csproj"
 APP_ICON="$PACKAGING_DIR/macos/Hyprism.icns"
-APP_NAME="Hyprism"
+APP_NAME="Hyprism Launcher"
+APP_EXECUTABLE="Hyprism Launcher"
+ARTIFACT_NAME="Hyprism"
 INFO_PLIST="$PACKAGING_DIR/macos/Info.plist"
 OUTPUT_DIR="$PROJECT_ROOT/dist"
 TARGETS=()
@@ -71,7 +73,7 @@ APP_DIR="$BUILD_ROOT/$APP_NAME.app"
 trap 'rm -rf "$BUILD_ROOT"' EXIT
 test -s "$APP_ICON"
 mkdir -p "$OUTPUT_DIR" "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
-cp "$APP_ICON" "$APP_DIR/Contents/Resources/$APP_NAME.icns"
+cp "$APP_ICON" "$APP_DIR/Contents/Resources/Hyprism.icns"
 
 dotnet publish "$PROJECT_FILE" \
     --configuration Release \
@@ -80,9 +82,9 @@ dotnet publish "$PROJECT_FILE" \
     -p:PublishReadyToRun=true \
     --output "$APP_DIR/Contents/MacOS"
 
-for host in Hyprism.Desktop Hyprism.LocalNode; do
-    test -x "$APP_DIR/Contents/MacOS/$host"
-done
+test -x "$APP_DIR/Contents/MacOS/$APP_EXECUTABLE"
+test -x "$APP_DIR/Contents/MacOS/Hyprism.LocalNode"
+file "$APP_DIR/Contents/MacOS/$APP_EXECUTABLE" | grep -q 'Mach-O 64-bit executable arm64'
 file "$APP_DIR/Contents/MacOS/Hyprism.LocalNode" | grep -q 'Mach-O 64-bit executable arm64'
 
 cp "$INFO_PLIST" "$APP_DIR/Contents/Info.plist"
@@ -101,6 +103,6 @@ hdiutil create \
     -srcfolder "$DMG_STAGE" \
     -ov \
     -format UDZO \
-    "$OUTPUT_DIR/$APP_NAME-mac-arm64-$VERSION.dmg"
+    "$OUTPUT_DIR/$ARTIFACT_NAME-mac-arm64-$VERSION.dmg"
 
 echo "Published macOS artifact to $OUTPUT_DIR"

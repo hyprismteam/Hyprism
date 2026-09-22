@@ -124,10 +124,36 @@ jobs:
                 "arm64": {
                   "dmg": "https://github.com/$REPO/releases/download/$TAG/Hyprism-mac-arm64-$VERSION.dmg"
                 }
+              },
+              "nix": {
+                "x86_64-linux": {
+                  "flake": "https://github.com/$REPO/tree/$TAG/Packaging/linux/flake"
+                }
               }
             }
           }
           EOF
+
+      - name: Generate release checksums
+        run: |
+          set -euo pipefail
+
+          : > final-assets/SHA256SUMS
+          while IFS= read -r artifact; do
+            artifact_name="$(basename "$artifact")"
+            (cd final-assets && sha256sum "$artifact_name") >> final-assets/SHA256SUMS
+            (cd final-assets && sha256sum "$artifact_name") > "$artifact.sha256"
+          done < <(find final-assets -maxdepth 1 -type f \( \
+            -name '*.tar.xz' -o \
+            -name '*.deb' -o \
+            -name '*.rpm' -o \
+            -name '*.AppImage' -o \
+            -name '*.flatpak' -o \
+            -name '*.dmg' -o \
+            -name '*.zip' -o \
+            -name '*.msi' -o \
+            -name '*-setup.exe' \
+          \) -print | sort)
 
       - name: Detect missing builds
         id: build_status
@@ -181,6 +207,7 @@ jobs:
             | **Linux** | x64 | Flatpak bundle | [Hyprism-linux-x64-${{ needs.version.outputs.version }}.flatpak](https://github.com/${{ github.repository }}/releases/download/${{ needs.version.outputs.tag_name }}/Hyprism-linux-x64-${{ needs.version.outputs.version }}.flatpak) |
             | **Linux** | x64 | tar.xz | [Hyprism-linux-x64-${{ needs.version.outputs.version }}.tar.xz](https://github.com/${{ github.repository }}/releases/download/${{ needs.version.outputs.tag_name }}/Hyprism-linux-x64-${{ needs.version.outputs.version }}.tar.xz) |
             | **Linux** | x64 | Nix flake | [Packaging/linux/flake](https://github.com/${{ github.repository }}/tree/${{ needs.version.outputs.tag_name }}/Packaging/linux/flake) |
+            | All packages | SHA-256 | Checksums | [SHA256SUMS](https://github.com/${{ github.repository }}/releases/download/${{ needs.version.outputs.tag_name }}/SHA256SUMS) |
 
             > For Nix users: Run the Nix package directly from this release with `nix run github:${{ github.repository }}?ref=${{ needs.version.outputs.tag_name }}&dir=Packaging/linux/flake`
             

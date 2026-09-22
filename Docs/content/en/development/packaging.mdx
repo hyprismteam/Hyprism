@@ -5,7 +5,9 @@ description: Platform publishers, CI workflows, artifact targets, and release ve
 
 # Packaging and releases
 
-`Packaging/` contains the maintained release entry points. Each publisher creates packages from one self-contained Desktop publish so Desktop and Local Node ship together
+`Packaging/` contains the maintained release entry points. Each publisher creates packages from one self-contained publish containing the Hyprism Launcher and the separate Local Node apphost
+
+The Desktop project keeps `Hyprism.Desktop` as its assembly identity for Avalonia resource URIs. Its build and publish targets rename only the native apphost to `Hyprism Launcher`, so the executable name stays consistent without breaking embedded UI resources
 
 ## Platform targets
 
@@ -26,15 +28,17 @@ Install the tools needed by your selected targets: `dpkg-deb`, `rpmbuild`, `appi
 ./Packaging/publish-linux.sh all --output dist
 ```
 
+The `all` target builds DEB, RPM, AppImage, Flatpak, and tar.xz artifacts. Build the Nix target explicitly because it is supplied by the flake and stored in `/nix/store`
+
 AppImage tooling can be selected with `--appimagetool` or `APPIMAGETOOL`. Flatpak exports and bundles use the `stable` branch
 
 The Flatpak bundle currently uses Avalonia's X11 backend through XWayland, so its manifest grants `--socket=x11` and does not grant the conditional `fallback-x11` or native `wayland` sockets. This keeps KDE Plasma Wayland launches working until native Wayland is enabled in the desktop host
 
 Linux packages preserve the source artwork from `logo.svg` and publish it in a square SVG viewport required by application icon validators
 
-## NixOS
+## Nix
 
-The repository contains a flake for the native `x86_64-linux` package. Install Nix with flakes enabled, then build or run Hyprism from the repository root
+The repository contains a flake for the native `x86_64-linux` package. Install Nix with flakes enabled, then build or run Hyprism from the repository root or from a release tag
 
 ```bash
 nix build ./Packaging/linux/flake#hyprism
@@ -43,6 +47,8 @@ nix run ./Packaging/linux/flake#hyprism
 ```
 
 The flake pins nixpkgs and restores NuGet dependencies from `Packaging/linux/flake/nix/deps.json`. Update that file when .NET package references change
+
+The package exposes `hyprism` as its stable command name and includes both the `Hyprism Launcher` and separate `Hyprism.LocalNode` executables in the result
 
 Nix stores the result in `/nix/store`; the `--output` option applies only to native package targets
 
@@ -61,19 +67,19 @@ The publisher installs pinned WiX tooling in a temporary directory for MSI and E
 pwsh Packaging/publish-windows.ps1 all --output dist
 ```
 
-It verifies both `Hyprism.Desktop.exe` and `Hyprism.LocalNode.exe` before producing artifacts. ZIP contains the same application payload as the installers
+It verifies `Hyprism Launcher.exe` and the separate `Hyprism.LocalNode.exe` before producing artifacts. ZIP contains the same application payload as the installers
 
 The Windows apphost uses the multi-size `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico` resource. WiX uses the same icon for the MSI entry in Apps and Features and the EXE bootstrapper
 
 ## macOS
 
-The macOS app bundle includes the generated `Packaging/macos/Hyprism.icns` icon derived from `logo.svg` and references it from `Info.plist`. The macOS publisher uses `plutil`, `hdiutil`, `codesign`, and `file`
+The macOS app bundle includes the generated `Packaging/macos/Hyprism.icns` icon derived from `logo.svg` and uses `Hyprism Launcher` as its executable and display name. The macOS publisher uses `plutil`, `hdiutil`, `codesign`, and `file`
 
 ```bash
 ./Packaging/publish-macos.sh dmg --output dist
 ```
 
-It builds an Apple Silicon app bundle, checks the Local Node apphost architecture, applies an ad hoc signature, verifies it, and creates a DMG. Ad hoc signing is not notarization
+It builds an Apple Silicon app bundle, checks both the Hyprism Launcher and Local Node apphost architectures, applies an ad hoc signature, verifies it, and creates a DMG. Ad hoc signing is not notarization
 
 ## Version source
 

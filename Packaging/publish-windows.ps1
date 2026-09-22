@@ -86,10 +86,12 @@ try {
         -p:PublishReadyToRun=true `
         --output $publishDirectory
 
-    foreach ($appHost in 'Hyprism.Desktop.exe', 'Hyprism.LocalNode.exe') {
-        if (-not (Test-Path (Join-Path $publishDirectory $appHost))) {
-            throw "Expected Windows apphost was not published: $appHost"
-        }
+    $launcherAppHost = Join-Path $publishDirectory 'Hyprism Launcher.exe'
+    if (-not (Test-Path $launcherAppHost)) {
+        throw 'Expected Windows apphost was not published: Hyprism Launcher.exe'
+    }
+    if (-not (Test-Path (Join-Path $publishDirectory 'Hyprism.LocalNode.exe'))) {
+        throw 'Expected Windows apphost was not published: Hyprism.LocalNode.exe'
     }
 
     if ($targets.Contains('zip')) {

@@ -7,12 +7,17 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <AssemblyName>Hyprism.Desktop</AssemblyName>
+    <ApplicationTitle>Hyprism Launcher</ApplicationTitle>
+    <Product>Hyprism Launcher</Product>
     <TargetFramework>net10.0</TargetFramework>
     <Version>4.0.0</Version>
     <ApplicationIcon>Assets/Images/Hyprism.ico</ApplicationIcon>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <LauncherAppHostName>Hyprism Launcher</LauncherAppHostName>
+    <LauncherAppHostExtension Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And '$(OS)' == 'Windows_NT')">.exe</LauncherAppHostExtension>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +39,25 @@ SPDX-License-Identifier: GPL-3.0-only
   <ItemGroup>
     <AvaloniaResource Include="Assets/**" />
   </ItemGroup>
+
+  <Target Name="RenameLauncherBuildAppHost" AfterTargets="Build" Condition="'$(UseAppHost)' == 'true'">
+    <Delete
+      Files="$(TargetDir)$(LauncherAppHostName)$(LauncherAppHostExtension)"
+      Condition="Exists('$(TargetDir)$(AssemblyName)$(LauncherAppHostExtension)') And Exists('$(TargetDir)$(LauncherAppHostName)$(LauncherAppHostExtension)')" />
+    <Move
+      SourceFiles="$(TargetDir)$(AssemblyName)$(LauncherAppHostExtension)"
+      DestinationFiles="$(TargetDir)$(LauncherAppHostName)$(LauncherAppHostExtension)"
+      Condition="Exists('$(TargetDir)$(AssemblyName)$(LauncherAppHostExtension)')" />
+  </Target>
+
+  <Target Name="RenameLauncherPublishAppHost" AfterTargets="Publish" Condition="'$(UseAppHost)' == 'true'">
+    <Delete
+      Files="$(PublishDir)$(LauncherAppHostName)$(LauncherAppHostExtension)"
+      Condition="Exists('$(PublishDir)$(AssemblyName)$(LauncherAppHostExtension)') And Exists('$(PublishDir)$(LauncherAppHostName)$(LauncherAppHostExtension)')" />
+    <Move
+      SourceFiles="$(PublishDir)$(AssemblyName)$(LauncherAppHostExtension)"
+      DestinationFiles="$(PublishDir)$(LauncherAppHostName)$(LauncherAppHostExtension)"
+      Condition="Exists('$(PublishDir)$(AssemblyName)$(LauncherAppHostExtension)')" />
+  </Target>
 
 </Project>

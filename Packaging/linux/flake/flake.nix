@@ -58,7 +58,8 @@
             runtimeId = "linux-x64";
             dotnet-sdk = pkgs.dotnetCorePackages.sdk_10_0;
             dotnet-runtime = pkgs.dotnetCorePackages.runtime_10_0;
-            executables = [ "Hyprism.Desktop" ];
+            dotnetFlags = [ "-p:LauncherAppHostName=Hyprism" ];
+            executables = [ "Hyprism" "Hyprism.LocalNode" ];
 
             nativeBuildInputs = [ pkgs.autoPatchelfHook ];
             buildInputs = runtimeLibraries;
@@ -66,7 +67,6 @@
 
             postInstall = ''
               install -d "$out/bin"
-              ln -s Hyprism.Desktop "$out/bin/hyprism"
               install -Dm644 Packaging/linux/io.github.hyprismteam.HyPrism.desktop \
                 "$out/share/applications/io.github.hyprismteam.HyPrism.desktop"
               install -Dm644 Sources/Hyprism.Desktop/Assets/Images/logo.svg \
@@ -74,6 +74,11 @@
               # Keep the source viewBox and make the packaged icon viewport square
               sed -E -i '0,/<svg[[:space:]]/{s/(<svg[^>]*width=")([^"]+)("[^>]*height=")[^"]+/\1\2\3\2/}' \
                 "$out/share/icons/hicolor/scalable/apps/io.github.hyprismteam.HyPrism.svg"
+            '';
+
+            postFixup = ''
+              mv "$out/bin/Hyprism" "$out/bin/Hyprism Launcher"
+              ln -s "Hyprism Launcher" "$out/bin/hyprism"
             '';
 
             meta = {

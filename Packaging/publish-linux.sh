@@ -3,9 +3,9 @@
 # Copyright (C) 2026 Hyprism Launcher
 # SPDX-License-Identifier: GPL-3.0-only
 
-# Publishes Linux packages for the Avalonia desktop host. Native package targets
-# share one self-contained dotnet publish output so Desktop and Local Node hosts
-# always ship together. The Nix target delegates the build to the repository flake
+# Publishes Linux packages for the Hyprism Launcher and its dedicated Local Node
+# process. Native package targets share one self-contained publish output. The
+# Nix target delegates the build to the repository flake
 set -euo pipefail
 
 PACKAGING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,6 +15,7 @@ ASSETS_DIR="$PACKAGING_DIR/linux"
 FLAKE_DIR="$ASSETS_DIR/flake"
 APP_ID="io.github.hyprismteam.HyPrism"
 APP_NAME="Hyprism"
+APP_EXECUTABLE="Hyprism Launcher"
 ICON_ASSET="$PROJECT_ROOT/Sources/Hyprism.Desktop/Assets/Images/logo.svg"
 RUNTIME="linux-x64"
 FLATPAK_BRANCH="stable"
@@ -192,7 +193,7 @@ if [[ "$contains_native_target" == true ]]; then
         -p:PublishReadyToRun=true \
         --output "$PUBLISH_DIR"
 
-    test -x "$PUBLISH_DIR/Hyprism.Desktop"
+    test -x "$PUBLISH_DIR/$APP_EXECUTABLE"
     test -x "$PUBLISH_DIR/Hyprism.LocalNode"
 fi
 
@@ -208,7 +209,7 @@ create_system_payload() {
     local root="$1"
     install -d "$root/opt/hyprism" "$root/usr/bin"
     cp -a "$PUBLISH_DIR/." "$root/opt/hyprism/"
-    ln -s /opt/hyprism/Hyprism.Desktop "$root/usr/bin/hyprism"
+    ln -s "/opt/hyprism/$APP_EXECUTABLE" "$root/usr/bin/hyprism"
     install_desktop_assets "$root"
 }
 
@@ -282,7 +283,7 @@ build_appimage() {
     cat >"$app_dir/AppRun" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-exec "$(dirname "$0")/usr/lib/hyprism/Hyprism.Desktop" "$@"
+    exec "$(dirname "$0")/usr/lib/hyprism/Hyprism Launcher" "$@"
 EOF
     chmod +x "$app_dir/AppRun"
     ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN="${APPIMAGE_EXTRACT_AND_RUN:-1}" \
