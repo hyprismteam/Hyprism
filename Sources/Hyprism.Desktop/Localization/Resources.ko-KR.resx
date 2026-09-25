@@ -2829,18 +2829,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} 시 {1} 분</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>콘솔</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>이 인스턴스의 명령어 및 실시간 출력</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>콘솔을 아직 사용할 수 없습니다</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>인스턴스별 콘솔 추적이 여기에 추가됩니다</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>로그</value>
   </data>
@@ -2991,25 +2979,16 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Game running</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Not running</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Auto-scroll</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
+  <data name="instances.logs.wrap" xml:space="preserve">
     <value>Wrap</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
+  <data name="instances.logs.clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
+  <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
-  </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>{0} lines</value>
   </data>
 </root>

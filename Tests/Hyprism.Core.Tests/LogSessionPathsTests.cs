@@ -51,8 +51,8 @@ public sealed class LogSessionPathsTests
             writer.Write("ERR", "Game", "client error");
 
             var content = await File.ReadAllTextAsync(path);
-            Assert.Contains("OUT Game: client output", content);
-            Assert.Contains("ERR Game: client error", content);
+            Assert.Contains("|INFO|Game|client output", content);
+            Assert.Contains("|ERROR|Game|client error", content);
         }
         finally
         {

@@ -25,6 +25,25 @@ internal sealed class ObservableRangeCollection<T> : ObservableCollection<T>
             startIndex));
     }
 
+    public void RemoveRange(int startIndex, int count)
+    {
+        if (count <= 0)
+            return;
+
+        var removed = new List<T>(count);
+        for (var index = 0; index < count; index++)
+        {
+            removed.Add(Items[startIndex]);
+            Items.RemoveAt(startIndex);
+        }
+
+        RaisePropertiesChanged();
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(
+            NotifyCollectionChangedAction.Remove,
+            removed,
+            startIndex));
+    }
+
     public void ReplaceRange(IEnumerable<T> items)
     {
         var replacement = items as IReadOnlyList<T> ?? items.ToList();

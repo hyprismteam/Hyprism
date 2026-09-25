@@ -2829,18 +2829,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur.</value>
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} h {1} min</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>Console</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>Commandes et sortie en direct pour cette instance</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>La console n'est pas encore disponible</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>Le suivi de la console par instance sera ajouté ici</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>Journaux</value>
   </data>
@@ -2991,25 +2979,16 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur.</value>
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Game running</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Not running</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Auto-scroll</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
+  <data name="instances.logs.wrap" xml:space="preserve">
     <value>Wrap</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
+  <data name="instances.logs.clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
+  <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
-  </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>{0} lines</value>
   </data>
 </root>

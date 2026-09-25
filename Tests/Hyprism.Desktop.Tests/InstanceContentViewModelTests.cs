@@ -140,8 +140,8 @@ public sealed class InstanceContentViewModelTests
         Assert.Equal("0", viewModel.InstanceWorldsCountText);
         Assert.Equal("1 h 2 min", viewModel.ManagedInstancePlayTime);
         viewModel.CloseInstanceSectionCommand.Execute(null);
-        viewModel.SelectInstanceSectionCommand.Execute("console");
-        Assert.True(viewModel.IsInstanceConsoleSection);
+        viewModel.SelectInstanceSectionCommand.Execute("logs");
+        Assert.True(viewModel.IsInstanceLogsSection);
         Assert.Equal("Console", viewModel.InstanceSectionTitle);
         viewModel.SelectInstanceSectionCommand.Execute("logs");
         Assert.True(viewModel.IsInstanceLogsSection);

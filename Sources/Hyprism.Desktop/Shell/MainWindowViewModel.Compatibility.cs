@@ -191,25 +191,30 @@ public sealed partial class MainWindowViewModel
         get => Instances.IsApplyingModUpdates;
         set => Instances.IsApplyingModUpdates = value;
     }
-    public string ConsoleSearchQuery
+    public string LogsSearchQuery
     {
-        get => Instances.ConsoleSearchQuery;
-        set => Instances.ConsoleSearchQuery = value;
+        get => Instances.LogsSearchQuery;
+        set => Instances.LogsSearchQuery = value;
     }
-    public bool IsConsoleAutoScroll
+    public bool IsLogsAutoScroll
     {
-        get => Instances.IsConsoleAutoScroll;
-        set => Instances.IsConsoleAutoScroll = value;
+        get => Instances.IsLogsAutoScroll;
+        set => Instances.IsLogsAutoScroll = value;
     }
-    public bool IsConsoleWrap
+    public bool IsLogsWrap
     {
-        get => Instances.IsConsoleWrap;
-        set => Instances.IsConsoleWrap = value;
+        get => Instances.IsLogsWrap;
+        set => Instances.IsLogsWrap = value;
     }
-    public int ConsoleRevision
+    public bool IsLogsDebugEnabled { get => Instances.IsLogsDebugEnabled; set => Instances.IsLogsDebugEnabled = value; }
+    public bool IsLogsWarningsEnabled { get => Instances.IsLogsWarningsEnabled; set => Instances.IsLogsWarningsEnabled = value; }
+    public bool IsLogsErrorsEnabled { get => Instances.IsLogsErrorsEnabled; set => Instances.IsLogsErrorsEnabled = value; }
+    public bool IsLogsTracingEnabled { get => Instances.IsLogsTracingEnabled; set => Instances.IsLogsTracingEnabled = value; }
+    public bool IsLogsLevelPopupOpen { get => Instances.IsLogsLevelPopupOpen; set => Instances.IsLogsLevelPopupOpen = value; }
+    public int LogsRevision
     {
-        get => Instances.ConsoleRevision;
-        set => Instances.ConsoleRevision = value;
+        get => Instances.LogsRevision;
+        set => Instances.LogsRevision = value;
     }
     public InstanceListOptionViewModel? SelectedModCatalogCategory
     {
@@ -333,10 +338,6 @@ public sealed partial class MainWindowViewModel
     public string InstanceWorldsHint => Instances.InstanceWorldsHint;
     public string InstanceWorldsEmptyTitle => Instances.InstanceWorldsEmptyTitle;
     public string InstanceWorldsEmptyHint => Instances.InstanceWorldsEmptyHint;
-    public string InstanceConsoleTitle => Instances.InstanceConsoleTitle;
-    public string InstanceConsoleHint => Instances.InstanceConsoleHint;
-    public string InstanceConsoleEmptyTitle => Instances.InstanceConsoleEmptyTitle;
-    public string InstanceConsoleEmptyHint => Instances.InstanceConsoleEmptyHint;
     public string InstanceLogsTitle => Instances.InstanceLogsTitle;
     public string InstanceLogsHint => Instances.InstanceLogsHint;
     public string InstanceLogsEmptyTitle => Instances.InstanceLogsEmptyTitle;
@@ -374,15 +375,24 @@ public sealed partial class MainWindowViewModel
     public string ModCatalogInstallVersionColumn => Instances.ModCatalogInstallVersionColumn;
     public string ModCatalogInstallDependenciesColumn => Instances.ModCatalogInstallDependenciesColumn;
     public string ModCatalogGameVersionLabel => Instances.ModCatalogGameVersionLabel;
-    public string ConsoleAutoScrollLabel => Instances.ConsoleAutoScrollLabel;
-    public string ConsoleClearLabel => Instances.ConsoleClearLabel;
-    public string ConsoleSearchHint => Instances.ConsoleSearchHint;
-    public string ConsoleWrapLabel => Instances.ConsoleWrapLabel;
+    public string LogsAutoScrollLabel => Instances.LogsAutoScrollLabel;
+    public string LogsClearLabel => Instances.LogsClearLabel;
+    public string LogsSearchHint => Instances.LogsSearchHint;
+    public string LogsWrapLabel => Instances.LogsWrapLabel;
+    public string LogsLevelLabel => Instances.LogsLevelLabel;
+    public string LogsDebugLabel => Instances.LogsDebugLabel;
+    public string LogsWarningsLabel => Instances.LogsWarningsLabel;
+    public string LogsErrorsLabel => Instances.LogsErrorsLabel;
+    public string LogsTracingLabel => Instances.LogsTracingLabel;
+    public string LogsShowInFolderLabel => Instances.LogsShowInFolderLabel;
+    public string LogsLevelSummary => Instances.LogsLevelSummary;
+    public bool HasAdditionalLogsLevels => Instances.HasAdditionalLogsLevels;
+    public string LogsAdditionalLevelCountText => Instances.LogsAdditionalLevelCountText;
+    public bool CanShowLogsInFolder => Instances.CanShowLogsInFolder;
     public bool HasModSelection => Instances.HasModSelection;
     public bool HasModUpdates => Instances.HasModUpdates;
-    public bool IsConsoleRunning => Instances.IsConsoleRunning;
-    public bool HasConsoleLines => Instances.HasConsoleLines;
-    public bool IsConsoleEmpty => Instances.IsConsoleEmpty;
+    public bool HasLogs => Instances.HasLogs;
+    public bool IsLogsEmpty => Instances.IsLogsEmpty;
     public bool CanLoadMoreModCatalog => Instances.CanLoadMoreModCatalog;
     public bool HasModCatalogPreview => Instances.HasModCatalogPreview;
     public bool IsModCatalogPreviewMounted => Instances.IsModCatalogPreviewMounted;
@@ -404,8 +414,6 @@ public sealed partial class MainWindowViewModel
     public string ModUpdateCountText => Instances.ModUpdateCountText;
     public string InstanceModsUpdatesAvailableText => Instances.InstanceModsUpdatesAvailableText;
     public string InstanceModsFooterText => Instances.InstanceModsFooterText;
-    public string ConsoleStatusText => Instances.ConsoleStatusText;
-    public string ConsoleLineCountText => Instances.ConsoleLineCountText;
     public string InstanceNotInstalledTitle => Instances.InstanceNotInstalledTitle;
     public string InstanceNotInstalledHint => Instances.InstanceNotInstalledHint;
     public string RefreshLabel => Instances.RefreshLabel;
@@ -450,7 +458,6 @@ public sealed partial class MainWindowViewModel
     public bool IsInstanceModsSection => Instances.IsInstanceModsSection;
     public bool IsInstanceBrowseSection => Instances.IsInstanceBrowseSection;
     public bool IsInstanceWorldsSection => Instances.IsInstanceWorldsSection;
-    public bool IsInstanceConsoleSection => Instances.IsInstanceConsoleSection;
     public bool IsInstanceLogsSection => Instances.IsInstanceLogsSection;
     public bool HasInstalledMods => Instances.HasInstalledMods;
     public bool HasModCatalogItems => Instances.HasModCatalogItems;
@@ -469,7 +476,7 @@ public sealed partial class MainWindowViewModel
     public ObservableCollection<ModCatalogFileItemViewModel> ModCatalogPreviewFiles => Instances.ModCatalogPreviewFiles;
     public ObservableCollection<ModCatalogInstallItemViewModel> ModCatalogInstallItems => Instances.ModCatalogInstallItems;
     public ObservableCollection<InstanceWorldItemViewModel> InstanceWorlds => Instances.InstanceWorlds;
-    public ObservableCollection<ConsoleLineViewModel> ConsoleLines => Instances.ConsoleLines;
+    public ObservableCollection<InstanceLogLineViewModel> LogsLines => Instances.LogsLines;
     public ObservableCollection<InstanceListOptionViewModel> ModCatalogCategories => Instances.ModCatalogCategories;
     public ObservableCollection<InstanceListOptionViewModel> ModCatalogSortOptions => Instances.ModCatalogSortOptions;
 
@@ -508,7 +515,8 @@ public sealed partial class MainWindowViewModel
     public IAsyncRelayCommand ImportModsCommand => Instances.ImportModsCommand;
     public IAsyncRelayCommand OpenInstalledModPageCommand => Instances.OpenInstalledModPageCommand;
     public IAsyncRelayCommand OpenCatalogModPageCommand => Instances.OpenCatalogModPageCommand;
-    public IRelayCommand ClearConsoleCommand => Instances.ClearConsoleCommand;
+    public IRelayCommand ClearLogsCommand => Instances.ClearLogsCommand;
+    public IAsyncRelayCommand ShowLogsInFolderCommand => Instances.ShowLogsInFolderCommand;
     public IAsyncRelayCommand RunManagedInstanceCommand => Instances.RunManagedInstanceCommand;
     public IAsyncRelayCommand OpenManagedInstanceFolderCommand => Instances.OpenManagedInstanceFolderCommand;
     public IRelayCommand DeleteManagedInstanceCommand => Instances.DeleteManagedInstanceCommand;

@@ -2829,18 +2829,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden.</val
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} h {1} min</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>Konsole</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>Befehle und Live-Ausgabe für diese Instanz</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>Konsole ist noch nicht verfügbar</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>Pro-Instanz-Konsolenverfolgung wird hier hinzugefügt</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>Protokolle</value>
   </data>
@@ -2991,25 +2979,16 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden.</val
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Game running</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Not running</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Auto-scroll</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
+  <data name="instances.logs.wrap" xml:space="preserve">
     <value>Wrap</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
+  <data name="instances.logs.clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
+  <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
-  </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>{0} lines</value>
   </data>
 </root>

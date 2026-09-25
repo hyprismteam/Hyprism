@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 using System.Collections.Concurrent;
+using System.Globalization;
+using System.Text;
+using Hyprism.Core.Game.Launch;
 
 namespace Hyprism.Core.Infrastructure;
 
@@ -32,13 +35,27 @@ public sealed class SessionLogWriter
     /// <param name="source">Component that produced the record</param>
     /// <param name="message">Message text</param>
     public void Write(string level, string source, string message)
+        => Write(DateTimeOffset.Now, level, source, message);
+
+    /// <summary>Appends a game record using its original timestamp and source</summary>
+    public void Write(DateTimeOffset timestamp, string level, string source, string message)
     {
-        var line = $"{DateTimeOffset.Now:O} {level} {source}: {message}{Environment.NewLine}";
+        var output = new StringBuilder();
+        foreach (var part in message.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
+        {
+            var trace = GameLogParser.IsTraceLine(part);
+            output.Append(timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.ffff", CultureInfo.InvariantCulture))
+                .Append('|').Append(trace ? "TRACE" : GameLogParser.NormalizeLevel(level))
+                .Append('|').Append(source)
+                .Append('|').Append(part.TrimEnd('\r'))
+                .AppendLine();
+        }
+
         lock (_fileLock)
         {
             try
             {
-                File.AppendAllText(FilePath, line);
+                File.AppendAllText(FilePath, output.ToString());
             }
             catch
             {

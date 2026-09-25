@@ -172,46 +172,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
 
 
-  <Style Selector="Button.articleAction">
-    <Setter Property="Padding" Value="0,8" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
-      </Transitions>
-    </Setter>
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border Background="{TemplateBinding Background}"
-                Padding="{TemplateBinding Padding}">
-          <ContentPresenter Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="Center" />
-        </Border>
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="Button.articleAction:pointerover">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="Button.articleAction:pressed">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="Button.articleAction Path">
-    <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
-  </Style>
-
   <Style Selector="news|NewsRichTextBlock.articleParagraph">
     <Setter Property="Foreground" Value="#E1E2E5" />
     <Setter Property="FontSize" Value="16" />

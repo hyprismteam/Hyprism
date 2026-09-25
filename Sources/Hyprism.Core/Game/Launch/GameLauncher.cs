@@ -1460,6 +1460,8 @@ DUALAUTH_TRUST_OFFICIAL=""true""
 
         Process? process = null;
         var instanceLog = new SessionLogWriter(instanceLogPath);
+        var outputLogParser = new GameLogParser();
+        var errorLogParser = new GameLogParser();
         try
         {
             instanceLog.Write("INF", "Hyprism", $"Starting instance '{instanceId}' for profile '{profileName}'");
@@ -1488,8 +1490,10 @@ DUALAUTH_TRUST_OFFICIAL=""true""
             {
                 if (string.IsNullOrEmpty(e.Data)) return;
                 string line = e.Data;
-                instanceLog.Write("OUT", "Game", line);
-                _console?.Append(instanceId, ClassifyGameLine(line), line);
+                var logEntry = outputLogParser.Parse(line, ClassifyGameLine(line));
+                instanceLog.Write(logEntry.Timestamp, logEntry.Level, logEntry.Source, logEntry.Message);
+                _console?.Append(instanceId, logEntry.Level, logEntry.Message,
+                    logEntry.Timestamp, logEntry.Source, logEntry.IsTrace);
                 bool isNewLogEntry = LogTimestampRegex().IsMatch(line);
 
                 if (line.StartsWith("Set log path to")) { Logger.Info("Game", line); return; }
@@ -1540,8 +1544,10 @@ DUALAUTH_TRUST_OFFICIAL=""true""
             process.ErrorDataReceived += (_, e) =>
             {
                 if (string.IsNullOrWhiteSpace(e.Data)) return;
-                instanceLog.Write("ERR", "Game", e.Data);
-                _console?.Append(instanceId, "ERR", e.Data);
+                var logEntry = errorLogParser.Parse(e.Data, "ERR");
+                instanceLog.Write(logEntry.Timestamp, logEntry.Level, logEntry.Source, logEntry.Message);
+                _console?.Append(instanceId, logEntry.Level, logEntry.Message,
+                    logEntry.Timestamp, logEntry.Source, logEntry.IsTrace);
                 Logger.Warning("Game", $"stderr: {e.Data}");
             };
 

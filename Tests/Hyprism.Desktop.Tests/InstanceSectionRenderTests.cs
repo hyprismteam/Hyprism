@@ -37,7 +37,7 @@ namespace Hyprism.Desktop.Tests;
 public sealed class InstanceSectionRenderTests
 {
     [AvaloniaFact]
-    public async Task ModsBrowseAndConsoleSectionsRenderInteractiveRows()
+    public async Task ModsBrowseAndLogsSectionsRenderInteractiveRows()
     {
         const string instancePath = "/tmp/hyprism-section-render-test";
         var instance = new InstanceInfo
@@ -187,7 +187,8 @@ public sealed class InstanceSectionRenderTests
                 installProgress = progressCallback;
                 return installGate.Task;
             });
-        console.Append(instance.Id, "ERR", "rendered error line");
+        console.Append(instance.Id, "ERR", "rendered error line",
+            source: "HytaleClient.Application.Program");
 
         using var viewModel = new MainWindowViewModel(
             instances.Object,
@@ -607,15 +608,50 @@ public sealed class InstanceSectionRenderTests
 
         Assert.Equal(720, view.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
         Assert.Equal(820, view.FindControl<Grid>("ModCatalogSection")?.MaxWidth);
-        Assert.Equal(720, view.FindControl<Grid>("InstanceConsoleSection")?.MaxWidth);
+        Assert.Equal(820, view.FindControl<Grid>("InstanceLogsSection")?.MaxWidth);
 
-        viewModel.SelectInstanceSectionCommand.Execute("console");
-        Assert.Single(viewModel.ConsoleLines);
-        await WaitUntilAsync(() => FindConsoleLines(view).Any(text => text.IsEffectivelyVisible));
-        var consoleLines = FindConsoleLines(view).Where(text => text.IsEffectivelyVisible).ToList();
-        Assert.NotEmpty(consoleLines);
-        Assert.Contains("rendered error line", consoleLines[0].Text);
-        Assert.Contains("error", consoleLines[0].Classes);
+        viewModel.SelectInstanceSectionCommand.Execute("logs");
+        Assert.Single(viewModel.LogsLines);
+        await WaitUntilAsync(() => FindLogLines(view).Any(text => text.IsEffectivelyVisible));
+        var logLines = FindLogLines(view).Where(text => text.IsEffectivelyVisible).ToList();
+        Assert.NotEmpty(logLines);
+        Assert.Contains("rendered error line", logLines[0].Text);
+        Assert.Contains("error", logLines[0].Classes);
+
+        await Task.Run(() => console.Append(instance.Id, "INFO", "live rendered line"));
+        await WaitUntilAsync(() => FindLogLines(view)
+            .Any(text => text.IsEffectivelyVisible && text.Text == "live rendered line"));
+        Assert.Equal(2, viewModel.LogsLines.Count);
+
+        var logText = Assert.IsType<TextBox>(
+            FindLogLines(view).First(text => text.Text == "live rendered line"));
+        logText.SelectAll();
+        Assert.Equal("live rendered line", logText.SelectedText);
+        var logLevel = Assert.Single(view.GetVisualDescendants().OfType<TextBox>(),
+            text => text.Classes.Contains("logLevel") && text.Text == "ERROR");
+        Assert.Equal(FontWeight.Bold, logLevel.FontWeight);
+
+        var levelButton = view.FindControl<ToggleButton>("LogsLevelButton");
+        var levelPopup = view.FindControl<FadingPopup>("LogsLevelPopup");
+        Assert.NotNull(levelButton);
+        Assert.NotNull(levelPopup);
+        Assert.Equal(40, levelButton!.Height);
+        Assert.Equal("Debug", viewModel.Instances.LogsLevelSummary);
+        Assert.Equal("+2", viewModel.Instances.LogsAdditionalLevelCountText);
+        levelButton.IsChecked = true;
+        await WaitUntilAsync(() => levelPopup!.IsOpen);
+        var levelChecks = levelPopup!.Child!.GetVisualDescendants()
+            .OfType<CheckBox>().Where(check => check.Classes.Contains("logsLevelCheck")).ToList();
+        Assert.Equal(4, levelChecks.Count);
+        var tracingCheck = levelChecks[3];
+        var tracingCenter = tracingCheck.TranslatePoint(
+            new Point(tracingCheck.Bounds.Width / 2, tracingCheck.Bounds.Height / 2), window);
+        Assert.NotNull(tracingCenter);
+        window.MouseDown(tracingCenter!.Value, MouseButton.Left);
+        window.MouseUp(tracingCenter.Value, MouseButton.Left);
+        await WaitUntilAsync(() => viewModel.Instances.IsLogsTracingEnabled);
+        Assert.True(levelPopup.IsRequestedOpen);
+        Assert.Equal("+3", viewModel.Instances.LogsAdditionalLevelCountText);
     }
 
     [AvaloniaFact]
@@ -826,10 +862,10 @@ public sealed class InstanceSectionRenderTests
             .Where(border => border.Classes.Contains(className))
             .ToList();
 
-    private static List<TextBlock> FindConsoleLines(InstancesView view)
+    private static List<TextBox> FindLogLines(InstancesView view)
         => view.GetVisualDescendants()
-            .OfType<TextBlock>()
-            .Where(text => text.Classes.Contains("consoleText"))
+            .OfType<TextBox>()
+            .Where(text => text.Classes.Contains("logText"))
             .ToList();
 
     private static Task WaitUntilAsync(Func<bool> condition)

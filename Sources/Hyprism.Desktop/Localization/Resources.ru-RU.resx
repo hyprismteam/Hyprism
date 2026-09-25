@@ -2820,29 +2820,17 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} ч {1} мин</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>Консоль</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>Команды и вывод выбранного экземпляра</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>Консоль пока недоступна</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>Здесь появится консоль с привязкой к экземпляру</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>Логи</value>
   </data>
   <data name="instances.logs.hint" xml:space="preserve">
-    <value>Логи запуска и игры для этого экземпляра</value>
+    <value>Вывод игры для этого экземпляра</value>
   </data>
   <data name="instances.logs.emptyTitle" xml:space="preserve">
-    <value>Логов экземпляра пока нет</value>
+    <value>Вывода игры пока нет</value>
   </data>
   <data name="instances.logs.emptyHint" xml:space="preserve">
-    <value>Здесь появится история логов выбранного экземпляра</value>
+    <value>Вывод игры появится здесь, пока Hyprism открыт</value>
   </data>
   <data name="oauth.callback.successTitle" xml:space="preserve">
     <value>Авторизация завершена</value>
@@ -2997,25 +2985,34 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Загружается еще...</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Игра запущена</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Не запущена</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Автопрокрутка</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
-    <value>Перенос</value>
+  <data name="instances.logs.wrap" xml:space="preserve">
+    <value>Перенос строк</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
-    <value>Очистить</value>
+  <data name="instances.logs.clear" xml:space="preserve">
+    <value>Очистить логи</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
-    <value>Фильтр вывода консоли</value>
+  <data name="instances.logs.search" xml:space="preserve">
+    <value>Фильтр вывода игры</value>
   </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>Строк: {0}</value>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Уровень логов</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Отладка</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Предупреждения</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Ошибки</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Трейсинг</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Показать в папке</value>
   </data>
 </root>

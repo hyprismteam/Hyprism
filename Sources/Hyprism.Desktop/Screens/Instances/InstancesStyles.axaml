@@ -291,6 +291,55 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="BorderBrush" Value="{DynamicResource StrokeStrongBrush}" />
   </Style>
 
+  <Style Selector="instances|InstancesView TextBox.logsSearch">
+    <Setter Property="Padding" Value="44,9,12,9" />
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView TextBox.logsSearch /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView TextBox.logsSearch:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <Style Selector="instances|InstancesView TextBox.logsSearch:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Path.logsSearchIcon">
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
+    <Setter Property="Margin" Value="12,0,0,0" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+
   <Style Selector="instances|InstancesView TextBox.instanceSearch.catalogSearch">
     <Setter Property="Padding" Value="12,0,48,0" />
     <Setter Property="BorderBrush" Value="Transparent" />
@@ -413,6 +462,32 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Border.catalogInstallTopBar.hidden">
+    <Setter Property="Opacity" Value="0" />
+    <Setter Property="RenderTransform" Value="scale(0.94) translateX(10px)" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.logsShowFolderAction">
+    <Setter Property="Opacity" Value="0" />
+    <Setter Property="RenderTransformOrigin" Value="100%,50%" />
+    <Setter Property="RenderTransform" Value="scale(0.94) translateX(10px)" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+          <DoubleTransition.Easing><easing:CubicEaseOut /></DoubleTransition.Easing>
+        </DoubleTransition>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18">
+          <TransformOperationsTransition.Easing><easing:CubicEaseOut /></TransformOperationsTransition.Easing>
+        </TransformOperationsTransition>
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.logsShowFolderAction.visible">
+    <Setter Property="Opacity" Value="1" />
+    <Setter Property="RenderTransform" Value="scale(1) translateX(0px)" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.logsShowFolderAction.hidden">
     <Setter Property="Opacity" Value="0" />
     <Setter Property="RenderTransform" Value="scale(0.94) translateX(10px)" />
   </Style>
@@ -652,7 +727,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Transitions">
       <Transitions>
         <BrushTransition Property="Background" Duration="0:0:0.16" />
-        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
       </Transitions>
     </Setter>
   </Style>
@@ -1539,46 +1613,300 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView Border.consoleStatusPill">
-    <Setter Property="Padding" Value="11,7" />
-    <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="11" />
+  <Style Selector="instances|InstancesView Grid.logsSearchContainer">
+    <Setter Property="Width" Value="280" />
   </Style>
 
-  <Style Selector="instances|InstancesView Ellipse.consoleStatusDot">
-    <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
+  <Style Selector="instances|InstancesView.compact Grid.logsSearchContainer">
+    <Setter Property="Width" Value="170" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsLevelButton">
+    <Setter Property="Width" Value="220" />
+    <Setter Property="MinHeight" Value="44" />
+    <Setter Property="Padding" Value="14,6,42,6" />
+    <Setter Property="Background" Value="{DynamicResource SegmentedTrackBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="*,32">
+          <Border x:Name="ButtonBackground"
+                  Grid.ColumnSpan="2"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <Border.Transitions>
+              <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.18" />
+              </Transitions>
+            </Border.Transitions>
+          </Border>
+          <ContentPresenter Grid.Column="0"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          <PathIcon Grid.Column="1"
+                    Classes="logsLevelChevron"
+                    Data="{StaticResource ExpandMoreIcon}"
+                    IsHitTestVisible="False"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsLevelButton:pointerover /template/ Border#ButtonBackground,
+                  instances|InstancesView ToggleButton.logsLevelButton:checked /template/ Border#ButtonBackground">
+    <Setter Property="Background" Value="{DynamicResource ControlTrackHoverBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView.compact ToggleButton.logsLevelButton">
+    <Setter Property="Width" Value="180" />
+  </Style>
+
+  <Style Selector="instances|InstancesView TextBlock.logsLevelSummary">
+    <Setter Property="MaxWidth" Value="130" />
+  </Style>
+
+  <Style Selector="instances|InstancesView.compact TextBlock.logsLevelSummary">
+    <Setter Property="MaxWidth" Value="86" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.logsLevelCountBadge">
+    <Setter Property="Padding" Value="6,2" />
+  </Style>
+
+  <Style Selector="instances|InstancesView PathIcon.logsLevelChevron">
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Height" Value="14" />
+    <Setter Property="Margin" Value="0,0,14,0" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="RenderTransform" Value="rotate(0deg)" />
+    <Setter Property="RenderTransformOrigin" Value="50%,50%" />
     <Setter Property="Transitions">
       <Transitions>
-        <BrushTransition Property="Fill" Duration="0:0:0.22" />
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
       </Transitions>
     </Setter>
   </Style>
 
-  <Style Selector="instances|InstancesView Ellipse.consoleStatusDot.running">
-    <Setter Property="Fill" Value="{DynamicResource ToggleOnBrush}" />
+  <Style Selector="instances|InstancesView ToggleButton.logsLevelButton:pointerover PathIcon.logsLevelChevron">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView TextBlock.consoleOptionLabel">
-    <Setter Property="FontSize" Value="12" />
+  <Style Selector="instances|InstancesView ToggleButton.logsLevelButton:checked PathIcon.logsLevelChevron">
+    <Setter Property="RenderTransform" Value="rotate(180deg)" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.logsLevelPopup">
+    <Setter Property="Width" Value="220" />
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="RowBackground"
+                Background="Transparent"
+                CornerRadius="8"
+                Padding="10,9">
+          <Border.Transitions>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.16" />
+            </Transitions>
+          </Border.Transitions>
+          <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+            <Border x:Name="SelectionIndicator"
+                    Width="20" Height="20"
+                    Background="#34343A"
+                    CornerRadius="6">
+              <Border.Transitions>
+                <Transitions>
+                  <BrushTransition Property="Background" Duration="0:0:0.16" />
+                </Transitions>
+              </Border.Transitions>
+              <PathIcon x:Name="CheckGlyph"
+                        Width="11" Height="11"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource CheckIcon}"
+                        Foreground="#151515"
+                        Opacity="0">
+                <PathIcon.Transitions>
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.12" />
+                  </Transitions>
+                </PathIcon.Transitions>
+              </PathIcon>
+            </Border>
+            <ContentPresenter Grid.Column="1"
+                              x:Name="CheckLabel"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              VerticalContentAlignment="Center">
+              <ContentPresenter.Transitions>
+                <Transitions>
+                  <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+                </Transitions>
+              </ContentPresenter.Transitions>
+            </ContentPresenter>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:pointerover /template/ Border#RowBackground">
+    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:pointerover /template/ ContentPresenter#CheckLabel">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked:pointerover /template/ Border#RowBackground">
+    <Setter Property="Background" Value="{DynamicResource ItemSelectedHoverBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked /template/ Border#SelectionIndicator">
+    <Setter Property="Background" Value="#F1F1F3" />
+  </Style>
+
+  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked /template/ PathIcon#CheckGlyph">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton,
+                  instances|InstancesView Button.logsIconButton">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="#00000000" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="LogsButtonSurface"
+                Background="{TemplateBinding Background}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <ContentPresenter x:Name="LogsButtonContent"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            IsHitTestVisible="False" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:pointerover,
+                  instances|InstancesView Button.logsIconButton:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:checked">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:checked:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:pressed,
+                  instances|InstancesView Button.logsIconButton:pressed">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:checked:pressed">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Button.clearLogsIconButton:pressed">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Button.clearLogsIconButton:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:disabled,
+                  instances|InstancesView Button.logsIconButton:disabled">
+    <Setter Property="Opacity" Value="0.45" />
+    <Setter Property="Background" Value="#00000000" />
     <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ToggleButton.logsIconButton:disabled:pointerover,
+                  instances|InstancesView ToggleButton.logsIconButton:disabled:pressed,
+                  instances|InstancesView Button.logsIconButton:disabled:pointerover,
+                  instances|InstancesView Button.logsIconButton:disabled:pressed">
+    <Setter Property="Background" Value="#00000000" />
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Path.logsToolbarIcon">
+    <Setter Property="Width" Value="17" />
+    <Setter Property="Height" Value="17" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Fill" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
 
-  <Style Selector="instances|InstancesView ToggleSwitch.consoleOptionToggle">
-    <Setter Property="VerticalAlignment" Value="Center" />
+  <Style Selector="instances|InstancesView Path.logsToolbarIcon.compact">
+    <Setter Property="Width" Value="15" />
+    <Setter Property="Height" Value="15" />
   </Style>
 
-  <Style Selector="instances|InstancesView.compact StackPanel.consoleWrapOption">
-    <Setter Property="IsVisible" Value="False" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Border.consolePanel">
-    <Setter Property="Background" Value="#0A0B0D" />
-  </Style>
-
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="0" />
@@ -1591,57 +1919,96 @@ SPDX-License-Identifier: GPL-3.0-only
     </Setter>
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList.wrap">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList /template/ controls|SmoothScrollViewer">
+    <Setter Property="IsWheelEasingEnabled" Value="False" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList.wrap">
     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList > ListBoxItem">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList > ListBoxItem">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Padding" Value="4,0" />
     <Setter Property="Margin" Value="0" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Focusable" Value="True" />
     <Setter Property="FontFamily" Value="JetBrains Mono" />
     <Setter Property="FontSize" Value="12" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList > ListBoxItem:pointerover">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList > ListBoxItem:pointerover">
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList > ListBoxItem:selected">
-    <Setter Property="Background" Value="Transparent" />
+  <Style Selector="instances|InstancesView ListBox.instanceLogList > ListBoxItem:selected">
+    <Setter Property="Background" Value="{DynamicResource ItemSelectedBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList TextBlock.consoleTime">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logLevel,
+                  instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText,
+                  instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logTime,
+                  instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logSource">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="Cursor" Value="Ibeam" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logTime">
     <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="Opacity" Value="0.75" />
     <Setter Property="TextWrapping" Value="NoWrap" />
     <Setter Property="VerticalAlignment" Value="Top" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList TextBlock.consoleText">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logLevel">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+    <Setter Property="TextWrapping" Value="NoWrap" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logSource">
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logLevel.error">
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logLevel.warning">
+    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText">
     <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
     <Setter Property="TextWrapping" Value="NoWrap" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList.wrap TextBlock.consoleText">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList.wrap SelectableTextBlock.logText">
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList TextBlock.consoleText.error">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText.error">
     <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList TextBlock.consoleText.warning">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText.warning">
     <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceConsoleList TextBlock.consoleText.system">
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText.system">
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
+  <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText.trace">
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+  </Style>
+
 
 </Styles>
-

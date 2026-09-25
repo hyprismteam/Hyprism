@@ -5,7 +5,7 @@ description: Create, install, launch, and remove isolated Hytale installations
 
 # Instances
 
-An instance is one Hytale installation with its own version, game files, mods, worlds, console buffer, and play-time record
+An instance is one Hytale installation with its own version, game files, mods, worlds, live game output, and play-time record
 
 When an available source provides a human-readable version name, Hyprism uses it on the instance card and in the details. Existing instances are updated automatically when the launcher finds a missing name
 
@@ -49,8 +49,7 @@ Dragging a card by its handle changes and saves the list order. Opening a card c
 | **Installed mods** | Enable, disable, update, import, or remove mods in this instance |
 | **Discover mods** | Find compatible CurseForge files and install them into this instance |
 | **Worlds** | View saves found under the instance user data |
-| **Console** | Follow live output from the running game |
-| **Logs** | Not yet available; use the log files on disk |
+| **Logs** | Follow live output from the game running in this instance |
 
 See [Mods](/user-guide/mods) for the complete mod workflow
 
@@ -74,9 +73,17 @@ The **Preview** sheet warns that required dependencies may add extra downloads. 
 
 Hyprism also reads the Hytale `manifest.json` inside JAR and ZIP mods. It keeps the declared plugin identifier and version ranges in the instance manifest and prevents removing a mod while another installed mod declares it as a required dependency. If a local archive declares a dependency, install that dependency separately before using the local mod
 
-## Console and logs {/* #console-and-logs */}
+## Logs {/* #console-and-logs */}
 
-The console keeps a separate in-memory buffer for every instance while the launcher is open. You can filter text, pause automatic scrolling by scrolling away from the bottom, toggle line wrapping, and clear the visible buffer
+The **Logs** section shows live game output for the selected instance while Hyprism is open
+
+1. Open **Instances**, select an installed instance, and select **Logs**
+2. Enter text in the filter field to find matching messages or sources. Press `Esc` or click an empty area of the log panel to clear the filter and return to all messages
+3. Open the level filter and select any combination of **Debug** for ordinary output, **Warnings**, **Errors**, and **Tracing** for stack trace lines. The menu stays open while you change its checkboxes
+4. Use **Auto-scroll** to follow new lines and **Wrap lines** to fit long lines to the panel width
+5. Select **Clear logs** to clear the current in-memory buffer for this instance, or **Show in folder** to open the current session folder when an instance log file exists
+
+Each row shows time, level, source, and message. Select text to copy it, or select rows and press Ctrl+C to copy complete records. Scrolling away from the bottom pauses auto-scroll. The live buffer remains available only while Hyprism is open
 
 Launcher logs remain on disk after Hyprism closes. Open **Settings → Data**, open the launcher data folder, and look in `Logs` for the relevant session. If a launch fails, include the relevant launcher and instance logs when [reporting a bug](https://github.com/hyprismteam/HyPrism/issues/new/choose), but review them for personal paths or account data first
 
