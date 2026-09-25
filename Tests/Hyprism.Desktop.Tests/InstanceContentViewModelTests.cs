@@ -142,9 +142,6 @@ public sealed class InstanceContentViewModelTests
         viewModel.CloseInstanceSectionCommand.Execute(null);
         viewModel.SelectInstanceSectionCommand.Execute("logs");
         Assert.True(viewModel.IsInstanceLogsSection);
-        Assert.Equal("Console", viewModel.InstanceSectionTitle);
-        viewModel.SelectInstanceSectionCommand.Execute("logs");
-        Assert.True(viewModel.IsInstanceLogsSection);
         Assert.Equal("Logs", viewModel.InstanceSectionTitle);
         Assert.Equal("Logs", viewModel.DisplayedInstanceSectionTitle);
         viewModel.CloseInstanceSectionCommand.Execute(null);

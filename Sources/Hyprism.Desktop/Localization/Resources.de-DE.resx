@@ -2991,4 +2991,22 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden.</val
   <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Protokollebene</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Warnungen</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Ablaufverfolgung</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Im Ordner anzeigen</value>
+  </data>
 </root>

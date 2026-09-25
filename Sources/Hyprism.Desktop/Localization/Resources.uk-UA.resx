@@ -2991,4 +2991,22 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Рівень журналу</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Налагодження</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Помилки</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Трасування</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Показати в папці</value>
+  </data>
 </root>

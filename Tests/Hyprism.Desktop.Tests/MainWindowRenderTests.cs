@@ -2671,21 +2671,19 @@ public sealed class MainWindowRenderTests
             .OfType<Button>()
             .Where(button => button.Classes.Contains("instanceMenuRow"))
             .ToList();
-        Assert.Equal(
-            5,
-            instanceMenuRows.Count);
+        Assert.Equal(4, instanceMenuRows.Count);
         var instanceMenuIcons = instancesView.GetVisualDescendants()
             .OfType<Image>()
             .Where(image => image.Classes.Contains("instanceMenuIcon"))
             .ToList();
-        Assert.Equal(5, instanceMenuIcons.Count);
+        Assert.Equal(4, instanceMenuIcons.Count);
         Assert.All(instanceMenuIcons, icon =>
         {
             Assert.Equal(28, icon.Width);
             Assert.Equal(28, icon.Height);
             Assert.NotNull(icon.Source);
         });
-        Assert.All(instanceMenuRows.Take(4), row => Assert.InRange(row.Bounds.Height, 68.5, 69.5));
+        Assert.All(instanceMenuRows.Take(3), row => Assert.InRange(row.Bounds.Height, 68.5, 69.5));
         Assert.InRange(instanceMenuRows[^1].Bounds.Height, 65.5, 66.5);
         Assert.DoesNotContain(
             instancesView.GetVisualDescendants().OfType<Button>(),

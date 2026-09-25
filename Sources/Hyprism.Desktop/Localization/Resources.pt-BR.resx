@@ -2991,4 +2991,22 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
   <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Nível de log</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Depuração</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Avisos</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Erros</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Rastreamento</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Mostrar na pasta</value>
+  </data>
 </root>

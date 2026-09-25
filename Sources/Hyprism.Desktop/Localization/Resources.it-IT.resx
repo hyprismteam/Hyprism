@@ -2991,4 +2991,22 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Livello di log</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Avvisi</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Errori</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Tracciamento</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Mostra nella cartella</value>
+  </data>
 </root>

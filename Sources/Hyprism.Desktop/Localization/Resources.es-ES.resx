@@ -2991,4 +2991,22 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Nivel de registro</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Depuración</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Advertencias</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Errores</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Trazado</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Mostrar en la carpeta</value>
+  </data>
 </root>

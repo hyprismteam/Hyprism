@@ -623,11 +623,11 @@ public sealed class InstanceSectionRenderTests
             .Any(text => text.IsEffectivelyVisible && text.Text == "live rendered line"));
         Assert.Equal(2, viewModel.LogsLines.Count);
 
-        var logText = Assert.IsType<TextBox>(
+        var logText = Assert.IsType<SelectableTextBlock>(
             FindLogLines(view).First(text => text.Text == "live rendered line"));
         logText.SelectAll();
         Assert.Equal("live rendered line", logText.SelectedText);
-        var logLevel = Assert.Single(view.GetVisualDescendants().OfType<TextBox>(),
+        var logLevel = Assert.Single(view.GetVisualDescendants().OfType<SelectableTextBlock>(),
             text => text.Classes.Contains("logLevel") && text.Text == "ERROR");
         Assert.Equal(FontWeight.Bold, logLevel.FontWeight);
 
@@ -635,7 +635,7 @@ public sealed class InstanceSectionRenderTests
         var levelPopup = view.FindControl<FadingPopup>("LogsLevelPopup");
         Assert.NotNull(levelButton);
         Assert.NotNull(levelPopup);
-        Assert.Equal(40, levelButton!.Height);
+        Assert.Equal(44, levelButton!.Bounds.Height);
         Assert.Equal("Debug", viewModel.Instances.LogsLevelSummary);
         Assert.Equal("+2", viewModel.Instances.LogsAdditionalLevelCountText);
         levelButton.IsChecked = true;
@@ -862,9 +862,9 @@ public sealed class InstanceSectionRenderTests
             .Where(border => border.Classes.Contains(className))
             .ToList();
 
-    private static List<TextBox> FindLogLines(InstancesView view)
+    private static List<SelectableTextBlock> FindLogLines(InstancesView view)
         => view.GetVisualDescendants()
-            .OfType<TextBox>()
+            .OfType<SelectableTextBlock>()
             .Where(text => text.Classes.Contains("logText"))
             .ToList();
 
