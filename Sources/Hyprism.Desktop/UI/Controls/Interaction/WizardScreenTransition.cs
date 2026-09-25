@@ -31,6 +31,7 @@ public sealed class WizardScreenTransition
     private CancellationTokenSource? _animationCancellation;
     private double? _anchorTargetY;
     private bool _isPlannedAnchorMove;
+    private bool _isNavigationPaneVisible = true;
     private bool _suppressAnchorLayoutTracking;
     private double _plannedAnchorLayoutDelta;
 
@@ -74,6 +75,7 @@ public sealed class WizardScreenTransition
                 return;
 
             _overview.IsVisible = false;
+            CollapseHiddenNavigationPane();
             PrepareForEntry(_wizard, 28);
 
             await Dispatcher.UIThread.InvokeAsync(static () => { }, DispatcherPriority.Loaded);
@@ -293,6 +295,7 @@ public sealed class WizardScreenTransition
         _navigationPane.Width = double.NaN;
         _navigationPane.Opacity = 1;
         translation.X = 0;
+        _isNavigationPaneVisible = true;
         _navigationPane.Transitions = paneTransitions;
         translation.Transitions = translationTransitions;
     }
@@ -334,14 +337,26 @@ public sealed class WizardScreenTransition
         var translation = GetTranslation(_navigationPane);
         var paneTransitions = _navigationPane.Transitions;
         var translationTransitions = translation.Transitions;
-        if (!animate)
+        _isNavigationPaneVisible = isVisible;
+        if (isVisible)
         {
             _navigationPane.Transitions = null;
             translation.Transitions = null;
+            _navigationPane.Width = _navigationPaneWidth;
+            if (animate)
+            {
+                _navigationPane.Transitions = paneTransitions;
+                translation.Transitions = translationTransitions;
+            }
+        }
+        else if (!animate)
+        {
+            _navigationPane.Transitions = null;
+            translation.Transitions = null;
+            _navigationPane.Width = 0;
         }
 
         _navigationPane.IsHitTestVisible = isVisible;
-        _navigationPane.Width = isVisible ? _navigationPaneWidth : 0;
         _navigationPane.Opacity = isVisible ? 1 : 0;
         translation.X = isVisible ? 0 : -24;
 
@@ -350,6 +365,17 @@ public sealed class WizardScreenTransition
             _navigationPane.Transitions = paneTransitions;
             translation.Transitions = translationTransitions;
         }
+    }
+
+    private void CollapseHiddenNavigationPane()
+    {
+        if (_navigationPane is null || _isNavigationPaneVisible)
+            return;
+
+        var paneTransitions = _navigationPane.Transitions;
+        _navigationPane.Transitions = null;
+        _navigationPane.Width = 0;
+        _navigationPane.Transitions = paneTransitions;
     }
 
     private void ApplyImmediateState(bool showWizard)

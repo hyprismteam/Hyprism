@@ -2781,10 +2781,8 @@ public sealed class MainWindowRenderTests
                 "instances list width to be restored");
             viewModel.CloseInstanceCreatorCommand.Execute(null);
             await instancesListWidthRestored;
-            await WaitForAvaloniaPropertyAsync(
-                instancesListPane,
-                Visual.OpacityProperty,
-                () => Math.Abs(instancesListPane.Opacity - 1) < 0.01,
+            await AvaloniaTestWait.UntilAsync(
+                () => !instancesListPane.IsAnimating(Visual.OpacityProperty),
                 "instances list opacity to be restored");
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(276, instancesListPane.Bounds.Width);
