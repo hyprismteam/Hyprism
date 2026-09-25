@@ -9,7 +9,7 @@ description: Autonomous HTTPS endpoints, session ownership, certificates, and st
 
 ## Managed lifecycle
 
-`LocalNodeServiceFactory` allocates a free port from `8443–9999` and a separate `LocalNode/Sessions/<session-id>` directory for each launch. Accounts and certificates are shared across these sessions
+`LocalNodeServiceFactory` allocates a free port from `8443 to 9999` and a separate `LocalNode/Sessions/<session-id>` directory for each launch. Accounts and certificates are shared across these sessions
 
 1. `GameLauncher` creates a node and passes the active instance directory
 2. `LocalNodeHost` prepares certificates and launches `Hyprism.LocalNode` as a separate process
@@ -62,7 +62,7 @@ Private `.pfx` files belong to local state and must not be distributed with scre
 
 ## Standalone development
 
-The standalone Local Node executable defaults to port `8443` and `LocalNodeData` beside the executable. For an isolated run from the repository root
+The standalone Local Node executable defaults to port `8443` and `LocalNodeData` beside the executable. For an isolated run from the repository root:
 
 ```bash
 hyprism_node_data="$(mktemp -d)"

@@ -7,7 +7,7 @@ description: Config.json fields, defaults, and environment overrides
 
 `JsonConfigStore` reads and writes `Config.json` in the [application directory](/architecture/data-and-cache). JSON properties use PascalCase and are read case-insensitively
 
-Close the launcher before editing the file manually and preserve unrelated fields. The following fragment illustrates common preferences, not a complete replacement file
+Close the launcher before editing the file manually and preserve unrelated fields. The following fragment illustrates common preferences, not a complete replacement file:
 
 ```json
 {
@@ -32,7 +32,7 @@ Close the launcher before editing the file manually and preserve unrelated field
 | `AuthServers` | `[]` | User-added authentication service domains available in Network settings |
 | `CurseForgeKey` | empty | API key prepared during bootstrap when missing |
 
-Official profiles always use official authentication and do not show the Auth Server editor. For unofficial profiles, the Network settings list appears only while Connected mode is enabled. The built-in `sessions.sanasol.ws` entry is always listed; `AuthServers` stores additional user-added entries and `AuthDomain` stores the selected value. The desktop checks each listed server with the game-session authentication API and records no availability result in configuration. Local Node chooses a free port from `8443–9999` on `127.0.0.1`; neither the address nor its per-launch port is stored in this file
+Official profiles always use official authentication and do not show the Auth Server editor. For unofficial profiles, the Network settings list appears only while Connected mode is enabled. The built-in `sessions.sanasol.ws` entry is always listed; `AuthServers` stores additional user-added entries and `AuthDomain` stores the selected value. The desktop checks each listed server with the game-session authentication API and records no availability result in configuration. Local Node chooses a free port from `8443 to 9999` on `127.0.0.1`; neither the address nor its per-launch port is stored in this file
 
 ## Launch settings
 
