@@ -41,6 +41,7 @@ NUMERIC_PROPERTIES = {
     "Padding", "Margin", "BorderThickness", "StrokeThickness",
 }
 ATTRIBUTE_PATTERN = re.compile(r"\b([A-Za-z][A-Za-z0-9]*)\s*=\s*\"([^\"]*)\"")
+LICENSE_PATTERN = re.compile(r"SPDX-" r"License-Identifier:\s*([^\s*]+)")
 
 
 def relative(path: Path) -> str:
@@ -155,7 +156,7 @@ def collect_assets(xaml_files: list[Path], code_files: list[Path]) -> tuple[list
     source_texts = [(source, source.read_text(encoding="utf-8")) for source in xaml_files + code_files]
     for path in source_files([DESKTOP / "Assets"], {".axaml"}):
         text = path.read_text(encoding="utf-8")
-        license_match = re.search(r"SPDX-License-Identifier:\s*([^\s*]+)", text[:500])
+        license_match = LICENSE_PATTERN.search(text[:500])
         for match in re.finditer(r"<([A-Za-z_][\w:.-]*)\b[^>]*\bx:Key=\"([^\"]+)\"[^>]*>", text, re.S):
             key = match.group(2)
             resource_type = match.group(1).split(":")[-1]
@@ -197,7 +198,7 @@ def collect_assets(xaml_files: list[Path], code_files: list[Path]) -> tuple[list
             except (UnicodeDecodeError, json.JSONDecodeError):
                 pass
         text_header = data[:1024].decode("utf-8", errors="ignore")
-        license_match = re.search(r"SPDX-License-Identifier:\s*([^\s*]+)", text_header)
+        license_match = LICENSE_PATTERN.search(text_header)
         declared_image_sizes: list[dict[str, int]] = []
         for _, source_text in source_texts:
             for image_tag in re.finditer(r"<Image\b[^>]*>", source_text, re.S):
