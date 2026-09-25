@@ -25,7 +25,7 @@ namespace Hyprism.Desktop.Tests;
 public sealed class WizardAnimationTests
 {
     [AvaloniaFact]
-    public async Task NavigationPaneTransitionAnimatesWidthAndOpacity()
+    public async Task NavigationPaneTransitionKeepsLayoutStableUntilOverviewIsHidden()
     {
         var overview = new Border { RenderTransform = new TranslateTransform() };
         var wizard = new Border { RenderTransform = new TranslateTransform() };
@@ -43,32 +43,40 @@ public sealed class WizardAnimationTests
         {
             new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromMilliseconds(190) }
         };
+        var contentHost = new Grid
+        {
+            MaxWidth = 600,
+            Children = { overview, wizard }
+        };
+        Grid.SetColumn(contentHost, 1);
         var window = new Window
         {
-            Width = 1000,
+            Width = 800,
             Height = 700,
             Content = new Grid
             {
                 ColumnDefinitions = new ColumnDefinitions("Auto,*"),
-                Children = { pane, wizard }
+                Children = { pane, contentHost }
             }
         };
 
         window.Show();
         Dispatcher.UIThread.RunJobs();
+        var overviewWidth = contentHost.Bounds.Width;
 
         var transition = new WizardScreenTransition(overview, wizard, pane);
         transition.HideNavigationPane(animate: true);
         Dispatcher.UIThread.RunJobs();
-        Assert.True(pane.IsAnimating(Layoutable.WidthProperty));
+        Assert.False(pane.IsAnimating(Layoutable.WidthProperty));
         Assert.True(pane.IsAnimating(Visual.OpacityProperty));
+        Assert.Equal(276, pane.Bounds.Width);
+        Assert.Equal(overviewWidth, contentHost.Bounds.Width);
 
-        await AvaloniaTestWait.UntilAsync(
-            () => !pane.IsAnimating(Layoutable.WidthProperty) &&
-                  !pane.IsAnimating(Visual.OpacityProperty),
-            "navigation pane transition to finish");
+        await transition.OpenAsync(() => true);
+
         Assert.Equal(0, pane.Bounds.Width);
         Assert.Equal(0, pane.Opacity);
+        Assert.True(contentHost.Bounds.Width > overviewWidth);
 
         window.Close();
     }
@@ -165,13 +173,14 @@ public sealed class WizardAnimationTests
         profileRepository.Raise(repository => repository.ProfilesChanged += null);
         await AvaloniaTestWait.PropertyAsync(
             pane,
-            Layoutable.WidthProperty,
-            () => pane.IsAnimating(Layoutable.WidthProperty),
+            Visual.OpacityProperty,
+            () => pane.IsAnimating(Visual.OpacityProperty),
             "navigation pane to start reopening");
+        Assert.False(pane.IsAnimating(Layoutable.WidthProperty));
+        Assert.Equal(276, pane.Bounds.Width);
 
         await AvaloniaTestWait.UntilAsync(
-            () => !pane.IsAnimating(Layoutable.WidthProperty) &&
-                  !pane.IsAnimating(Visual.OpacityProperty),
+            () => !pane.IsAnimating(Visual.OpacityProperty),
             "navigation pane to finish reopening");
         Assert.Equal(276, pane.Bounds.Width);
         Assert.Equal(1, pane.Opacity);
