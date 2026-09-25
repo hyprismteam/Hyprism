@@ -394,37 +394,176 @@ input {
   display: flex;
 }
 
-.hyprism-language-switch {
-  align-items: center;
-  display: inline-flex;
-  gap: 0;
-  margin: 0;
-  padding: 0;
+.hyprism-language-switch-slot {
+  position: relative;
 }
 
-.hyprism-language-switch button {
+.hyprism-language-switcher {
+  position: relative;
+}
+
+.hyprism-language-trigger {
+  align-items: center;
   background: transparent;
   border: 0;
-  border-radius: 0;
   color: var(--hyprism-muted);
   cursor: pointer;
+  display: grid;
+  height: 40px;
+  padding: 0 6px;
+  place-items: center;
+  transition: color 220ms ease;
+  width: 40px;
+}
+
+.hyprism-language-trigger:hover,
+.hyprism-language-trigger[aria-expanded='true'] {
+  color: var(--hyprism-accent);
+}
+
+.hyprism-language-globe {
+  height: 22px;
+  transition: transform 650ms var(--hyprism-ease);
+  width: 22px;
+}
+
+.hyprism-language-trigger:hover .hyprism-language-globe,
+.hyprism-language-trigger[aria-expanded='true'] .hyprism-language-globe {
+  transform: rotate(-18deg);
+}
+
+.hyprism-globe-meridian {
+  transform-origin: center;
+  transition: transform 650ms var(--hyprism-ease);
+}
+
+.hyprism-language-trigger[aria-expanded='true'] .hyprism-globe-meridian {
+  transform: scaleX(0.4);
+}
+
+.hyprism-language-panel {
+  background: var(--hyprism-surface);
+  border: 1px solid var(--hyprism-line);
+  border-top: 0;
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  visibility: hidden;
+  width: 250px;
+  z-index: 100;
+  transition:
+    clip-path 420ms var(--hyprism-ease),
+    opacity 240ms ease,
+    visibility 0s 420ms;
+}
+
+.hyprism-language-panel::before {
+  background: var(--hyprism-accent);
+  content: '';
+  height: 1px;
+  left: 0;
+  opacity: 0.55;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 450ms var(--hyprism-ease);
+}
+
+.hyprism-language-switcher[data-open='true'] .hyprism-language-panel {
+  clip-path: inset(0);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.hyprism-language-switcher[data-open='true'] .hyprism-language-panel::before {
+  transform: scaleX(1);
+}
+
+.hyprism-language-links {
+  padding: 10px 16px 14px;
+}
+
+.hyprism-language-links button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--hyprism-soft-line);
+  color: var(--hyprism-muted);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 22px 1fr 16px;
+  min-height: 43px;
+  padding: 0 5px;
+  text-align: left;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-9px);
+  transition:
+    opacity 150ms,
+    transform 200ms var(--hyprism-ease),
+    color 200ms;
+}
+
+.hyprism-language-links img {
+  display: block;
+  width: 22px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 1px;
+  filter: saturate(0.4);
+  transition: filter 250ms;
+}
+
+.hyprism-language-links button:hover img {
+  filter: saturate(1);
+}
+
+.hyprism-language-links button:last-child {
+  border-bottom: 0;
+}
+
+.hyprism-language-switcher[data-open='true'] .hyprism-language-links button {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 300ms var(--hyprism-ease) var(--item-delay),
+    transform 430ms var(--hyprism-ease) var(--item-delay),
+    color 200ms;
+}
+
+.hyprism-language-links button:hover,
+.hyprism-language-links button[aria-current='page'] {
+  color: var(--hyprism-accent);
+}
+
+.hyprism-language-code {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
-  line-height: 1;
-  padding: 8px 4px;
-  transition: color 220ms ease;
 }
 
-.hyprism-language-switch button + button::before {
-  color: var(--hyprism-faint);
-  content: '/';
-  margin-right: 8px;
+.hyprism-language-name {
+  font-size: 13px;
 }
 
-.hyprism-language-switch button:hover,
-.hyprism-language-switch button[aria-current='page'] {
+.hyprism-language-indicator {
   color: var(--hyprism-accent);
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition:
+    transform 250ms var(--hyprism-ease),
+    opacity 200ms;
+}
+
+.hyprism-language-links button:hover .hyprism-language-indicator,
+.hyprism-language-links button[aria-current='page'] .hyprism-language-indicator {
+  opacity: 1;
+  transform: none;
 }
 
 /* Search */
