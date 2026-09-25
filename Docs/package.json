@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "docusaurus start --host 0.0.0.0",
-    "build": "docusaurus build --out-dir out/docs",
+    "build": "docusaurus build --out-dir out/launcher/docs",
     "check": "python3 ../Scripts/test_documentation.py && python3 ../Scripts/check_documentation.py && tsc --noEmit",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve --dir out/docs",
+    "serve": "docusaurus serve --dir out/launcher/docs",
     "lint:content": "python3 ../Scripts/check_documentation.py"
   },
   "dependencies": {

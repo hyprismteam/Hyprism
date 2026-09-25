@@ -9,7 +9,7 @@ The launcher requires .NET 10 SDK and Git. Node.js and npm are needed only for t
 
 ## Clone and build
 
-Run these commands in a terminal
+Run these commands in a terminal:
 
 ```bash
 git clone https://github.com/hyprismteam/HyPrism.git
@@ -34,7 +34,7 @@ HYPRISM_DATA="$hyprism_data" dotnet run \
   --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
 ```
 
-On Windows PowerShell
+On Windows PowerShell:
 
 ```powershell
 $hyprismData = Join-Path ([IO.Path]::GetTempPath()) ("hyprism-dev-" + [guid]::NewGuid())
@@ -60,7 +60,7 @@ Run the relevant [test suite](/development/testing), then validate documentation
 ```bash
 cd Docs
 npm run check
-PAGES_BASE_PATH=/HyPrism npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
 The documentation export is written to `Docs/out`

@@ -16,13 +16,13 @@ Start with an issue or design note when a change affects architecture, persisten
 5. Run the relevant [test suite](/development/testing)
 6. Validate documentation and license headers
 
-From the repository root
+From the repository root:
 
 ```bash
 python3 Scripts/license_headers.py --check
 cd Docs
 npm run check
-PAGES_BASE_PATH=/HyPrism npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
 ## Review checklist

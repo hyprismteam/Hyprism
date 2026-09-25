@@ -1,7 +1,7 @@
 # Copyright (C) 2026 Hyprism Launcher
 # SPDX-License-Identifier: GPL-3.0-only
 
-"""Regression checks for the documentation validator"""
+"""Regression checks for the documentation validator."""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -45,6 +45,14 @@ class DocumentationChecksTests(unittest.TestCase):
         self.page("en/index.mdx", "```md\n[Example](/docs/missing)\n![Example](missing.png)\n```")
         self.assertFalse(checks.check_links())
         self.assertFalse(checks.check_images())
+
+    def test_final_periods_are_allowed(self):
+        self.assertFalse(self.prose_errors("A complete sentence."))
+        self.assertFalse(self.prose_errors("- A complete list item."))
+
+    def test_en_and_em_dashes_are_rejected(self):
+        self.assertTrue(self.prose_errors("Do not use an em dash — here."))
+        self.assertTrue(self.prose_errors("Do not use an en dash – here."))
 
     def test_bilingual_anchors_are_checked_in_each_locale(self):
         self.page("en/index.mdx", "[Settings](/settings#downloads)")

@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Откройте [локальную документацию](http://localhost:3000/Hyprism/docs/). Разработка и GitHub Pages используют одинаковый базовый путь `/Hyprism/docs`
+Откройте [локальную документацию](http://localhost:3000/launcher/docs/). Разработка и GitHub Pages используют одинаковый базовый путь `/launcher/docs`
 
 ## Контент и языки
 
@@ -84,10 +84,10 @@ HYPRISM_DOCS_SCREENSHOTS="$PWD/Docs/static/img/user" \
 cd Docs
 npm ci
 npm run check
-PAGES_BASE_PATH=/Hyprism/docs npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
-`npm run check` запускает тесты валидатора, проверяет текст, паритет языков, кодовые блоки, изображения, маршруты, двуязычные якоря, ссылки на исходники и документацию контрактов Core, затем запускает TypeScript. Статический экспорт записывается в `Docs/out/docs`, чтобы GitHub Pages открывал его по адресу `/Hyprism/docs/`
+`npm run check` запускает тесты валидатора, проверяет текст, паритет языков, кодовые блоки, изображения, маршруты, двуязычные якоря, ссылки на исходники и документацию контрактов Core, затем запускает TypeScript. Статический экспорт записывается в `Docs/out/launcher/docs`, чтобы GitHub Pages открывал его по адресу `/launcher/docs/`
 
 В готовом сайте проверьте подсветку C#, shell, JSON и XML, переключение языка, ссылки разделов, иконки и узкую компоновку
 
@@ -95,6 +95,6 @@ PAGES_BASE_PATH=/Hyprism/docs npm run build
 
 `docs-pages.yml` проверяет и публикует экспорт. В **Settings → Pages** репозитория источником должны быть **GitHub Actions**
 
-Опубликованный вход: [сайт документации Hyprism](https://hyprismteam.github.io/HyPrism/docs/). Не добавляйте в коммит `out`, `.docusaurus`, `node_modules` и старые результаты `.next`
+Опубликованный вход: [сайт документации Hyprism](https://hyprism.org/launcher/docs/). Не добавляйте в коммит `out`, `.docusaurus`, `node_modules` и старые результаты `.next`
 
 Исходники: [AGENTS.md](../../../../AGENTS.md), [DocumentationScreenshotTests](../../../../Tests/Hyprism.Desktop.Tests/DocumentationScreenshotTests.cs)

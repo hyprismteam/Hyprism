@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Open the [local documentation](http://localhost:3000/Hyprism/docs/). Development and GitHub Pages use the same `/Hyprism/docs` base path
+Open the [local documentation](http://localhost:3000/launcher/docs/). Development and GitHub Pages use the same `/launcher/docs` base path
 
 ## Content and languages
 
@@ -66,7 +66,7 @@ Every code fence needs a language. Use `bash`, `powershell`, `csharp`, `json`, `
 
 Documentation captures render the actual Avalonia views with deterministic sample profiles, instances, and service responses. They demonstrate the interface, not a live game session or current external news
 
-From the repository root
+From the repository root:
 
 ```bash
 HYPRISM_DOCS_SCREENSHOTS="$PWD/Docs/static/img/user" \
@@ -84,10 +84,10 @@ Use the matching language image, write useful alternative text, and link to the 
 cd Docs
 npm ci
 npm run check
-PAGES_BASE_PATH=/Hyprism/docs npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
-`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/docs` so GitHub Pages serves it at `/Hyprism/docs/`
+`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/launcher/docs` so GitHub Pages serves it at `/launcher/docs/`
 
 Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus language switching, section links, sidebar icons, and narrow-window layout
 
@@ -95,6 +95,6 @@ Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus l
 
 `docs-pages.yml` validates and publishes the static export. In repository **Settings → Pages**, the source must be **GitHub Actions**
 
-The published entry point is the [Hyprism documentation site](https://hyprismteam.github.io/HyPrism/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products
+The published entry point is the [Hyprism documentation site](https://hyprism.org/launcher/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products
 
 Source: [AGENTS.md](../../../../AGENTS.md), [DocumentationScreenshotTests](../../../../Tests/Hyprism.Desktop.Tests/DocumentationScreenshotTests.cs)

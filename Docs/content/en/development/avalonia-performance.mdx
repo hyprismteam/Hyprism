@@ -40,7 +40,7 @@ Reuse shared controls and `MotionDurations`. Custom continuous animation uses `T
 
 Desktop caps the Skia GPU resource cache at 256 MiB and uses sustained-low-latency garbage collection. The launcher does not force a discrete graphics adapter and leaves adapter selection to the system. These launcher-rendering choices are separate from the user's game GPU selection
 
-To compare a Windows composition backend in PowerShell
+To compare a Windows composition backend in PowerShell:
 
 ```powershell
 $env:HYPRISM_WIN32_COMPOSITION = 'winui'
@@ -60,7 +60,7 @@ Remove-Item Env:HYPRISM_WIN32_COMPOSITION
 3. Change one cause and repeat with the same data
 4. Add a focused regression check when the change fixes measurable behavior
 
-Run the existing Desktop suite
+Run the existing Desktop suite:
 
 ```bash
 dotnet test Tests/Hyprism.Desktop.Tests/Hyprism.Desktop.Tests.csproj
