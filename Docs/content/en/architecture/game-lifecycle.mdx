@@ -5,7 +5,7 @@ description: Version selection, installation, authentication, process launch, an
 
 # Game lifecycle
 
-Launch operations target an explicit instance ID or the persisted current instance. Profile selection and instance selection are separate concerns
+Launch operations target an explicit instance ID or the persisted current instance. Profile selection and instance selection are separate concerns.
 
 ## Install and launch
 
@@ -20,9 +20,9 @@ Desktop instance action
   -> GameProcessTracker and per-instance console
 ```
 
-`GameInstallationWorkflow` rejects concurrent installation work for the same instance. Every instance targets an explicit branch and numeric version. It records `PendingVersion` before modifying an installation so an interrupted update can be resumed. An installed instance whose metadata matches the selected version uses a fast path without contacting version sources or mirrors
+`GameInstallationWorkflow` rejects concurrent installation work for the same instance. Each instance has an explicit branch and numeric version. The workflow records `PendingVersion` before changing an installation, which allows an interrupted update to resume safely. When an installed instance already matches the selected version, the workflow can use a fast path without contacting version sources or mirrors.
 
-Game payloads are cached under `Cache/Game/Downloads`. Transfer and patching propagate cancellation through network I/O, writes, extraction, and process waits. A successful installation automatically starts the game
+Game payloads are cached under `Cache/Game/Downloads`. Transfer and patching propagate cancellation through network I/O, writes, extraction, and process waits. A successful installation automatically starts the game.
 
 ## Authentication and patching
 
@@ -32,24 +32,24 @@ Game payloads are cached under `Cache/Game/Downloads`. Transfer and patching pro
 | Local profile with online mode enabled | Configured custom authentication service |
 | Local profile with online mode disabled | Per-launch Local Node |
 
-`ClientPatcher` restores the stable original backup before changing a client target. It redirects supported embedded service domains for custom or autonomous sessions and preserves NativeAOT string metadata. On macOS, backup state is kept outside a recognized application bundle
+`ClientPatcher` restores the stable original backup before changing a client target. It redirects supported embedded service domains for custom or autonomous sessions and preserves NativeAOT string metadata. On macOS, backup state is kept outside a recognized application bundle.
 
-Autonomous launch starts Local Node before client preparation, obtains session tokens, and applies the node's certificate trust to the game. See [Local Node](/reference/local-node) for protocol and certificate details
+Autonomous launch starts Local Node before client preparation, obtains session tokens, and applies the node's certificate trust to the game. See [Local Node](/reference/local-node) for protocol and certificate details.
 
 ## Runtime and environment
 
-`RuntimeProvisioner` discovers or downloads the managed Java runtime and handles Windows Visual C++ prerequisites. Official JRE archives are SHA-256 verified when metadata supplies a hash; failed verification removes the archive before extraction
+`RuntimeProvisioner` discovers or downloads the managed Java runtime and handles Windows Visual C++ prerequisites. Official JRE archives are SHA-256 verified when metadata supplies a hash; failed verification removes the archive before extraction.
 
-The launcher builds Java arguments, GPU overrides, DualAuth settings, and user environment assignments. Custom assignments are applied last. JVM sanitization excludes options that would replace the managed agent or executable setup
+The launcher builds Java arguments, GPU overrides, DualAuth settings, and user environment assignments. Custom assignments are applied last. JVM sanitization excludes options that would replace the managed agent or executable setup.
 
 ## Process ownership
 
-`GameProcessTracker` persists PID, process start time, instance, profile, and authentication owner. It restores only records that still match a live process, preventing PID reuse from identifying an unrelated process as a game
+`GameProcessTracker` persists PID, process start time, instance, profile, and authentication owner. It restores only records that still match a live process, preventing PID reuse from identifying an unrelated process as a game.
 
-Different instances may run together. The same instance cannot run twice, and official authentication permits only one running client per Hytale account owner
+Different instances may run together. The same instance cannot run twice, and official authentication permits only one running client per Hytale account owner.
 
-After an autonomous game starts, Local Node transfers lifetime ownership from the launcher to the game PID. On exit, the launcher reconciles play time and cleanup; Local Node stops when its attached game exits
+After an autonomous game starts, Local Node transfers lifetime ownership from the launcher to the game PID. On exit, the launcher reconciles play time and cleanup; Local Node stops when its attached game exits.
 
-Use typed process events and instance-scoped progress to update a host. Do not infer game lifetime from whether the launcher window is open
+Use typed process events and instance-scoped progress to update a host. Do not infer game lifetime from whether the launcher window is open.
 
-Source: [Game services](../../../../Sources/Hyprism.Core/Game)
+Source: [Game services](../../../../Sources/Hyprism.Core/Game).

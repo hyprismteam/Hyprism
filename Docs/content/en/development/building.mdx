@@ -5,7 +5,7 @@ description: Restore, build, run, and isolate the native launcher
 
 # Building
 
-The launcher requires .NET 10 SDK and Git. Node.js and npm are needed only for the [documentation site](/development/documentation)
+The launcher requires .NET 10 SDK and Git. Node.js and npm are needed only for the [documentation site](/development/documentation).
 
 ## Clone and build
 
@@ -18,7 +18,7 @@ dotnet restore Hyprism.slnx
 dotnet build Hyprism.slnx
 ```
 
-The solution builds Core, Desktop, Local Node, and their test projects
+The solution builds Core, Desktop, Local Node, and their test projects.
 
 ## Run Desktop
 
@@ -26,7 +26,7 @@ The solution builds Core, Desktop, Local Node, and their test projects
 dotnet run --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
 ```
 
-Desktop uses the same data directory as a packaged launcher unless you override it. To keep development data separate on Linux or macOS
+Desktop uses the same data directory as a packaged launcher unless you override it. To keep development data separate on Linux or macOS.
 
 ```bash
 hyprism_data="$(mktemp -d)"
@@ -43,7 +43,7 @@ $env:HYPRISM_DATA = $hyprismData
 dotnet run --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
 ```
 
-The directory must exist before startup. It is retained after exit so you can inspect logs and state
+The directory must exist before startup. It is retained after exit so you can inspect logs and state.
 
 ## Build a release configuration
 
@@ -51,16 +51,16 @@ The directory must exist before startup. It is retained after exit so you can in
 dotnet build Hyprism.slnx --configuration Release
 ```
 
-A build creates development binaries. Use [Packaging and releases](/development/packaging) for self-contained applications and installable artifacts
+A build creates development binaries. Use [Packaging and releases](/development/packaging) for self-contained applications and installable artifacts.
 
 ## Verify a change
 
-Run the relevant [test suite](/development/testing), then validate documentation when behavior or contributor workflows change
+Run the relevant [test suite](/development/testing), then validate documentation when behavior or contributor workflows change.
 
 ```bash
 cd Docs
 npm run check
-PAGES_BASE_PATH=/Hyprism/docs npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
-The documentation export is written to `Docs/out`
+The documentation export is written to `Docs/out`.

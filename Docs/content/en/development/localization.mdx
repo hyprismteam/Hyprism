@@ -5,15 +5,15 @@ description: Add resource strings and update views when the language changes
 
 # Localization
 
-Launcher translations belong to Desktop. The default resource is `Sources/Hyprism.Desktop/Localization/Resources.resx`; each supported culture has a sibling such as `Resources.ru-RU.resx`
+Launcher translations belong to Desktop. The default resource is `Sources/Hyprism.Desktop/Localization/Resources.resx`; each supported culture has a sibling such as `Resources.ru-RU.resx`.
 
 ## Add a string
 
-1. Add a stable key and English value to the default resource
-2. Add the same key to every culture resource
-3. Resolve it through `StringLocalizer`
-4. Refresh affected view-model properties when `LanguageChanged` fires
-5. Run localization tests
+1. Add a stable key and English value to the default resource.
+2. Add the same key to every culture resource.
+3. Resolve it through `StringLocalizer`.
+4. Refresh affected view-model properties when `LanguageChanged` fires.
+5. Run localization tests.
 
 Example resource entry:
 
@@ -32,13 +32,13 @@ var localizer = new StringLocalizer("en-US");
 var readyLabel = localizer["example.ready"];
 ```
 
-The example key must be added before use. Missing keys fall back to English and then to the key itself
+The example key must be added before use. Missing keys fall back to English and then to the key itself.
 
 ## Languages and formatting
 
-`_supportedCultures` in the default resource controls the picker. `_langName` in each locale is its native display name. `IDesktopSettingsStore.Language` persists the selected culture
+`_supportedCultures` in the default resource controls the picker. `_langName` in each locale is its native display name. `IDesktopSettingsStore.Language` persists the selected culture.
 
-Keep placeholder names and indices aligned between languages. Core publishes data and message keys, while Desktop owns translated UI text and resource lookup
+Keep placeholder names and indices aligned between languages. Core publishes data and message keys, while Desktop owns translated UI text and resource lookup.
 
 ## Verify
 
@@ -47,6 +47,6 @@ dotnet test Tests/Hyprism.Desktop.Tests/Hyprism.Desktop.Tests.csproj \
   --filter FullyQualifiedName~StringLocalizerTests
 ```
 
-Tests check the complete key set and interpolation placeholders. Documentation uses a separate [two-language MDX model](/development/documentation)
+Tests check the complete key set and interpolation placeholders. Documentation uses a separate [two-language MDX model](/development/documentation).
 
-Source: [Localization](../../../../Sources/Hyprism.Desktop/Localization)
+Source: [Localization](../../../../Sources/Hyprism.Desktop/Localization).

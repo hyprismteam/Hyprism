@@ -6,7 +6,6 @@ const meta = {
   index: 'Overview',
   'getting-started': 'Getting started',
   'user-guide': 'User guide',
-  migration: 'Avalonia migration',
   architecture: 'Architecture',
   development: 'Development',
   reference: 'Reference'

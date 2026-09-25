@@ -6,7 +6,6 @@ const meta = {
   index: 'Обзор',
   'getting-started': 'Начало работы',
   'user-guide': 'Руководство пользователя',
-  migration: 'Переход на Avalonia',
   architecture: 'Архитектура',
   development: 'Разработка',
   reference: 'Справочник'

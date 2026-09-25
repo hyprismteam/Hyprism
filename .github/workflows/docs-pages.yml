@@ -32,7 +32,7 @@ jobs:
     name: Build documentation
     runs-on: ubuntu-latest
     env:
-      PAGES_BASE_PATH: /Hyprism/docs
+      PAGES_BASE_PATH: /launcher/docs
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -5,7 +5,7 @@ description: Run the three test suites and choose the right verification boundar
 
 # Testing
 
-Run tests from the repository root. Each suite has its own project and CI matrix
+Run tests from the repository root. Each suite has its own project and CI matrix.
 
 ```bash
 dotnet test Tests/Hyprism.Core.Tests/Hyprism.Core.Tests.csproj
@@ -21,9 +21,9 @@ dotnet test Tests/Hyprism.Desktop.Tests/Hyprism.Desktop.Tests.csproj
 | Local Node | HTTPS routes, tokens, account persistence, certificates, companion lifecycle |
 | Desktop | View-model workflows, localization, platform adapters, native view rendering and controls |
 
-Local Node tests pin generated certificates and disable platform trust changes. Unit tests use temporary data and mocks rather than live account, game, or third-party services
+Local Node tests pin generated certificates and disable platform trust changes. Unit tests use temporary data and mocks rather than live account, game, or third-party services.
 
-Desktop tests share an Avalonia application, dispatcher, and compositor and run sequentially. Wait for a final property or state; use fixed delays only when deliberately sampling an intermediate animation frame
+Desktop tests share an Avalonia application, dispatcher, and compositor and run sequentially. Wait for a final property or state; use fixed delays only when deliberately sampling an intermediate animation frame.
 
 ## Run a focused test
 
@@ -34,16 +34,16 @@ dotnet test Tests/Hyprism.Desktop.Tests/Hyprism.Desktop.Tests.csproj \
   --filter FullyQualifiedName~StringLocalizerTests
 ```
 
-Screenshot generation is an opt-in workflow documented under [Documentation site](/development/documentation#screenshots). Normal test runs skip that capture
+Screenshot generation is an opt-in workflow documented under [Documentation site](/development/documentation#screenshots). Normal test runs skip that capture.
 
 ## CI and manual checks
 
-Core, Desktop, and Local Node run in separate reusable workflows, each with Ubuntu, Windows, and macOS matrix jobs and `fail-fast: false`. Every matrix job writes a GitHub Step Summary from the TRX result file with total, passed, skipped, and error counts. Failed runs include the last failure in a text code block and upload the TRX file as a job artifact
+Core, Desktop, and Local Node run in separate reusable workflows, each with Ubuntu, Windows, and macOS matrix jobs and `fail-fast: false`. Every matrix job writes a GitHub Step Summary from the TRX result file with total, passed, skipped, and error counts. Failed runs include the last failure in a text code block and upload the TRX file as a job artifact.
 
-The macOS entry in the Local Node matrix also publishes apphosts and checks HTTPS health with a generated authority in the disposable runner keychain. This is a step in the macOS Local Node job, not a separate test job. It does not cover an interactive trust prompt on a player's Mac or a full proprietary Hytale launch
+The macOS entry in the Local Node matrix also publishes apphosts and checks HTTPS health with a generated authority in the disposable runner keychain. This is a step in the macOS Local Node job, not a separate test job. It does not cover an interactive trust prompt on a player's Mac or a full proprietary Hytale launch.
 
-Packaging is a separate check group. In `ci.yml`, it starts only after the Core, Desktop, and Local Node reusable workflows complete successfully
+Packaging is a separate check group. In `ci.yml`, it starts only after the Core, Desktop, and Local Node reusable workflows complete successfully.
 
-Verify native compositor behavior, platform dialogs, and real game compatibility manually when those boundaries change. For a documentation-only change, run [content checks and static export](/development/documentation)
+Verify native compositor behavior, platform dialogs, and real game compatibility manually when those boundaries change. For a documentation-only change, run [content checks and static export](/development/documentation).
 
-Source: [Tests](../../../../Tests)
+Source: [Tests](../../../../Tests).

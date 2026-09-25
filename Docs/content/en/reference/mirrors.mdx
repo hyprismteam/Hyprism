@@ -5,13 +5,13 @@ description: Mirror schema, discovery, source selection, and examples
 
 # Mirrors
 
-A mirror definition tells Hyprism where a source lists versions and serves full images or differential patches. The launcher ships the official source and no preconfigured third-party game mirrors
+A mirror definition tells Hyprism where a source lists versions and serves full images or differential patches. The launcher ships the official source and no preconfigured third-party game mirrors.
 
 ## Storage and validation
 
-Definitions are stored under `Mirrors/<id>.mirror.json` in the application directory. `IMirrorCatalog.Save` validates the ID, name, schema version, source type, and required configuration section
+Definitions are stored under `Mirrors/<id>.mirror.json` in the application directory. `IMirrorCatalog.Save` validates the ID, name, schema version, source type, and required configuration section.
 
-IDs contain lowercase ASCII letters, digits, dots, hyphens, and underscores, start with a letter or digit, and have at most 64 characters. The current schema version is `1`
+IDs contain lowercase ASCII letters, digits, dots, hyphens, and underscores, start with a letter or digit, and have at most 64 characters. The current schema version is `1`.
 
 ## Pattern source
 
@@ -46,15 +46,15 @@ This complete example uses a reserved example domain and a static version list. 
 | `OsMapping`, `ArchMapping`, `BranchMapping` | Override platform or branch strings |
 | `DiffBasedBranches` | Branches using differential patching |
 
-URL templates support `{base}`, `{os}`, `{arch}`, `{branch}`, `{version}`, `{from}`, and `{to}`. Internal platform strings include `windows`, `linux`, `darwin`, `amd64`, and `arm64`
+URL templates support `{base}`, `{os}`, `{arch}`, `{branch}`, `{version}`, `{from}`, and `{to}`. Internal platform strings include `windows`, `linux`, `darwin`, `amd64`, and `arm64`.
 
-Discovery supports `static-list`, `json-api` with `Url` and `JsonPath`, `manifest` with a manifest `Url`, or `html-autoindex` with `Url` and an optional `HtmlPattern`. Custom regular expressions are time-limited and invalid expressions are ignored
+Discovery supports `static-list`, `json-api` with `Url` and `JsonPath`, `manifest` with a manifest `Url`, or `html-autoindex` with `Url` and an optional `HtmlPattern`. Custom regular expressions are time-limited and invalid expressions are ignored.
 
 ### Version names and builds
 
-The launcher keeps the numeric build identifier separate from the human-readable game version. The build is used for download paths, patch chains, and instance compatibility, while the version name is shown in the instance creation list and instance details
+The launcher keeps the numeric build identifier separate from the human-readable game version. The build is used for download paths, patch chains, and instance compatibility, while the version name is shown in the instance creation list and instance details.
 
-For JSON API entries, `JsonPath` points to the version name or numeric build. When an entry is an object, the parser reads a numeric `build`, `buildNumber`, `buildVersion`, `buildId`, `id`, or `number` field when available. Use `BuildJsonPath` when the build field needs to be specified explicitly
+For JSON API entries, `JsonPath` points to the version name or numeric build. When an entry is an object, the parser reads a numeric `build`, `buildNumber`, `buildVersion`, `buildId`, `id`, or `number` field when available. Use `BuildJsonPath` when the build field needs to be specified explicitly.
 
 ```json
 {
@@ -67,11 +67,11 @@ For JSON API entries, `JsonPath` points to the version name or numeric build. Wh
 }
 ```
 
-Manifest discovery also reads names from `versions[branch][build].version` and from `gameVersion` in matching file entries. This supports manifests where the file path contains only the numeric build, such as `0_to_27.pwr`. When a manifest contains a `files` index, only files matching the requested OS, architecture, and branch count as available. The global `versions` section supplies metadata for those files and does not make an unsupported platform available
+Manifest discovery also reads names from `versions[branch][build].version` and from `gameVersion` in matching file entries. This supports manifests where the file path contains only the numeric build, such as `0_to_27.pwr`. When a manifest contains a `files` index, only files matching the requested OS, architecture, and branch count as available. The global `versions` section supplies metadata for those files and does not make an unsupported platform available.
 
-The official source reads the authenticated `game-assets/version/{branch}.json` manifest and follows its signed JSON URL when necessary. The returned name is paired with the latest numeric build from the patches API
+The official source reads the authenticated `game-assets/version/{branch}.json` manifest and follows its signed JSON URL when necessary. The returned name is paired with the latest numeric build from the patches API.
 
-The official source applies the same separation to metadata returned with patch steps. Older version cache snapshots are refreshed once after this format change, while existing instance files without a version name continue to use the numeric build as a fallback
+The official source applies the same separation to metadata returned with patch steps. Older version cache snapshots are refreshed once after this format change, while existing instance files without a version name continue to use the numeric build as a fallback.
 
 ## JSON index source
 
@@ -91,15 +91,15 @@ A JSON index provides download URLs instead of constructing every URL from a tem
 }
 ```
 
-`Structure` accepts `flat` for branch → platform → filename → URL, or `grouped` with separate base and patch groups. `PlatformMapping` and `FileNamePattern` adapt source naming. Full file names default to `v{version}-{os}-{arch}.pwr`, differential files to `v{from}~{to}-{os}-{arch}.pwr`
+`Structure` accepts `flat` for branch → platform → filename → URL, or `grouped` with separate base and patch groups. `PlatformMapping` and `FileNamePattern` adapt source naming. Full file names default to `v{version}-{os}-{arch}.pwr`, differential files to `v{from}~{to}-{os}-{arch}.pwr`.
 
 ## Discovery and runtime selection
 
-Desktop automatic setup uses `IMirrorDiscovery` to inspect a public HTTPS endpoint. The UI rejects duplicate endpoints, assigns an ID, saves through the catalog, and calls `ReloadMirrorSources`. HTTP is accepted only for loopback development
+Desktop automatic setup uses `IMirrorDiscovery` to inspect a public HTTPS endpoint. The UI rejects duplicate endpoints, assigns an ID, saves through the catalog, and calls `ReloadMirrorSources`. HTTP is accepted only for loopback development.
 
-Availability probes check response latency and current-platform versions without downloading a game payload. The official probe needs a valid session from an official profile to query the authenticated patches API
+Availability probes check response latency and current-platform versions without downloading a game payload. The official probe needs a valid session from an official profile to query the authenticated patches API.
 
-The official source is preferred when it can serve the request. Mirror selection uses enabled sources and cached speed results. Reloading after a source change does not require restarting the launcher
+The official source is preferred when it can serve the request. Mirror selection uses enabled sources and cached speed results. Reloading after a source change does not require restarting the launcher.
 
 ## Optional settings
 
@@ -109,8 +109,8 @@ The official source is preferred when it can serve the request. Mirror selection
 | `SpeedTest` | Ping URL, timeout, and transfer sample size |
 | `Cache` | Index and speed-test cache lifetimes |
 
-Keep private headers out of source control and documentation. The complete model is `Sources/Hyprism.Core/Models/MirrorMeta.cs`; runtime parsing lives in `Game/Sources/JsonMirrorSource.cs`
+Keep private headers out of source control and documentation. The complete model is `Sources/Hyprism.Core/Models/MirrorMeta.cs`; runtime parsing lives in `Game/Sources/JsonMirrorSource.cs`.
 
-See [download settings](/user-guide/settings#downloads) for the player workflow
+See [download settings](/user-guide/settings#downloads) for the player workflow.
 
-Source: [MirrorMeta](../../../../Sources/Hyprism.Core/Models/MirrorMeta.cs), [Mirror services](../../../../Sources/Hyprism.Core/Game/Sources)
+Source: [MirrorMeta](../../../../Sources/Hyprism.Core/Models/MirrorMeta.cs), [Mirror services](../../../../Sources/Hyprism.Core/Game/Sources).

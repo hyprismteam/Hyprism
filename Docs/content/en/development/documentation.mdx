@@ -5,7 +5,7 @@ description: Author bilingual MDX, highlighted examples, navigation, and launche
 
 # Documentation site
 
-The documentation is a Docusaurus 3 application under `Docs`. Use Node.js 22 and npm
+The documentation is a Docusaurus 3 application under `Docs`. Use Node.js 22 and npm.
 
 ## Run locally
 
@@ -15,25 +15,25 @@ npm ci
 npm run dev
 ```
 
-Open the [local documentation](http://localhost:3000/Hyprism/docs/). Development and GitHub Pages use the same `/Hyprism/docs` base path
+Open the [local documentation](http://localhost:3000/launcher/docs/). Development and GitHub Pages use the same `/launcher/docs` base path.
 
 ## Content and languages
 
-English pages live under `content/en`, Russian under `content/ru`. Both trees must contain the same routes. The selected language changes content at the same public URL and is saved in the browser
+English pages live under `content/en`, Russian under `content/ru`. Both trees must contain the same routes. The selected language changes content at the same public URL and is saved in the browser.
 
-`plugins/localized-docs` discovers MDX pages, extracts search text, reads navigation metadata, and rejects missing translations. `src/i18n.ts` contains the site interface strings
+`plugins/localized-docs` discovers MDX pages, extracts search text, reads navigation metadata, and rejects missing translations. `src/i18n.ts` contains the site interface strings.
 
-Use explicit, matching heading IDs in both languages when another page links to that section
+Use explicit, matching heading IDs in both languages when another page links to that section.
 
 ```md
 ## Downloads {/* #downloads */}
 ```
 
-Internal documentation links use route paths such as `/getting-started/...`; the MDX theme link applies the deployment base path. Write source links relative to the MDX file, for example `../../../../Sources/Hyprism.Core/Models/Config.cs`. The repository-link plugin verifies each target and converts it to a GitHub source link when building
+Internal documentation links use route paths such as `/getting-started/...`; the MDX theme link applies the deployment base path. Write source links relative to the MDX file, for example `../../../../Sources/Hyprism.Core/Models/Config.cs`. The repository-link plugin verifies each target and converts it to a GitHub source link when building.
 
 ## Navigation and icons
 
-Each directory's `_meta.ts` defines page order and labels. Its `icon` field describes that category, not its child categories
+Each directory's `_meta.ts` defines page order and labels. Its `icon` field describes that category, not its child categories.
 
 ```typescript
 export default {
@@ -44,27 +44,27 @@ export default {
 }
 ```
 
-The five top-level categories use local SVG paths from Google's Material Symbols Rounded. `MaterialSymbol.tsx` owns the icon set, which is bundled without a remote font request
+The five top-level categories use local SVG paths from Google's Material Symbols Rounded. `MaterialSymbol.tsx` owns the icon set, which is bundled without a remote font request.
 
 ## Brand and theme
 
-`src/css/custom.css` owns the dark Hyprism Launcher visual system for the navbar, documentation frame, home page, code examples, responsive layout, and footer. The theme uses the local Google Sans and JetBrains Mono files under `static/fonts` and the launcher mark at `static/img/hyprism-logo.svg`
+`src/css/custom.css` owns the dark Hyprism Launcher visual system for the navbar, documentation frame, home page, code examples, responsive layout, and footer. The theme uses the local Google Sans and JetBrains Mono files under `static/fonts` and the launcher mark at `static/img/hyprism-logo.svg`.
 
-`src/theme/Footer/index.tsx` owns the large team-site call to action and the links below it. Keep its English and Russian labels in `src/i18n.ts` when the footer changes
+`src/theme/Footer/index.tsx` owns the large team-site call to action and the links below it. Keep its English and Russian labels in `src/i18n.ts` when the footer changes.
 
-`DocsSidebar.tsx` renders the category tree in the left column on wide screens. At compact widths `Navbar/MobileSidebar/index.tsx` renders the search field and the same tree in a full-viewport panel below the existing navbar. The panel follows the language switcher interaction pattern, closes on outside click, Escape, or navigation, and does not render a second header
+`DocsSidebar.tsx` renders the category tree in the left column on wide screens. At compact widths, `Navbar/MobileSidebar/index.tsx` renders the search field and the same tree in a full-viewport panel below the navbar. The panel closes on outside click, Escape, or navigation and does not render a second header.
 
 ## Examples and prose
 
-Follow `AGENTS.md`: user guides describe actions and results, while technical pages describe responsibilities, contracts, and maintenance constraints
+Follow `AGENTS.md`: user guides describe actions and results, while technical pages describe responsibilities, contracts, and maintenance constraints.
 
-Every code fence needs a language. Use `bash`, `powershell`, `csharp`, `json`, `xml`, `typescript`, or `text` as appropriate. Explain prerequisites and results outside the example
+Every code fence needs a language. Use `bash`, `powershell`, `csharp`, `json`, `xml`, `typescript`, or `text` as appropriate. Explain prerequisites and results outside the example.
 
-`LocalizedDocPage` wraps content with the Docusaurus `MDXContent` provider. This enables the theme's headings, links, admonitions, and highlighted code blocks. Prism grammars are configured in `docusaurus.config.ts`
+`LocalizedDocPage` wraps content with the Docusaurus `MDXContent` provider. This enables the theme's headings, links, admonitions, and highlighted code blocks. Prism grammars are configured in `docusaurus.config.ts`.
 
 ## Screenshots {/* #screenshots */}
 
-Documentation captures render the actual Avalonia views with deterministic sample profiles, instances, and service responses. They demonstrate the interface, not a live game session or current external news
+Documentation captures render the actual Avalonia views with deterministic sample profiles, instances, and service responses. They demonstrate the interface, not a live game session or current external news.
 
 From the repository root:
 
@@ -74,9 +74,9 @@ HYPRISM_DOCS_SCREENSHOTS="$PWD/Docs/static/img/user" \
   --filter FullyQualifiedName~DocumentationScreenshotTests
 ```
 
-The test writes English and Russian PNGs under `Docs/static/img/user/en` and `ru`. It runs only when the output variable is set. The actual views are rendered at 2× pixel density into PNG, without enlarging an existing bitmap. Dialog captures render only the relevant real control
+The test writes English and Russian PNGs under `Docs/static/img/user/en` and `ru`. It runs only when the output variable is set. The actual views are rendered at 2× pixel density into PNG, without enlarging an existing bitmap. Dialog captures render only the relevant real control.
 
-Use the matching language image, write useful alternative text, and link to the original image for full-size inspection. Crop dialogs or pickers only when the surrounding window is irrelevant. Review every updated capture for missing data, clipped controls, and unfinished transitions
+Use the matching language image, write useful alternative text, and link to the original image for full-size inspection. Crop dialogs or pickers only when the surrounding window is irrelevant. Review every updated capture for missing data, clipped controls, and unfinished transitions.
 
 ## Validate and export
 
@@ -84,17 +84,17 @@ Use the matching language image, write useful alternative text, and link to the 
 cd Docs
 npm ci
 npm run check
-PAGES_BASE_PATH=/Hyprism/docs npm run build
+PAGES_BASE_PATH=/launcher/docs npm run build
 ```
 
-`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/docs` so GitHub Pages serves it at `/Hyprism/docs/`
+`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/launcher/docs` so the published site is available at `/launcher/docs/`.
 
-Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus language switching, section links, sidebar icons, and narrow-window layout
+Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus language switching, section links, sidebar icons, and narrow-window layout.
 
 ## Publishing
 
-`docs-pages.yml` validates and publishes the static export. In repository **Settings → Pages**, the source must be **GitHub Actions**
+`docs-pages.yml` validates and publishes the static export. In repository **Settings → Pages**, the source must be **GitHub Actions**.
 
-The published entry point is the [Hyprism documentation site](https://hyprismteam.github.io/HyPrism/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products
+The published entry point is the [Hyprism documentation site](https://hyprism.org/launcher/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products.
 
-Source: [AGENTS.md](../../../../AGENTS.md), [DocumentationScreenshotTests](../../../../Tests/Hyprism.Desktop.Tests/DocumentationScreenshotTests.cs)
+Source: [AGENTS.md](../../../../AGENTS.md), [DocumentationScreenshotTests](../../../../Tests/Hyprism.Desktop.Tests/DocumentationScreenshotTests.cs).

@@ -5,11 +5,11 @@ description: Tokens, components, screen styles, and layout ownership in Hyprism.
 
 # Desktop UI architecture
 
-This page is the maintenance contract for the Avalonia UI layer. It explains where a resource belongs, how a shared component is consumed, and which layer owns a visual state
+This page is the maintenance contract for the Avalonia UI layer. It explains where a resource belongs, how a shared component is consumed, and which layer owns a visual state.
 
 ## Ownership model
 
-The Desktop UI is split into five layers
+The Desktop UI is split into five layers.
 
 | Layer | Location | Owns |
 | --- | --- | --- |
@@ -19,11 +19,11 @@ The Desktop UI is split into five layers
 | Screen resources | `Screens/<Screen>` | Data templates and styles that describe one screen or a deliberate cross-screen pattern |
 | Screen views | `Screens/<Screen>/*View.axaml` | Composition, bindings, view-local event handlers, and screen-specific layout |
 
-The screen view owns the behavior. A reusable control owns the visual contract that can be consumed by more than one screen. A token owns a value that should change consistently across several consumers
+The screen view owns the behavior. A reusable control owns the visual contract that can be consumed by more than one screen. A token owns a value that should change consistently across several consumers.
 
 ## Resource pipeline
 
-`App.axaml` loads resources in this order
+`App.axaml` loads resources in this order.
 
 | Order | Resource | Contract |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ The screen view owns the behavior. A reusable control owns the visual contract t
 | 7 | `UI/Foundation/GlobalStyles.axaml` | Selectors that apply across the application |
 | 8 | `UI/Components/ManagerStyles.axaml` | Shared manager rails, progress actions, detail toolbars, and loading placeholders |
 
-Keep this order stable. A theme template must exist before a selector customizes it, and a token dictionary must exist before a dynamic resource references it
+Keep this order stable. A theme template must exist before a selector customizes it, and a token dictionary must exist before a dynamic resource references it.
 
 ## Component catalog
 
@@ -63,7 +63,7 @@ Keep this order stable. A theme template must exist before a selector customizes
 | `AspectRatioPanel` | `UI/Controls/Layout` | Media surfaces that must retain a stable aspect ratio |
 | `StorageUsageBarPanel` | `UI/Controls/Layout` | Storage usage segments with shared measurement behavior |
 
-Use a component from this catalog before adding a new selector or helper to a screen. If the existing API cannot express the screen state, extend the component contract or record why the screen must stay local
+Use a component from this catalog before adding a new selector or helper to a screen. If the existing API cannot express the screen state, extend the component contract or record why the screen must stay local.
 
 ## Placement rules
 
@@ -80,7 +80,7 @@ Use a component from this catalog before adding a new selector or helper to a sc
 | A reusable behavior or control | `UI/Controls/<category>` | A static helper inside a view |
 | Window-only behavior | `Shell` | A screen folder |
 
-Each view includes its own style dictionary through `UserControl.Styles`. Shared manager rails, progress actions, detail toolbars, and loading placeholders use neutral class names and live in `UI/Components/ManagerStyles.axaml`
+Each view includes its own style dictionary through `UserControl.Styles`. Shared manager rails, progress actions, detail toolbars, and loading placeholders use neutral class names and live in `UI/Components/ManagerStyles.axaml`.
 
 ## Consuming a shared component
 
@@ -103,13 +103,13 @@ The screen supplies content and state. The component supplies hierarchy, spacing
 </controls:EmptyState>
 ```
 
-Keep screen strings and commands in the view model. Keep component properties small and typed around the visual contract. Prefer `DynamicResource` for tokens so theme changes propagate without copying values
+Keep screen strings and commands in the view model. Keep component properties small and typed around the visual contract. Prefer `DynamicResource` for tokens so theme changes propagate without copying values.
 
 ## Style and state contract
 
-Use a `ControlTheme` when a control family needs a complete template and named states. Use a plain `Style` for a selector, a class, or a narrow state adjustment. Use `Classes.<name>` bindings when a view model state changes a visual state
+Use a `ControlTheme` when a control family needs a complete template and named states. Use a plain `Style` for a selector, a class, or a narrow state adjustment. Use `Classes.<name>` bindings when a view model state changes a visual state.
 
-Every interactive shared component should account for the states that apply to it
+Every interactive shared component should account for the states that apply to it.
 
 | State | Expected review |
 | --- | --- |
@@ -123,11 +123,11 @@ Every interactive shared component should account for the states that apply to i
 | Success, warning, error | Status uses semantic brushes and localized text |
 | Empty | The user sees what is absent and the next useful action |
 
-Do not use animation as the only state signal. Keep transitions on render properties when a layout property would cause remeasure or scroll changes
+Do not use animation as the only state signal. Keep transitions on render properties when a layout property would cause remeasure or scroll changes.
 
 ## Screen templates and views
 
-Screen resource files follow the owning screen
+Screen resource files follow the owning screen.
 
 | Screen | Template resources | Style resources |
 | --- | --- | --- |
@@ -136,28 +136,28 @@ Screen resource files follow the owning screen
 | News | `Screens/News/NewsArticleTemplates.axaml` | `Screens/News/NewsStyles.axaml` |
 | Settings | View-local resources and existing view composition | `Screens/Settings/SettingsStyles.axaml` |
 
-Templates are merged by the owning view when they are not application-wide. A template that references a view event handler stays in the view resource section because a standalone dictionary has no owner for that handler
+Templates are merged by the owning view when they are not application-wide. A template that references a view event handler stays in the view resource section because a standalone dictionary has no owner for that handler.
 
-Views keep `x:DataType` and use compiled bindings. A view may contain layout and event wiring, but it should not define a second application-wide button or input template
+Views keep `x:DataType` and use compiled bindings. A view may contain layout and event wiring, but it should not define a second application-wide button or input template.
 
 ## Responsive ownership
 
-`AdaptiveMasterDetailHost` owns the transition between wide and compact master-detail behavior. Screen view models own selected items and commands. The view owns size observation and visual host changes
+`AdaptiveMasterDetailHost` owns the transition between wide and compact master-detail behavior. Screen view models own selected items and commands. The view owns size observation and visual host changes.
 
-When adding a responsive state, review the wide and compact layouts together
+When adding a responsive state, review the wide and compact layouts together.
 
-- Keep the same command and localization contract
-- Preserve keyboard focus or provide a deterministic focus target after navigation
-- Keep destructive actions available through the compact action surface
-- Test long localized labels and narrow widths
-- Avoid duplicating a second state machine in code-behind
+- Keep the same command and localization contract.
+- Preserve keyboard focus or provide a deterministic focus target after navigation.
+- Keep destructive actions available through the compact action surface.
+- Test long localized labels and narrow widths.
+- Avoid duplicating a second state machine in code-behind.
 
 ## Tests and review gates
 
-UI changes require a Desktop build and the relevant headless tests. Reusable controls should have focused tests for their public properties and rendered states. Screen changes should cover the state transition that consumes the component
+UI changes require a Desktop build and the relevant headless tests. Reusable controls should have focused tests for their public properties and rendered states. Screen changes should cover the state transition that consumes the component.
 
-Useful existing test locations include `Tests/Hyprism.Desktop.Tests/NoteCardTests.cs`, `OverlayModalAnimationTests.cs`, `MainWindowRenderTests.cs`, and `InstanceSectionRenderTests.cs`
+Useful existing test locations include `Tests/Hyprism.Desktop.Tests/NoteCardTests.cs`, `OverlayModalAnimationTests.cs`, `MainWindowRenderTests.cs`, and `InstanceSectionRenderTests.cs`.
 
-Before merging a UI change, verify the resource path, the owner dictionary, the state matrix, English and Russian strings, keyboard behavior, compact layout, and the rendered result
+Before merging a UI change, verify the resource path, the owner dictionary, the state matrix, English and Russian strings, keyboard behavior, compact layout, and the rendered result.
 
-The higher-level composition rules remain in [Desktop architecture](/architecture/desktop)
+The higher-level composition rules remain in [Desktop architecture](/architecture/desktop).

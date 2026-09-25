@@ -5,7 +5,7 @@ description: Application directories, persistent files, migrations, and session 
 
 # Data and cache
 
-Hyprism separates persistent player data from replaceable downloads and presentation caches
+Hyprism separates persistent player data from replaceable downloads and presentation caches.
 
 ## Application directory
 
@@ -15,7 +15,7 @@ Hyprism separates persistent player data from replaceable downloads and presenta
 | macOS | `~/Library/Application Support/HyPrism` |
 | Linux | `$XDG_DATA_HOME/HyPrism`, or `~/.local/share/HyPrism` when unset |
 
-`HYPRISM_DATA` overrides the complete application directory only if that directory already exists. `InstanceDirectory` changes only the instance root
+`HYPRISM_DATA` overrides the complete application directory only if that directory already exists. `InstanceDirectory` changes only the instance root.
 
 Use an isolated directory for development:
 
@@ -41,9 +41,9 @@ HYPRISM_DATA="$hyprism_data" dotnet run \
 | `LocalNode/Certificate/` | Local certificate authority and server certificates |
 | `Runtime/GameProcesses.json` | Process identities used across launcher restarts |
 
-The instance locations above use the default root. A custom instance root moves the registry and installation directories together
+The instance locations above use the default root. A custom instance root moves the registry and installation directories together.
 
-Back up profiles, worlds, configuration, and local account data before migration testing. Session files and certificate private keys must not appear in fixtures or bug reports
+Back up profiles, worlds, configuration, and local account data before migration testing. Session files and certificate private keys must not appear in fixtures or bug reports.
 
 ## Replaceable content
 
@@ -56,11 +56,11 @@ Back up profiles, worlds, configuration, and local account data before migration
 | `Jre/`, `Butler/`, `DualAuth/` | Downloaded launch tools |
 | `LocalNode/Sessions/<session-id>/` | Per-launch node runtime files and trust bundles |
 
-Do not clear downloads or runtime files while an installation or related game is active. Clearing a cache makes Hyprism retrieve or recreate its contents when needed
+Do not clear downloads or runtime files while an installation or related game is active. Clearing a cache makes Hyprism retrieve or recreate its contents when needed.
 
 ## Session logs
 
-Each launcher process creates one directory
+Each launcher process creates one directory.
 
 ```text
 Logs/<yyyy-MM-dd_HH-mm-ss.fff>/
@@ -70,16 +70,16 @@ Logs/<yyyy-MM-dd_HH-mm-ss.fff>/
   local-node-requests-<port>.ndjson
 ```
 
-Instance logs capture game standard output and standard error. Local Node logs record route status, timing, lifecycle, and failures; unknown-request journals exclude headers and bodies. A node can continue writing to its original log directory after Desktop closes
+Instance logs capture game standard output and standard error. Local Node logs record route status, timing, lifecycle, and failures; unknown-request journals exclude headers and bodies. A node can continue writing to its original log directory after Desktop closes.
 
 ## Migration rules
 
-Hyprism-owned JSON uses PascalCase filenames and property names. `LauncherJsonFile` recognizes earlier filenames and moves them to canonical names; deserialization stays case-insensitive
+Hyprism-owned JSON uses PascalCase filenames and property names. `LauncherJsonFile` recognizes earlier filenames and moves them to canonical names; deserialization stays case-insensitive.
 
-`CoreMigrationRunner` applies local data migrations before Desktop reads instances, profiles, sessions, or mods. It records a durable step only after the step returns successfully, while the migration itself remains safe to rerun after an interrupted launch
+`CoreMigrationRunner` applies local data migrations before Desktop reads instances, profiles, sessions, or mods. It records a durable step only after the step returns successfully, while the migration itself remains safe to rerun after an interrupted launch.
 
-`LegacyProfileConfigMigration` moves old identity fields into the profile store. Instance and profile migrations preserve compatibility with older directory layouts. Cache migration moves old PWR downloads and remote images to the current directories
+`LegacyProfileConfigMigration` moves old identity fields into the profile store. Instance and profile migrations preserve compatibility with older directory layouts. Cache migration moves old PWR downloads and remote images to the current directories.
 
-Version names are retryable enrichment rather than a one-time migration. Hyprism fills missing names in instance metadata when a configured source can resolve the stored build identifier
+Version names are retryable enrichment rather than a one-time migration. Hyprism fills missing names in instance metadata when a configured source can resolve the stored build identifier.
 
-Keep migration tests based on temporary copies of old data, and avoid changing game-owned filenames or external protocol casing
+Keep migration tests based on temporary copies of old data, and avoid changing game-owned filenames or external protocol casing.

@@ -5,7 +5,7 @@ description: Config.json fields, defaults, and environment overrides
 
 # Configuration
 
-`JsonConfigStore` reads and writes `Config.json` in the [application directory](/architecture/data-and-cache). JSON properties use PascalCase and are read case-insensitively
+`JsonConfigStore` reads and writes `Config.json` in the [application directory](/architecture/data-and-cache). JSON properties use PascalCase and are read case-insensitively.
 
 Close the launcher before editing the file manually and preserve unrelated fields. The following fragment illustrates common preferences, not a complete replacement file:
 
@@ -15,7 +15,7 @@ Close the launcher before editing the file manually and preserve unrelated field
   "CloseAfterLaunch": false,
   "UseCustomJava": false,
   "JavaArguments": "-Xms2G -Xmx4G",
-  "GpuPreference": "auto",
+  "GpuPreference": "dedicated",
   "OnlineMode": false
 }
 ```
@@ -32,7 +32,7 @@ Close the launcher before editing the file manually and preserve unrelated field
 | `AuthServers` | `[]` | User-added authentication service domains available in Network settings |
 | `CurseForgeKey` | empty | API key prepared during bootstrap when missing |
 
-Official profiles always use official authentication and do not show the Auth Server editor. For unofficial profiles, the Network settings list appears only while Connected mode is enabled. The built-in `sessions.sanasol.ws` entry is always listed; `AuthServers` stores additional user-added entries and `AuthDomain` stores the selected value. The desktop checks each listed server with the game-session authentication API and records no availability result in configuration. Local Node chooses a free port from `8443 to 9999` on `127.0.0.1`; neither the address nor its per-launch port is stored in this file
+Official profiles always use official authentication and do not show the Auth Server editor. For offline profiles, the server list appears only when Connected mode is enabled. The built-in `sessions.sanasol.ws` entry is always listed. `AuthServers` stores additional user-added entries, while `AuthDomain` stores the selected value. Desktop checks each listed server through the game-session authentication API, but does not store the availability result. Local Node chooses a free port from `8443 to 9999` on `127.0.0.1`. Neither the address nor the per-launch port is stored in this file.
 
 ## Launch settings
 
@@ -45,7 +45,7 @@ Official profiles always use official authentication and do not show the Auth Se
 | `GpuPreference` | `dedicated` | Automatic, legacy adapter type, or a specific adapter key |
 | `GameEnvironmentVariables` | empty | Newline-separated `KEY=VALUE` assignments |
 
-GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` when available and an adapter name otherwise. Platform adapters translate the selection into supported launch overrides
+GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` when available and an adapter name otherwise. Platform adapters translate the selection into supported launch overrides.
 
 ## Interface and storage
 
@@ -61,13 +61,13 @@ GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` wh
 | `LastExportPath` | empty | Remembered mod export destination |
 | `HasCompletedOnboarding` | `false` | Compatibility state for onboarding |
 
-A persisted property does not imply a completed Desktop workflow. The current onboarding and instance log viewer remain unfinished
+Some persisted properties are kept for compatibility and may not have a dedicated editor in the current UI.
 
 ## Compatibility
 
-Profile names, UUIDs, and sessions belong in `Profiles`, not `Config.json`. Loading older data migrates `Nick`, `UUID`, `Profiles`, and `ActiveProfileIndex` into the profile store
+Profile names, UUIDs, and sessions belong in `Profiles`, not `Config.json`. Loading older data migrates `Nick`, `UUID`, `Profiles`, and `ActiveProfileIndex` into the profile store.
 
-`Instances`, `VersionType`, and `SelectedVersion` remain compatibility fields. `PreferredMirror` is obsolete and ignored; source selection is automatic
+`Instances`, `VersionType`, and `SelectedVersion` remain compatibility fields. `PreferredMirror` is obsolete and ignored; source selection is automatic.
 
 ## Environment overrides
 
@@ -75,9 +75,9 @@ Profile names, UUIDs, and sessions belong in `Profiles`, not `Config.json`. Load
 | --- | --- |
 | `HYPRISM_DATA` | Existing directory used as the full application data root |
 | `XDG_DATA_HOME` | Linux default data root when `HYPRISM_DATA` is absent |
-| `HYPRISM_WIN32_COMPOSITION` | Windows rendering diagnostic override, see [performance](/development/avalonia-performance) |
+| `HYPRISM_WIN32_COMPOSITION` | Windows rendering diagnostic override |
 | `HYPRISM_DOCS_SCREENSHOTS` | Opt-in output directory for [documentation captures](/development/documentation#screenshots) |
 
-The managed launch also supplies Java, DualAuth, GPU, and local certificate variables to child processes. Those runtime values are not independent launcher settings
+The managed launch also supplies Java, DualAuth, GPU, and local certificate variables to child processes. Those runtime values are not independent launcher settings.
 
-Source: [Config](../../../../Sources/Hyprism.Core/Models/Config.cs)
+Source: [Config](../../../../Sources/Hyprism.Core/Models/Config.cs).
