@@ -65,7 +65,13 @@ const config: Config = {
         docs: false,
         blog: false,
         pages: false,
-        sitemap: false,
+        sitemap: {
+          lastmod: 'date',
+          changefreq: 'weekly',
+          priority: 0.7,
+          ignorePatterns: ['/__source/**', '/launcher/docs/__source/**'],
+          filename: 'sitemap.xml'
+        },
         theme: {
           customCss: './src/css/custom.css'
         }
@@ -97,7 +103,8 @@ const config: Config = {
         showLastUpdateTime: false
       }
     ],
-    './plugins/localized-docs/index.ts'
+    './plugins/localized-docs/index.ts',
+    './plugins/seo/index.ts'
   ],
   themeConfig: {
     colorMode: {

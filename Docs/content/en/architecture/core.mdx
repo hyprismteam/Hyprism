@@ -5,7 +5,7 @@ description: Domain services, orchestration, and host contracts
 
 # Hyprism.Core
 
-Core owns launcher behavior that can operate without a UI toolkit. Interfaces live beside their implementations; host capabilities live under `Application/Ports`.
+Core owns launcher behavior that can operate without a UI toolkit. Interfaces live beside their implementations; host capabilities live under `Application/Ports`
 
 ## Subsystems
 
@@ -28,26 +28,26 @@ Core owns launcher behavior that can operate without a UI toolkit. Interfaces li
 
 ## Orchestration
 
-`GameLaunchCoordinator` guards installed-instance launches. `GameInstallationWorkflow` handles the selected branch and numeric version during installation or an explicit update, then calls `GameLauncher` after preparation. The [launch workflow](/architecture/game-lifecycle) describes their ordering and cancellation boundaries.
+`GameLaunchCoordinator` guards installed-instance launches. `GameInstallationWorkflow` handles the selected branch and numeric version during installation or an explicit update, then calls `GameLauncher` after preparation. The [launch workflow](/architecture/game-lifecycle) describes their ordering and cancellation boundaries
 
-The repository services raise `InstancesChanged` and `ProfilesChanged` after mutations. Consumers subscribe to these events instead of polling disk or assuming their own action was the only writer.
+The repository services raise `InstancesChanged` and `ProfilesChanged` after mutations. Consumers subscribe to these events instead of polling disk or assuming their own action was the only writer
 
 ## Host boundary
 
-Core accepts an `AuthUriPresenter` callback for interactive OAuth. The host opens the browser and may supply `IOAuthCallbackPageRenderer` for the loopback callback response.
+Core accepts an `AuthUriPresenter` callback for interactive OAuth. The host opens the browser and may supply `IOAuthCallbackPageRenderer` for the loopback callback response
 
-Core resolves profile and instance paths, but Desktop opens their folders. GPU selection consumes `IGpuProvider`; presence consumes `IDiscordPresence`; autonomous launch consumes `ILocalNodeServiceFactory`.
+Core resolves profile and instance paths, but Desktop opens their folders. GPU selection consumes `IGpuProvider`; presence consumes `IDiscordPresence`; autonomous launch consumes `ILocalNodeServiceFactory`
 
-News parsing and GitHub metadata belong to Desktop because they support presentation rather than game or account rules.
+News parsing and GitHub metadata belong to Desktop because they support presentation rather than game or account rules
 
 ## Mod storage and compatibility
 
-`ModManager` stores files under the target instance's `UserData/Mods`. Disabling a file adds the `.disabled` suffix, and enabling it restores the normal filename. Managed metadata connects installed files to CurseForge project and file identifiers.
+`ModManager` stores files under the target instance's `UserData/Mods`. Disabling a file adds the `.disabled` suffix, and enabling it restores the normal filename. Managed metadata connects installed files to CurseForge project and file identifiers
 
-CurseForge file relations are stored in the instance manifest. Required relations are resolved recursively before installation. Cycles and unresolved required nodes fail the operation. Optional relations are recorded but are not installed automatically. Incompatible relations are checked against the current installed set. JAR and ZIP archives are inspected for a root `manifest.json`, whose plugin identifier, version, and dependency ranges are stored for validation and removal protection.
+CurseForge file relations are normalized into the instance manifest. Required relations are resolved as a depth-first graph before installation; cycles and unresolved required nodes fail the operation, optional relations are recorded but not installed automatically, and incompatible relations are checked against the current installed set. JAR and ZIP archives are also inspected for a root `manifest.json`; its plugin identifier, version, and dependency ranges are persisted for validation and removal protection
 
-`ModCompatibilityEvaluator` reads the installed server version and compares it with the game versions attached to catalog files. The UI disables files classified as incompatible, while an unknown version remains a distinct state.
+`ModCompatibilityEvaluator` reads the installed server version and compares it with the game versions attached to catalog files. The UI disables files classified as incompatible, while an unknown version remains a distinct state
 
-See [Core contracts](/reference/services) for integration examples and [Data and cache](/architecture/data-and-cache) for persistence rules.
+See [Core contracts](/reference/services) for integration examples and [Data and cache](/architecture/data-and-cache) for persistence rules
 
-Source: [Core source](../../../../Sources/Hyprism.Core).
+Source: [Core source](../../../../Sources/Hyprism.Core)

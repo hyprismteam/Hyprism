@@ -6,6 +6,7 @@ export default {
   building: 'Сборка',
   packaging: 'Пакеты и релизы',
   testing: 'Тестирование',
+  'avalonia-performance': 'Производительность Avalonia',
   localization: 'Локализация',
   'coding-style': 'Стиль кода',
   contributing: 'Участие в разработке',

@@ -5,7 +5,7 @@ description: Projects, ownership boundaries, and application startup
 
 # Architecture overview
 
-Hyprism contains three .NET 10 projects and a separate Docusaurus documentation application.
+Hyprism contains three .NET 10 projects and a separate Docusaurus documentation application
 
 ```text
 Sources/
@@ -22,9 +22,9 @@ Packaging/           platform publishers and installer assets
 
 ## Project dependencies
 
-Desktop references Core and Local Node. Local Node references Core. Core has no dependency on Avalonia and exposes the contracts used by both hosts.
+Desktop references Core and Local Node. Local Node references Core. Core has no dependency on Avalonia and exposes the contracts used by both hosts
 
-Release packaging produces the `Hyprism Launcher` apphost and a separate `Hyprism.LocalNode` apphost from the same publish.
+Release packaging produces the `Hyprism Launcher` apphost and a separate `Hyprism.LocalNode` apphost from the same publish
 
 | Boundary | Owner | Details |
 | --- | --- | --- |
@@ -34,21 +34,22 @@ Release packaging produces the `Hyprism Launcher` apphost and a separate `Hypris
 | Installation and game processes | Core with host capabilities | [Launch workflow](/architecture/game-lifecycle) |
 | Storage, migrations, and diagnostics | Each owning service | [Data and cache](/architecture/data-and-cache) |
 
+There is no Electron host, web frontend, IPC bridge, or generated TypeScript API in the launcher. Desktop calls C# interfaces directly
 
 ## Startup and shutdown
 
-1. Desktop configures rendering, launcher version, and the shared HTTP user agent.
-2. `Bootstrapper.Initialize` creates Core services and applies host registrations.
-3. `App` creates the window, localizer, native file picker, URI launcher, and view models.
-4. Asynchronous initialization prepares optional remote data while the loading screen is visible.
-5. Window shutdown cancels bootstrap work, disposes view models and services, and closes the launcher log.
+1. Desktop configures rendering, launcher version, and the shared HTTP user agent
+2. `Bootstrapper.Initialize` creates Core services and applies host registrations
+3. `App` creates the window, localizer, native file picker, URI launcher, and view models
+4. Asynchronous initialization prepares optional remote data while the loading screen is visible
+5. Window shutdown cancels bootstrap work, disposes view models and services, and closes the launcher log
 
-A Local Node already attached to a game has a separate lifetime and continues until that game exits.
+A Local Node already attached to a game has a separate lifetime and continues until that game exits
 
 ## Where to add behavior
 
-Put game, account, download, or persistence rules in Core. Put presentation state and operating-system UI in Desktop. Extend Local Node only for its loopback service or companion process lifecycle.
+Put game, account, download, or persistence rules in Core. Put presentation state and operating-system UI in Desktop. Extend Local Node only for its loopback service or companion process lifecycle
 
-Use the [contract reference](/reference/services) before adding another service, and cover changes with the matching [test suite](/development/testing).
+Use the [contract reference](/reference/services) before adding another service, and cover changes with the matching [test suite](/development/testing)
 
-Source: [Bootstrapper](../../../../Sources/Hyprism.Core/Application/Composition/Bootstrapper.cs), [Desktop startup](../../../../Sources/Hyprism.Desktop/Program.cs), [Local Node host](../../../../Sources/Hyprism.LocalNode/LocalNodeApplication.cs).
+Source: [Bootstrapper](../../../../Sources/Hyprism.Core/Application/Composition/Bootstrapper.cs), [Desktop startup](../../../../Sources/Hyprism.Desktop/Program.cs), [Local Node host](../../../../Sources/Hyprism.LocalNode/LocalNodeApplication.cs)

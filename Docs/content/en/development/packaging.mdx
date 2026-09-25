@@ -5,11 +5,11 @@ description: Platform publishers, CI workflows, artifact targets, and release ve
 
 # Packaging and releases
 
-`Packaging/` contains the maintained release entry points. Each publisher creates packages from one self-contained publish containing the Hyprism Launcher and the separate Local Node apphost.
+`Packaging/` contains the maintained release entry points. Each publisher creates packages from one self-contained publish containing the Hyprism Launcher and the separate Local Node apphost
 
-The Desktop project keeps `Hyprism.Desktop` as its assembly identity for Avalonia resource URIs. Ordinary `dotnet build`, `dotnet run`, and `dotnet publish` use the SDK's default apphost name, `Hyprism.Desktop` (`Hyprism.Desktop.exe` on Windows).
+The Desktop project keeps `Hyprism.Desktop` as its assembly identity for Avalonia resource URIs. Ordinary `dotnet build`, `dotnet run`, and `dotnet publish` use the SDK's default apphost name, `Hyprism.Desktop` (`Hyprism.Desktop.exe` on Windows)
 
-The platform publishers rename the published native apphost to `Hyprism Launcher` (`Hyprism Launcher.exe` on Windows) before signing or creating packages. The Nix flake exposes the launcher under that name after creating its executable wrappers. These packaging steps leave the managed assembly and embedded resource paths unchanged.
+The platform publishers rename the published native apphost to `Hyprism Launcher` (`Hyprism Launcher.exe` on Windows) before signing or creating packages. The Nix flake exposes the launcher under that name after creating its executable wrappers. These packaging steps leave the managed assembly and embedded resource paths unchanged
 
 ## Platform targets
 
@@ -19,28 +19,28 @@ The platform publishers rename the published native apphost to `Hyprism Launcher
 | Windows | `win-x64` | `zip`, `msi`, `exe` |
 | macOS | `osx-arm64` | `dmg` |
 
-Use a matching host for packaging. Native publishers accept `all` and `--output`; output defaults to `dist`.
+Use a matching host for packaging. Native publishers accept `all` and `--output`; output defaults to `dist`
 
 ## Linux
 
-Install the tools needed by your selected targets: `dpkg-deb`, `rpmbuild`, `appimagetool`, `flatpak`, and `flatpak-builder`.
+Install the tools needed by your selected targets: `dpkg-deb`, `rpmbuild`, `appimagetool`, `flatpak`, and `flatpak-builder`
 
 ```bash
 ./Packaging/publish-linux.sh deb rpm tar --output dist
 ./Packaging/publish-linux.sh all --output dist
 ```
 
-The `all` target builds DEB, RPM, AppImage, Flatpak, and tar.xz artifacts. Build the Nix target explicitly because it is supplied by the flake and stored in `/nix/store`.
+The `all` target builds DEB, RPM, AppImage, Flatpak, and tar.xz artifacts. Build the Nix target explicitly because it is supplied by the flake and stored in `/nix/store`
 
-AppImage tooling can be selected with `--appimagetool` or `APPIMAGETOOL`. Flatpak exports and bundles use the `stable` branch.
+AppImage tooling can be selected with `--appimagetool` or `APPIMAGETOOL`. Flatpak exports and bundles use the `stable` branch
 
-The Flatpak bundle currently uses Avalonia's X11 backend through XWayland, so its manifest grants `--socket=x11` and does not grant the conditional `fallback-x11` or native `wayland` sockets. This keeps KDE Plasma Wayland launches working until native Wayland is enabled in the desktop host.
+The Flatpak bundle currently uses Avalonia's X11 backend through XWayland, so its manifest grants `--socket=x11` and does not grant the conditional `fallback-x11` or native `wayland` sockets. This keeps KDE Plasma Wayland launches working until native Wayland is enabled in the desktop host
 
-Linux packages preserve the source artwork from `logo.svg` and publish it in a square SVG viewport required by application icon validators.
+Linux packages preserve the source artwork from `logo.svg` and publish it in a square SVG viewport required by application icon validators
 
 ## Nix
 
-The repository contains a flake for the native `x86_64-linux` package. Install Nix with flakes enabled, then build or run Hyprism from the repository root or from a release tag.
+The repository contains a flake for the native `x86_64-linux` package. Install Nix with flakes enabled, then build or run Hyprism from the repository root or from a release tag
 
 ```bash
 nix build ./Packaging/linux/flake#hyprism
@@ -48,13 +48,13 @@ nix run ./Packaging/linux/flake#hyprism
 ./Packaging/publish-linux.sh nix
 ```
 
-The flake pins nixpkgs and restores NuGet dependencies from `Packaging/linux/flake/nix/deps.json`. Update that file when .NET package references change.
+The flake pins nixpkgs and restores NuGet dependencies from `Packaging/linux/flake/nix/deps.json`. Update that file when .NET package references change
 
-The package exposes `hyprism` as its stable command name and includes both the `Hyprism Launcher` and separate `Hyprism.LocalNode` executables in the result.
+The package exposes `hyprism` as its stable command name and includes both the `Hyprism Launcher` and separate `Hyprism.LocalNode` executables in the result
 
-Nix stores the result in `/nix/store`; the `--output` option applies only to native package targets.
+Nix stores the result in `/nix/store`; the `--output` option applies only to native package targets
 
-To regenerate the NuGet dependency lockfile, build the helper exposed by the package and run it with the lockfile path.
+To regenerate the NuGet dependency lockfile, build the helper exposed by the package and run it with the lockfile path
 
 ```bash
 nix build ./Packaging/linux/flake#hyprism.fetch-deps
@@ -63,36 +63,36 @@ nix build ./Packaging/linux/flake#hyprism.fetch-deps
 
 ## Windows
 
-The publisher installs pinned WiX tooling in a temporary directory for MSI and EXE packaging.
+The publisher installs pinned WiX tooling in a temporary directory for MSI and EXE packaging
 
 ```powershell
 pwsh Packaging/publish-windows.ps1 all --output dist
 ```
 
-It verifies `Hyprism Launcher.exe` and the separate `Hyprism.LocalNode.exe` before producing artifacts. ZIP contains the same application payload as the installers.
+It verifies `Hyprism Launcher.exe` and the separate `Hyprism.LocalNode.exe` before producing artifacts. ZIP contains the same application payload as the installers
 
-The Windows apphost uses the multi-size `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico` resource. WiX uses the same icon for the MSI entry in Apps and Features and the EXE bootstrapper.
+The Windows apphost uses the multi-size `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico` resource. WiX uses the same icon for the MSI entry in Apps and Features and the EXE bootstrapper
 
 ## macOS
 
-The macOS app bundle includes the generated `Packaging/macos/Hyprism.icns` icon derived from `logo.svg` and uses `Hyprism Launcher` as its executable and display name. The macOS publisher uses `plutil`, `hdiutil`, `codesign`, and `file`.
+The macOS app bundle includes the generated `Packaging/macos/Hyprism.icns` icon derived from `logo.svg` and uses `Hyprism Launcher` as its executable and display name. The macOS publisher uses `plutil`, `hdiutil`, `codesign`, and `file`
 
 ```bash
 ./Packaging/publish-macos.sh dmg --output dist
 ```
 
-It builds an Apple Silicon app bundle, checks both the Hyprism Launcher and Local Node apphost architectures, applies an ad hoc signature, verifies it, and creates a DMG. Ad hoc signing is not notarization.
+It builds an Apple Silicon app bundle, checks both the Hyprism Launcher and Local Node apphost architectures, applies an ad hoc signature, verifies it, and creates a DMG. Ad hoc signing is not notarization
 
 ## Version source
 
-`Version` in `Sources/Hyprism.Desktop/Hyprism.Desktop.csproj` is the release version source. Publishers query it through MSBuild.
+`Version` in `Sources/Hyprism.Desktop/Hyprism.Desktop.csproj` is the release version source. Publishers query it through MSBuild
 
 ```bash
 dotnet msbuild Sources/Hyprism.Desktop/Hyprism.Desktop.csproj \
   -nologo -getProperty:Version
 ```
 
-A release tag must equal `v<Version>`. The release workflow rejects a mismatched tag before packaging.
+A release tag must equal `v<Version>`. The release workflow rejects a mismatched tag before packaging
 
 ## CI ownership
 
@@ -106,8 +106,8 @@ A release tag must equal `v<Version>`. The release workflow rejects a mismatched
 | `docs-pages.yml` | Documentation validation and GitHub Pages deployment |
 | `reuse.yml` | License headers and REUSE compliance |
 
-Use the maintained platform publisher scripts and CI workflows for release packaging.
+The separate Flathub workflow and `Scripts/update-flathub-manifest.sh` contain legacy Electron/frontend paths. They are not the maintained native packaging entry point and require migration before reuse
 
-The Linux build workflow publishes the native Linux packages and runs `nix flake check --print-build-logs` for the Nix package in the same job. In `ci.yml`, the Packaging group waits for the Core, Desktop, and Local Node test workflows.
+The Linux build workflow publishes the native Linux packages and runs `nix flake check --print-build-logs` for the Nix package in the same job. In `ci.yml`, the Packaging group waits for the Core, Desktop, and Local Node test workflows
 
-Source: [Packaging](../../../../Packaging), [GitHub Actions](../../../../.github/workflows).
+Source: [Packaging](../../../../Packaging), [GitHub Actions](../../../../.github/workflows)

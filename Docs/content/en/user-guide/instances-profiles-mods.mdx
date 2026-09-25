@@ -5,42 +5,42 @@ description: Create, install, launch, and remove isolated Hytale installations
 
 # Instances
 
-An instance is one Hytale installation with its own version, game files, mods, worlds, console buffer, and play-time record.
+An instance is one Hytale installation with its own version, game files, mods, worlds, console buffer, and play-time record
 
-When an available source provides a human-readable version name, Hyprism uses it on the instance card and in the details. Existing instances are updated automatically when the launcher finds a missing name.
+When an available source provides a human-readable version name, Hyprism uses it on the instance card and in the details. Existing instances are updated automatically when the launcher finds a missing name
 
 [![Instances list and the selected instance workspace](../../../static/img/user/en/instances.png)](../../../static/img/user/en/instances.png)
 
 ## Create an instance
 
-1. Open **Instances** and select **New Instance**.
-2. Choose a branch.
-3. Choose one of the available versions. When the source provides a human-readable name, Hyprism shows that name instead of the numeric build identifier. Versions whose names start with `build` are legacy builds and appear at the bottom.
-4. Confirm the creation.
+1. Open **Instances** and select **New Instance**
+2. Choose a branch
+3. Choose one of the available versions. When the source provides a human-readable name, Hyprism shows that name instead of the numeric build identifier. Versions whose names start with `build` are legacy builds and appear at the bottom
+4. Confirm the creation
 
-The new entry appears immediately, but its game files are downloaded only when you launch it.
+The new entry appears immediately, but its game files are downloaded only when you launch it
 
-New instances store the default name `Hytale`; the interface displays it as `Hytale <version>`.
+New instances store the default name `Hytale`; the interface displays it as `Hytale <version>`
 
 ## Install or launch
 
 Select an instance card, then use its main action:
 
-- An uninstalled instance downloads its files and starts automatically when installation succeeds.
-- During an active installation, the main action shows the current stage, percentage, and a spinner.
-- An installed instance starts without downloading a complete image again.
-- A running instance shows its session time and the same action stops it.
-- An active installation can be canceled after the action changes to **Cancel**.
+- An uninstalled instance downloads its files and starts automatically when installation succeeds
+- During an active installation, the main action shows the current stage, percentage, and a spinner
+- An installed instance starts without downloading a complete image again
+- A running instance shows its session time and the same action stops it
+- An active installation can be canceled after the action changes to **Cancel**
 
-Only one process can use an instance at a time. Different instances can run together because their files and user data are separate.
+Only one process can use an instance at a time. Different instances can run together because their files and user data are separate
 
 ## Manage files
 
-**Open Folder** opens the instance directory. Use it only when no installation, update, or game process is writing to that instance.
+**Open Folder** opens the instance directory. Use it only when no installation, update, or game process is writing to that instance
 
-**Delete** removes the instance and its game data after confirmation. Back up worlds or other files you want to keep before deleting it.
+**Delete** removes the instance and its game data after confirmation. Back up worlds or other files you want to keep before deleting it
 
-Dragging a card by its handle changes and saves the list order. Opening a card changes the workspace displayed on the right.
+Dragging a card by its handle changes and saves the list order. Opening a card changes the workspace displayed on the right
 
 ## Instance sections
 
@@ -52,34 +52,34 @@ Dragging a card by its handle changes and saves the list order. Opening a card c
 | **Console** | Follow live output from the running game |
 | **Logs** | Not yet available; use the log files on disk |
 
-See [Mods](/user-guide/mods) for the complete mod workflow.
+See [Mods](/user-guide/mods) for the complete mod workflow
 
 ## Find a mod
 
-1. Open **Instances**, select an installed instance, and open **Discover mods**.
-2. Enter at least four characters in **Search the mod catalog**.
-3. Press **Enter** or select the search icon that appears inside the field.
-4. Optionally choose **Category** and **Sort** before searching again.
-5. Select a mod, choose a compatible file, and select **Install**.
+1. Open **Instances**, select an installed instance, and open **Discover mods**
+2. Enter at least four characters in **Search the mod catalog**
+3. Press **Enter** or select the search icon that appears inside the field
+4. Optionally choose **Category** and **Sort** before searching again
+5. Select a mod, choose a compatible file, and select **Install**
 
-The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes.
+The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes
 
-To install several mods together, select the compatible catalog entries and select **Install** in the top bar. The **Preview** sheet shows the selected mods and their required dependencies before installation. Review the versions, then select **Install** to continue. The catalog shows installation progress until the selected mods finish.
+To install several mods together, select the compatible catalog entries and select **Install** in the top bar. Review each mod, its icon, and the version that will be installed in the **Preview** sheet. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. The sheet closes and the catalog shows installation progress until the selected mods finish
 
 ## Mod dependencies
 
-Hyprism reads dependency relations from CurseForge mod files. Required dependencies are resolved recursively and installed before the selected mod. Optional dependencies are not installed automatically, while an incompatible mod relation stops installation when the conflicting mod is already installed.
+Hyprism reads dependency relations from CurseForge mod files. Required dependencies are resolved recursively and installed before the selected mod. Optional dependencies are not installed automatically, while an incompatible mod relation stops installation when the conflicting mod is already installed
 
-The **Preview** sheet warns that required dependencies may add extra downloads. Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata.
+The **Preview** sheet warns that required dependencies may add extra downloads. Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata
 
-Hyprism also reads the Hytale `manifest.json` inside JAR and ZIP mods. It keeps the declared plugin identifier and version ranges in the instance manifest and prevents removing a mod while another installed mod declares it as a required dependency. If a local archive declares a dependency, install that dependency separately before using the local mod.
+Hyprism also reads the Hytale `manifest.json` inside JAR and ZIP mods. It keeps the declared plugin identifier and version ranges in the instance manifest and prevents removing a mod while another installed mod declares it as a required dependency. If a local archive declares a dependency, install that dependency separately before using the local mod
 
 ## Console and logs {/* #console-and-logs */}
 
-The console keeps a separate in-memory buffer for every instance while the launcher is open. You can filter text, pause automatic scrolling by scrolling away from the bottom, toggle line wrapping, and clear the visible buffer.
+The console keeps a separate in-memory buffer for every instance while the launcher is open. You can filter text, pause automatic scrolling by scrolling away from the bottom, toggle line wrapping, and clear the visible buffer
 
-Launcher logs remain on disk after Hyprism closes. Open **Settings → Data**, open the launcher data folder, and look in `Logs` for the relevant session. If a launch fails, include the relevant launcher and instance logs when [reporting a bug](https://github.com/hyprismteam/HyPrism/issues/new/choose), but review them for personal paths or account data first.
+Launcher logs remain on disk after Hyprism closes. Open **Settings → Data**, open the launcher data folder, and look in `Logs` for the relevant session. If a launch fails, include the relevant launcher and instance logs when [reporting a bug](https://github.com/hyprismteam/HyPrism/issues/new/choose), but review them for personal paths or account data first
 
 ## Running games after reopening Hyprism
 
-Hyprism records game process identity and restores the running state when the same process is still alive after reopening the launcher. It removes stale records and keeps accumulated play time.
+Hyprism records game process identity and restores the running state when the same process is still alive after reopening the launcher. It removes stale records and keeps accumulated play time

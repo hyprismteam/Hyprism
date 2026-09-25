@@ -6,6 +6,7 @@ export default {
   building: 'Building',
   packaging: 'Packaging and releases',
   testing: 'Testing',
+  'avalonia-performance': 'Avalonia performance',
   localization: 'Localization',
   'coding-style': 'Coding style',
   contributing: 'Contributing',

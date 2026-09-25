@@ -5,7 +5,7 @@ description: Avalonia composition, screen ownership, and reusable controls
 
 # Hyprism.Desktop
 
-Desktop is the Avalonia application host. It composes Core services, provides native capabilities, and adapts their state into views and commands.
+Desktop is the Avalonia application host. It composes Core services, provides native capabilities, and adapts their state into views and commands
 
 ## Composition and screens
 
@@ -25,19 +25,19 @@ Desktop is the Avalonia application host. It composes Core services, provides na
 
 ## Window chrome
 
-The shell uses Avalonia 12's [WindowDrawnDecorations](https://docs.avaloniaui.net/controls/primitives/windowdrawndecorations) model. The main window extends its client area into the decoration region. On Windows, `WindowDecorations="Full"` keeps native DWM transitions and snap behavior available. [WindowDecorations.axaml](../../../../Sources/Hyprism.Desktop/Shell/WindowDecorations.axaml) supplies the application-specific decoration content.
+The shell uses Avalonia 12's [WindowDrawnDecorations](https://docs.avaloniaui.net/controls/primitives/windowdrawndecorations) model. The main window extends its client area into the decoration region. Windows selects `WindowDecorations="Full"` so native DWM state transitions and snap behavior remain available, while [WindowDecorations.axaml](../../../../Sources/Hyprism.Desktop/Shell/WindowDecorations.axaml) replaces Avalonia's default drawn decoration content
 
-Other platforms use `WindowDecorations="None"` with the same custom shell. Linux enables Avalonia X11 client-side decorations in `Program.cs`, allowing the window manager to handle move and resize requests through element roles. The [main window](../../../../Sources/Hyprism.Desktop/Shell/MainWindow.axaml) marks the title bar, caption buttons, and resize regions with `WindowDecorationProperties.ElementRole`. Keep it paired with `ExtendClientAreaToDecorationsHint` and do not add manual Win32 position updates.
+Other platforms keep `WindowDecorations="None"` through the platform-specific value and use the same custom shell. Linux enables Avalonia X11 client-side decorations in `Program.cs` so the element roles become native window-manager move and resize requests. The [main window](../../../../Sources/Hyprism.Desktop/Shell/MainWindow.axaml) marks the title bar, caption buttons, and resize hit regions with `WindowDecorationProperties.ElementRole`; keep that option paired with `ExtendClientAreaToDecorationsHint` and do not reintroduce manual Win32 position updates
 
-Caption buttons render vector resources from `Assets/Icons/MaterialSymbols.axaml`. The minimize and close buttons use fixed glyphs, while the maximize button switches between `MaximizeIcon` and `RestoreIcon` when `WindowState` changes. Keep their standard arrow cursor separate from the hand cursor used by ordinary action buttons so native caption hit testing remains stable.
+Caption buttons render vector resources from `Assets/Icons/MaterialSymbols.axaml`. The minimize and close buttons use fixed glyphs, while the maximize button switches between `MaximizeIcon` and `RestoreIcon` when `WindowState` changes. Keep their standard arrow cursor separate from the hand cursor used by ordinary action buttons so native caption hit testing remains stable
 
 ## Views and state
 
-Compiled bindings are enabled for the Desktop project. Views declare `x:DataType`; view models expose observable state and commands. Code-behind handles behavior tied to input, layout, focus, or animation.
+Compiled bindings are enabled for the Desktop project. Views declare `x:DataType`; view models expose observable state and commands. Code-behind handles behavior tied to input, layout, focus, or animation
 
-`MainWindowViewModel` owns only shell state and composes screen view models. `InstancesViewModel` and `NewsViewModel` own their screen state and service subscriptions. `MainWindow.axaml` passes those child models into `InstancesView` and `NewsView`, so screen bindings do not depend on Shell properties.
+`MainWindowViewModel` owns only shell state and composes screen view models. `InstancesViewModel` and `NewsViewModel` own their screen state and service subscriptions. `MainWindow.axaml` passes those child models into `InstancesView` and `NewsView`, so screen bindings do not depend on Shell properties
 
-Each `Screens/<Screen>` directory is a vertical UI slice. It may contain the view, its view model, screen-local presentation models, and Desktop adapters that exist only for that screen.
+Each `Screens/<Screen>` directory is a vertical UI slice. It may contain the view, its view model, screen-local presentation models, and Desktop adapters that exist only for that screen
 
 The following fragment illustrates a compiled binding to the existing settings view model:
 
@@ -50,13 +50,13 @@ The following fragment illustrates a compiled binding to the existing settings v
 </UserControl>
 ```
 
-Publish observable collection changes on the UI dispatcher. Unsubscribe from service events and release image resources when their owner is disposed.
+Publish observable collection changes on the UI dispatcher. Unsubscribe from service events and release image resources when their owner is disposed
 
 ## Shared UI foundation
 
-`UI/Foundation/Themes/HyprismTheme.axaml` provides application-owned templates for common controls and surfaces. `UI/Foundation/Tokens` contains primitive and semantic values. `UI/Components/ControlThemes.axaml` contains named framework control themes. `UI/Components/Components.axaml` defines shared control families. `UI/Components/ManagerStyles.axaml` owns repeated manager and detail patterns, while `UI/Foundation/GlobalStyles.axaml` contains application-wide selectors. Each screen includes its own style dictionary locally.
+`UI/Foundation/Themes/HyprismTheme.axaml` provides the application-owned templates for the window, scrolling, text input, selection, list, combo box, progress, tooltip, and popup surfaces. `UI/Foundation/Tokens` contains primitive and semantic values. `UI/Components/ControlThemes.axaml` contains named framework control themes. `UI/Components/Components.axaml` defines shared control families, `UI/Components/ManagerStyles.axaml` owns repeated manager and detail patterns, and `UI/Foundation/GlobalStyles.axaml` contains application-wide selectors. Each screen includes its own style dictionary locally
 
-The [Desktop UI architecture](/architecture/desktop-ui) page defines the component catalog, resource order, placement rules, and state contract.
+The [Desktop UI architecture](/architecture/desktop-ui) page defines the component catalog, resource order, placement rules, and state contract
 
 | Control | Responsibility |
 | --- | --- |
@@ -71,16 +71,16 @@ The [Desktop UI architecture](/architecture/desktop-ui) page defines the compone
 | `FormRow` | Shared label, hint, and trailing editor layout |
 | `SmoothScrollViewer` | Shared wheel and precision-touchpad scrolling; optional middle-button auto-scroll |
 
-Animation timing belongs in `MotionDurations` or the owning reusable control. Keep performance checks close to the control or screen they cover.
+Animation timing belongs in `MotionDurations` or the owning reusable control. The [performance guide](/development/avalonia-performance) explains layout and rendering checks
 
-App-owned scroll hosts use `SmoothScrollViewer`, which sends mouse-wheel and precision-touchpad input through one frame-based easing loop. `SmoothScrollContentPresenter` intercepts wheel input before Avalonia updates the offset. Middle-button auto-scroll is opt-in and is currently used only by News. The scrollbar keeps a fixed 6 px layout slot and uses `RenderTransform` for its idle 3 px appearance. Keep future thickness animations on render properties rather than `Width`.
+App-owned scroll hosts use `SmoothScrollViewer`, so mouse-wheel and precision-touchpad deltas feed one frame-based easing loop. Its template uses `SmoothScrollContentPresenter` to intercept wheel input before Avalonia's default immediate offset update. Middle-button auto-scroll is opt-in and remains enabled only for News views. The scrollbar keeps a fixed 6 px thumb layout slot and animates its idle 3 px appearance through `RenderTransform`; keep future thickness animations on render properties rather than `Width`
 
 ## Network presentation
 
-News and GitHub clients use the shared HTTP identity. Parsed news lives in `Cache/News`; encoded remote images live in `Cache/Images`. Article text is prepared before image decoding, and decoded article bitmaps are released when the article closes.
+News and GitHub clients use the shared HTTP identity. Parsed news lives in `Cache/News`; encoded remote images live in `Cache/Images`. Article text is prepared before image decoding, and decoded article bitmaps are released when the article closes
 
-`RemoteBitmapLoader` is shared by screens that display images. It validates remote URLs, uses `RemoteImageCache` when available, and decodes bitmaps away from the Avalonia dispatcher.
+`RemoteBitmapLoader` is shared by screens that display images. It validates remote URLs, uses `RemoteImageCache` when available, and decodes bitmaps away from the Avalonia dispatcher
 
-Native file selection uses Avalonia's `StorageProvider`. External links preserve escaped absolute URIs, including OAuth parameters. Neither capability belongs in Core.
+Native file selection uses Avalonia's `StorageProvider`. External links preserve escaped absolute URIs, including OAuth parameters. Neither capability belongs in Core
 
-Source: [MainWindowViewModel](../../../../Sources/Hyprism.Desktop/Shell/MainWindowViewModel.cs), [InstancesViewModel](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstancesViewModel.cs), [NewsViewModel](../../../../Sources/Hyprism.Desktop/Screens/News/NewsViewModel.cs), [Shared controls](../../../../Sources/Hyprism.Desktop/UI/Controls).
+Source: [MainWindowViewModel](../../../../Sources/Hyprism.Desktop/Shell/MainWindowViewModel.cs), [InstancesViewModel](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstancesViewModel.cs), [NewsViewModel](../../../../Sources/Hyprism.Desktop/Screens/News/NewsViewModel.cs), [Shared controls](../../../../Sources/Hyprism.Desktop/UI/Controls)

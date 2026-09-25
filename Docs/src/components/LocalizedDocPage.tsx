@@ -4,12 +4,13 @@
 import Layout from '@theme/Layout'
 import MDXContent from '@theme/MDXContent'
 import TOC from '@theme/TOC'
-import React, { type ComponentType, useEffect } from 'react'
+import React, { type ComponentType } from 'react'
 import { useDocsLocale } from '../context/locale'
 import { routeToUrl, useLocalizedDocsData, type NavigationItem } from '../data'
 import { dictionaries, type Locale } from '../i18n'
 import DocsSidebar from './DocsSidebar'
 import Link from '@docusaurus/Link'
+import SeoHead from './SeoHead'
 
 type TocItem = Readonly<{
   value: string
@@ -87,12 +88,17 @@ export default function LocalizedDocPage({ en, ru, pageKey }: LocalizedDocPagePr
   const sourcePath = pageKey ? `${pageKey}.mdx` : 'index.mdx'
   const editUrl = `https://github.com/hyprismteam/HyPrism/edit/main/Docs/content/${locale}/${sourcePath}`
 
-  useEffect(() => {
-    document.title = `${title} | Hyprism`
-  }, [title])
+  const canonicalPath = routeToUrl(pageKey)
 
   return (
     <Layout title={title} description={description}>
+      <SeoHead
+        title={title}
+        description={description}
+        canonicalPath={canonicalPath}
+        locale={locale}
+        isHome={!pageKey}
+      />
       <div className={`hyprism-docs-shell${pageKey ? '' : ' hyprism-docs-home'}`}>
         <div className="hyprism-docs-layout">
           <DocsSidebar />

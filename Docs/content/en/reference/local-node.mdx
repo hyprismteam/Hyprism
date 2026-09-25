@@ -5,20 +5,20 @@ description: Autonomous HTTPS endpoints, session ownership, certificates, and st
 
 # Local Node
 
-`Hyprism.LocalNode` is a separate executable shipped with Hyprism Launcher. During autonomous local-profile sessions, the launcher starts it as a dedicated process. It listens only on `127.0.0.1`, so client requests do not depend on DNS or a remote authentication server.
+`Hyprism.LocalNode` is a separate executable shipped with Hyprism Launcher. During autonomous local-profile sessions, the launcher starts it as a dedicated process. It listens only on `127.0.0.1`, so client requests do not depend on DNS or a remote authentication server
 
 ## Managed lifecycle
 
-`LocalNodeServiceFactory` allocates a free port from `8443 to 9999` and a separate `LocalNode/Sessions/<session-id>` directory for each launch. Accounts and certificates are shared across these sessions.
+`LocalNodeServiceFactory` allocates a free port from `8443 to 9999` and a separate `LocalNode/Sessions/<session-id>` directory for each launch. Accounts and certificates are shared across these sessions
 
-1. `GameLauncher` creates a node and passes the active instance directory.
-2. `LocalNodeHost` prepares certificates and launches `Hyprism.LocalNode` as a separate process.
-3. The launcher waits for HTTPS health, then creates a local session.
-4. Client preparation redirects supported services and supplies certificate trust.
-5. Once the game starts, the launcher attaches its PID to the node.
-6. The node follows the game lifetime even if Desktop closes.
+1. `GameLauncher` creates a node and passes the active instance directory
+2. `LocalNodeHost` prepares certificates and launches `Hyprism.LocalNode` as a separate process
+3. The launcher waits for HTTPS health, then creates a local session
+4. Client preparation redirects supported services and supplies certificate trust
+5. Once the game starts, the launcher attaches its PID to the node
+6. The node follows the game lifetime even if Desktop closes
 
-Before attachment, a managed node follows its launcher owner. Lifecycle requests require the per-process `X-HyPrism-Control` secret.
+Before attachment, a managed node follows its launcher owner. Lifecycle requests require the per-process `X-HyPrism-Control` secret
 
 ## HTTP surface
 
@@ -33,21 +33,21 @@ Before attachment, a managed node follows its launcher owner. Lifecycle requests
 | Lifecycle | `POST /v1/lifecycle/attach`, `POST /v1/lifecycle/stop` for managed processes |
 | Compatibility | Configs, telemetry, presence settings, empty social and server-discovery responses |
 
-The host rejects unexpected Host headers and limits request bodies to 2 MiB. Compatibility routes do not provide a shared friends graph, invitations, cloud synchronization, NAT traversal, or public discovery.
+The host rejects unexpected Host headers and limits request bodies to 2 MiB. Compatibility routes do not provide a shared friends graph, invitations, cloud synchronization, NAT traversal, or public discovery
 
-The route implementation is `Sources/Hyprism.LocalNode/LocalNodeApplication.cs`; tests live in `Tests/Hyprism.LocalNode.Tests/LocalNodeHostTests.cs`.
+The route implementation is `Sources/Hyprism.LocalNode/LocalNodeApplication.cs`; tests live in `Tests/Hyprism.LocalNode.Tests/LocalNodeHostTests.cs`
 
 ## Tokens and character state
 
-Each selected local profile receives an ephemeral Ed25519 signing key. Identity handoff includes the private JWK required by DualAuth. JWKS, grants, and access tokens expose public key material only.
+Each selected local profile receives an ephemeral Ed25519 signing key. Identity handoff includes the private JWK required by DualAuth. JWKS, grants, and access tokens expose public key material only
 
-Authorization validates the player's Bearer session separately from the target server identity in the request body. Access tokens bind the requested certificate fingerprint through `cnf.x5t#S256`. Refresh and child sessions reuse the profile key.
+Authorization validates the player's Bearer session separately from the target server identity in the request body. Access tokens bind the requested certificate fingerprint through `cnf.x5t#S256`. Refresh and child sessions reuse the profile key
 
-The active character is included in the string-valued `skin` claim. The cosmetics catalog reads installed items from the active instance's `Assets.zip` and uses a small fallback when that archive is unavailable.
+The active character is included in the string-valued `skin` claim. The cosmetics catalog reads installed items from the active instance's `Assets.zip` and uses a small fallback when that archive is unavailable
 
 ## Certificate trust {/* #certificate-trust */}
 
-The shared authority is stored in `LocalNode/Certificate`. Its server certificate is valid for the IP address rather than a particular port.
+The shared authority is stored in `LocalNode/Certificate`. Its server certificate is valid for the IP address rather than a particular port
 
 | Platform | Trust setup |
 | --- | --- |
@@ -56,9 +56,9 @@ The shared authority is stored in `LocalNode/Certificate`. Its server certificat
 | macOS | Register the local authority in admin trust settings, potentially showing a system prompt, and supply a CA bundle |
 | Java on every platform | Supply a dedicated PKCS#12 trust store |
 
-The server certificate rotates when invalid, issued by a different authority, missing the endpoint IP, or within seven days of expiry. The local authority lasts ten years unless invalid. Canceling the macOS trust prompt aborts the launch.
+The server certificate rotates when invalid, issued by a different authority, missing the endpoint IP, or within seven days of expiry. The local authority lasts ten years unless invalid. Canceling the macOS trust prompt aborts the launch
 
-Private `.pfx` files belong to local state and must not be distributed with screenshots, logs, or test fixtures.
+Private `.pfx` files belong to local state and must not be distributed with screenshots, logs, or test fixtures
 
 ## Standalone development
 
@@ -71,7 +71,7 @@ dotnet run --project Sources/Hyprism.LocalNode/Hyprism.LocalNode.csproj -- \
   --port 8443
 ```
 
-Standalone startup can also configure platform certificate trust. Prefer the automated Local Node suite for tests, which disables system trust changes and pins its generated certificate.
+Standalone startup can also configure platform certificate trust. Prefer the automated Local Node suite for tests, which disables system trust changes and pins its generated certificate
 
 | Option | Meaning |
 | --- | --- |
@@ -85,12 +85,12 @@ Standalone startup can also configure platform certificate trust. Prefer the aut
 | `--request-journal` | Override the unknown-request journal |
 | `--owner-pid`, `--control-secret` | Managed lifecycle pair, both required together |
 
-Arguments use `--name value` pairs. Unknown and duplicate options are rejected.
+Arguments use `--name value` pairs. Unknown and duplicate options are rejected
 
 ## Diagnostics and compatibility
 
-Managed logs use the launcher's [session log directory](/architecture/data-and-cache). Authentication diagnostics omit headers, token values, and request bodies.
+Managed logs use the launcher's [session log directory](/architecture/data-and-cache). Authentication diagnostics omit headers, token values, and request bodies
 
-Protocol compatibility follows the open [hytale-auth-server implementation](https://github.com/sanasol/hytale-auth-server). Automated tests cover HTTPS, account persistence, tokens, certificates, process lifetime, and client patch transitions; a new proprietary Hytale build still needs a real game launch to verify end-to-end compatibility.
+Protocol compatibility follows the open [hytale-auth-server implementation](https://github.com/sanasol/hytale-auth-server). Automated tests cover HTTPS, account persistence, tokens, certificates, process lifetime, and client patch transitions; a new proprietary Hytale build still needs a real game launch to verify end-to-end compatibility
 
-Source: [LocalNodeApplication](../../../../Sources/Hyprism.LocalNode/LocalNodeApplication.cs), [LocalNodeHostTests](../../../../Tests/Hyprism.LocalNode.Tests/LocalNodeHostTests.cs).
+Source: [LocalNodeApplication](../../../../Sources/Hyprism.LocalNode/LocalNodeApplication.cs), [LocalNodeHostTests](../../../../Tests/Hyprism.LocalNode.Tests/LocalNodeHostTests.cs)
