@@ -1,0 +1,187 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsDownloadsView"
+             x:Name="SettingsDownloadsRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="MirrorSourceTemplate" x:DataType="vm:MirrorSourceViewModel">
+      <Border Classes="formRow mirrorSourceRow"
+              Classes.last="{Binding IsLast}">
+        <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+          <TextBlock Text="{Binding Endpoint}"
+                     Classes="dataTableValue link"
+                     ToolTip.Tip="{Binding Name}"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1"
+                     Text="{Binding SourceType}"
+                     Classes="dataTableValue"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center" />
+          <Grid Grid.Column="2"
+                Classes="sourceAvailability"
+                Classes.checking="{Binding IsChecking}"
+                Classes.available="{Binding IsAvailable}"
+                Classes.noVersions="{Binding HasNoCompatibleVersions}"
+                Classes.unavailable="{Binding IsUnavailable}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ToolTip.Tip="{Binding Availability}">
+            <Grid Classes="sourceAvailabilityState checking">
+              <Path Classes="sourceAvailabilitySpinner"
+                    controls:RotatingVisual.IsActive="{Binding IsChecking}"
+                    Data="M10,2 A8,8 0 1 1 2,10" />
+            </Grid>
+            <Grid Classes="sourceAvailabilityState available">
+              <PathIcon Data="{StaticResource CheckIcon}"
+                        Classes="sourceAvailabilityIcon available" />
+            </Grid>
+            <Grid Classes="sourceAvailabilityState noVersions">
+              <PathIcon Data="{StaticResource WarningIcon}"
+                        Classes="sourceAvailabilityIcon noVersions" />
+            </Grid>
+            <Grid Classes="sourceAvailabilityState unavailable">
+              <PathIcon Data="{StaticResource CloseIcon}"
+                        Classes="sourceAvailabilityIcon unavailable" />
+            </Grid>
+          </Grid>
+          <ToggleSwitch Grid.Column="3"
+                        Classes="uiToggle"
+                        IsChecked="{Binding IsEnabled}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+          <Grid Grid.Column="4">
+            <Border x:Name="MirrorMoreTarget"
+                    Classes="sourceMoreTarget"
+                    Cursor="Hand"
+                    PointerPressed="OnMirrorMenuPointerPressed"
+                    PointerReleased="OnToggleMirrorMenuPointerReleased">
+              <Path Classes="sourceMoreIcon" Data="{StaticResource MoreVerticalIcon}" />
+            </Border>
+            <controls:FadingPopup Placement="BottomEdgeAlignedRight"
+                                  PlacementTarget="MirrorMoreTarget"
+                                  VerticalOffset="8"
+                                  IsRequestedOpen="{Binding IsMenuOpen, Mode=TwoWay}">
+              <Border Classes="uiPopupSurface sourceActionFlyout">
+                <Button Classes="sourceMenuAction danger"
+                        Command="{Binding DataContext.RequestDeleteMirrorCommand, ElementName=SettingsDownloadsRoot}"
+                        CommandParameter="{Binding}"
+                        Click="OnCloseMirrorMenuClicked">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Path Classes="sourceMenuIcon" Data="{StaticResource DeleteIcon}" />
+                    <TextBlock Text="{Binding DataContext.RemoveLabel, ElementName=SettingsDownloadsRoot}" />
+                  </StackPanel>
+                </Button>
+              </Border>
+            </controls:FadingPopup>
+          </Grid>
+        </Grid>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="22" IsVisible="{Binding IsDownloads}">
+              <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="*,Auto" Classes="settingsHeaderAction">
+                  <TextBlock Text="{Binding DownloadSourcesTitle}"
+                             Classes="settingsCategoryHeading" />
+                  <Button x:Name="AddDownloadSourceButton"
+                          Grid.Column="1"
+                          Classes="dataAddAction"
+                          Theme="{StaticResource SettingsActionButtonTheme}"
+                          Command="{Binding ShowAddMirrorCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="+" FontSize="20" VerticalAlignment="Center" />
+                      <TextBlock Text="{Binding AddSourceButtonLabel}"
+                                 Classes="settingsHeaderActionLabel" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+
+                <Border x:Name="DownloadSourcesTable"
+                        Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="dataTableHeader">
+                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+                        <TextBlock Text="{Binding SourceLinkColumn}" />
+                        <TextBlock Grid.Column="1" Text="{Binding SourceTypeColumn}" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding SourceAvailabilityColumn}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding SourceEnabledColumn}"
+                                   HorizontalAlignment="Center" />
+                      </Grid>
+                    </Border>
+                    <Border Classes="formRow"
+                            Classes.last="{Binding HasNoMirrors}">
+                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+                        <TextBlock Text="{Binding OfficialSourceLink}"
+                                   Classes="dataTableValue link"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding OfficialSourceType}"
+                                   Classes="dataTableValue"
+                                   VerticalAlignment="Center" />
+                        <Grid Grid.Column="2"
+                              Classes="sourceAvailability"
+                              Classes.checking="{Binding OfficialSourceIsChecking}"
+                              Classes.available="{Binding OfficialSourceIsAvailable}"
+                              Classes.unavailable="{Binding OfficialSourceIsUnavailable}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              ToolTip.Tip="{Binding OfficialSourceAvailability}">
+                          <Grid Classes="sourceAvailabilityState checking">
+                            <Path Classes="sourceAvailabilitySpinner"
+                                  controls:RotatingVisual.IsActive="{Binding OfficialSourceIsChecking}"
+                                  Data="M10,2 A8,8 0 1 1 2,10" />
+                          </Grid>
+                          <Grid Classes="sourceAvailabilityState available">
+                            <PathIcon Data="{StaticResource CheckIcon}"
+                                      Classes="sourceAvailabilityIcon available" />
+                          </Grid>
+                          <Grid Classes="sourceAvailabilityState unavailable">
+                            <PathIcon Data="{StaticResource CloseIcon}"
+                                      Classes="sourceAvailabilityIcon unavailable" />
+                          </Grid>
+                        </Grid>
+                        <ToggleSwitch Grid.Column="3"
+                                      Classes="uiToggle"
+                                      IsChecked="{Binding OfficialSourceIsEnabled}"
+                                      IsEnabled="False"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      ToolTip.Tip="{Binding OfficialSourceAvailability}" />
+                      </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding MirrorSources}"
+                                  ItemTemplate="{StaticResource MirrorSourceTemplate}"
+                                  IsVisible="{Binding HasMirrors}" />
+                  </StackPanel>
+                </Border>
+
+                <controls:NoteCard x:Name="DownloadsNoteCard"
+                                   Classes="note"
+                                   Title="{Binding DownloadsNoteTitle}">
+                  <TextBlock Text="{Binding DownloadsInfo}"
+                             Classes="formHint"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                </controls:NoteCard>
+
+                <TextBlock Text="{Binding MirrorOperationStatus}"
+                           Classes="sourceOperationStatus"
+                           IsVisible="{Binding HasMirrorOperationStatus}" />
+                <TextBlock Text="{Binding MirrorOperationError}"
+                           Classes="sourceOperationError"
+                           IsVisible="{Binding HasMirrorOperationError}" />
+              </StackPanel>
+            </StackPanel>
+</UserControl>

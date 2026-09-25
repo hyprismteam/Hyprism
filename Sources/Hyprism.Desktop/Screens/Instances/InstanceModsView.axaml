@@ -1,0 +1,524 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             xmlns:easing="using:Avalonia.Animation.Easings"
+             x:Class="Hyprism.Desktop.Screens.Instances.InstanceModsView"
+             x:Name="InstanceModsRoot"
+             x:DataType="instances:InstancesViewModel">
+  <Grid>
+              <Grid x:Name="InstalledModsSection"
+                    IsVisible="{Binding IsDisplayedInstanceModsSection}"
+                    MaxWidth="{x:Static controls:AdaptiveMasterDetailHost.DefaultContentMaxWidth}"
+                    HorizontalAlignment="Stretch"
+                    RowDefinitions="Auto,Auto,*,Auto"
+                    RowSpacing="10">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <TextBox Classes="instanceSearch" PlaceholderText="{Binding InstanceModsSearchHint}" Text="{Binding InstalledModsSearchQuery, Mode=TwoWay}" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Classes="instanceToolbarIconButton"
+                            Command="{Binding ImportModsCommand}"
+                            ToolTip.Tip="{Binding InstanceModsAddLabel}">
+                      <Path Classes="instanceToolbarIcon" Data="{StaticResource AddIcon}" />
+                    </Button>
+                    <Button Classes="instanceToolbarIconButton update"
+                            IsEnabled="{Binding !IsCheckingModUpdates}"
+                            Command="{Binding CheckModUpdatesCommand}"
+                            ToolTip.Tip="{Binding InstanceModsCheckUpdatesLabel}">
+                      <Grid>
+                        <Path x:Name="ModUpdateCheckSpinner"
+                              Classes="instanceToolbarSpinner"
+                              Data="M9,1 A8,8 0 1 1 1,9"
+                              IsVisible="{Binding IsCheckingModUpdates}"
+                              controls:RotatingVisual.IsActive="{Binding IsCheckingModUpdates}" />
+                        <Path Classes="instanceToolbarIcon"
+                              Data="{StaticResource DownloadIcon}"
+                              IsVisible="{Binding !IsCheckingModUpdates}" />
+                        <Border Classes="instanceBadge update"
+                                IsVisible="{Binding HasModUpdates}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,-6,-6,0">
+                          <TextBlock Text="{Binding ModUpdateCountText}" />
+                        </Border>
+                      </Grid>
+                    </Button>
+                    <Button Classes="instanceToolbarIconButton"
+                            IsEnabled="{Binding !IsInstanceModsLoading}"
+                            Command="{Binding RefreshInstanceModsCommand}"
+                            ToolTip.Tip="{Binding RefreshLabel}">
+                      <Grid>
+                        <Path Classes="instanceToolbarSpinner"
+                              Data="M9,1 A8,8 0 1 1 1,9"
+                              IsVisible="{Binding IsInstanceModsLoading}"
+                              controls:RotatingVisual.IsActive="{Binding IsInstanceModsLoading}" />
+                        <Path Classes="instanceToolbarIcon"
+                              Data="{StaticResource RefreshIcon}"
+                              IsVisible="{Binding !IsInstanceModsLoading}" />
+                      </Grid>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Row="1" Spacing="8">
+                  <Border Classes="instanceAlertBar"
+                          IsVisible="{Binding HasModUpdates}">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBlock Text="{Binding InstanceModsUpdatesAvailableText}"
+                                 VerticalAlignment="Center"
+                                 TextTrimming="CharacterEllipsis" />
+                      <Button Grid.Column="1"
+                              Classes="instanceToolbarAction primarySmall"
+                              IsEnabled="{Binding !IsApplyingModUpdates}"
+                              Command="{Binding UpdateAllModsWithUpdatesCommand}">
+                        <Grid>
+                          <TextBlock Text="{Binding InstanceModsUpdateAllLabel}" IsVisible="{Binding !IsApplyingModUpdates}" />
+                          <Path Classes="instanceButtonSpinner light"
+                                Data="M9,1 A8,8 0 1 1 1,9"
+                                IsVisible="{Binding IsApplyingModUpdates}"
+                                controls:RotatingVisual.IsActive="{Binding IsApplyingModUpdates}" />
+                        </Grid>
+                      </Button>
+                    </Grid>
+                  </Border>
+
+                  <Border Classes="instanceAlertBar"
+                          IsVisible="{Binding HasModSelection}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="6">
+                      <TextBlock Text="{Binding SelectedModCountText}"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,8,0" />
+                      <Button Grid.Column="1" Classes="instanceBulkAction" Command="{Binding EnableSelectedModsCommand}">
+                        <TextBlock Text="{Binding InstanceModsEnableSelectedLabel}" />
+                      </Button>
+                      <Button Grid.Column="2" Classes="instanceBulkAction" Command="{Binding DisableSelectedModsCommand}">
+                        <TextBlock Text="{Binding InstanceModsDisableSelectedLabel}" />
+                      </Button>
+                      <Button Grid.Column="3" Classes="instanceBulkAction danger" Command="{Binding DeleteSelectedModsCommand}">
+                        <TextBlock Text="{Binding InstanceModsDeleteSelectedLabel}" />
+                      </Button>
+                      <Button Grid.Column="5" Classes="instanceBulkAction" Command="{Binding ClearInstalledModsSelectionCommand}">
+                        <TextBlock Text="{Binding InstanceModsClearSelectionLabel}" />
+                      </Button>
+                    </Grid>
+                  </Border>
+                </StackPanel>
+
+                <Border Grid.Row="2" Classes="instanceContentPanel">
+                  <Grid x:Name="ModsDropZone">
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ProgressBar IsVisible="{Binding IsInstanceModsLoading}" IsIndeterminate="True" Width="180" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <StackPanel IsVisible="{Binding IsInstalledModsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
+                      <Image Width="48" Height="48" Source="avares://Hyprism.Desktop/Assets/Fluent/puzzle.png" />
+                      <TextBlock Text="{Binding InstanceModsEmptyTitle}" FontSize="19" FontWeight="SemiBold" TextAlignment="Center" />
+                      <TextBlock Text="{Binding InstanceModsEmptyHint}" Classes="muted" MaxWidth="390" TextAlignment="Center" TextWrapping="Wrap" />
+                      <Button Classes="instanceToolbarAction primarySmall"
+                              HorizontalAlignment="Center"
+                              Margin="0,6,0,0"
+                              Command="{Binding SelectInstanceSectionCommand}"
+                              CommandParameter="browse">
+                        <TextBlock Text="{Binding InstanceBrowseTitle}" />
+                      </Button>
+                    </StackPanel>
+                    <ListBox IsVisible="{Binding HasInstalledMods}"
+                             ItemsSource="{Binding VisibleInstalledMods}"
+                             Classes="instanceVirtualizedList"
+                             Margin="10,10,10,0">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="instances:InstanceModItemViewModel">
+                          <Border Classes="instanceModRow"
+                                  Classes.selected="{Binding IsSelected}"
+                                  Classes.disabled="{Binding !IsEnabled}">
+                            <Grid ColumnDefinitions="Auto,44,*,Auto,Auto" ColumnSpacing="12">
+                              <CheckBox Classes="instanceSelectCheck uiSelectionCheck"
+                                        AutomationProperties.Name="{Binding Name}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                        VerticalAlignment="Center" />
+                              <Panel Grid.Column="1">
+                                <Border Classes="instanceModIcon" IsVisible="{Binding !IsBusy}">
+                                  <Panel>
+                                    <TextBlock Text="{Binding Initial}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Bold"
+                                               IsVisible="{Binding !ShowsIcon}" />
+                                    <Image Source="{Binding Icon}"
+                                           IsVisible="{Binding ShowsIcon}"
+                                           Stretch="UniformToFill"
+                                           ClipToBounds="True" />
+                                  </Panel>
+                                </Border>
+                                <Path Classes="instanceRowSpinner"
+                                      Data="M9,1 A8,8 0 1 1 1,9"
+                                      IsVisible="{Binding IsBusy}"
+                                      controls:RotatingVisual.IsActive="{Binding IsBusy}" />
+                              </Panel>
+                              <StackPanel Grid.Column="2" Spacing="3" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="7">
+                                  <Button Classes="instanceModNameLink"
+                                          Command="{Binding DataContext.OpenInstalledModPageCommand, ElementName=InstanceModsRoot}"
+                                          CommandParameter="{Binding}"
+                                          ToolTip.Tip="{Binding DataContext.InstanceModsOpenPageTooltip, ElementName=InstanceModsRoot}">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold"
+                                               MaxWidth="320"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap" />
+                                  </Button>
+                                  <Border Classes="instanceBadge update" IsVisible="{Binding ShowsUpdateBadge}">
+                                    <TextBlock Text="{Binding UpdateBadgeText}" />
+                                  </Border>
+                                  <Border Classes="instanceBadge release" IsVisible="{Binding ShowsReleaseBadge}">
+                                    <TextBlock Text="{Binding ReleaseBadge}" />
+                                  </Border>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="7">
+                                  <TextBlock Text="{Binding Version}" Classes="muted" FontSize="12" />
+                                  <TextBlock Text="·" Classes="muted" FontSize="12" />
+                                  <TextBlock Text="{Binding Author}" Classes="muted" FontSize="12" />
+                                </StackPanel>
+                              </StackPanel>
+                              <ToggleSwitch Grid.Column="3"
+                                            Classes="uiToggle instanceModToggle"
+                                            IsChecked="{Binding IsEnabled, Mode=OneWay}"
+                                            IsEnabled="{Binding CanInteract}"
+                                            Command="{Binding DataContext.ToggleModCommand, ElementName=InstanceModsRoot}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="{Binding DataContext.InstanceModsToggleTooltip, ElementName=InstanceModsRoot}" />
+                              <Button Grid.Column="4"
+                                      x:Name="InstalledModDeleteButton"
+                                      Classes="instanceRowIconButton"
+                                      ToolTip.Tip="{Binding DataContext.InstanceModsDeleteTooltip, ElementName=InstanceModsRoot}">
+                                <Button.Flyout>
+                                  <Flyout Placement="LeftEdgeAlignedTop">
+                                    <Border Classes="instanceDeleteConfirmation">
+                                      <StackPanel Width="240" Spacing="10">
+                                        <TextBlock Text="{Binding DataContext.InstanceModsDeleteTitle, ElementName=InstanceModsRoot}"
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding DataContext.InstanceModsDeleteHint, ElementName=InstanceModsRoot}"
+                                                   Classes="muted"
+                                                   TextWrapping="Wrap" />
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                                          <Button Classes="instanceConfirmAction"
+                                                  Click="OnCloseModDeleteFlyoutClicked">
+                                            <TextBlock Text="{Binding DataContext.CancelLabel, ElementName=InstanceModsRoot}" />
+                                          </Button>
+                                          <Button Classes="instanceConfirmAction danger"
+                                                  Command="{Binding DataContext.DeleteModCommand, ElementName=InstanceModsRoot}"
+                                                  CommandParameter="{Binding}"
+                                                  Click="OnCloseModDeleteFlyoutClicked">
+                                            <TextBlock Text="{Binding DataContext.InstanceModsDeleteLabel, ElementName=InstanceModsRoot}" />
+                                          </Button>
+                                        </StackPanel>
+                                      </StackPanel>
+                                    </Border>
+                                  </Flyout>
+                                </Button.Flyout>
+                                <Path Classes="instanceRowIcon" Data="{StaticResource DeleteIcon}" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Border Grid.Row="1" Classes="instanceListFooter" IsVisible="{Binding HasInstalledMods}">
+                      <TextBlock Text="{Binding InstanceModsFooterText}" Classes="muted" FontSize="12" />
+                    </Border>
+                    <Border x:Name="ModDropOverlay"
+                            Grid.RowSpan="2"
+                            Classes="instanceDropOverlay"
+                            IsVisible="False">
+                      <StackPanel HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Spacing="10">
+                        <Path Classes="instanceDropIcon" Data="{StaticResource DownloadIcon}" />
+                        <TextBlock Text="{Binding InstanceModsDropImportLabel}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold" />
+                      </StackPanel>
+                    </Border>
+                  </Grid>
+                </Border>
+              </Grid>
+
+              <Grid x:Name="ModCatalogSection"
+                    IsVisible="{Binding IsDisplayedInstanceBrowseSection}"
+                    MaxWidth="{x:Static instances:InstanceModsView.ModCatalogContentMaxWidth}"
+                    HorizontalAlignment="Stretch"
+                    RowDefinitions="Auto,*"
+                    RowSpacing="10">
+                <Grid x:Name="ModCatalogBrowseContent"
+                      Grid.RowSpan="2"
+                      RowDefinitions="Auto,*"
+                      RowSpacing="10">
+                  <Grid.RenderTransform>
+                    <TranslateTransform />
+                  </Grid.RenderTransform>
+                  <Grid ColumnDefinitions="2*,*,*"
+                        ColumnSpacing="8">
+                  <Grid>
+                    <TextBox x:Name="ModCatalogSearchBox"
+                             Classes="instanceSearch catalogSearch"
+                             PlaceholderText="{Binding InstanceBrowseSearchHint}"
+                             Text="{Binding ModCatalogSearchQuery, Mode=TwoWay}"
+                             KeyDown="OnCatalogSearchKeyDown" />
+                    <Button x:Name="ModCatalogSearchButton"
+                            Classes="dataPathOpen modCatalogSearchAction"
+                            Classes.visible="{Binding ShouldShowModCatalogSearchAction}"
+                            Classes.hidden="{Binding !ShouldShowModCatalogSearchAction}"
+                            IsEnabled="{Binding CanSearchModCatalog}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Command="{Binding SearchModCatalogCommand}"
+                            ToolTip.Tip="{Binding InstanceBrowseSearchHint}">
+                      <Path Classes="dataPathOpenIcon"
+                            Data="M9.5,3 A6.5,6.5 0 1 0 13.72,14.43 L19.49,20.19 L20.9,18.78 L15.14,13.02 A6.5,6.5 0 0 0 9.5,3 M9.5,5 A4.5,4.5 0 1 1 9.5,14 A4.5,4.5 0 0 1 9.5,5" />
+                    </Button>
+                  </Grid>
+                  <controls:FadingComboBox Grid.Column="1"
+                                           Classes="uiComboBox instanceFilterCombo"
+                                           ItemsSource="{Binding ModCatalogCategories}"
+                                           ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
+                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                           SelectedItem="{Binding SelectedModCatalogCategory, Mode=TwoWay}"
+                                           PlaceholderText="{Binding InstanceBrowseCategoryLabel}"
+                                           MaxDropDownHeight="280" />
+                  <controls:FadingComboBox Grid.Column="2"
+                                           Classes="uiComboBox instanceFilterCombo"
+                                           ItemsSource="{Binding ModCatalogSortOptions}"
+                                           ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
+                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                           SelectedItem="{Binding SelectedModCatalogSort, Mode=TwoWay}"
+                                           PlaceholderText="{Binding InstanceBrowseSortLabel}"
+                                           MaxDropDownHeight="220" />
+                  </Grid>
+                  <Border Grid.Row="1" Classes="instanceContentPanel catalog">
+                  <Grid>
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel IsVisible="{Binding IsModCatalogEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
+                      <Image Width="48" Height="48" Source="avares://Hyprism.Desktop/Assets/Fluent/puzzle.png" />
+                      <TextBlock Text="{Binding InstanceBrowseEmptyTitle}" FontSize="19" FontWeight="SemiBold" />
+                      <TextBlock Text="{Binding InstanceBrowseEmptyHint}" Classes="muted" MaxWidth="400" TextAlignment="Center" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <ListBox x:Name="ModCatalogList"
+                             IsVisible="{Binding HasModCatalogItems}"
+                             ItemsSource="{Binding ModCatalogItems}"
+                             Classes="instanceVirtualizedList"
+                             Margin="10,10,10,0"
+                             ScrollViewer.ScrollChanged="OnModCatalogScrollChanged">
+                      <ListBox.Transitions>
+                        <Transitions>
+                          <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                          </DoubleTransition>
+                        </Transitions>
+                      </ListBox.Transitions>
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="instances:ModCatalogItemViewModel">
+                          <Border Classes="instanceModRow catalog"
+                                  Classes.selected="{Binding IsSelected}"
+                                  Classes.incompatible="{Binding IsIncompatible}"
+                                  Cursor="Hand"
+                                  Tapped="OnCatalogModPreviewRequested">
+                            <Grid ColumnDefinitions="Auto,56,*,Auto" ColumnSpacing="12">
+                              <CheckBox Classes="instanceSelectCheck uiSelectionCheck"
+                                        AutomationProperties.Name="{Binding Name}"
+                                        IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                        IsEnabled="{Binding CanSelect}"
+                                        Command="{Binding DataContext.ToggleModCatalogSelectionCommand, ElementName=InstanceModsRoot}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Center" />
+                              <Border Grid.Column="1" Classes="instanceModIcon">
+                                <Panel>
+                                  <TextBlock Text="{Binding Initial}"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             FontWeight="Bold"
+                                             IsVisible="{Binding !ShowsIcon}" />
+                                  <Image Source="{Binding Icon}"
+                                         IsVisible="{Binding ShowsIcon}"
+                                         Stretch="UniformToFill"
+                                         ClipToBounds="True" />
+                                </Panel>
+                              </Border>
+                              <StackPanel Grid.Column="2" Spacing="3" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Left"
+                                           MaxWidth="360"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap" />
+                                <TextBlock Text="{Binding Summary}" Classes="muted" FontSize="12" MaxLines="1" TextTrimming="CharacterEllipsis" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                  <Border Classes="instanceCatalogAuthorBadge">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                      <Border Classes="instanceCatalogAuthorAvatar">
+                                        <Grid>
+                                          <TextBlock Text="{Binding AuthorInitial}"
+                                                     IsVisible="{Binding !ShowsAuthorAvatar}" />
+                                          <Image Source="{Binding AuthorAvatar}"
+                                                 IsVisible="{Binding ShowsAuthorAvatar}"
+                                                 Stretch="UniformToFill" />
+                                        </Grid>
+                                      </Border>
+                                      <TextBlock Text="{Binding Author}"
+                                                 Classes="instanceCatalogAuthorName" />
+                                    </StackPanel>
+                                  </Border>
+                                  <TextBlock Text="{Binding DownloadCountLabel}"
+                                             Classes="muted"
+                                             FontSize="11"
+                                             VerticalAlignment="Center" />
+                                </StackPanel>
+                              </StackPanel>
+                              <StackPanel Grid.Column="3"
+                                          Spacing="5"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center">
+                                <Border Classes="instanceBadge update"
+                                        HorizontalAlignment="Right"
+                                        IsVisible="{Binding IsInstalled}">
+                                  <TextBlock Text="{Binding DataContext.InstalledLabel, ElementName=InstanceModsRoot}" />
+                                </Border>
+                              </StackPanel>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Border x:Name="ModCatalogSearchSpinner"
+                            Grid.RowSpan="2"
+                            ZIndex="2"
+                            IsVisible="False"
+                            IsHitTestVisible="False"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                      <Border.Transitions>
+                        <Transitions>
+                          <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                          </DoubleTransition>
+                        </Transitions>
+                      </Border.Transitions>
+                      <Path Classes="instanceToolbarSpinner modCatalogSearchSpinner"
+                            Classes.loading="{Binding IsModCatalogLoading}"
+                            Data="M9,1 A8,8 0 1 1 1,9"
+                            RenderTransformOrigin="50%,50%">
+                        <Path.RenderTransform>
+                          <RotateTransform Angle="0" />
+                        </Path.RenderTransform>
+                      </Path>
+                    </Border>
+                    <Border Grid.Row="1" Classes="instanceLoadMoreBar" IsVisible="{Binding IsLoadingMoreModCatalog}">
+                      <StackPanel Orientation="Horizontal" Spacing="9" HorizontalAlignment="Center">
+                        <Path Classes="instanceToolbarSpinner"
+                              Data="M9,1 A8,8 0 1 1 1,9"
+                              controls:RotatingVisual.IsActive="True" />
+                        <TextBlock Text="{Binding InstanceBrowseLoadingMoreLabel}" Classes="muted" FontSize="12" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Border>
+                  </Grid>
+                  </Border>
+                </Grid>
+
+                <Border x:Name="ModCatalogInstallScreen"
+                        Grid.RowSpan="2"
+                        Classes="wizardScreen"
+                        IsVisible="False"
+                        Opacity="0">
+                  <Border.RenderTransform>
+                    <TranslateTransform />
+                  </Border.RenderTransform>
+                  <controls:SmoothScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                                VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="620"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Margin="28"
+                                Spacing="12">
+                      <TextBlock Text="{Binding ModCatalogInstallTitle}"
+                                 FontSize="25"
+                                 FontWeight="Bold"
+                                 HorizontalAlignment="Center"
+                                 TextAlignment="Center" />
+                      <TextBlock Text="{Binding ModCatalogInstallProgressText}"
+                                 Classes="muted"
+                                 HorizontalAlignment="Center" />
+                      <ProgressBar Value="{Binding ModCatalogInstallProgress}"
+                                   Maximum="100"
+                                   Height="6" />
+                      <Border Classes="formGroup modCatalogInstallTable">
+                        <StackPanel>
+                          <Border Classes="dataTableHeader">
+                            <Grid ColumnDefinitions="*,1.3*,1.4*" ColumnSpacing="16">
+                              <TextBlock Text="{Binding ModCatalogFileNameColumn}" />
+                              <TextBlock Grid.Column="1" Text="{Binding ModCatalogInstallVersionColumn}" />
+                              <TextBlock Grid.Column="2" />
+                            </Grid>
+                          </Border>
+                          <ItemsControl ItemsSource="{Binding ModCatalogInstallItems}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate x:DataType="instances:ModCatalogInstallItemViewModel">
+                                <Border Classes="modCatalogInstallTableRow">
+                                  <Grid ColumnDefinitions="*,1.3*,1.4*" ColumnSpacing="16">
+                                    <Grid ColumnDefinitions="38,*" ColumnSpacing="16">
+                                      <Border Classes="modCatalogInstallIcon">
+                                        <Grid>
+                                          <TextBlock Text="{Binding Initial}"
+                                                     IsVisible="{Binding !ShowsIcon}"
+                                                     HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center" />
+                                          <Image Source="{Binding Icon}"
+                                                 IsVisible="{Binding ShowsIcon}"
+                                                 Stretch="UniformToFill"
+                                                 ClipToBounds="True" />
+                                        </Grid>
+                                      </Border>
+                                      <TextBlock Grid.Column="1"
+                                                 Text="{Binding Name}"
+                                                 Classes="dataTableValue link"
+                                                 TextTrimming="CharacterEllipsis"
+                                                 VerticalAlignment="Center" />
+                                    </Grid>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Version}"
+                                               Classes="dataTableValue"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+                                    <StackPanel Grid.Column="2"
+                                                VerticalAlignment="Center"
+                                                Spacing="5">
+                                      <ProgressBar Value="{Binding Progress}"
+                                                   Maximum="100"
+                                                   Height="5" />
+                                      <TextBlock Text="{Binding ProgressText}"
+                                                 Classes="dataTableValue"
+                                                 HorizontalAlignment="Right" />
+                                    </StackPanel>
+                                  </Grid>
+                                </Border>
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </StackPanel>
+                      </Border>
+                    </StackPanel>
+                  </controls:SmoothScrollViewer>
+                </Border>
+              </Grid>
+
+  </Grid>
+</UserControl>

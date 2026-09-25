@@ -7,13 +7,14 @@ SPDX-License-Identifier: GPL-3.0-only
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
              xmlns:controls="using:Hyprism.Desktop.Controls"
+             xmlns:settings="using:Hyprism.Desktop.Screens.Settings"
              xmlns:easing="clr-namespace:Avalonia.Animation.Easings;assembly=Avalonia.Base"
              x:Class="Hyprism.Desktop.Screens.Settings.SettingsView"
              x:Name="SettingsRoot"
              x:DataType="vm:SettingsViewModel"
              SizeChanged="OnSettingsViewSizeChanged">
   <UserControl.Resources>
-    <ControlTheme x:Key="SourceAddButtonTheme" TargetType="Button">
+    <ControlTheme x:Key="SettingsActionButtonTheme" TargetType="Button">
       <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BorderThickness" Value="0" />
@@ -45,90 +46,8 @@ SPDX-License-Identifier: GPL-3.0-only
       </Style>
     </ControlTheme>
 
-    <DataTemplate x:Key="SettingChoiceTemplate" x:DataType="vm:SettingChoiceViewModel">
-      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-        <Border Width="24"
-                Height="16"
-                CornerRadius="3"
-                ClipToBounds="True"
-                VerticalAlignment="Center"
-                IsVisible="{Binding HasIcon}">
-          <Image Source="{Binding Icon}"
-                 Stretch="UniformToFill"
-                 IsHitTestVisible="False" />
-        </Border>
-        <TextBlock Grid.Column="1"
-                   Text="{Binding Display}"
-                   TextWrapping="NoWrap"
-                   VerticalAlignment="Center" />
-      </Grid>
-    </DataTemplate>
 
-    <DataTemplate x:Key="CustomJavaPathActionTemplate" x:DataType="vm:SettingsViewModel">
-      <Grid Classes="managedActionContent">
-        <StackPanel Classes="managedActionIdle"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-          <TextBlock Text="{Binding EditCustomJavaPathLabel}"
-                     VerticalAlignment="Center" />
-        </StackPanel>
-        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
-          <Path Classes="managedActionSpinner"
-                controls:RotatingVisual.IsActive="{Binding IsBrowsingCustomJava}"
-                HorizontalAlignment="Center"
-                Data="M10,2 A8,8 0 1 1 2,10" />
-        </Grid>
-      </Grid>
-    </DataTemplate>
 
-    <DataTemplate x:Key="InstanceFolderChangeActionTemplate" x:DataType="vm:SettingsViewModel">
-      <Grid Classes="managedActionContent">
-        <StackPanel Classes="managedActionIdle"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-          <TextBlock Text="{Binding ChangeInstanceFolderLabel}"
-                     TextWrapping="NoWrap"
-                     TextTrimming="CharacterEllipsis"
-                     VerticalAlignment="Center" />
-        </StackPanel>
-        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
-          <Path x:Name="InstanceFolderPickerSpinner"
-                Classes="managedActionSpinner"
-                IsVisible="{Binding !IsMovingInstanceFolder}"
-                controls:RotatingVisual.IsActive="{Binding IsChangingInstanceFolder}"
-                HorizontalAlignment="Center"
-                Data="M10,2 A8,8 0 1 1 2,10" />
-          <Grid x:Name="InstanceFolderMoveProgress"
-                Classes="instanceFolderMoveProgress"
-                ColumnDefinitions="48,*,48"
-                IsVisible="{Binding IsMovingInstanceFolder}"
-                VerticalAlignment="Center">
-            <Path Classes="managedActionSpinner"
-                  controls:RotatingVisual.IsActive="{Binding IsMovingInstanceFolder}"
-                  HorizontalAlignment="Center"
-                  Data="M10,2 A8,8 0 1 1 2,10" />
-            <controls:FadingTextBlock Grid.Column="1"
-                                      Classes="managedActionStatus"
-                                      Text="{Binding MovingDataLabel}"
-                                      Foreground="{Binding $parent[Button].Foreground}"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Center" />
-            <TextBlock Grid.Column="2"
-                       Classes="managedActionMetric"
-                       Text="{Binding InstanceFolderChangeMetricText}"
-                       Width="48"
-                       FontFeatures="tnum"
-                       TextAlignment="Right"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Center" />
-          </Grid>
-        </Grid>
-        <TextBlock Classes="managedActionCancel"
-                   Text="{Binding CancelLabel}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
-      </Grid>
-    </DataTemplate>
 
     <DataTemplate x:Key="AuthServerAddActionTemplate" x:DataType="vm:SettingsViewModel">
       <Grid Classes="managedActionContent">
@@ -151,80 +70,8 @@ SPDX-License-Identifier: GPL-3.0-only
     </DataTemplate>
 
 
-    <ControlTheme x:Key="JavaSliderTrackButtonTheme" TargetType="RepeatButton">
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Border Height="8"
-                  VerticalAlignment="Center"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="999">
-            <Border.Transitions>
-              <Transitions>
-                <BrushTransition Property="Background" Duration="0:0:0.16" />
-              </Transitions>
-            </Border.Transitions>
-          </Border>
-        </ControlTemplate>
-      </Setter>
-    </ControlTheme>
 
-    <ControlTheme x:Key="JavaSliderThumbTheme" TargetType="Thumb">
-      <Setter Property="Width" Value="18" />
-      <Setter Property="Height" Value="18" />
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Border x:Name="JavaSliderThumbVisual"
-                  Width="{TemplateBinding Width}"
-                  Height="{TemplateBinding Height}"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="999"
-                  BoxShadow="0 2 6 0 #99000000">
-            <Border.Transitions>
-              <Transitions>
-                <BrushTransition Property="Background" Duration="0:0:0.16" />
-              </Transitions>
-            </Border.Transitions>
-          </Border>
-        </ControlTemplate>
-      </Setter>
-    </ControlTheme>
 
-    <ControlTheme x:Key="JavaMemorySliderTheme" TargetType="Slider">
-      <Setter Property="Height" Value="28" />
-      <Setter Property="Background" Value="#24FFFFFF" />
-      <Setter Property="Foreground" Value="#E8E8EA" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="FocusAdorner" Value="{x:Null}" />
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Grid Background="Transparent">
-            <Track x:Name="PART_Track"
-                   Minimum="{TemplateBinding Minimum}"
-                   Maximum="{TemplateBinding Maximum}"
-                   Value="{TemplateBinding Value, Mode=TwoWay}"
-                   Orientation="Horizontal">
-              <Track.DecreaseButton>
-                <RepeatButton Theme="{StaticResource JavaSliderTrackButtonTheme}"
-                              Background="{TemplateBinding Foreground}" />
-              </Track.DecreaseButton>
-              <Track.IncreaseButton>
-                <RepeatButton Theme="{StaticResource JavaSliderTrackButtonTheme}"
-                              Background="{TemplateBinding Background}" />
-              </Track.IncreaseButton>
-              <Track.Thumb>
-                <Thumb x:Name="JavaMemorySliderThumb"
-                       Theme="{StaticResource JavaSliderThumbTheme}"
-                       Background="{TemplateBinding Foreground}" />
-              </Track.Thumb>
-            </Track>
-          </Grid>
-        </ControlTemplate>
-      </Setter>
-      <Style Selector="^:pointerover">
-        <Setter Property="Background" Value="#32FFFFFF" />
-        <Setter Property="Foreground" Value="#FFFFFF" />
-      </Style>
-    </ControlTheme>
 
     <DataTemplate x:Key="SettingRailCategoryTemplate" x:DataType="vm:SettingCategoryViewModel">
       <Button Classes="managerRailCategory"
@@ -257,134 +104,8 @@ SPDX-License-Identifier: GPL-3.0-only
       </Button>
     </DataTemplate>
 
-    <DataTemplate x:Key="MirrorSourceTemplate" x:DataType="vm:MirrorSourceViewModel">
-      <Border Classes="formRow settingsRow mirrorSourceRow"
-              Classes.last="{Binding IsLast}">
-        <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
-          <TextBlock Text="{Binding Endpoint}"
-                     Classes="dataTableValue link"
-                     ToolTip.Tip="{Binding Name}"
-                     TextTrimming="CharacterEllipsis"
-                     VerticalAlignment="Center" />
-          <TextBlock Grid.Column="1"
-                     Text="{Binding SourceType}"
-                     Classes="dataTableValue"
-                     TextTrimming="CharacterEllipsis"
-                     VerticalAlignment="Center" />
-          <Grid Grid.Column="2"
-                Classes="sourceAvailability"
-                Classes.checking="{Binding IsChecking}"
-                Classes.available="{Binding IsAvailable}"
-                Classes.noVersions="{Binding HasNoCompatibleVersions}"
-                Classes.unavailable="{Binding IsUnavailable}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                ToolTip.Tip="{Binding Availability}">
-            <Grid Classes="sourceAvailabilityState checking">
-              <Path Classes="sourceAvailabilitySpinner"
-                    controls:RotatingVisual.IsActive="{Binding IsChecking}"
-                    Data="M10,2 A8,8 0 1 1 2,10" />
-            </Grid>
-            <Grid Classes="sourceAvailabilityState available">
-              <PathIcon Data="{StaticResource CheckIcon}"
-                        Classes="sourceAvailabilityIcon available" />
-            </Grid>
-            <Grid Classes="sourceAvailabilityState noVersions">
-              <PathIcon Data="{StaticResource WarningIcon}"
-                        Classes="sourceAvailabilityIcon noVersions" />
-            </Grid>
-            <Grid Classes="sourceAvailabilityState unavailable">
-              <PathIcon Data="{StaticResource CloseIcon}"
-                        Classes="sourceAvailabilityIcon unavailable" />
-            </Grid>
-          </Grid>
-          <ToggleSwitch Grid.Column="3"
-                        Classes="uiToggle"
-                        IsChecked="{Binding IsEnabled}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-          <Grid Grid.Column="4">
-            <Border x:Name="MirrorMoreTarget"
-                    Classes="sourceMoreTarget"
-                    Cursor="Hand"
-                    PointerPressed="OnMirrorMenuPointerPressed"
-                    PointerReleased="OnToggleMirrorMenuPointerReleased">
-              <Path Classes="sourceMoreIcon" Data="{StaticResource MoreVerticalIcon}" />
-            </Border>
-            <controls:FadingPopup Placement="BottomEdgeAlignedRight"
-                                  PlacementTarget="MirrorMoreTarget"
-                                  VerticalOffset="8"
-                                  IsRequestedOpen="{Binding IsMenuOpen, Mode=TwoWay}">
-              <Border Classes="uiPopupSurface sourceActionFlyout">
-                <Button Classes="sourceMenuAction danger"
-                        Command="{Binding DataContext.RequestDeleteMirrorCommand, ElementName=SettingsRoot}"
-                        CommandParameter="{Binding}"
-                        Click="OnCloseMirrorMenuClicked">
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Path Classes="sourceMenuIcon" Data="{StaticResource DeleteIcon}" />
-                    <TextBlock Text="{Binding DataContext.RemoveLabel, ElementName=SettingsRoot}" />
-                  </StackPanel>
-                </Button>
-              </Border>
-            </controls:FadingPopup>
-          </Grid>
-        </Grid>
-      </Border>
-    </DataTemplate>
 
-    <DataTemplate x:Key="AboutTeamMemberTemplate" x:DataType="vm:AboutTeamMemberViewModel">
-      <Button Classes="aboutTeamMember"
-              Command="{Binding DataContext.OpenTeamMemberCommand, ElementName=SettingsRoot}"
-              CommandParameter="{Binding}">
-        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-          <Border Classes="aboutTeamAvatar">
-            <Grid>
-              <Image Source="{Binding Avatar}"
-                     IsVisible="{Binding HasAvatar}"
-                     Stretch="UniformToFill" />
-              <TextBlock Text="{Binding Initials}"
-                         IsVisible="{Binding !HasAvatar}"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="12"
-                         FontWeight="Bold" />
-            </Grid>
-          </Border>
-          <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-            <TextBlock Text="{Binding DisplayName}"
-                       Classes="formLabel settingsLabel"
-                       MaxLines="1"
-                       TextTrimming="CharacterEllipsis" />
-            <TextBlock Text="{Binding Role}"
-                       Classes="aboutTeamRole"
-                       MaxLines="2"
-                       TextWrapping="Wrap"
-                       TextTrimming="CharacterEllipsis" />
-          </StackPanel>
-        </Grid>
-      </Button>
-    </DataTemplate>
 
-    <DataTemplate x:Key="AboutContributorTemplate" x:DataType="vm:AboutContributorViewModel">
-      <Button Classes="aboutContributor"
-              Command="{Binding DataContext.OpenContributorCommand, ElementName=SettingsRoot}"
-              CommandParameter="{Binding}"
-              ToolTip.Tip="{Binding Login}">
-        <Border Classes="aboutContributorAvatar">
-          <Grid>
-            <Image Source="{Binding Avatar}"
-                   IsVisible="{Binding HasAvatar}"
-                   Stretch="UniformToFill" />
-            <TextBlock Text="{Binding Initial}"
-                       IsVisible="{Binding !HasAvatar}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="12"
-                       FontWeight="Bold" />
-          </Grid>
-        </Border>
-      </Button>
-    </DataTemplate>
   </UserControl.Resources>
 
   <UserControl.Styles>
@@ -396,21 +117,9 @@ SPDX-License-Identifier: GPL-3.0-only
         ColumnDefinitions="Auto,*"
         ClipToBounds="True"
         Background="{DynamicResource SurfaceBrush}">
-    <Grid.Effect>
-      <BlurEffect Radius="0">
-        <BlurEffect.Transitions>
-          <Transitions>
-            <DoubleTransition Property="Radius" Duration="0:0:0.2">
-              <DoubleTransition.Easing><easing:CubicEaseOut /></DoubleTransition.Easing>
-            </DoubleTransition>
-          </Transitions>
-        </BlurEffect.Transitions>
-      </BlurEffect>
-    </Grid.Effect>
     <Border x:Name="SettingsCategoryRail"
             Grid.Column="0"
-            Width="276"
-            Classes="settingsRail">
+            Classes="settingsRail managerRail">
       <Border.Transitions>
         <Transitions>
           <DoubleTransition Property="Opacity" Duration="0:0:0.15">
@@ -429,9 +138,9 @@ SPDX-License-Identifier: GPL-3.0-only
           </TranslateTransform.Transitions>
         </TranslateTransform>
       </Border.RenderTransform>
-      <Grid MinWidth="276">
+      <Grid Classes="managerRailContent">
         <controls:SmoothScrollViewer x:Name="SettingsCategoryScroll"
-                      Classes="settingsCategoryScroll"
+
                       Margin="14,18,4,18"
                       HorizontalContentAlignment="Stretch"
                       HorizontalScrollBarVisibility="Disabled"
@@ -540,967 +249,26 @@ SPDX-License-Identifier: GPL-3.0-only
 
       <controls:SmoothScrollViewer x:Name="SettingsContent"
                     Grid.Row="1"
-                    Classes="settingsScroll"
+
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto">
         <Grid x:Name="SettingsContentHost"
               Margin="32,28,32,40"
               MaxWidth="720"
               HorizontalAlignment="Stretch">
-          <StackPanel Spacing="22" IsVisible="{Binding IsGeneral}">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding LanguageCategoryTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <controls:FormRow Label="{Binding LanguageLabel}"
-                                      Hint="{Binding LanguageHint}">
-                  <controls:FadingComboBox Width="220"
-                                           Classes="uiComboBox"
-                                           ItemsSource="{Binding Languages}"
-                                           ItemTemplate="{StaticResource SettingChoiceTemplate}"
-                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
-                                           SelectedItem="{Binding SelectedLanguage}" />
-                </controls:FormRow>
-              </Border>
-            </StackPanel>
+          <settings:SettingsGeneralView />
 
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding GeneralTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                <controls:FormRow Label="{Binding CloseAfterLaunchLabel}" Hint="{Binding CloseAfterLaunchHint}">
-                  <ToggleSwitch Classes="uiToggle" IsChecked="{Binding CloseAfterLaunch}" />
-                </controls:FormRow>
-                <controls:FormRow Label="{Binding AlphaModsLabel}" Hint="{Binding AlphaModsHint}">
-                  <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowAlphaMods}" />
-                </controls:FormRow>
-                <controls:FormRow Label="{Binding DiscordAnnouncementsLabel}" Hint="{Binding DiscordAnnouncementsHint}">
-                  <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowDiscordAnnouncements}" />
-                </controls:FormRow>
-                <controls:FormRow Classes="last" Label="{Binding MusicLabel}" Hint="{Binding MusicHint}">
-                  <ToggleSwitch Classes="uiToggle" IsChecked="{Binding MusicEnabled}" />
-                </controls:FormRow>
-                </StackPanel>
-              </Border>
-            </StackPanel>
+          <settings:SettingsDownloadsView />
 
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding GpuLabel}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <controls:FormRow Classes="last"
-                                      Label="{Binding GpuRowLabel}"
-                                      Hint="{Binding GpuHint}">
-                  <controls:FadingComboBox Width="220"
-                                           Classes="uiComboBox"
-                                           ItemsSource="{Binding GpuPreferences}"
-                                           ItemTemplate="{StaticResource SettingChoiceTemplate}"
-                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
-                                           SelectedItem="{Binding SelectedGpuPreference}" />
-                </controls:FormRow>
-              </Border>
-            </StackPanel>
+          <settings:SettingsJavaView />
 
-            <StackPanel Spacing="10">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="4,0,4,2">
-                <TextBlock Text="{Binding EnvLabel}"
-                           Classes="settingsCategoryHeading"
-                           VerticalAlignment="Center" />
-                <Button x:Name="AddEnvironmentVariableButton"
-                        Grid.Column="1"
-                        Classes="dataAddAction"
-                        Theme="{StaticResource SourceAddButtonTheme}"
-                        Command="{Binding ShowAddEnvironmentVariableCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding AddSourceButtonLabel}" />
-                  </StackPanel>
-                </Button>
-              </Grid>
-              <Border x:Name="EnvironmentVariablesTable" Classes="formGroup settingsGroup" IsVisible="{Binding HasEnvironmentVariables}">
-                <StackPanel>
-                  <Border Classes="dataTableHeader">
-                    <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
-                      <TextBlock Text="{Binding EnvLabel}" />
-                    </Grid>
-                  </Border>
-                  <ItemsControl ItemsSource="{Binding EnvironmentVariableItems}">
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate x:DataType="vm:EnvironmentVariableItemViewModel">
-                        <Border Classes="formRow settingsRow"
-                                Classes.last="{Binding IsLast}">
-                          <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
-                            <TextBlock Text="{Binding Display}"
-                                       Classes="dataTableValue link"
-                                       FontFamily="JetBrains Mono"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Center" />
-                            <Button Grid.Column="1"
-                                    Classes="mirrorRemove"
-                                    Command="{Binding DataContext.RemoveEnvironmentVariableCommand, ElementName=SettingsRoot}"
-                                    CommandParameter="{Binding}"
-                                    ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsRoot}">
-                              <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-                            </Button>
-                          </Grid>
-                        </Border>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </StackPanel>
-              </Border>
-              <Border x:Name="EnvironmentVariablesEmptyCard"
-                      Classes="formGroup settingsGroup"
-                      IsVisible="{Binding HasNoEnvironmentVariables}">
-                <StackPanel Spacing="12"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="0,26">
-                  <PathIcon Classes="emptyStateIcon"
-                            Data="{StaticResource DataObjectIcon}"
-                            HorizontalAlignment="Center" />
-                  <TextBlock Text="{Binding EnvEmptyState}"
-                             Classes="formHint settingsHint"
-                             TextAlignment="Center"
-                             MaxWidth="440"
-                             HorizontalAlignment="Center" />
-                </StackPanel>
-              </Border>
-              <TextBlock Text="{Binding EnvHint}"
-                         Classes="formHint settingsHint"
-                         Margin="4,0"
-                         IsVisible="{Binding HasEnvironmentVariables}" />
-              <TextBlock Text="{Binding EnvironmentVariablesError}"
-                         Classes="settingsError"
-                         Margin="4,0"
-                         IsVisible="{Binding HasEnvironmentVariablesError}" />
-            </StackPanel>
-          </StackPanel>
+          <settings:SettingsVisualView />
 
-          <StackPanel Spacing="22" IsVisible="{Binding IsDownloads}">
-            <StackPanel Spacing="10">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="4,0,4,2">
-                <TextBlock Text="{Binding DownloadSourcesTitle}"
-                           Classes="settingsCategoryHeading"
-                           Margin="0"
-                           VerticalAlignment="Center" />
-                <Button x:Name="AddDownloadSourceButton"
-                        Grid.Column="1"
-                        Classes="dataAddAction"
-                        Theme="{StaticResource SourceAddButtonTheme}"
-                        Command="{Binding ShowAddMirrorCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="+" FontSize="20" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding AddSourceButtonLabel}"
-                               FontWeight="SemiBold"
-                               VerticalAlignment="Center" />
-                  </StackPanel>
-                </Button>
-              </Grid>
+          <settings:SettingsNetworkView />
 
-              <Border x:Name="DownloadSourcesTable"
-                      Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="dataTableHeader">
-                    <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
-                      <TextBlock Text="{Binding SourceLinkColumn}" />
-                      <TextBlock Grid.Column="1" Text="{Binding SourceTypeColumn}" />
-                      <TextBlock Grid.Column="2"
-                                 Text="{Binding SourceAvailabilityColumn}"
-                                 HorizontalAlignment="Center" />
-                      <TextBlock Grid.Column="3"
-                                 Text="{Binding SourceEnabledColumn}"
-                                 HorizontalAlignment="Center" />
-                    </Grid>
-                  </Border>
-                  <Border Classes="formRow settingsRow"
-                          Classes.last="{Binding HasNoMirrors}">
-                    <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
-                      <TextBlock Text="{Binding OfficialSourceLink}"
-                                 Classes="dataTableValue link"
-                                 TextTrimming="CharacterEllipsis"
-                                 VerticalAlignment="Center" />
-                      <TextBlock Grid.Column="1"
-                                 Text="{Binding OfficialSourceType}"
-                                 Classes="dataTableValue"
-                                 VerticalAlignment="Center" />
-                      <Grid Grid.Column="2"
-                            Classes="sourceAvailability"
-                            Classes.checking="{Binding OfficialSourceIsChecking}"
-                            Classes.available="{Binding OfficialSourceIsAvailable}"
-                            Classes.unavailable="{Binding OfficialSourceIsUnavailable}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            ToolTip.Tip="{Binding OfficialSourceAvailability}">
-                        <Grid Classes="sourceAvailabilityState checking">
-                          <Path Classes="sourceAvailabilitySpinner"
-                                controls:RotatingVisual.IsActive="{Binding OfficialSourceIsChecking}"
-                                Data="M10,2 A8,8 0 1 1 2,10" />
-                        </Grid>
-                        <Grid Classes="sourceAvailabilityState available">
-                          <PathIcon Data="{StaticResource CheckIcon}"
-                                    Classes="sourceAvailabilityIcon available" />
-                        </Grid>
-                        <Grid Classes="sourceAvailabilityState unavailable">
-                          <PathIcon Data="{StaticResource CloseIcon}"
-                                    Classes="sourceAvailabilityIcon unavailable" />
-                        </Grid>
-                      </Grid>
-                      <ToggleSwitch Grid.Column="3"
-                                    Classes="uiToggle"
-                                    IsChecked="{Binding OfficialSourceIsEnabled}"
-                                    IsEnabled="False"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    ToolTip.Tip="{Binding OfficialSourceAvailability}" />
-                    </Grid>
-                  </Border>
-                  <ItemsControl ItemsSource="{Binding MirrorSources}"
-                                ItemTemplate="{StaticResource MirrorSourceTemplate}"
-                                IsVisible="{Binding HasMirrors}" />
-                </StackPanel>
-              </Border>
+          <settings:SettingsDataView />
 
-              <controls:NoteCard x:Name="DownloadsNoteCard"
-                                 Classes="note"
-                                 Title="{Binding DownloadsNoteTitle}">
-                <TextBlock Text="{Binding DownloadsInfo}"
-                           Classes="settingsHint"
-                           Foreground="{DynamicResource TextPrimaryBrush}" />
-              </controls:NoteCard>
-
-              <TextBlock Text="{Binding MirrorOperationStatus}"
-                         Classes="sourceOperationStatus"
-                         IsVisible="{Binding HasMirrorOperationStatus}" />
-              <TextBlock Text="{Binding MirrorOperationError}"
-                         Classes="sourceOperationError"
-                         IsVisible="{Binding HasMirrorOperationError}" />
-            </StackPanel>
-          </StackPanel>
-
-          <StackPanel Spacing="22" IsVisible="{Binding IsJava}">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding JavaRuntimeLabel}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="formRow settingsRow runtime">
-                    <Button Classes="javaRuntimeOption"
-                            Classes.selected="{Binding UseBundledJava}"
-                            IsHitTestVisible="{Binding !UseBundledJava}"
-                            Command="{Binding SelectBundledJavaCommand}">
-                      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
-                        <Border Classes="javaRadioIndicator">
-                          <Ellipse Classes="javaRadioDot" IsVisible="{Binding UseBundledJava}" />
-                        </Border>
-                        <StackPanel Grid.Column="1" Spacing="2">
-                          <TextBlock Text="{Binding BundledJavaLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding BundledJavaHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow runtime last">
-                    <StackPanel>
-                      <Grid>
-                        <Button Classes="javaRuntimeOption"
-                                Classes.selected="{Binding UseCustomJava}"
-                                IsHitTestVisible="{Binding !UseCustomJava}"
-                                Command="{Binding SelectCustomJavaCommand}">
-                          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
-                            <Border Classes="javaRadioIndicator">
-                              <Ellipse Classes="javaRadioDot" IsVisible="{Binding UseCustomJava}" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Spacing="2">
-                              <TextBlock Text="{Binding CustomJavaLabel}" Classes="formLabel settingsLabel" />
-                              <TextBlock Text="{Binding CustomJavaHint}" Classes="formHint settingsHint" />
-                            </StackPanel>
-                          </Grid>
-                        </Button>
-                        <Border Classes="customJavaPathActionHost"
-                                Classes.open="{Binding UseCustomJava}">
-                          <Button VerticalAlignment="Center"
-                                  Margin="0,0,18,0"
-                                  Classes="settingsAction instanceFolderChangeAction"
-                                  Classes.active="{Binding IsBrowsingCustomJava}"
-                                  Command="{Binding BrowseJavaCommand}">
-                            <ContentControl Content="{Binding}"
-                                            ContentTemplate="{StaticResource CustomJavaPathActionTemplate}" />
-                          </Button>
-                        </Border>
-                      </Grid>
-                      <Border Classes="customJavaExpander"
-                              Classes.open="{Binding UseCustomJava}">
-                        <Border Classes="dataPathSurface" Margin="18,10,18,14">
-                          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                            <TextBlock Text="{Binding CustomJavaPathDisplay}"
-                                       Classes="dataPathText"
-                                       Classes.placeholder="{Binding !HasCustomJavaPath}"
-                                       TextTrimming="CharacterEllipsis"
-                                       ToolTip.Tip="{Binding CustomJavaPath}" />
-                            <Button Grid.Column="1"
-                                    Classes="dataPathOpen"
-                                    Command="{Binding OpenCustomJavaFolderCommand}"
-                                    IsVisible="{Binding HasCustomJavaPath}"
-                                    ToolTip.Tip="{Binding OpenFolderLabel}">
-                              <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
-                            </Button>
-                          </Grid>
-                        </Border>
-                      </Border>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding RamAllocationLabel}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="formRow settingsRow">
-                    <StackPanel Spacing="10">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <TextBlock Text="{Binding MaximumRamLabel}" Classes="formLabel settingsLabel" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Text="{Binding JavaMaximumRamValue}" Classes="javaMemoryValue" />
-                      </Grid>
-                      <Slider x:Name="JavaMaximumMemorySlider"
-                              Theme="{StaticResource JavaMemorySliderTheme}"
-                              Minimum="{Binding MinimumJavaRamMb}"
-                              Maximum="{Binding MaximumJavaRamMb}"
-                              TickFrequency="{Binding JavaMemoryTickFrequency}"
-                              IsSnapToTickEnabled="True"
-                              Value="{Binding JavaMaximumRamMb, Mode=TwoWay}" />
-                    </StackPanel>
-                  </Border>
-                  <Border Classes="formRow settingsRow last">
-                    <StackPanel Spacing="10">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <TextBlock Text="{Binding InitialRamLabel}" Classes="formLabel settingsLabel" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Text="{Binding JavaInitialRamValue}" Classes="javaMemoryValue" />
-                      </Grid>
-                      <Slider x:Name="JavaInitialMemorySlider"
-                              Theme="{StaticResource JavaMemorySliderTheme}"
-                              Minimum="{Binding MinimumJavaRamMb}"
-                              Maximum="{Binding JavaInitialRamMaximum}"
-                              TickFrequency="{Binding JavaMemoryTickFrequency}"
-                              IsSnapToTickEnabled="True"
-                              Value="{Binding JavaInitialRamMb, Mode=TwoWay}" />
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="4,0,4,2">
-                <TextBlock Text="{Binding JavaArgumentsLabel}"
-                           Classes="settingsCategoryHeading"
-                           VerticalAlignment="Center" />
-                <Button x:Name="AddJavaArgumentButton"
-                        Grid.Column="1"
-                        Classes="dataAddAction"
-                        Theme="{StaticResource SourceAddButtonTheme}"
-                        Command="{Binding ShowAddJavaArgumentCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding AddSourceButtonLabel}" />
-                  </StackPanel>
-                </Button>
-              </Grid>
-              <Border x:Name="JavaArgumentsTable" Classes="formGroup settingsGroup" IsVisible="{Binding HasJavaArguments}">
-                <StackPanel>
-                  <Border Classes="dataTableHeader">
-                    <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
-                      <TextBlock Text="{Binding JavaArgumentsLabel}" />
-                    </Grid>
-                  </Border>
-                  <ItemsControl ItemsSource="{Binding JavaArgumentItems}">
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate x:DataType="vm:JavaArgumentItemViewModel">
-                        <Border Classes="formRow settingsRow"
-                                Classes.last="{Binding IsLast}">
-                          <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
-                            <TextBlock Text="{Binding Value}"
-                                       Classes="dataTableValue link"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Center" />
-                            <Button Grid.Column="1"
-                                    Classes="mirrorRemove"
-                                    Command="{Binding DataContext.RemoveJavaArgumentCommand, ElementName=SettingsRoot}"
-                                    CommandParameter="{Binding}"
-                                    ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsRoot}">
-                              <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-                            </Button>
-                          </Grid>
-                        </Border>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </StackPanel>
-              </Border>
-              <Border x:Name="JavaArgumentsEmptyCard"
-                      Classes="formGroup settingsGroup"
-                      IsVisible="{Binding HasNoJavaArguments}">
-                <StackPanel Spacing="12"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="0,26">
-                  <PathIcon Classes="emptyStateIcon"
-                            Data="{StaticResource ConsoleIcon}"
-                            HorizontalAlignment="Center" />
-                  <TextBlock Text="{Binding JavaArgumentsEmptyState}"
-                             Classes="formHint settingsHint"
-                             TextAlignment="Center"
-                             MaxWidth="440"
-                             HorizontalAlignment="Center" />
-                </StackPanel>
-              </Border>
-              <TextBlock Text="{Binding JavaArgumentsHint}"
-                         Classes="formHint settingsHint"
-                         Margin="4,0"
-                         IsVisible="{Binding HasJavaArguments}" />
-              <TextBlock Text="{Binding JavaArgumentsError}"
-                         Classes="settingsError"
-                         Margin="4,0"
-                         IsVisible="{Binding HasJavaArgumentsError}" />
-            </StackPanel>
-          </StackPanel>
-
-          <StackPanel Spacing="22" IsVisible="{Binding IsVisual}">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding VisualTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <Border Classes="formRow settingsRow last">
-                  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
-                    <StackPanel Spacing="3">
-                      <TextBlock Text="{Binding HideNewsLabel}" Classes="formLabel settingsLabel" />
-                      <TextBlock Text="{Binding HideNewsHint}" Classes="formHint settingsHint" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" Classes="uiToggle" IsChecked="{Binding DisableNews}" />
-                  </Grid>
-                </Border>
-              </Border>
-            </StackPanel>
-
-          </StackPanel>
-
-          <StackPanel Spacing="22" IsVisible="{Binding IsNetwork}">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding NetworkTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                <controls:FormRow Classes="last"
-                                      Label="{Binding OnlineModeLabel}"
-                                      Hint="{Binding OnlineModeHint}">
-                  <ToggleSwitch Classes="uiToggle" IsChecked="{Binding OnlineMode}" />
-                </controls:FormRow>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10" IsVisible="{Binding IsAuthServerVisible}">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="4,0,4,2">
-                <TextBlock Text="{Binding AuthServerLabel}"
-                           Classes="settingsCategoryHeading"
-                           VerticalAlignment="Center" />
-                <Button Grid.Column="1"
-                        x:Name="AddAuthServerButton"
-                        Classes="dataAddAction"
-                        Theme="{StaticResource SourceAddButtonTheme}"
-                        Command="{Binding ShowAddAuthServerCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding AuthServerAddLabel}" />
-                  </StackPanel>
-                </Button>
-              </Grid>
-              <Border x:Name="AuthServerTable"
-                      Classes="formGroup settingsGroup"
-                      IsVisible="{Binding HasAuthServers}">
-                <StackPanel>
-                  <Border Classes="dataTableHeader">
-                    <Grid ColumnDefinitions="2.4*,1.05*,84,34" ColumnSpacing="16">
-                      <TextBlock Text="{Binding SourceLinkColumn}" />
-                      <TextBlock Grid.Column="1"
-                                 Text="{Binding SourceAvailabilityColumn}"
-                                 HorizontalAlignment="Center" />
-                      <TextBlock Grid.Column="2"
-                                 Text="{Binding SourcePingColumn}"
-                                 HorizontalAlignment="Center" />
-                    </Grid>
-                  </Border>
-                  <ItemsControl ItemsSource="{Binding AuthServerItems}">
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate x:DataType="vm:AuthServerItemViewModel">
-                        <Border Classes="formRow settingsRow mirrorSourceRow"
-                                Classes.last="{Binding IsLast}">
-                          <Grid ColumnDefinitions="2.4*,1.05*,84,34" ColumnSpacing="16">
-                            <RadioButton Classes="authServerRadio"
-                                         GroupName="AuthServers"
-                                         IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                         VerticalAlignment="Center">
-                              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                <Border Classes="authServerRadioIndicator"
-                                        Classes.selected="{Binding IsSelected}">
-                                  <Ellipse Classes="authServerRadioDot"
-                                           IsVisible="{Binding IsSelected}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding Value}"
-                                           Classes="dataTableValue link"
-                                           TextTrimming="CharacterEllipsis" />
-                              </Grid>
-                            </RadioButton>
-                            <Grid Grid.Column="1"
-                                  Classes="sourceAvailability"
-                                  Classes.checking="{Binding IsChecking}"
-                                  Classes.available="{Binding IsAvailable}"
-                                  Classes.unavailable="{Binding IsUnavailable}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  ToolTip.Tip="{Binding Availability}">
-                              <Grid Classes="sourceAvailabilityState checking">
-                                <Path Classes="sourceAvailabilitySpinner"
-                                      controls:RotatingVisual.IsActive="{Binding IsChecking}"
-                                      Data="M10,2 A8,8 0 1 1 2,10" />
-                              </Grid>
-                              <Grid Classes="sourceAvailabilityState available">
-                                <PathIcon Data="{StaticResource CheckIcon}"
-                                          Classes="sourceAvailabilityIcon available" />
-                              </Grid>
-                              <Grid Classes="sourceAvailabilityState unavailable">
-                                <PathIcon Data="{StaticResource CloseIcon}"
-                                          Classes="sourceAvailabilityIcon unavailable" />
-                              </Grid>
-                            </Grid>
-                            <TextBlock Grid.Column="2"
-                                       Text="{Binding Ping}"
-                                       Classes="dataTableValue"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                            <Button Grid.Column="3"
-                                    Classes="mirrorRemove"
-                                    IsVisible="{Binding CanRemove}"
-                                    Command="{Binding DataContext.RemoveAuthServerCommand, ElementName=SettingsRoot}"
-                                    CommandParameter="{Binding}"
-                                    ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsRoot}">
-                              <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-                            </Button>
-                          </Grid>
-                        </Border>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-          </StackPanel>
-
-          <StackPanel Spacing="22" IsVisible="{Binding IsData}">
-            <Border x:Name="DataGameRunningWarning"
-                    Classes="dataWarning"
-                    IsVisible="{Binding IsGameRunning}">
-              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                <Path Classes="dataWarningIcon" Data="{StaticResource WarningIcon}" />
-                <TextBlock Grid.Column="1"
-                           Text="{Binding GameRunningWarning}"
-                           Classes="dataWarningText" />
-              </Grid>
-            </Border>
-
-            <StackPanel x:Name="StorageUsageOverview"
-                        HorizontalAlignment="Stretch"
-                        Spacing="12">
-              <Border Classes="storageUsageCard">
-                <Grid>
-                  <StackPanel Spacing="10" IsVisible="{Binding !IsStorageUsageLoading}">
-                   <TextBlock Text="{Binding StorageUsageSummary}"
-                              Classes="storageTotalValue storageUsageValue" />
-                   <Border Height="16"
-                           CornerRadius="8"
-                           ClipToBounds="True">
-                    <ItemsControl ItemsSource="{Binding StorageUsageItems}">
-                      <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate><controls:StorageUsageBarPanel /></ItemsPanelTemplate>
-                      </ItemsControl.ItemsPanel>
-                      <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="controls:StorageUsageSegment">
-                          <Border Background="{Binding Brush}" CornerRadius="0" />
-                        </DataTemplate>
-                      </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                  </Border>
-                  </StackPanel>
-                  <StackPanel Spacing="8" IsVisible="{Binding IsStorageUsageLoading}">
-                  <ProgressBar Classes="storageLoadingProgress" IsIndeterminate="True" />
-                  <TextBlock Text="{Binding StorageLoadingLabel}" Classes="storageTotalLabel" />
-                  </StackPanel>
-                </Grid>
-              </Border>
-              <Border x:Name="StorageLegendCard"
-                      Classes="storageLegendCard"
-                      HorizontalAlignment="Stretch">
-                <ItemsControl ItemsSource="{Binding StorageUsageItems}">
-                  <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                      <UniformGrid Columns="2"
-                                   ColumnSpacing="2"
-                                   RowSpacing="2" />
-                    </ItemsPanelTemplate>
-                  </ItemsControl.ItemsPanel>
-                  <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="controls:StorageUsageSegment">
-                      <Border Classes="storageLegendItem">
-                         <Grid RowDefinitions="Auto,Auto" RowSpacing="3" VerticalAlignment="Center">
-                          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="7">
-                            <Border Width="8"
-                                    Height="8"
-                                    CornerRadius="999"
-                                    Background="{Binding Brush}"
-                                    VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding Label}"
-                                       Grid.Column="1"
-                                       Classes="storageLegendLabel"
-                                       VerticalAlignment="Center" />
-                          </Grid>
-                          <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                            <TextBlock Text="{Binding DisplaySize}"
-                                       Classes="storageLegendSize" />
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding Percentage}"
-                                       Classes="storageLegendPercent" />
-                          </Grid>
-                        </Grid>
-                      </Border>
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>
-                </ItemsControl>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding LauncherFilesLabel}" Classes="settingsCategoryHeading" />
-              <Border x:Name="LauncherFilesCard" Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border x:Name="InstanceFolderCard" Classes="formRow settingsRow dataFileRow">
-                    <StackPanel Spacing="12">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                        <StackPanel Spacing="3" VerticalAlignment="Center">
-                          <TextBlock Text="{Binding GameDirectoryLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding GameDirectoryHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Grid Grid.Column="1"
-                              Width="220"
-                              Height="36"
-                              ColumnDefinitions="100,10,110">
-                          <Button x:Name="ResetInstanceFolderButton"
-                                  Grid.Column="0"
-                                  Classes="dataAddAction"
-                                  Theme="{StaticResource SourceAddButtonTheme}"
-                                  Command="{Binding ResetInstanceFolderCommand}"
-                                  IsVisible="{Binding !IsDefaultInstanceFolder}"
-                                  IsEnabled="{Binding CanResetInstanceFolder}">
-                            <StackPanel Orientation="Horizontal"
-                                        Spacing="7"
-                                        VerticalAlignment="Center">
-                              <Path Classes="dataActionIcon"
-                                    Data="{StaticResource RefreshIcon}"
-                                    VerticalAlignment="Center" />
-                              <TextBlock Text="{Binding ResetInstanceFolderLabel}"
-                                         VerticalAlignment="Center" />
-                            </StackPanel>
-                          </Button>
-                          <Button x:Name="SelectInstanceFolderButton"
-                                  Grid.Column="2"
-                                  ZIndex="1"
-                                  Classes="settingsAction instanceFolderChangeAction"
-                                  Classes.active="{Binding IsChangingInstanceFolder}"
-                                  Classes.cancelArmed="{Binding IsInstanceFolderChangeCancellationArmed}"
-                                  Command="{Binding BrowseInstanceFolderCommand}"
-                                  IsEnabled="{Binding CanUseInstanceFolderChangeAction}"
-                                  PointerExited="OnInstanceFolderChangeActionPointerExited"
-                                  HorizontalAlignment="Right"
-                                  VerticalContentAlignment="Center">
-                            <ContentControl Content="{Binding}"
-                                            ContentTemplate="{StaticResource InstanceFolderChangeActionTemplate}" />
-                          </Button>
-                        </Grid>
-                      </Grid>
-                      <Border x:Name="InstanceFolderPathSurface" Classes="dataPathSurface">
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                          <TextBlock x:Name="InstanceFolderPath"
-                                     Text="{Binding InstanceFolder}"
-                                     Classes="dataPathText"
-                                     TextTrimming="CharacterEllipsis"
-                                     ToolTip.Tip="{Binding InstanceFolder}" />
-                          <Button Grid.Column="1"
-                                  Classes="dataPathOpen"
-                                  Command="{Binding OpenInstanceFolderCommand}"
-                                  ToolTip.Tip="{Binding OpenFolderLabel}">
-                            <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
-                          </Button>
-                        </Grid>
-                      </Border>
-                    </StackPanel>
-                  </Border>
-                  <Border x:Name="LauncherDataCard" Classes="formRow settingsRow last dataFileRow">
-                    <StackPanel Spacing="12">
-                      <StackPanel Spacing="3">
-                        <TextBlock Text="{Binding LauncherDataFolderLabel}" Classes="formLabel settingsLabel" />
-                        <TextBlock Text="{Binding LauncherDataHint}" Classes="formHint settingsHint" />
-                      </StackPanel>
-                      <Border x:Name="LauncherDataPathSurface" Classes="dataPathSurface">
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                          <TextBlock x:Name="LauncherDataPath"
-                                     Text="{Binding LauncherDataFolder}"
-                                     Classes="dataPathText"
-                                     TextTrimming="CharacterEllipsis"
-                                     ToolTip.Tip="{Binding LauncherDataFolder}" />
-                          <Button x:Name="OpenLauncherDataFolderButton"
-                                  Grid.Column="1"
-                                  Classes="dataPathOpen"
-                                  Command="{Binding OpenLauncherDataFolderCommand}"
-                                  ToolTip.Tip="{Binding OpenFolderLabel}">
-                            <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
-                          </Button>
-                        </Grid>
-                      </Border>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-          </StackPanel>
-
-          <StackPanel Spacing="22" IsVisible="{Binding IsAbout}">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding AboutProjectTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Grid MinHeight="66" Margin="18,0" ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                      <StackPanel Spacing="3" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding AboutCurrentVersionLabel}" Classes="formLabel settingsLabel" />
-                        <TextBlock Text="{Binding AboutCurrentVersionHint}" Classes="formHint settingsHint" />
-                      </StackPanel>
-                      <Border Grid.Column="1" Classes="versionBadge">
-                        <TextBlock Text="{Binding AboutCurrentVersion}" />
-                      </Border>
-                    </Grid>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink"
-                            Command="{Binding OpenLatestCommitCommand}"
-                            IsEnabled="{Binding HasAboutLatestCommit}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutLatestCommitLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutLatestCommitHint}"
-                                     Classes="formHint settingsHint"
-                                     MaxLines="1"
-                                     TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                        <Border Grid.Column="1"
-                                Classes="versionBadge"
-                                IsVisible="{Binding HasAboutLatestCommit}">
-                          <TextBlock Text="{Binding AboutLatestCommitSha}" FontFamily="JetBrains Mono" />
-                        </Border>
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink" Command="{Binding OpenGitHubCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="GitHub" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutGitHubHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow last">
-                    <Button Classes="aboutLink" Command="{Binding OpenDocumentationCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutDocumentationLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutDocumentationHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding AboutCommunityTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink" Command="{Binding OpenDiscordCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="Discord" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutDiscordHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow last">
-                    <Button Classes="aboutLink" Command="{Binding OpenBugReportCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding BugReportLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutBugReportHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding AboutTeamTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup aboutTeamGroup">
-                <ItemsControl ItemsSource="{Binding AboutTeamMembers}"
-                              ItemTemplate="{StaticResource AboutTeamMemberTemplate}">
-                  <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                      <UniformGrid Columns="3" />
-                    </ItemsPanelTemplate>
-                  </ItemsControl.ItemsPanel>
-                </ItemsControl>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding AboutContributorsTitle}" Classes="settingsCategoryHeading" />
-              <Border x:Name="AboutContributorsContainer"
-                      Classes="formGroup aboutContributorsGroup"
-                      SizeChanged="OnAboutContributorsSizeChanged">
-                <StackPanel x:Name="AboutContributorsRow"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Center">
-                  <ItemsControl ItemsSource="{Binding AboutContributors}"
-                                ItemTemplate="{StaticResource AboutContributorTemplate}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                  </ItemsControl>
-                  <Button Classes="aboutContributor overflow"
-                          IsVisible="{Binding HasMoreAboutContributors}"
-                          Command="{Binding OpenAllContributorsCommand}"
-                          ToolTip.Tip="{Binding AboutContributorsTitle}">
-                    <Border Classes="aboutContributorAvatar overflow">
-                      <TextBlock Text="{Binding AboutContributorOverflow}"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"
-                                 FontSize="13"
-                                 FontWeight="Bold" />
-                    </Border>
-                  </Button>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel Spacing="10">
-              <TextBlock Text="{Binding AboutLegalTitle}" Classes="settingsCategoryHeading" />
-              <Border Classes="formGroup settingsGroup">
-                <StackPanel>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink" Command="{Binding OpenLicenseCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutLicenseLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutLicenseHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Border Grid.Column="1" Classes="versionBadge">
-                          <TextBlock Text="GPL-3.0-only" />
-                        </Border>
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink" Command="{Binding OpenHytaleEulaCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutHytaleEulaLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutHytaleEulaHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow">
-                    <Button Classes="aboutLink" Command="{Binding OpenIcons8Command}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutCreditsLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutCreditsHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                  <Border Classes="formRow settingsRow aboutRow last">
-                    <Button Classes="aboutLink" Command="{Binding OpenLordiconCommand}">
-                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
-                        <StackPanel Spacing="3">
-                          <TextBlock Text="{Binding AboutLordiconLabel}" Classes="formLabel settingsLabel" />
-                          <TextBlock Text="{Binding AboutLordiconHint}" Classes="formHint settingsHint" />
-                        </StackPanel>
-                        <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
-                      </Grid>
-                    </Button>
-                  </Border>
-                </StackPanel>
-              </Border>
-            </StackPanel>
-
-            <StackPanel x:Name="AboutTechnologyAttribution"
-                        Classes="aboutTechnologyAttribution"
-                        HorizontalAlignment="Center">
-              <TextBlock Text="{Binding AboutBuiltWithLabel}"
-                         Classes="aboutTechnologyCaption"
-                         HorizontalAlignment="Center" />
-              <StackPanel Orientation="Horizontal"
-                          Spacing="8"
-                          HorizontalAlignment="Center">
-                <Button x:Name="AboutAvaloniaButton"
-                        Classes="aboutTechnologyLogo avalonia"
-                        Command="{Binding OpenAvaloniaCommand}"
-                        ToolTip.Tip="Avalonia UI">
-                  <Path x:Name="AboutAvaloniaMark"
-                        Classes="aboutTechnologyAvaloniaMark"
-                        Data="{StaticResource AvaloniaBrandIcon}" />
-                </Button>
-                <Button x:Name="AboutDotNetButton"
-                        Classes="aboutTechnologyLogo dotnet"
-                        Command="{Binding OpenDotNetCommand}"
-                        ToolTip.Tip=".NET">
-                  <Viewbox Width="38" Height="38" Stretch="Uniform">
-                    <Canvas Width="456" Height="456">
-                      <Path x:Name="AboutDotNetBackground"
-                            Classes="aboutTechnologyDotNetBackground"
-                            Data="{StaticResource DotNetBrandBackground}" />
-                      <Path x:Name="AboutDotNetWordmark"
-                            Classes="aboutTechnologyDotNetWordmark"
-                            Data="{StaticResource DotNetBrandWordmark}" />
-                    </Canvas>
-                  </Viewbox>
-                </Button>
-              </StackPanel>
-              <TextBlock Text="{Binding AboutDisclaimer}"
-                         Classes="aboutDisclaimer aboutTechnologyDisclaimer"
-                         HorizontalAlignment="Center"
-                         TextWrapping="Wrap" />
-            </StackPanel>
-          </StackPanel>
+          <settings:SettingsAboutView />
 
         </Grid>
       </controls:SmoothScrollViewer>
@@ -1739,7 +507,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </Grid>
 
   <controls:OverlayModal x:Name="JavaArgumentModal"
-                         Classes="javaArgumentModal"
+
+                         BackdropTarget="{Binding ElementName=SettingsLayout}"
+                         InitialFocusTarget="{Binding ElementName=NewJavaArgumentTextBox}"
                          IsOpen="{Binding IsAddingJavaArgument}"
                          DismissCommand="{Binding CancelAddJavaArgumentCommand}"
                          SheetMaxWidth="560"
@@ -1750,49 +520,42 @@ SPDX-License-Identifier: GPL-3.0-only
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>
-      <Grid Classes="javaArgumentModalSheet">
-        <Border Classes="javaArgumentModalContent">
-          <StackPanel Spacing="16">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-              <TextBlock Text="{Binding JavaArgumentsLabel}"
-                         FontSize="22"
-                         FontWeight="Bold"
-                         VerticalAlignment="Center" />
-              <Button Grid.Column="1"
-                      Classes="javaArgumentModalClose mirrorRemove"
-                      Command="{Binding CancelAddJavaArgumentCommand}"
-                      ToolTip.Tip="{Binding CancelLabel}">
-                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-              </Button>
-            </Grid>
-            <TextBlock Text="{Binding JavaArgumentsHint}"
-                       Classes="formHint settingsHint" />
+      <controls:ModalForm Title="{Binding JavaArgumentsLabel}"
+                          Description="{Binding JavaArgumentsHint}"
+                          DismissLabel="{Binding CancelLabel}"
+                          DismissCommand="{Binding CancelAddJavaArgumentCommand}">
+        <StackPanel Spacing="8">
+          <controls:ModalTextField IsError="{Binding HasJavaArgumentsError}"
+                                   ErrorMessage="{Binding JavaArgumentsError}">
             <TextBox x:Name="NewJavaArgumentTextBox"
                      Text="{Binding NewJavaArgument, Mode=TwoWay}"
                      PlaceholderText="{Binding JavaArgumentsPlaceholder}" />
-            <TextBlock Text="{Binding JavaArgumentsError}"
-                       Classes="settingsError"
-                       IsVisible="{Binding HasJavaArgumentsError}" />
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="10">
-              <Button Classes="wizardAction"
-                      Command="{Binding CancelAddJavaArgumentCommand}">
-                <TextBlock Text="{Binding CancelLabel}" />
-              </Button>
-              <Button Classes="wizardAction create"
-                      Command="{Binding AddJavaArgumentCommand}">
-                <TextBlock Text="{Binding AddSourceButtonLabel}" />
-              </Button>
-            </StackPanel>
+          </controls:ModalTextField>
+          <TextBlock Text="{Binding JavaArgumentsError}"
+                     Classes="formError"
+                     IsVisible="{Binding HasJavaArgumentsError}" />
+        </StackPanel>
+        <controls:ModalForm.ActionsContent>
+          <StackPanel Orientation="Horizontal"
+                      HorizontalAlignment="Right"
+                      Spacing="10">
+            <Button Classes="wizardAction"
+                    Command="{Binding CancelAddJavaArgumentCommand}">
+              <TextBlock Text="{Binding CancelLabel}" />
+            </Button>
+            <Button Classes="wizardAction create"
+                    Command="{Binding AddJavaArgumentCommand}">
+              <TextBlock Text="{Binding AddSourceButtonLabel}" />
+            </Button>
           </StackPanel>
-        </Border>
-        <Border Classes="javaArgumentModalOutline" />
-      </Grid>
+        </controls:ModalForm.ActionsContent>
+      </controls:ModalForm>
     </controls:OverlayModal.ModalContent>
   </controls:OverlayModal>
   <controls:OverlayModal x:Name="EnvironmentVariableModal"
-                         Classes="javaArgumentModal"
+
+                         BackdropTarget="{Binding ElementName=SettingsLayout}"
+                         InitialFocusTarget="{Binding ElementName=NewEnvironmentVariableTextBox}"
                          IsOpen="{Binding IsAddingEnvironmentVariable}"
                          DismissCommand="{Binding CancelAddEnvironmentVariableCommand}"
                          SheetMaxWidth="560"
@@ -1803,49 +566,42 @@ SPDX-License-Identifier: GPL-3.0-only
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>
-      <Grid Classes="javaArgumentModalSheet">
-        <Border Classes="javaArgumentModalContent">
-          <StackPanel Spacing="16">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-              <TextBlock Text="{Binding EnvLabel}"
-                         FontSize="22"
-                         FontWeight="Bold"
-                         VerticalAlignment="Center" />
-              <Button Grid.Column="1"
-                      Classes="javaArgumentModalClose mirrorRemove"
-                      Command="{Binding CancelAddEnvironmentVariableCommand}"
-                      ToolTip.Tip="{Binding CancelLabel}">
-                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-              </Button>
-            </Grid>
-            <TextBlock Text="{Binding EnvHint}"
-                       Classes="formHint settingsHint" />
+      <controls:ModalForm Title="{Binding EnvLabel}"
+                          Description="{Binding EnvHint}"
+                          DismissLabel="{Binding CancelLabel}"
+                          DismissCommand="{Binding CancelAddEnvironmentVariableCommand}">
+        <StackPanel Spacing="8">
+          <controls:ModalTextField IsError="{Binding HasEnvironmentVariablesError}"
+                                   ErrorMessage="{Binding EnvironmentVariablesError}">
             <TextBox x:Name="NewEnvironmentVariableTextBox"
                      Text="{Binding NewEnvironmentVariable, Mode=TwoWay}"
                      PlaceholderText="{Binding EnvPlaceholder}" />
-            <TextBlock Text="{Binding EnvironmentVariablesError}"
-                       Classes="settingsError"
-                       IsVisible="{Binding HasEnvironmentVariablesError}" />
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="10">
-              <Button Classes="wizardAction"
-                      Command="{Binding CancelAddEnvironmentVariableCommand}">
-                <TextBlock Text="{Binding CancelLabel}" />
-              </Button>
-              <Button Classes="wizardAction create"
-                      Command="{Binding AddEnvironmentVariableCommand}">
-                <TextBlock Text="{Binding AddSourceButtonLabel}" />
-              </Button>
-            </StackPanel>
+          </controls:ModalTextField>
+          <TextBlock Text="{Binding EnvironmentVariablesError}"
+                     Classes="formError"
+                     IsVisible="{Binding HasEnvironmentVariablesError}" />
+        </StackPanel>
+        <controls:ModalForm.ActionsContent>
+          <StackPanel Orientation="Horizontal"
+                      HorizontalAlignment="Right"
+                      Spacing="10">
+            <Button Classes="wizardAction"
+                    Command="{Binding CancelAddEnvironmentVariableCommand}">
+              <TextBlock Text="{Binding CancelLabel}" />
+            </Button>
+            <Button Classes="wizardAction create"
+                    Command="{Binding AddEnvironmentVariableCommand}">
+              <TextBlock Text="{Binding AddSourceButtonLabel}" />
+            </Button>
           </StackPanel>
-        </Border>
-        <Border Classes="javaArgumentModalOutline" />
-      </Grid>
+        </controls:ModalForm.ActionsContent>
+      </controls:ModalForm>
     </controls:OverlayModal.ModalContent>
   </controls:OverlayModal>
   <controls:OverlayModal x:Name="AuthServerModal"
-                         Classes="javaArgumentModal"
+
+                         BackdropTarget="{Binding ElementName=SettingsLayout}"
+                         InitialFocusTarget="{Binding ElementName=NewAuthServerTextBox}"
                          IsOpen="{Binding IsAddingAuthServer}"
                          DismissCommand="{Binding CancelAddAuthServerCommand}"
                          SheetMaxWidth="560"
@@ -1856,59 +612,36 @@ SPDX-License-Identifier: GPL-3.0-only
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>
-      <Grid Classes="javaArgumentModalSheet">
-        <Border Classes="javaArgumentModalContent">
-          <StackPanel Spacing="16">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-              <TextBlock Text="{Binding AuthServerLabel}"
-                         FontSize="22"
-                         FontWeight="Bold"
-                         VerticalAlignment="Center" />
-              <Button Grid.Column="1"
-                      Classes="javaArgumentModalClose mirrorRemove"
-                      Command="{Binding CancelAddAuthServerCommand}"
-                      ToolTip.Tip="{Binding CancelLabel}">
-                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
-              </Button>
-            </Grid>
-            <TextBlock Text="{Binding AuthServerHint}"
-                       Classes="formHint settingsHint" />
-            <Grid Classes="authServerInputHost">
-              <TextBox x:Name="NewAuthServerTextBox"
-                       Text="{Binding NewAuthServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       Classes="authServerInput"
-                       Classes.error="{Binding IsAuthServerAddError}"
-                       PlaceholderText="{Binding AuthServerPlaceholder}" />
-              <Button Classes="authServerInputError"
-                      Classes.error="{Binding IsAuthServerAddError}"
-                      ToolTip.Tip="{Binding AuthServerErrorTooltip}"
-                      IsTabStop="False">
-                <PathIcon Data="{StaticResource WarningIcon}"
-                          Classes="authServerInputErrorIcon" />
-              </Button>
-            </Grid>
-            <Grid Width="272"
-                  HorizontalAlignment="Right">
-              <Button Classes="wizardAction"
-                      HorizontalAlignment="Left"
-                      Command="{Binding CancelAddAuthServerCommand}">
-                <TextBlock Text="{Binding CancelLabel}" />
-              </Button>
-              <Button Classes="wizardAction create instanceFolderChangeAction authServerAddAction"
-                      Classes.active="{Binding IsCheckingAuthServer}"
-                      Classes.cancelArmed="{Binding IsAuthServerCancellationArmed}"
-                      ZIndex="1"
-                      HorizontalAlignment="Right"
-                      PointerExited="OnAuthServerAddPointerExited"
-                      Command="{Binding AddAuthServerCommand}">
-                <ContentControl Content="{Binding}"
-                                ContentTemplate="{StaticResource AuthServerAddActionTemplate}" />
-              </Button>
-            </Grid>
-          </StackPanel>
-        </Border>
-        <Border Classes="javaArgumentModalOutline" />
-      </Grid>
+      <controls:ModalForm Title="{Binding AuthServerLabel}"
+                          Description="{Binding AuthServerHint}"
+                          DismissLabel="{Binding CancelLabel}"
+                          DismissCommand="{Binding CancelAddAuthServerCommand}">
+        <controls:ModalTextField IsError="{Binding IsAuthServerAddError}"
+                                 ErrorMessage="{Binding AuthServerErrorTooltip}">
+          <TextBox x:Name="NewAuthServerTextBox"
+                   Text="{Binding NewAuthServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   PlaceholderText="{Binding AuthServerPlaceholder}" />
+        </controls:ModalTextField>
+        <controls:ModalForm.ActionsContent>
+          <Grid Width="272" HorizontalAlignment="Right">
+            <Button Classes="wizardAction"
+                    HorizontalAlignment="Left"
+                    Command="{Binding CancelAddAuthServerCommand}">
+              <TextBlock Text="{Binding CancelLabel}" />
+            </Button>
+            <Button Classes="wizardAction create instanceFolderChangeAction authServerAddAction"
+                    Classes.active="{Binding IsCheckingAuthServer}"
+                    Classes.cancelArmed="{Binding IsAuthServerCancellationArmed}"
+                    ZIndex="1"
+                    HorizontalAlignment="Right"
+                    PointerExited="OnAuthServerAddPointerExited"
+                    Command="{Binding AddAuthServerCommand}">
+              <ContentControl Content="{Binding}"
+                              ContentTemplate="{StaticResource AuthServerAddActionTemplate}" />
+            </Button>
+          </Grid>
+        </controls:ModalForm.ActionsContent>
+      </controls:ModalForm>
     </controls:OverlayModal.ModalContent>
   </controls:OverlayModal>
   </Grid>

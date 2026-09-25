@@ -1,0 +1,161 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsGeneralView"
+             x:Name="SettingsGeneralRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="SettingChoiceTemplate" x:DataType="vm:SettingChoiceViewModel">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+        <Border Width="24"
+                Height="16"
+                CornerRadius="3"
+                ClipToBounds="True"
+                VerticalAlignment="Center"
+                IsVisible="{Binding HasIcon}">
+          <Image Source="{Binding Icon}"
+                 Stretch="UniformToFill"
+                 IsHitTestVisible="False" />
+        </Border>
+        <TextBlock Grid.Column="1"
+                   Text="{Binding Display}"
+                   TextWrapping="NoWrap"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="22" IsVisible="{Binding IsGeneral}">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding LanguageCategoryTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <controls:FormRow Label="{Binding LanguageLabel}"
+                                        Hint="{Binding LanguageHint}">
+                    <controls:FadingComboBox Width="220"
+                                             Classes="uiComboBox"
+                                             ItemsSource="{Binding Languages}"
+                                             ItemTemplate="{StaticResource SettingChoiceTemplate}"
+                                             ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                             SelectedItem="{Binding SelectedLanguage}" />
+                  </controls:FormRow>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding GeneralTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                  <controls:FormRow Label="{Binding CloseAfterLaunchLabel}" Hint="{Binding CloseAfterLaunchHint}">
+                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding CloseAfterLaunch}" />
+                  </controls:FormRow>
+                  <controls:FormRow Label="{Binding AlphaModsLabel}" Hint="{Binding AlphaModsHint}">
+                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowAlphaMods}" />
+                  </controls:FormRow>
+                  <controls:FormRow Label="{Binding DiscordAnnouncementsLabel}" Hint="{Binding DiscordAnnouncementsHint}">
+                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowDiscordAnnouncements}" />
+                  </controls:FormRow>
+                  <controls:FormRow Classes="last" Label="{Binding MusicLabel}" Hint="{Binding MusicHint}">
+                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding MusicEnabled}" />
+                  </controls:FormRow>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding GpuLabel}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <controls:FormRow Classes="last"
+                                        Label="{Binding GpuRowLabel}"
+                                        Hint="{Binding GpuHint}">
+                    <controls:FadingComboBox Width="220"
+                                             Classes="uiComboBox"
+                                             ItemsSource="{Binding GpuPreferences}"
+                                             ItemTemplate="{StaticResource SettingChoiceTemplate}"
+                                             ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                             SelectedItem="{Binding SelectedGpuPreference}" />
+                  </controls:FormRow>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="*,Auto" Classes="settingsHeaderAction">
+                  <TextBlock Text="{Binding EnvLabel}"
+                             Classes="settingsCategoryHeading" />
+                  <Button x:Name="AddEnvironmentVariableButton"
+                          Grid.Column="1"
+                          Classes="dataAddAction"
+                          Theme="{StaticResource SettingsActionButtonTheme}"
+                          Command="{Binding ShowAddEnvironmentVariableCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
+                      <TextBlock Text="{Binding AddSourceButtonLabel}"
+                                 Classes="settingsHeaderActionLabel" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <Border x:Name="EnvironmentVariablesTable" Classes="formGroup" IsVisible="{Binding HasEnvironmentVariables}">
+                  <StackPanel>
+                    <Border Classes="dataTableHeader">
+                      <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
+                        <TextBlock Text="{Binding EnvLabel}" />
+                      </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding EnvironmentVariableItems}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EnvironmentVariableItemViewModel">
+                          <Border Classes="formRow"
+                                  Classes.last="{Binding IsLast}">
+                            <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
+                              <TextBlock Text="{Binding Display}"
+                                         Classes="dataTableValue link"
+                                         FontFamily="JetBrains Mono"
+                                         TextTrimming="CharacterEllipsis"
+                                         VerticalAlignment="Center" />
+                              <Button Grid.Column="1"
+                                      Classes="mirrorRemove"
+                                      Command="{Binding DataContext.RemoveEnvironmentVariableCommand, ElementName=SettingsGeneralRoot}"
+                                      CommandParameter="{Binding}"
+                                      ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsGeneralRoot}">
+                                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </Border>
+                <Border x:Name="EnvironmentVariablesEmptyCard"
+                        Classes="formGroup"
+                        IsVisible="{Binding HasNoEnvironmentVariables}">
+                  <StackPanel Spacing="12"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="0,26">
+                    <PathIcon Classes="emptyStateIcon"
+                              Data="{StaticResource DataObjectIcon}"
+                              HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding EnvEmptyState}"
+                               Classes="formHint"
+                               TextAlignment="Center"
+                               MaxWidth="440"
+                               HorizontalAlignment="Center" />
+                  </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding EnvHint}"
+                           Classes="formHint"
+                           Margin="4,0"
+                           IsVisible="{Binding HasEnvironmentVariables}" />
+                <TextBlock Text="{Binding EnvironmentVariablesError}"
+                           Classes="formError"
+                           Margin="4,0"
+                           IsVisible="{Binding HasEnvironmentVariablesError}" />
+              </StackPanel>
+            </StackPanel>
+</UserControl>

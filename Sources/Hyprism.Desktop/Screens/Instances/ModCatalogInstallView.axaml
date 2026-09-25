@@ -1,0 +1,170 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Instances.ModCatalogInstallView"
+             x:Name="ModCatalogInstallRoot"
+             x:DataType="instances:InstancesViewModel">
+  <Grid >
+          <Border Classes="instanceModPreviewContent">
+            <Grid RowDefinitions="Auto,*,Auto" RowSpacing="14">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <TextBlock Text="{Binding ModCatalogInstallPreviewTitle}"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           MaxLines="1"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        Classes="instancePreviewClose"
+                        Command="{Binding CloseModCatalogInstallConfirmationCommand}"
+                        ToolTip.Tip="{Binding ModCatalogPreviewCloseLabel}">
+                  <Path Data="{StaticResource CloseIcon}" />
+                </Button>
+              </Grid>
+
+              <controls:SmoothScrollViewer Grid.Row="1"
+                                           HorizontalScrollBarVisibility="Disabled"
+                                           VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="10">
+                  <TextBlock Text="{Binding ModCatalogInstallDependencyHint}"
+                             Classes="dataTableValue"
+                             TextWrapping="Wrap" />
+                  <Border x:Name="ModCatalogInstallTable"
+                          Classes="instancePreviewVersionTable modCatalogInstallTable">
+                    <StackPanel>
+                    <Border Classes="dataTableHeader">
+                      <Grid ColumnDefinitions="2*,1.1*,1.1*" ColumnSpacing="16">
+                        <TextBlock Text="{Binding ModCatalogFileNameColumn}" />
+                        <TextBlock Grid.Column="1" Text="{Binding ModCatalogInstallVersionColumn}" />
+                        <TextBlock Grid.Column="2" Text="{Binding ModCatalogInstallDependenciesColumn}" />
+                      </Grid>
+                    </Border>
+                    <ItemsControl Classes="instancePreviewFiles"
+                                  ItemsSource="{Binding ModCatalogInstallItems}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="instances:ModCatalogInstallItemViewModel">
+                          <Border Classes="modCatalogInstallTableRow">
+                            <Grid ColumnDefinitions="2*,1.1*,1.1*" ColumnSpacing="16">
+                              <Grid ColumnDefinitions="38,*" ColumnSpacing="16">
+                                <Border Classes="modCatalogInstallIcon">
+                                  <Grid>
+                                    <TextBlock Text="{Binding Initial}"
+                                               IsVisible="{Binding !ShowsIcon}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                    <Image Source="{Binding Icon}"
+                                           IsVisible="{Binding ShowsIcon}"
+                                           Stretch="UniformToFill"
+                                           ClipToBounds="True" />
+                                  </Grid>
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           Classes="dataTableValue link"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center" />
+                              </Grid>
+                              <TextBlock Grid.Column="1"
+                                         Text="{Binding Version}"
+                                         Classes="dataTableValue"
+                                         TextTrimming="CharacterEllipsis"
+                                         VerticalAlignment="Center" />
+                              <Border Grid.Column="2"
+                                      x:Name="ModCatalogDependencyBadge"
+                                      Classes="versionBadge modCatalogDependencyBadge"
+                                      IsVisible="{Binding HasDependencies}">
+                                <TextBlock Text="{Binding DependenciesLabel}"
+                                           HorizontalAlignment="Stretch"
+                                           TextAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                              </Border>
+                              <controls:FadingPopup Grid.Column="2"
+                                                    Placement="Top"
+                                                    PlacementTarget="ModCatalogDependencyBadge"
+                                                    VerticalOffset="-8"
+                                                    IsHoverEnabled="True">
+                                <Border Classes="modCatalogDependencyPopup">
+                                  <controls:SmoothScrollViewer MaxHeight="240"
+                                                               HorizontalScrollBarVisibility="Disabled"
+                                                               VerticalScrollBarVisibility="Auto"
+                                                               IsScrollChainingEnabled="False">
+                                    <ItemsControl ItemsSource="{Binding DependencyItems}">
+                                      <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="instances:ModCatalogDependencyItemViewModel">
+                                          <Grid ColumnDefinitions="32,*"
+                                                ColumnSpacing="9"
+                                                MinHeight="36"
+                                                Margin="0,2">
+                                            <Border Classes="modCatalogDependencyIcon">
+                                              <Grid>
+                                                <TextBlock Text="{Binding Initial}"
+                                                           IsVisible="{Binding !ShowsIcon}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                                <Image Source="{Binding Icon}"
+                                                       IsVisible="{Binding ShowsIcon}"
+                                                       Stretch="UniformToFill"
+                                                       ClipToBounds="True" />
+                                              </Grid>
+                                            </Border>
+                                            <TextBlock Grid.Column="1"
+                                                       Classes="modCatalogDependencyDetails"
+                                                       MaxLines="2"
+                                                       TextWrapping="Wrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       LineHeight="15"
+                                                       VerticalAlignment="Center">
+                                              <Run Text="{Binding Name}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   FontWeight="SemiBold" />
+                                              <Run Text=" " />
+                                              <Run Text="{Binding VersionInParentheses}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   FontWeight="Normal" />
+                                            </TextBlock>
+                                          </Grid>
+                                        </DataTemplate>
+                                      </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                  </controls:SmoothScrollViewer>
+                                </Border>
+                              </controls:FadingPopup>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+              </controls:SmoothScrollViewer>
+
+              <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <Button x:Name="ModCatalogInstallResetButton"
+                        Classes="dataAddAction modCatalogInstallResetAction"
+                        Command="{Binding ClearModCatalogSelectionCommand}"
+                        ToolTip.Tip="{Binding InstanceModsClearSelectionLabel}"
+                        VerticalAlignment="Center">
+                  <Path Classes="dataActionIcon" Data="{StaticResource RefreshIcon}" />
+                </Button>
+                <Button x:Name="ModCatalogInstallConfirmButton"
+                        Grid.Column="1"
+                        Classes="instanceInstall modCatalogInstallConfirmAction"
+                        IsEnabled="{Binding CanInstallSelectedCatalogMods}"
+                        Command="{Binding InstallSelectedCatalogModsCommand}"
+                        HorizontalAlignment="Stretch">
+                  <TextBlock Text="{Binding InstallLabel}" />
+                </Button>
+              </Grid>
+            </Grid>
+          </Border>
+
+          <Border Classes="instanceModPreviewBodyOutline" />
+        </Grid>
+</UserControl>

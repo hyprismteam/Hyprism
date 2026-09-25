@@ -26,8 +26,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Grid x:Name="ProfilesLayout" ColumnDefinitions="Auto,*" ClipToBounds="True">
     <Border x:Name="ProfilesListPane"
-            Classes="profileListPane"
-            Width="276"
+            Classes="profileListPane managerRail"
             ClipToBounds="True"
             IsVisible="{Binding HasProfiles}">
       <Border.Transitions>
@@ -48,13 +47,8 @@ SPDX-License-Identifier: GPL-3.0-only
           </TranslateTransform.Transitions>
         </TranslateTransform>
       </Border.RenderTransform>
-      <Grid MinWidth="276">
-        <controls:SmoothScrollViewer Classes="instancesScroll"
-                      Margin="14,18,4,18"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto">
-          <StackPanel Margin="0,0,10,0" Spacing="2">
+      <ContentControl Classes="managerRailSurface">
+        <StackPanel Classes="managerRailList">
           <ItemsControl x:Name="ProfilesItems" ItemsSource="{Binding Profiles}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>
@@ -65,6 +59,8 @@ SPDX-License-Identifier: GPL-3.0-only
               <DataTemplate x:DataType="profiles:ProfileItemViewModel">
                 <Button Classes="managerRailCategory managerListItem"
                         Classes.managed="{Binding IsSelected}"
+                        Command="{Binding DataContext.SelectProfileCommand, ElementName=ProfilesRoot}"
+                        CommandParameter="{Binding}"
                         Click="OnProfileSelectedClicked">
                   <Grid Classes="managerListItemLayout"
                         ColumnDefinitions="Auto,*,22"
@@ -160,9 +156,8 @@ SPDX-License-Identifier: GPL-3.0-only
               <TextBlock Text="{Binding AddLabel}" Classes="formLabel" />
             </StackPanel>
           </Button>
-          </StackPanel>
-        </controls:SmoothScrollViewer>
-      </Grid>
+        </StackPanel>
+      </ContentControl>
     </Border>
 
     <Grid x:Name="ProfileMain"
@@ -526,7 +521,7 @@ SPDX-License-Identifier: GPL-3.0-only
       </Grid>
 
       <Border x:Name="ProfileCreatorScreen"
-              Classes="wizardScreen profileWizardScreen"
+              Classes="wizardScreen"
               IsVisible="False"
               Opacity="0">
         <Border.Transitions>
@@ -558,7 +553,7 @@ SPDX-License-Identifier: GPL-3.0-only
                                        AnimationPath="/Assets/Lotties/avatar-reveal.json" />
 
             <StackPanel x:Name="ProfileCreationChoiceContent"
-                        Classes="profileWizardStep"
+
                         IsVisible="{Binding IsCreateChoiceVisible}"
                         Spacing="12">
               <StackPanel.RenderTransform>
@@ -643,7 +638,7 @@ SPDX-License-Identifier: GPL-3.0-only
             </StackPanel>
 
             <StackPanel x:Name="OfflineProfileCreationContent"
-                        Classes="profileWizardStep"
+
                         IsVisible="{Binding IsOfflineCreationVisible}"
                         Spacing="12">
               <StackPanel.RenderTransform>
@@ -708,7 +703,7 @@ SPDX-License-Identifier: GPL-3.0-only
             </StackPanel>
 
             <StackPanel x:Name="OfficialProfileCreationContent"
-                        Classes="profileWizardStep"
+
                         IsVisible="{Binding IsOfficialCreationVisible}"
                         Spacing="12">
               <StackPanel.RenderTransform>

@@ -5,16 +5,16 @@ description: Prepare a focused implementation and documentation change for revie
 
 # Contributing
 
-Start with an issue or design note when a change affects architecture, persistent data, authentication, or packaging
+Start with an issue or design note when a change affects architecture, persistent data, authentication, or packaging.
 
 ## Workflow
 
-1. Create a focused branch and preserve unrelated local changes
-2. Implement the change in the subsystem that owns the behavior
-3. Add a regression test when behavior changes
-4. Update both documentation languages and any affected examples or screenshots
-5. Run the relevant [test suite](/development/testing)
-6. Validate documentation and license headers
+1. Create a focused branch and preserve unrelated local changes.
+2. Implement the change in the subsystem that owns the behavior.
+3. Add a regression test when behavior changes.
+4. Update both documentation languages and any affected examples or screenshots.
+5. Run the relevant [test suite](/development/testing).
+6. Validate documentation and license headers.
 
 From the repository root:
 
@@ -27,17 +27,66 @@ PAGES_BASE_PATH=/launcher/docs npm run build
 
 ## Review checklist
 
-- Describe the problem, resulting behavior, and relevant tradeoffs
-- Keep Core, Desktop, and Local Node responsibilities clear
-- Document public contracts and stored-data changes
-- Include no credentials, personal data, generated builds, or caches
-- Confirm both language trees describe the implementation
-- Report checks performed and any unverified platform boundary
+- Describe the problem, resulting behavior, and relevant tradeoffs.
+- Keep Core, Desktop, and Local Node responsibilities clear.
+- Document public contracts and stored-data changes.
+- Include no credentials, personal data, generated builds, or caches.
+- Confirm both language trees describe the implementation.
+- Report checks performed and any unverified platform boundary.
 
-Use a `docs:` commit prefix when the commit changes documentation only. Follow the detailed writing and screenshot policy in `AGENTS.md`
+Use a `docs:` commit prefix when the commit changes documentation only. Follow the detailed writing and screenshot policy in `AGENTS.md`.
+
+## First visual change
+
+1. Start the standalone Desktop app from the repository root.
+
+   ```bash
+   dotnet run --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
+   ```
+
+2. Follow the ownership chain in [Desktop UI architecture](/architecture/desktop-ui): token, theme or class, component, then screen. Open the owning AXAML and keep screen text and commands in its view model.
+3. Preview the executable UI while editing. Avalonia offers preview through the Visual Studio extension, the Avalonia for VS Code extension, and the third-party AvaloniaRider plugin. A preview requires a standalone desktop executable, which `Hyprism.Desktop` provides. See [Avalonia preview setup](https://docs.avaloniaui.net/docs/app-development/xaml-preview-and-design-settings).
+4. Run the matching headless screen test after changing behavior. `MainWindowRenderTests.ShellRendersAtSupportedDesktopSizes` uses deterministic application data and covers wide and compact sizes.
+
+   ```bash
+   dotnet test Tests/Hyprism.Desktop.Tests/Hyprism.Desktop.Tests.csproj \
+     --filter FullyQualifiedName~MainWindowRenderTests.ShellRendersAtSupportedDesktopSizes
+   ```
+
+5. When the visible screen changes, regenerate both documentation languages' screenshots using the [screenshot workflow](/development/documentation#screenshots).
+
+For onboarding feedback, use the optional pull request fields to record the time to the first visible edit, the files changed for one shared state, and follow-up edits after review.
+
+The short mapping for web developers is:
+
+| Web and CSS term | Avalonia term | How to use it here |
+| --- | --- | --- |
+| `class` and `.selector` | `Classes` and a selector such as `Button.primary` | Put the class on the control and keep shared setters in its style owner. |
+| Component markup | `ControlTemplate` | Describes the visual tree and parts for one control family. |
+| A model-to-view renderer | `DataTemplate` | Renders one typed item. Keep screen item templates next to that screen. |
+| A component slot | `ContentPresenter` and `Content` | Lets the caller supply content inside a shared control template. |
+| A property or event handler | `Binding` | Bind values and commands to the inherited `DataContext`; use commands for state changes. |
+| Type checking for bindings | `x:DataType` | Declares the model used by compiled bindings and catches invalid paths during build. |
+| A runtime theme variable | `DynamicResource` | Reads a shared token so a theme change updates its consumers. |
+| A local CSS override | A local XAML property value | Local values have higher priority than style setters. Keep them for deliberate exceptions. |
+
+Avalonia styles select controls in the visual tree. A property inherits only when Avalonia defines it as inheritable, so use the owning style or an explicit binding for shared state.
+
+## UI change summary
+
+Include this short checklist in a UI pull request.
+
+```text
+Affected screen or component:
+States reviewed:
+Wide and compact sizes:
+English and Russian text:
+Screenshots before and after:
+Tests and documentation checks:
+```
 
 ## Bug reports
 
-Use [GitHub issue templates](https://github.com/hyprismteam/HyPrism/issues/new/choose). Include platform, launcher version, reproduction steps, expected and actual behavior, and relevant [logs](/architecture/data-and-cache)
+Use [GitHub issue templates](https://github.com/hyprismteam/HyPrism/issues/new/choose). Include platform, launcher version, reproduction steps, expected and actual behavior, and relevant [logs](/architecture/data-and-cache).
 
-Review attachments for credentials and personal paths before posting
+Review attachments for credentials and personal paths before posting.

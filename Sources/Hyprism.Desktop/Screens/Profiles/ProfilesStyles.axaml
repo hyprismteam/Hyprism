@@ -147,7 +147,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Style Selector="Button.officialSignInAction.active, Button.officialSignInAction.active:pointerover">
       <Setter Property="Width" Value="272" />
       <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-      <Setter Property="Foreground" Value="#111111" />
+      <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     </Style>
 
     <Style Selector="Button.officialSignInAction.active.cancelArmed:pointerover">

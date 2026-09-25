@@ -81,7 +81,9 @@ public sealed class MainWindowRenderTests
         }
         Dispatcher.UIThread.RunJobs();
 
-        var comboBox = instancesView.FindControl<FadingComboBox>("InstanceVersionComboBox");
+        var creatorView = Assert.IsType<InstanceCreatorView>(
+            instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView"));
+        var comboBox = creatorView.FindControl<FadingComboBox>("InstanceVersionComboBox");
         Assert.NotNull(comboBox);
         comboBox!.Margin = new Thickness(0, 32, 0, 0);
         Dispatcher.UIThread.RunJobs();
@@ -205,6 +207,15 @@ public sealed class MainWindowRenderTests
             .ToArray();
         var profilesListPane = Assert.IsType<Border>(view.FindControl<Border>("ProfilesListPane"));
         Assert.Equal(2, cards.Length);
+        var selectedProfile = viewModel.SelectedProfile;
+        var secondProfileRow = Assert.Single(
+            cards,
+            button => button.DataContext is ProfileItemViewModel { Id: "second-profile" });
+        Assert.Same(viewModel.SelectProfileCommand, secondProfileRow.Command);
+        Assert.Same(viewModel.Profiles[1], secondProfileRow.CommandParameter);
+        secondProfileRow.Command!.Execute(secondProfileRow.CommandParameter);
+        Assert.Same(viewModel.Profiles[1], viewModel.SelectedProfile);
+        viewModel.SelectProfileCommand.Execute(selectedProfile);
         Assert.All(cards, card => Assert.Equal(new Thickness(0), card.BorderThickness));
         Assert.All(
             cards,
@@ -334,7 +345,7 @@ public sealed class MainWindowRenderTests
         Assert.Equal(0, profilesListPane.Opacity);
         Assert.False(profilesListPane.IsHitTestVisible);
         Assert.True(profileMain.Bounds.Width > profileMainWidthWithList + 275);
-        Assert.Contains("profileWizardScreen", wizard.Classes);
+        Assert.Contains("wizardScreen", wizard.Classes);
         Assert.Equal("/Assets/Lotties/avatar-reveal.json", profileWizardAnimation.Path);
         Assert.True(profileWizardAnimation.AutoPlay);
         Assert.Equal(2, profileWizardAnimation.PlayBackRate);
@@ -1028,12 +1039,14 @@ public sealed class MainWindowRenderTests
         var instancesView = Assert.Single(window.GetVisualDescendants().OfType<InstancesView>());
         var compact = instancesView.Bounds.Width < 940;
         var primaryAction = compact
-            ? instancesView.FindControl<Button>("CompactInstancePrimaryAction")!
+            ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
+                .FindControl<Button>("CompactInstancePrimaryAction")!
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("managerAction") &&
                                   button.Classes.Contains("primary"));
         var collapsingAction = compact
-            ? instancesView.FindControl<Button>("CompactInstanceMoreButton")!
+            ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
+                .FindControl<Button>("CompactInstanceMoreButton")!
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("deleteAction"));
         if (compact)
@@ -2401,7 +2414,8 @@ public sealed class MainWindowRenderTests
         var shellInstancesView = Assert.Single(
             window.GetVisualDescendants().OfType<InstancesView>());
         Assert.True(shellInstancesView.IsEffectivelyVisible);
-        Assert.NotNull(shellInstancesView.FindControl<Border>("InstancesListPane"));
+        Assert.NotNull(shellInstancesView.FindControl<InstanceListView>("InstanceListContentView")?
+            .FindControl<Border>("InstancesListPane"));
         Assert.NotNull(shellInstancesView.FindControl<Grid>("InstancesContent"));
 
         Assert.NotNull(window.FindControl<Border>("ResizeNorth")?.Cursor);
@@ -2499,10 +2513,10 @@ public sealed class MainWindowRenderTests
             textBlock => textBlock.Text == "Instances");
         var instanceListGroup = Assert.Single(
             instancesView.GetVisualDescendants().OfType<StackPanel>(),
-            panel => panel.Classes.Contains("instancesListGroup"));
+            panel => panel.Classes.Contains("managerRailList"));
         var instancesScroll = Assert.Single(
             instancesView.GetVisualDescendants().OfType<ScrollViewer>(),
-            scroll => scroll.Classes.Contains("instancesScroll"));
+            scroll => scroll.Classes.Contains("managerRailScroll"));
         Assert.Equal(new Thickness(14, 18, 4, 18), instancesScroll.Margin);
         Assert.Equal(Avalonia.Layout.HorizontalAlignment.Stretch, instancesScroll.HorizontalContentAlignment);
         Assert.Equal(new Thickness(0, 0, 10, 0), instanceListGroup.Margin);
@@ -2704,22 +2718,24 @@ public sealed class MainWindowRenderTests
         var instanceSummary = Assert.Single(
             instancesView.GetVisualDescendants().OfType<StackPanel>(),
             panel => panel.Classes.Contains("instanceSummary"));
-        var instanceHubContent = instancesView.FindControl<StackPanel>("InstanceHubContent");
+        var instanceOverview = instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView");
+        var instanceHubContent = instanceOverview?.FindControl<StackPanel>("InstanceHubContent");
         Assert.NotNull(instanceHubContent);
         Assert.Equal(instanceHubContent!.Spacing, instanceSummary.Spacing);
 
         var instancesContent = instancesView.FindControl<Grid>("InstancesContent");
-        var instancesListPane = instancesView.FindControl<Border>("InstancesListPane");
-        var compactInstanceToolbar = instancesView.FindControl<Border>("CompactInstanceToolbar");
+        var instancesListPane = instancesView.FindControl<InstanceListView>("InstanceListContentView")?
+            .FindControl<Border>("InstancesListPane");
+        var compactInstanceToolbar = instanceOverview?.FindControl<Border>("CompactInstanceToolbar");
         var managerCompactSplitAction = instancesView.GetVisualDescendants()
             .OfType<Border>()
             .Single(border => border.Classes.Contains("managerCompactSplitAction") &&
                               border.GetVisualDescendants().OfType<Button>()
                                   .Any(button => button.Name == "CompactInstancePrimaryAction"));
-        var compactInstancePrimaryAction = instancesView.FindControl<Button>("CompactInstancePrimaryAction");
-        var compactInstanceMoreButton = instancesView.FindControl<Button>("CompactInstanceMoreButton");
-        var compactInstanceMenuPopup = instancesView.FindControl<FadingPopup>("CompactInstanceMenuPopup");
-        var managerWideActions = instancesView.FindControl<StackPanel>("WideInstanceActions");
+        var compactInstancePrimaryAction = instanceOverview?.FindControl<Button>("CompactInstancePrimaryAction");
+        var compactInstanceMoreButton = instanceOverview?.FindControl<Button>("CompactInstanceMoreButton");
+        var compactInstanceMenuPopup = instanceOverview?.FindControl<FadingPopup>("CompactInstanceMenuPopup");
+        var managerWideActions = instanceOverview?.FindControl<StackPanel>("WideInstanceActions");
         Assert.NotNull(instancesContent);
         Assert.NotNull(instancesListPane);
         if (!usesCompactInstancesLayout)
@@ -2734,8 +2750,10 @@ public sealed class MainWindowRenderTests
         Assert.Equal(Avalonia.Layout.HorizontalAlignment.Center, managerWideActions!.HorizontalAlignment);
         var instanceContentTranslation = Assert.IsType<TranslateTransform>(instancesContent!.RenderTransform);
         Assert.Equal(usesCompactInstancesLayout, compactInstanceToolbar!.IsVisible);
-        var instanceWizardReveal = Assert.IsType<WizardRevealIcon>(
-            instancesView.FindControl<WizardRevealIcon>("InstanceWizardReveal"));
+        var creatorView = Assert.IsType<InstanceCreatorView>(
+            instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView"));
+        var instanceWizardReveal = creatorView.FindControl<WizardRevealIcon>("InstanceWizardReveal");
+        Assert.NotNull(instanceWizardReveal);
         var instanceWizardAnimation = instanceWizardReveal.Animation;
         Assert.Equal("/Assets/Lotties/server-reveal.json", instanceWizardAnimation.Path);
         Assert.True(instanceWizardAnimation.AutoPlay);
@@ -2952,7 +2970,7 @@ public sealed class MainWindowRenderTests
             Assert.False(compactInstanceGameIcon.IsEffectivelyVisible);
         }
 
-        var instanceHub = instancesView.FindControl<Grid>("InstanceHubScreen");
+        var instanceHub = instanceOverview?.FindControl<Grid>("InstanceHubScreen");
         var instanceSection = instancesView.FindControl<Grid>("InstanceSectionScreen");
         var managerInfoGroup = instancesView.GetVisualDescendants()
             .OfType<Border>()
@@ -2989,7 +3007,8 @@ public sealed class MainWindowRenderTests
         var instanceSectionTitle = instanceSection.GetVisualDescendants()
             .OfType<TextBlock>()
             .Single(textBlock => textBlock.Classes.Contains("detailToolbarTitle"));
-        var installedModsSection = instancesView.FindControl<Grid>("InstalledModsSection");
+        var modsView = instancesView.FindControl<InstanceModsView>("InstanceModsContentView");
+        var installedModsSection = modsView?.FindControl<Grid>("InstalledModsSection");
         Assert.NotNull(installedModsSection);
         Assert.Equal("Installed mods", instanceSectionTitle.Text);
 
@@ -3963,7 +3982,7 @@ public sealed class MainWindowRenderTests
         }
         var visibleSettingsGroups = settingsView.GetVisualDescendants()
             .OfType<Border>()
-            .Where(border => border.IsEffectivelyVisible && border.Classes.Contains("settingsGroup"))
+            .Where(border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup"))
             .ToArray();
         Assert.Equal(4, visibleSettingsGroups.Length);
         Assert.All(visibleSettingsGroups, group =>
@@ -4032,7 +4051,7 @@ public sealed class MainWindowRenderTests
         Assert.Equal(
             3,
             settingsView.GetVisualDescendants().OfType<Border>().Count(
-                border => border.IsEffectivelyVisible && border.Classes.Contains("settingsGroup")));
+                border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup")));
         var javaCategoryHeadings = settingsView.GetVisualDescendants()
             .OfType<TextBlock>()
             .Where(text => text.IsEffectivelyVisible && text.Classes.Contains("settingsCategoryHeading"))
@@ -4041,8 +4060,9 @@ public sealed class MainWindowRenderTests
         Assert.Contains(viewModel.Settings.JavaRuntimeLabel, javaCategoryHeadings);
         Assert.Contains(viewModel.Settings.RamAllocationLabel, javaCategoryHeadings);
         Assert.Contains(viewModel.Settings.JavaArgumentsLabel, javaCategoryHeadings);
-        var javaArgumentsTable = settingsView.FindControl<Border>("JavaArgumentsTable");
-        var addJavaArgumentButton = settingsView.FindControl<Button>("AddJavaArgumentButton");
+        var javaView = Assert.Single(settingsView.GetVisualDescendants().OfType<SettingsJavaView>());
+        var javaArgumentsTable = javaView.FindControl<Border>("JavaArgumentsTable");
+        var addJavaArgumentButton = javaView.FindControl<Button>("AddJavaArgumentButton");
         var javaArgumentModal = settingsView.FindControl<OverlayModal>("JavaArgumentModal");
         Assert.NotNull(javaArgumentsTable);
         Assert.NotNull(addJavaArgumentButton);
@@ -4052,6 +4072,9 @@ public sealed class MainWindowRenderTests
         Dispatcher.UIThread.RunJobs();
         Assert.True(javaArgumentModal!.IsOpen);
         Assert.True(javaArgumentModal.IsVisible);
+        var modalForm = Assert.Single(javaArgumentModal.GetVisualDescendants().OfType<ModalForm>());
+        Assert.Equal(viewModel.Settings.JavaArgumentsLabel, modalForm.Title);
+        Assert.Equal(viewModel.Settings.JavaArgumentsHint, modalForm.Description);
         window.UpdateLayout();
         var javaModalSheet = javaArgumentModal.FindControl<Grid>("OverlayModalSheet");
         var javaModalShoulders = javaArgumentModal.FindControl<Grid>("OverlayModalShoulders");
@@ -4063,6 +4086,31 @@ public sealed class MainWindowRenderTests
             () => Assert.IsType<TranslateTransform>(javaModalSheet!.RenderTransform).Y == 0 &&
                   Assert.IsType<ScaleTransform>(javaModalShoulders!.RenderTransform).ScaleY == 1,
             "Java argument modal to finish opening");
+        var javaArgumentInput = Assert.Single(javaArgumentModal.GetVisualDescendants().OfType<TextBox>());
+        await WaitForConditionAsync(
+            () => ReferenceEquals(window.FocusManager?.GetFocusedElement(), javaArgumentInput),
+            "Java argument modal initial focus");
+        var javaArgumentField = Assert.Single(javaArgumentModal.GetVisualDescendants().OfType<ModalTextField>());
+        Assert.Same(javaArgumentInput, javaArgumentField.Content);
+        Assert.Equal(new Thickness(12, 9, 44, 9), javaArgumentInput.Padding);
+        viewModel.Settings.JavaArgumentsError = "Invalid Java argument";
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(javaArgumentField.IsError);
+        var javaArgumentErrorIcon = Assert.Single(
+            javaArgumentField.GetVisualDescendants().OfType<Button>(),
+            button => button.Classes.Contains("modalTextFieldError"));
+        Assert.True(javaArgumentErrorIcon.IsVisible);
+        Assert.Equal(
+            Color.Parse("#322525"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(javaArgumentInput.Background).Color);
+        var javaArgumentInputBorder = Assert.Single(
+            javaArgumentInput.GetVisualDescendants().OfType<Border>(),
+            border => border.Name == "PART_BorderElement");
+        await WaitForConditionAsync(
+            () => javaArgumentInputBorder.Background is ISolidColorBrush brush &&
+                  brush.Color == Color.Parse("#322525"),
+            "Java argument modal error surface");
+        viewModel.Settings.JavaArgumentsError = string.Empty;
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(608, javaArgumentModal.ShoulderMaxWidth);
         Assert.True(javaModalShoulders.ZIndex > javaModalSheet.ZIndex);
@@ -4077,8 +4125,8 @@ public sealed class MainWindowRenderTests
         if (!string.IsNullOrWhiteSpace(javaArgumentModalPreviewPath) && width == 1280)
             window.CaptureRenderedFrame()!.Save(javaArgumentModalPreviewPath, PngBitmapEncoderOptions.Default);
         viewModel.Settings.CancelAddJavaArgumentCommand.Execute(null);
-        var maximumMemorySlider = settingsView.FindControl<Slider>("JavaMaximumMemorySlider");
-        var initialMemorySlider = settingsView.FindControl<Slider>("JavaInitialMemorySlider");
+        var maximumMemorySlider = javaView.FindControl<Slider>("JavaMaximumMemorySlider");
+        var initialMemorySlider = javaView.FindControl<Slider>("JavaInitialMemorySlider");
         Assert.NotNull(maximumMemorySlider);
         Assert.NotNull(initialMemorySlider);
         Assert.Equal(1024, maximumMemorySlider!.Minimum);
@@ -4113,7 +4161,7 @@ public sealed class MainWindowRenderTests
         Assert.Equal(
             1,
             settingsView.GetVisualDescendants().OfType<Border>().Count(
-                border => border.IsEffectivelyVisible && border.Classes.Contains("settingsGroup")));
+                border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup")));
         var visualCategoryHeadings = settingsView.GetVisualDescendants()
             .OfType<TextBlock>()
             .Where(text => text.IsEffectivelyVisible && text.Classes.Contains("settingsCategoryHeading"))
@@ -4273,7 +4321,7 @@ public sealed class MainWindowRenderTests
             Assert.Same(category, Assert.Single(viewModel.Settings.Categories, item => item.IsSelected));
             Assert.Contains(
                 settingsView.GetVisualDescendants().OfType<Border>(),
-                border => border.IsEffectivelyVisible && border.Classes.Contains("settingsGroup"));
+                border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup"));
         }
 
         var aboutCategory = viewModel.Settings.Categories.Single(category => category.Id == "about");
@@ -4317,8 +4365,9 @@ public sealed class MainWindowRenderTests
             viewModel.Settings.AboutContributors.Count + (viewModel.Settings.HasMoreAboutContributors ? 1 : 0),
             settingsView.GetVisualDescendants().OfType<Button>().Count(
                 button => button.IsEffectivelyVisible && button.Classes.Contains("aboutContributor")));
-        var contributorsContainer = settingsView.FindControl<Border>("AboutContributorsContainer");
-        var contributorsRow = settingsView.FindControl<StackPanel>("AboutContributorsRow");
+        var aboutView = Assert.Single(settingsView.GetVisualDescendants().OfType<SettingsAboutView>());
+        var contributorsContainer = aboutView.FindControl<Border>("AboutContributorsContainer");
+        var contributorsRow = aboutView.FindControl<StackPanel>("AboutContributorsRow");
         Assert.NotNull(contributorsContainer);
         Assert.NotNull(contributorsRow);
         var contributorsRowCenter = contributorsRow!.TranslatePoint(
@@ -4352,12 +4401,12 @@ public sealed class MainWindowRenderTests
             .Single(textBlock => textBlock.IsEffectivelyVisible &&
                                  textBlock.Text == viewModel.Settings.AboutDisclaimer);
         Assert.IsType<StackPanel>(aboutDisclaimer.Parent);
-        var technologyAttribution = settingsView.FindControl<StackPanel>("AboutTechnologyAttribution");
-        var avaloniaButton = settingsView.FindControl<Button>("AboutAvaloniaButton");
-        var dotNetButton = settingsView.FindControl<Button>("AboutDotNetButton");
-        var avaloniaMark = settingsView.FindControl<Avalonia.Controls.Shapes.Path>("AboutAvaloniaMark");
-        var dotNetBackground = settingsView.FindControl<Avalonia.Controls.Shapes.Path>("AboutDotNetBackground");
-        var dotNetWordmark = settingsView.FindControl<Avalonia.Controls.Shapes.Path>("AboutDotNetWordmark");
+        var technologyAttribution = aboutView.FindControl<StackPanel>("AboutTechnologyAttribution");
+        var avaloniaButton = aboutView.FindControl<Button>("AboutAvaloniaButton");
+        var dotNetButton = aboutView.FindControl<Button>("AboutDotNetButton");
+        var avaloniaMark = aboutView.FindControl<Avalonia.Controls.Shapes.Path>("AboutAvaloniaMark");
+        var dotNetBackground = aboutView.FindControl<Avalonia.Controls.Shapes.Path>("AboutDotNetBackground");
+        var dotNetWordmark = aboutView.FindControl<Avalonia.Controls.Shapes.Path>("AboutDotNetWordmark");
         Assert.NotNull(technologyAttribution);
         Assert.True(technologyAttribution.IsEffectivelyVisible);
         Assert.NotNull(avaloniaButton);

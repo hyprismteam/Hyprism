@@ -6,9 +6,11 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 using Hyprism.Desktop.Controls;
 using Xunit;
 
@@ -88,6 +90,55 @@ public sealed class OverlayModalAnimationTests
         backdrop.Opacity = backdropOpacity;
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
+    }
+
+    [AvaloniaFact]
+    public async Task OwnsBackdropStateAndRestoresFocus()
+    {
+        var opener = new Button { Content = "Open" };
+        var backdrop = new Grid { Children = { opener } };
+        var entry = new TextBox();
+        var modal = new OverlayModal
+        {
+            BackdropTarget = backdrop,
+            InitialFocusTarget = entry,
+            ModalContent = entry,
+            HiddenOffset = 420
+        };
+        modal.DismissCommand = new RelayCommand(() => modal.IsOpen = false);
+        var root = new Grid { Children = { backdrop, modal } };
+        var window = new Window
+        {
+            Width = WindowWidth,
+            Height = WindowHeight,
+            Content = root
+        };
+
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+        opener.Focus();
+        Assert.Same(opener, window.FocusManager?.GetFocusedElement());
+
+        modal.IsOpen = true;
+        Assert.False(backdrop.IsHitTestVisible);
+        await AvaloniaTestWait.UntilAsync(
+            () => Assert.IsType<BlurEffect>(backdrop.Effect).Radius >= 5.99,
+            "modal backdrop blur");
+        await AvaloniaTestWait.UntilAsync(
+            () => ReferenceEquals(window.FocusManager?.GetFocusedElement(), entry),
+            "modal initial focus");
+
+        window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        window.KeyRelease(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        await AvaloniaTestWait.UntilAsync(
+            () => !modal.IsVisible && ReferenceEquals(window.FocusManager?.GetFocusedElement(), opener),
+            "modal close and focus restoration");
+
+        Assert.True(backdrop.IsHitTestVisible);
+        Assert.Null(backdrop.Effect);
+        window.Close();
     }
 
     [AvaloniaFact]

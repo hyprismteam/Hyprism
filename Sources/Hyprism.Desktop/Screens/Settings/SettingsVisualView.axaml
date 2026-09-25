@@ -1,0 +1,30 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsVisualView"
+             x:Name="SettingsVisualRoot"
+             x:DataType="vm:SettingsViewModel">
+  <StackPanel Spacing="22" IsVisible="{Binding IsVisual}">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding VisualTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <Border Classes="formRow last">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
+                      <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding HideNewsLabel}" Classes="formLabel" />
+                        <TextBlock Text="{Binding HideNewsHint}" Classes="formHint" />
+                      </StackPanel>
+                      <ToggleSwitch Grid.Column="1" Classes="uiToggle" IsChecked="{Binding DisableNews}" />
+                    </Grid>
+                  </Border>
+                </Border>
+              </StackPanel>
+
+            </StackPanel>
+</UserControl>

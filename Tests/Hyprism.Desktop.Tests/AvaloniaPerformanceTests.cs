@@ -74,17 +74,22 @@ public sealed class AvaloniaPerformanceTests
     }
 
     [AvaloniaFact]
-    public void InstanceContentListsUseVirtualizingPanels()
+    public void InstanceFeatureListsUseVirtualizingPanels()
     {
-        var view = new InstancesView();
-        var window = new Window { Content = view };
+        var mods = new InstanceModsView();
+        var worlds = new InstanceWorldsView();
+        var host = new Grid
+        {
+            Children = { mods, worlds }
+        };
+        var window = new Window { Content = host };
 
         try
         {
             window.Show();
             Dispatcher.UIThread.RunJobs();
 
-            var lists = view.GetVisualDescendants()
+            var lists = host.GetVisualDescendants()
                 .OfType<ListBox>()
                 .Where(list => list.Classes.Contains("instanceVirtualizedList"))
                 .ToList();

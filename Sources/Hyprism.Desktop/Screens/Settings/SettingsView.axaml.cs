@@ -6,9 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using Hyprism.Desktop.Controls;
 
 namespace Hyprism.Desktop.Screens.Settings;
@@ -58,32 +56,10 @@ public sealed partial class SettingsView : UserControl
         else
             HideDownloadSourceWizardImmediately();
 
-        ApplyModalBackground();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
-        if (args.PropertyName == nameof(SettingsViewModel.IsAddingJavaArgument))
-        {
-            ApplyModalBackground();
-            if (DataContext is SettingsViewModel { IsAddingJavaArgument: true })
-                Dispatcher.UIThread.Post(() => NewJavaArgumentTextBox.Focus(), DispatcherPriority.Loaded);
-        }
-
-        if (args.PropertyName == nameof(SettingsViewModel.IsAddingEnvironmentVariable))
-        {
-            ApplyModalBackground();
-            if (DataContext is SettingsViewModel { IsAddingEnvironmentVariable: true })
-                Dispatcher.UIThread.Post(() => NewEnvironmentVariableTextBox.Focus(), DispatcherPriority.Loaded);
-        }
-
-        if (args.PropertyName == nameof(SettingsViewModel.IsAddingAuthServer))
-        {
-            ApplyModalBackground();
-            if (DataContext is SettingsViewModel { IsAddingAuthServer: true })
-                Dispatcher.UIThread.Post(() => NewAuthServerTextBox.Focus(), DispatcherPriority.Loaded);
-        }
-
         if (args.PropertyName != nameof(SettingsViewModel.IsAddingMirror))
             return;
 
@@ -130,33 +106,10 @@ public sealed partial class SettingsView : UserControl
     private void OnCompactSettingsBackClicked(object? sender, RoutedEventArgs e)
         => TryCloseCompactContent();
 
-    private static void OnMirrorMenuPointerPressed(object? sender, PointerPressedEventArgs args)
-        => args.Handled = true;
-
-    private void OnInstanceFolderChangeActionPointerExited(object? sender, PointerEventArgs args)
-    {
-        if (DataContext is SettingsViewModel viewModel)
-            viewModel.ArmInstanceFolderChangeCancellation();
-    }
-
     private void OnAuthServerAddPointerExited(object? sender, PointerEventArgs args)
     {
         if (DataContext is SettingsViewModel viewModel)
             viewModel.ArmAuthServerCancellation();
-    }
-
-    private void OnToggleMirrorMenuPointerReleased(object? sender, PointerReleasedEventArgs args)
-    {
-        if (sender is Border { DataContext: MirrorSourceViewModel mirror })
-            mirror.IsMenuOpen = !mirror.IsMenuOpen;
-
-        args.Handled = true;
-    }
-
-    private void OnCloseMirrorMenuClicked(object? sender, RoutedEventArgs args)
-    {
-        if (sender is Button { DataContext: MirrorSourceViewModel mirror })
-            mirror.IsMenuOpen = false;
     }
 
     private async void OnBeginAutomaticSourceAdditionClicked(object? sender, RoutedEventArgs args)
@@ -201,20 +154,6 @@ public sealed partial class SettingsView : UserControl
             () => viewModel.IsAddingMirror);
     }
 
-    private void OnAboutContributorsSizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        const double containerPadding = 28;
-        const double contributorSlotWidth = 64;
-
-        if (DataContext is not SettingsViewModel viewModel || e.NewSize.Width <= containerPadding)
-            return;
-
-        var slots = Math.Max(
-            1,
-            (int)Math.Floor((e.NewSize.Width - containerPadding) / contributorSlotWidth));
-        viewModel.UpdateAboutContributorCapacity(slots);
-    }
-
     public bool TryCloseCompactContent()
     {
         if (DataContext is SettingsViewModel { IsAddingJavaArgument: true } javaViewModel)
@@ -242,22 +181,6 @@ public sealed partial class SettingsView : UserControl
         }
 
         return _layoutHost.TryCloseDetail();
-    }
-
-    private void ApplyModalBackground()
-    {
-        var isOpen = DataContext is SettingsViewModel
-        {
-            IsAddingJavaArgument: true
-        } or SettingsViewModel
-        {
-            IsAddingEnvironmentVariable: true
-        } or SettingsViewModel
-        {
-            IsAddingAuthServer: true
-        };
-        SettingsLayout.IsHitTestVisible = !isOpen;
-        ((BlurEffect)SettingsLayout.Effect!).Radius = isOpen ? 6 : 0;
     }
 
     private async Task PlayDownloadSourceWizardOpenAsync()

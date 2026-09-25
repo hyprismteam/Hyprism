@@ -1,0 +1,124 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsNetworkView"
+             x:Name="SettingsNetworkRoot"
+             x:DataType="vm:SettingsViewModel">
+  <StackPanel Spacing="22" IsVisible="{Binding IsNetwork}">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding NetworkTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                  <controls:FormRow Classes="last"
+                                        Label="{Binding OnlineModeLabel}"
+                                        Hint="{Binding OnlineModeHint}">
+                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding OnlineMode}" />
+                  </controls:FormRow>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10" IsVisible="{Binding IsAuthServerVisible}">
+                <Grid ColumnDefinitions="*,Auto" Classes="settingsHeaderAction">
+                  <TextBlock Text="{Binding AuthServerLabel}"
+                             Classes="settingsCategoryHeading" />
+                  <Button Grid.Column="1"
+                          x:Name="AddAuthServerButton"
+                          Classes="dataAddAction"
+                          Theme="{StaticResource SettingsActionButtonTheme}"
+                          Command="{Binding ShowAddAuthServerCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
+                      <TextBlock Text="{Binding AuthServerAddLabel}"
+                                 Classes="settingsHeaderActionLabel" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <Border x:Name="AuthServerTable"
+                        Classes="formGroup"
+                        IsVisible="{Binding HasAuthServers}">
+                  <StackPanel>
+                    <Border Classes="dataTableHeader">
+                      <Grid ColumnDefinitions="2.4*,1.05*,84,34" ColumnSpacing="16">
+                        <TextBlock Text="{Binding SourceLinkColumn}" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding SourceAvailabilityColumn}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding SourcePingColumn}"
+                                   HorizontalAlignment="Center" />
+                      </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding AuthServerItems}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AuthServerItemViewModel">
+                          <Border Classes="formRow mirrorSourceRow"
+                                  Classes.last="{Binding IsLast}">
+                            <Grid ColumnDefinitions="2.4*,1.05*,84,34" ColumnSpacing="16">
+                            <RadioButton Classes="uiSelectionRadio authServerRadio"
+                                           AutomationProperties.Name="{Binding Value}"
+                                           GroupName="AuthServers"
+                                           IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                           VerticalAlignment="Center">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                  <Border Classes="radioSelectionIndicator">
+                                    <Ellipse Classes="radioSelectionDot"
+                                             IsVisible="{Binding IsSelected}" />
+                                  </Border>
+                                  <TextBlock Grid.Column="1"
+                                             Text="{Binding Value}"
+                                             Classes="dataTableValue link"
+                                             TextTrimming="CharacterEllipsis" />
+                                </Grid>
+                              </RadioButton>
+                              <Grid Grid.Column="1"
+                                    Classes="sourceAvailability"
+                                    Classes.checking="{Binding IsChecking}"
+                                    Classes.available="{Binding IsAvailable}"
+                                    Classes.unavailable="{Binding IsUnavailable}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ToolTip.Tip="{Binding Availability}">
+                                <Grid Classes="sourceAvailabilityState checking">
+                                  <Path Classes="sourceAvailabilitySpinner"
+                                        controls:RotatingVisual.IsActive="{Binding IsChecking}"
+                                        Data="M10,2 A8,8 0 1 1 2,10" />
+                                </Grid>
+                                <Grid Classes="sourceAvailabilityState available">
+                                  <PathIcon Data="{StaticResource CheckIcon}"
+                                            Classes="sourceAvailabilityIcon available" />
+                                </Grid>
+                                <Grid Classes="sourceAvailabilityState unavailable">
+                                  <PathIcon Data="{StaticResource CloseIcon}"
+                                            Classes="sourceAvailabilityIcon unavailable" />
+                                </Grid>
+                              </Grid>
+                              <TextBlock Grid.Column="2"
+                                         Text="{Binding Ping}"
+                                         Classes="dataTableValue"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center" />
+                              <Button Grid.Column="3"
+                                      Classes="mirrorRemove"
+                                      IsVisible="{Binding CanRemove}"
+                                      Command="{Binding DataContext.RemoveAuthServerCommand, ElementName=SettingsNetworkRoot}"
+                                      CommandParameter="{Binding}"
+                                      ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsNetworkRoot}">
+                                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </StackPanel>
+</UserControl>

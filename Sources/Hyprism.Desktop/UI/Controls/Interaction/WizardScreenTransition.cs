@@ -41,7 +41,7 @@ public sealed class WizardScreenTransition
         Control? navigationPane = null,
         Control? layoutAnchor = null,
         Control? layoutMotionTarget = null,
-        double navigationPaneWidth = 276)
+        double navigationPaneWidth = ManagerLayoutMetrics.RailWidth)
     {
         _overview = overview;
         _wizard = wizard;

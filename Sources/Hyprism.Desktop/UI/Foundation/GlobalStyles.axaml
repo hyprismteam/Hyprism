@@ -21,12 +21,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
   </Style>
 
-  <Style Selector="TextBlock.eyebrow">
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="TextWrapping" Value="NoWrap" />
-  </Style>
+
 
   <Style Selector="Button">
     <Setter Property="FontFamily" Value="{DynamicResource GoogleSansFont}" />
@@ -150,7 +145,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="{DynamicResource Inset.Primary}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Radius.Action}" />
     <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="FontSize" Value="15" />
@@ -182,7 +177,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.primary Path.actionIcon">
-    <Setter Property="Fill" Value="#111111" />
+    <Setter Property="Fill" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="StrokeThickness" Value="0" />
   </Style>
 
@@ -237,17 +232,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 
-  <Style Selector="Path.cardIcon">
-    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="StrokeThickness" Value="0" />
-  </Style>
 
-  <Style Selector="Border.card">
-    <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Card}" />
-  </Style>
+
+
 
   <Style Selector="Border.mainSceneFrame">
     <Setter Property="BorderBrush" Value="{DynamicResource MainCardStrokeBrush}" />
@@ -282,13 +269,7 @@ SPDX-License-Identifier: GPL-3.0-only
     </Style.Animations>
   </Style>
 
-  <Style Selector="Border.tag">
-    <Setter Property="Background" Value="#2A000000" />
-    <Setter Property="BorderBrush" Value="#24FFFFFF" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="10" />
-    <Setter Property="Padding" Value="10,5" />
-  </Style>
+
 
   <!-- Shared scroll viewer chrome -->
 

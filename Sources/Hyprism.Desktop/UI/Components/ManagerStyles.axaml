@@ -5,8 +5,26 @@ SPDX-License-Identifier: GPL-3.0-only
 
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Hyprism.Desktop.Controls"
         xmlns:easing="using:Avalonia.Animation.Easings">
   <!-- Shared navigation rail and data presentation patterns -->
+
+  <Style Selector="Border.managerRail">
+    <Setter Property="Width" Value="{x:Static controls:ManagerLayoutMetrics.RailWidth}" />
+  </Style>
+  <Style Selector="Grid.managerRailContent">
+    <Setter Property="MinWidth" Value="{x:Static controls:ManagerLayoutMetrics.RailWidth}" />
+  </Style>
+  <Style Selector="ScrollViewer.managerRailScroll">
+    <Setter Property="Margin" Value="14,18,4,18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+  </Style>
+  <Style Selector="StackPanel.managerRailList">
+    <Setter Property="Margin" Value="0,0,10,0" />
+    <Setter Property="Spacing" Value="2" />
+  </Style>
 
   <Style Selector="Button.managerRailCategory">
     <Setter Property="Height" Value="72" />
@@ -116,12 +134,12 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
   <Style Selector="Border.dataTableHeader">
     <Setter Property="Padding" Value="18,11" />
-    <Setter Property="Background" Value="#18191B" />
+    <Setter Property="Background" Value="{DynamicResource NavigationPaneBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBrush}" />
     <Setter Property="BorderThickness" Value="0,0,0,3" />
   </Style>
   <Style Selector="Border.dataTableHeader TextBlock">
-    <Setter Property="Foreground" Value="#777A80" />
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="FontSize" Value="11" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -136,7 +154,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="FontWeight" Value="Medium" />
   </Style>
-  <Style Selector="Button.dataAddAction, Button.sourceCancel, Button.mirrorRemove, Button.sourceRemoveConfirm">
+  <Style Selector="Button.dataAddAction, Button.mirrorRemove">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="FocusAdorner" Value="{x:Null}" />
@@ -438,7 +456,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="13,0" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="0" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -482,11 +500,11 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main.active">
     <Setter Property="Width" Value="216" />
     <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main.active:pointerover">
     <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.menu">
     <Setter Property="Width" Value="36" />
@@ -610,7 +628,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector=":is(UserControl) Button.managerAction.primary">
     <Setter Property="Width" Value="150" />
     <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.middle">
@@ -627,7 +645,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.primary:pointerover">
     <Setter Property="Background" Value="White" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.primary.active">
     <Setter Property="Width" Value="265" />
