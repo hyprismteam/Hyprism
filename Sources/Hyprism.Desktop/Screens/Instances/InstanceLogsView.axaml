@@ -1,0 +1,149 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Instances.InstanceLogsView"
+             x:Name="InstanceLogsRoot"
+             x:DataType="instances:InstancesViewModel">
+  <Grid x:Name="InstanceLogsSection"
+                    IsVisible="{Binding IsDisplayedInstanceLogsSection}"
+                    MaxWidth="{x:Static instances:InstanceModsView.ModCatalogContentMaxWidth}"
+                    HorizontalAlignment="Stretch"
+                    RowDefinitions="Auto,*"
+                    RowSpacing="10">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="8">
+                  <Grid Classes="logsSearchContainer">
+                    <TextBox x:Name="LogsSearchTextBox"
+                             Classes="instanceSearch logsSearch"
+                             PlaceholderText="{Binding LogsSearchHint}"
+                             Text="{Binding LogsSearchQuery, Mode=TwoWay}"
+                             KeyDown="OnLogsSearchKeyDown" />
+                    <Path Classes="logsSearchIcon" Data="{StaticResource SearchIcon}" />
+                  </Grid>
+                  <Grid Grid.Column="1" HorizontalAlignment="Right">
+                    <ToggleButton x:Name="LogsLevelButton"
+                                  Classes="logsLevelButton"
+                                  IsChecked="{Binding IsLogsLevelPopupOpen, Mode=TwoWay}">
+                      <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                        <TextBlock Classes="logsLevelSummary"
+                                   Text="{Binding LogsLevelSummary}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                        <Border Classes="versionBadge logsLevelCountBadge"
+                                IsVisible="{Binding HasAdditionalLogsLevels}">
+                          <TextBlock Text="{Binding LogsAdditionalLevelCountText}" />
+                        </Border>
+                      </StackPanel>
+                    </ToggleButton>
+                    <controls:FadingPopup x:Name="LogsLevelPopup"
+                                          IsRequestedOpen="{Binding IsLogsLevelPopupOpen, Mode=TwoWay}"
+                                          PlacementTarget="LogsLevelButton"
+                                          PlacementGap="8"
+                                          ConstrainToPlacementContext="True"
+                                          PlacementConstraintAdjustment="SlideX,ResizeX"
+                                          IsHitTestVisible="{Binding IsLogsLevelPopupOpen}">
+                      <Border Classes="uiPopupSurface logsLevelPopup">
+                        <StackPanel HorizontalAlignment="Stretch">
+                          <CheckBox Classes="uiSelectionCheck row"
+                                    IsChecked="{Binding IsLogsDebugEnabled, Mode=TwoWay}"
+                                    Content="{Binding LogsDebugLabel}" />
+                          <CheckBox Classes="uiSelectionCheck row"
+                                    IsChecked="{Binding IsLogsWarningsEnabled, Mode=TwoWay}"
+                                    Content="{Binding LogsWarningsLabel}" />
+                          <CheckBox Classes="uiSelectionCheck row"
+                                    IsChecked="{Binding IsLogsErrorsEnabled, Mode=TwoWay}"
+                                    Content="{Binding LogsErrorsLabel}" />
+                          <CheckBox Classes="uiSelectionCheck row"
+                                    IsChecked="{Binding IsLogsTracingEnabled, Mode=TwoWay}"
+                                    Content="{Binding LogsTracingLabel}" />
+                        </StackPanel>
+                      </Border>
+                    </controls:FadingPopup>
+                  </Grid>
+                  <ToggleButton Grid.Column="2"
+                                Classes="logsIconButton"
+                                IsChecked="{Binding IsLogsAutoScroll, Mode=TwoWay}"
+                                ToolTip.Tip="{Binding LogsAutoScrollLabel}">
+                    <Path Classes="logsToolbarIcon compact" Data="{StaticResource VerticalAlignBottomIcon}" />
+                  </ToggleButton>
+                  <ToggleButton Grid.Column="3"
+                                Classes="logsIconButton"
+                                IsChecked="{Binding IsLogsWrap, Mode=TwoWay}"
+                                ToolTip.Tip="{Binding LogsWrapLabel}">
+                    <Path Classes="logsToolbarIcon compact" Data="{StaticResource WrapTextIcon}" />
+                  </ToggleButton>
+                  <Button Grid.Column="4"
+                          Classes="logsIconButton clearLogsIconButton"
+                          Command="{Binding ClearLogsCommand}"
+                          IsEnabled="{Binding HasLogs}"
+                          ToolTip.Tip="{Binding LogsClearLabel}">
+                    <Path Classes="logsToolbarIcon" Data="{StaticResource DeleteSweepIcon}" />
+                  </Button>
+                </Grid>
+                <Border Grid.Row="1" Classes="instanceContentPanel catalog">
+                  <Grid x:Name="LogsContentHost"
+                        Background="Transparent"
+                        Focusable="True"
+                        IsTabStop="False"
+                        PointerPressed="OnLogsContentPointerPressed">
+                    <ListBox x:Name="LogsList"
+                             Classes="instanceLogList"
+                             Classes.wrap="{Binding IsLogsWrap}"
+                             ItemsSource="{Binding LogsLines}"
+                             IsVisible="{Binding HasLogs}"
+                             SelectionMode="Multiple"
+                             Margin="10"
+                             KeyDown="OnLogsListKeyDown"
+                             ScrollViewer.ScrollChanged="OnLogsScrollChanged">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="instances:InstanceLogLineViewModel">
+                          <Grid 
+                                ColumnDefinitions="96,44,220,*"
+                                ColumnSpacing="6"
+                                HorizontalAlignment="Stretch">
+                            <SelectableTextBlock Classes="logTime" Text="{Binding Time}" />
+                            <SelectableTextBlock Grid.Column="1"
+                                                 Classes="logLevel"
+                                                 Classes.error="{Binding IsError}"
+                                                 Classes.warning="{Binding IsWarning}"
+                                                 Text="{Binding Level}" />
+                            <SelectableTextBlock Grid.Column="2"
+                                                 Classes="logSource"
+                                                 Text="{Binding Source}"
+                                                 TextTrimming="CharacterEllipsis"
+                                                 ToolTip.Tip="{Binding Source}" />
+                            <SelectableTextBlock Grid.Column="3"
+                                                 Classes="logText"
+                                                 Classes.error="{Binding IsError}"
+                                                 Classes.warning="{Binding IsWarning}"
+                                                 Classes.system="{Binding IsSystem}"
+                                                 Classes.trace="{Binding IsTrace}"
+                                                 Text="{Binding Text}" />
+                          </Grid>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel IsVisible="{Binding IsLogsEmpty}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Spacing="10">
+                      <Path Classes="instancePlaceholderIcon" Data="{StaticResource LogsIcon}" />
+                      <TextBlock Text="{Binding InstanceLogsEmptyTitle}"
+                                 FontSize="19"
+                                 FontWeight="SemiBold"
+                                 TextAlignment="Center" />
+                      <TextBlock Text="{Binding InstanceLogsEmptyHint}"
+                                 Classes="muted"
+                                 MaxWidth="420"
+                                 TextAlignment="Center"
+                                 TextWrapping="Wrap" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </Grid>
+</UserControl>

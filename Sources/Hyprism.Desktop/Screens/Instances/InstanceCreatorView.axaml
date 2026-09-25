@@ -1,0 +1,142 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Instances.InstanceCreatorView"
+             x:Name="InstanceCreatorRoot"
+             x:DataType="instances:InstancesViewModel">
+  <StackPanel 
+                    Width="560"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="32"
+                    Spacing="12">
+            <controls:WizardRevealIcon x:Name="InstanceWizardReveal"
+                                       AnimationPath="/Assets/Lotties/server-reveal.json" />
+            <TextBlock Text="{Binding NewInstanceTitle}"
+                       HorizontalAlignment="Center"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       TextAlignment="Center" />
+            <TextBlock Text="{Binding NewInstanceHint}"
+                       Classes="muted"
+                       MaxWidth="460"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap" />
+
+            <Border Classes="formGroup" Margin="0,16,0,0">
+              <StackPanel>
+                <controls:FormRow Label="{Binding BranchLabel}"
+                                  Hint="{Binding InstanceBranchHint}"
+                                  MinHeight="72">
+                  <Border Width="236" Classes="uiSegmentedControl">
+                    <Grid x:Name="BranchSwitchTrack"
+                          ColumnDefinitions="*,*"
+                          SizeChanged="OnBranchSwitchSizeChanged">
+                      <Border x:Name="BranchSelectionIndicator"
+                              Grid.Column="0"
+                              Classes="uiSegmentedIndicator"
+                              IsHitTestVisible="False">
+                        <Border.RenderTransform>
+                          <TranslateTransform>
+                            <TranslateTransform.Transitions>
+                              <Transitions>
+                                <DoubleTransition Property="X" Duration="0:0:0.2" />
+                              </Transitions>
+                            </TranslateTransform.Transitions>
+                          </TranslateTransform>
+                        </Border.RenderTransform>
+                      </Border>
+                      <Button Grid.Column="0"
+                              Classes="uiSegmentedItem"
+                              HorizontalAlignment="Stretch"
+                              Classes.selected="{Binding IsCreateReleaseBranch}"
+                              Content="{Binding ReleaseLabel}"
+                              Command="{Binding SetNewInstanceBranchCommand}"
+                              CommandParameter="release" />
+                      <Button Grid.Column="1"
+                              Classes="uiSegmentedItem"
+                              HorizontalAlignment="Stretch"
+                              Classes.selected="{Binding IsCreatePreReleaseBranch}"
+                              Content="{Binding PreReleaseLabel}"
+                              Command="{Binding SetNewInstanceBranchCommand}"
+                              CommandParameter="pre-release" />
+                    </Grid>
+                  </Border>
+                </controls:FormRow>
+
+                <controls:FormRow Classes="last"
+                                  Label="{Binding VersionLabel}"
+                                  Hint="{Binding InstanceVersionHint}"
+                                  MinHeight="72">
+                  <Border Width="236" Classes="instancesVersionPicker">
+                    <Grid>
+                        <controls:FadingComboBox x:Name="InstanceVersionComboBox"
+                                                 Classes="uiComboBox"
+                                                 ItemsSource="{Binding AvailableInstanceVersions}"
+                                                 ItemTemplate="{StaticResource InstanceVersionTemplate}"
+                                                 ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                                 SelectedItem="{Binding SelectedNewInstanceVersion, Mode=TwoWay}"
+                                                 IsEnabled="{Binding HasAvailableInstanceVersions}"
+                                                 MaxDropDownHeight="220">
+                          <controls:FadingComboBox.Transitions>
+                            <Transitions>
+                              <DoubleTransition Property="Opacity" Duration="0:0:0.16" />
+                            </Transitions>
+                          </controls:FadingComboBox.Transitions>
+                        </controls:FadingComboBox>
+                        <Path x:Name="VersionLoadingSpinner"
+                              Classes="instancesVersionSpinner"
+                              Width="18"
+                              Height="18"
+                              Data="M9,1 A8,8 0 1 1 1,9"
+                              Stretch="Uniform"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              IsHitTestVisible="False"
+                              controls:RotatingVisual.IsActive="{Binding IsVisible, RelativeSource={RelativeSource Self}}"
+                              Opacity="0">
+                          <Path.Transitions>
+                            <Transitions>
+                              <DoubleTransition Property="Opacity" Duration="0:0:0.16" />
+                            </Transitions>
+                          </Path.Transitions>
+                          <Path.RenderTransform>
+                            <RotateTransform />
+                          </Path.RenderTransform>
+                        </Path>
+                    </Grid>
+                  </Border>
+                </controls:FormRow>
+              </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding InstanceCreationError}"
+                       Margin="4,0"
+                       Foreground="{DynamicResource DangerSoftBrush}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasInstanceCreationError}" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,0"
+                        Spacing="10">
+              <Button Classes="wizardAction"
+                      Command="{Binding CloseInstanceCreatorCommand}">
+                <TextBlock Text="{Binding BackLabel}" />
+              </Button>
+              <Button Classes="wizardAction create"
+                      IsEnabled="{Binding CanCreateInstance}"
+                      Command="{Binding CreateInstanceCommand}">
+                <TextBlock Text="{Binding CreateInstanceLabel}" />
+              </Button>
+            </StackPanel>
+        </StackPanel>
+</UserControl>

@@ -6,6 +6,7 @@ SPDX-License-Identifier: GPL-3.0-only
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:easing="using:Avalonia.Animation.Easings"
+        xmlns:controls="using:Hyprism.Desktop.Controls"
         xmlns:settings="using:Hyprism.Desktop.Screens.Settings">
   <!-- Selectors owned by the Settings screen -->
 
@@ -46,6 +47,24 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="FontSize" Value="18" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="Grid.settingsHeaderAction">
+    <Setter Property="ColumnSpacing" Value="16" />
+    <Setter Property="Margin" Value="4,0,4,2" />
+  </Style>
+  <Style Selector="Grid.settingsHeaderAction TextBlock.settingsCategoryHeading">
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+  </Style>
+  <Style Selector="Grid.settingsHeaderAction Button.dataAddAction">
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="Padding" Value="10,0" />
+    <Setter Property="MinHeight" Value="0" />
+  </Style>
+  <Style Selector="TextBlock.settingsHeaderActionLabel">
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
   <Style Selector="Border.dataWarning">
@@ -251,25 +270,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 
-  <Style Selector="settings|SettingsView Border.authServerRadioIndicator">
-    <Setter Property="Width" Value="18" />
-    <Setter Property="Height" Value="18" />
-    <Setter Property="Padding" Value="4" />
-    <Setter Property="Background" Value="#0F1012" />
-    <Setter Property="BorderBrush" Value="#78FFFFFF" />
-    <Setter Property="BorderThickness" Value="1.5" />
-    <Setter Property="CornerRadius" Value="999" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-
-  <Style Selector="settings|SettingsView Border.authServerRadioIndicator.selected">
-    <Setter Property="BorderBrush" Value="#FFFFFF" />
-  </Style>
-
-  <Style Selector="settings|SettingsView Ellipse.authServerRadioDot">
-    <Setter Property="Fill" Value="#FFFFFF" />
-  </Style>
-
   <Style Selector="Grid.sourceAvailability">
     <Setter Property="Width" Value="18" />
     <Setter Property="Height" Value="18" />
@@ -337,24 +337,14 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
   </Style>
 
-  <Style Selector="TextBlock.sourceSelectionHint">
-    <Setter Property="Margin" Value="4,2,4,0" />
-    <Setter Property="TextWrapping" Value="Wrap" />
-    <Setter Property="LineHeight" Value="19" />
-  </Style>
 
 
 
 
-  <Style Selector="Button.sourceCancel">
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="Padding" Value="14,8" />
-  </Style>
 
-  <Style Selector="Button.sourceCancel:pointerover">
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Background" Value="Transparent" />
-  </Style>
+
+
+
 
   <Style Selector="Button.mirrorRemove">
     <Setter Property="Width" Value="34" />
@@ -368,15 +358,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
-  <Style Selector="Button.sourceRemoveConfirm">
-    <Setter Property="Foreground" Value="#F0A2A2" />
-    <Setter Property="Padding" Value="14,8" />
-  </Style>
 
-  <Style Selector="Button.sourceRemoveConfirm:pointerover">
-    <Setter Property="Foreground" Value="#FFD0D0" />
-    <Setter Property="Background" Value="Transparent" />
-  </Style>
+
+
 
   <Style Selector="ProgressBar.sourceProgress">
     <Setter Property="Height" Value="2" />
@@ -690,19 +674,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="TextAlignment" Value="Center" />
   </Style>
 
-  <Style Selector="TextBlock.settingsError">
-    <Setter Property="Foreground" Value="#FF9B9B" />
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="TextWrapping" Value="Wrap" />
-  </Style>
 
-  <Style Selector="TextBlock.settingsWarningText">
-    <Setter Property="Foreground" Value="#FFD477" />
-    <Setter Property="FontSize" Value="13" />
-    <Setter Property="LineHeight" Value="19" />
-  </Style>
 
-  <Style Selector="Button.javaRuntimeOption">
+  <Style Selector="RadioButton.javaRuntimeOption">
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="MinHeight" Value="58" />
@@ -718,35 +692,19 @@ SPDX-License-Identifier: GPL-3.0-only
         <BrushTransition Property="Background" Duration="0:0:0.16" />
       </Transitions>
     </Setter>
-    <!-- The custom template hosts the background on a plain Border, so the
-         BrushTransition above stays in charge of the hover highlight -->
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{TemplateBinding CornerRadius}"
-                Padding="{TemplateBinding Padding}">
-          <ContentPresenter Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Center" />
-        </Border>
-      </ControlTemplate>
-    </Setter>
   </Style>
 
-  <Style Selector="Button.javaRuntimeOption:pointerover">
+  <Style Selector="RadioButton.javaRuntimeOption:pointerover">
     <Setter Property="Background" Value="{DynamicResource NavigationItemHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
-  <Style Selector="Button.javaRuntimeOption:pressed">
+  <Style Selector="RadioButton.javaRuntimeOption:pressed">
     <Setter Property="Background" Value="#10FFFFFF" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
-  <Style Selector="Button.javaRuntimeOption.selected">
+  <Style Selector="RadioButton.javaRuntimeOption:checked">
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
@@ -775,83 +733,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="RenderTransform" Value="translateY(0px)" />
   </Style>
 
-  <Style Selector="settings|SettingsView Grid.javaArgumentModalSheet">
-    <Setter Property="Margin" Value="0" />
-  </Style>
 
-  <Style Selector="settings|SettingsView Border.javaArgumentModalContent">
-    <Setter Property="Padding" Value="20" />
-    <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
-    <Setter Property="CornerRadius" Value="18,18,0,0" />
-    <Setter Property="ClipToBounds" Value="True" />
-  </Style>
 
-  <Style Selector="settings|SettingsView Border.javaArgumentModalOutline">
-    <Setter Property="Margin" Value="0,0,0,42" />
-    <Setter Property="BorderBrush" Value="{DynamicResource MainCardStrokeBrush}" />
-    <Setter Property="BorderThickness" Value="1,1,1,0" />
-    <Setter Property="CornerRadius" Value="18,18,0,0" />
-    <Setter Property="IsHitTestVisible" Value="False" />
-  </Style>
 
-  <Style Selector="settings|SettingsView Button.javaArgumentModalClose">
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-  </Style>
 
-  <Style Selector="settings|SettingsView Button.javaArgumentModalClose:pointerover">
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-  </Style>
 
-  <Style Selector="Border.javaRadioIndicator">
-    <Setter Property="Width" Value="19" />
-    <Setter Property="Height" Value="19" />
-    <Setter Property="Padding" Value="4" />
-    <Setter Property="Background" Value="#0F1012" />
-    <Setter Property="BorderBrush" Value="#78FFFFFF" />
-    <Setter Property="BorderThickness" Value="1.5" />
-    <Setter Property="CornerRadius" Value="999" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
 
-  <Style Selector="Button.javaRuntimeOption.selected Border.javaRadioIndicator">
-    <Setter Property="BorderBrush" Value="#FFFFFF" />
-  </Style>
 
-  <Style Selector="Ellipse.javaRadioDot">
-    <Setter Property="Fill" Value="#FFFFFF" />
-  </Style>
-
-  <Style Selector="Button.javaInlineAction">
-    <Setter Property="Height" Value="36" />
-    <Setter Property="Padding" Value="14,0" />
-    <Setter Property="Background" Value="#18191C" />
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="10" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Background" Duration="0:0:0.16" />
-        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
-  </Style>
-
-  <Style Selector="Button.javaInlineAction:pointerover">
-    <Setter Property="Background" Value="#202124" />
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="Button.javaInlineAction:pressed">
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="Border.javaMemoryCard">
-    <Setter Property="Padding" Value="2,6" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="CornerRadius" Value="0" />
-  </Style>
 
   <Style Selector="TextBlock.javaMemoryValue">
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
@@ -860,14 +748,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-  <Style Selector="Border.settingsCodeLine">
-    <Setter Property="Padding" Value="10,7" />
-    <Setter Property="Background" Value="#121319" />
-    <Setter Property="BorderBrush" Value="#246F63A3" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="8" />
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-  </Style>
+
 
   <Style Selector="Button.settingsAction">
     <Setter Property="Height" Value="36" />
@@ -973,28 +854,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="FontFeatures" Value="tnum" />
   </Style>
 
-  <Style Selector="Button.settingsLink">
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="Padding" Value="12,9" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="#C9BCFF" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="9" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
-        <BrushTransition Property="Background" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
-  </Style>
 
-  <Style Selector="Button.settingsLink:pointerover">
-    <Setter Property="Background" Value="#0AFFFFFF" />
-    <Setter Property="Foreground" Value="#DED6FF" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
+
+
 
   <Style Selector="settings|SettingsView TextBox">
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
@@ -1005,62 +867,8 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="12,9" />
   </Style>
 
-  <Style Selector="settings|SettingsView TextBox.authServerInput">
+  <Style Selector="settings|SettingsView controls|ModalTextField TextBox">
     <Setter Property="Padding" Value="12,9,44,9" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
-      </Transitions>
-    </Setter>
-  </Style>
-
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error,
-                  settings|SettingsView TextBox.authServerInput.error:focus">
-    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
-  </Style>
-
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error:pointerover">
-    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
-  </Style>
-
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error:pointerover:focus">
-    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
-  </Style>
-
-  <Style Selector="settings|SettingsView Button.authServerInputError">
-    <Setter Property="Width" Value="32" />
-    <Setter Property="Height" Value="32" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Margin" Value="0,0,6,0" />
-    <Setter Property="HorizontalAlignment" Value="Right" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Opacity" Value="0" />
-    <Setter Property="IsHitTestVisible" Value="False" />
-    <Setter Property="FocusAdorner" Value="{x:Null}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <DoubleTransition Property="Opacity" Duration="0:0:0.18">
-          <DoubleTransition.Easing><easing:CubicEaseOut /></DoubleTransition.Easing>
-        </DoubleTransition>
-      </Transitions>
-    </Setter>
-  </Style>
-
-  <Style Selector="settings|SettingsView Button.authServerInputError.error">
-    <Setter Property="Opacity" Value="1" />
-    <Setter Property="IsHitTestVisible" Value="True" />
-  </Style>
-
-  <Style Selector="settings|SettingsView PathIcon.authServerInputErrorIcon">
-    <Setter Property="Width" Value="18" />
-    <Setter Property="Height" Value="18" />
-    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
   </Style>
 
   <Style Selector="settings|SettingsView TextBox /template/ Border#PART_BorderElement">
@@ -1086,22 +894,18 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="BorderThickness" Value="0" />
   </Style>
 
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error /template/ Border#PART_BorderElement,
-                  settings|SettingsView TextBox.authServerInput.error:focus /template/ Border#PART_BorderElement">
+  <Style Selector="settings|SettingsView controls|ModalTextField:error TextBox /template/ Border#PART_BorderElement,
+                  settings|SettingsView controls|ModalTextField:error TextBox:focus /template/ Border#PART_BorderElement">
     <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
   </Style>
 
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error:pointerover /template/ Border#PART_BorderElement">
+  <Style Selector="settings|SettingsView controls|ModalTextField:error TextBox:pointerover /template/ Border#PART_BorderElement">
     <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
   </Style>
 
-  <Style Selector="settings|SettingsView TextBox.authServerInput.error:pointerover:focus /template/ Border#PART_BorderElement">
+  <Style Selector="settings|SettingsView controls|ModalTextField:error TextBox:pointerover:focus /template/ Border#PART_BorderElement">
     <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
   </Style>
-
-
 
   <!-- Screen-specific wizard styles -->
 

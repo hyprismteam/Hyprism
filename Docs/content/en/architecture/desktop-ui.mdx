@@ -5,11 +5,11 @@ description: Tokens, components, screen styles, and layout ownership in Hyprism.
 
 # Desktop UI architecture
 
-This page is the maintenance contract for the Avalonia UI layer. It explains where a resource belongs, how a shared component is consumed, and which layer owns a visual state
+This page is the maintenance contract for the Avalonia UI layer. It explains where a resource belongs, how a shared component is consumed, and which layer owns a visual state.
 
 ## Ownership model
 
-The Desktop UI is split into five layers
+The Desktop UI is split into five layers.
 
 | Layer | Location | Owns |
 | --- | --- | --- |
@@ -19,11 +19,11 @@ The Desktop UI is split into five layers
 | Screen resources | `Screens/<Screen>` | Data templates and styles that describe one screen or a deliberate cross-screen pattern |
 | Screen views | `Screens/<Screen>/*View.axaml` | Composition, bindings, view-local event handlers, and screen-specific layout |
 
-The screen view owns the behavior. A reusable control owns the visual contract that can be consumed by more than one screen. A token owns a value that should change consistently across several consumers
+The screen view owns the behavior. A reusable control owns the visual contract that can be consumed by more than one screen. A token owns a value that should change consistently across several consumers.
 
 ## Resource pipeline
 
-`App.axaml` loads resources in this order
+`App.axaml` loads resources in this order.
 
 | Order | Resource | Contract |
 | --- | --- | --- |
@@ -36,7 +36,9 @@ The screen view owns the behavior. A reusable control owns the visual contract t
 | 7 | `UI/Foundation/GlobalStyles.axaml` | Selectors that apply across the application |
 | 8 | `UI/Components/ManagerStyles.axaml` | Shared manager rails, progress actions, detail toolbars, and loading placeholders |
 
-Keep this order stable. A theme template must exist before a selector customizes it, and a token dictionary must exist before a dynamic resource references it
+Keep this order stable. A theme template must exist before a selector customizes it, and a token dictionary must exist before a dynamic resource references it.
+
+At the same priority, a later matching style wins. Class and pseudo-class selectors outrank plain type selectors, while a local XAML value outranks a style setter. Keep base rules before state rules and explain intentional local overrides of shared roles. See [Avalonia property value precedence](https://docs.avaloniaui.net/docs/properties/value-precedence).
 
 ## Component catalog
 
@@ -46,8 +48,9 @@ Keep this order stable. A theme template must exist before a selector customizes
 | --- | --- | --- |
 | `EmptyState` | `UI/Controls/Primitives/EmptyState.cs` | A title, description, icon, and optional action for an empty screen surface |
 | `NoteCard` | `UI/Controls/Primitives/NoteCard.cs` | Informational or important callouts with a consistent icon and surface |
-| `FormRow` | `UI/Controls/Primitives/FormRow.cs` | A label, hint, and trailing editor with shared form-row structure |
-| `OverlayModal` | `UI/Controls/Primitives/OverlayModal.axaml` | Animated modal sheets that share the application overlay contract |
+| `FormRow` | `UI/Controls/Primitives/FormRow.cs` | A label, hint, optional error, and trailing editor with shared form-row structure |
+| `ModalForm` | `UI/Controls/Primitives/ModalForm.cs` | A modal heading, description, body, dismiss action, and action slot |
+| `OverlayModal` | `UI/Controls/Primitives/OverlayModal.axaml` and `.axaml.cs` | Animated modal sheets, backdrop lifecycle, Escape handling, and focus restoration |
 | `FadingPopup` | `UI/Controls/Primitives/FadingPopup.cs` | Popups that need coordinated open and close transitions |
 | `FadingComboBox` | `UI/Controls/Primitives/FadingComboBox.cs` | Combo box selection with the shared popup lifecycle |
 
@@ -63,7 +66,83 @@ Keep this order stable. A theme template must exist before a selector customizes
 | `AspectRatioPanel` | `UI/Controls/Layout` | Media surfaces that must retain a stable aspect ratio |
 | `StorageUsageBarPanel` | `UI/Controls/Layout` | Storage usage segments with shared measurement behavior |
 
-Use a component from this catalog before adding a new selector or helper to a screen. If the existing API cannot express the screen state, extend the component contract or record why the screen must stay local
+Use a component from this catalog before adding a new selector or helper to a screen. If the existing API cannot express the screen state, extend the component contract or record why the screen must stay local.
+
+The ownership chain is `token -> theme or class -> component -> screen`. Keep shared values, control appearance, reusable structure, and screen state in those respective layers.
+
+### Component API and states
+
+| Component | Source and API | States covered | Example |
+| --- | --- | --- | --- |
+| `FormRow` | [`FormRow.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/FormRow.cs), `Label`, `Hint`, `Error`, and trailing `Content` | Rest, optional error, compact width, long text | [Settings rows](../../../static/img/user/en/settings-general.png) |
+| `ModalForm` | [`ModalForm.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalForm.cs), `Title`, `Description`, `DismissLabel`, `DismissCommand`, body `Content`, and `ActionsContent` | Open, close, validation error, compact sheet | [Java argument form](../../../static/img/user/en/java-arguments.png) |
+| `ModalTextField` | [`ModalTextField.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalTextField.cs), a `TextBox` content slot, `IsError`, and `ErrorMessage` | Rest, hover, focus, and validation error with a warning tooltip | [Java argument form](../../../static/img/user/en/java-arguments.png) |
+| `OverlayModal` | [`OverlayModal.axaml.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/OverlayModal.axaml.cs), `IsOpen`, `DismissCommand`, `BackdropTarget`, `InitialFocusTarget`, and `ModalContent` | Open, dismiss, Escape, blocked backdrop, focus restore | [Java argument form](../../../static/img/user/en/java-arguments.png) |
+| `CheckBox.uiSelectionCheck` | [`HyprismTheme.axaml`](../../../../Sources/Hyprism.Desktop/UI/Foundation/Themes/HyprismTheme.axaml) and [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml) | Rest, hover, pressed, keyboard focus, selected, disabled | [Selection controls](../../../static/img/user/en/selection-controls.png) |
+| `RadioButton.uiSelectionRadio` | [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml), native group behavior with a shared content template | Rest, hover, pressed, keyboard focus, selected, disabled | [Selection controls](../../../static/img/user/en/selection-controls.png) |
+
+Keep `FormRow`'s error line hidden while `Error` is empty. This keeps ordinary rows compact and centers the label and hint as one block.
+
+### Shared compositions
+
+| Pattern | Owner | Contract |
+| --- | --- | --- |
+| Manager rail surface | `ContentControl.managerRailSurface` in `UI/Components/Components.axaml` | A stretched, vertically scrolling surface for a list and its trailing action. The screen supplies item templates and the action. |
+| Manager rail rows and compact actions | `UI/Components/ManagerStyles.axaml` | Shared row sizing, drag-handle spacing, selection, toolbar, menu, and progress-action states. |
+| Selection checkbox | `CheckBox` template in `UI/Foundation/Themes/HyprismTheme.axaml`; `uiSelectionCheck` and `.row` in `UI/Components/Components.axaml` | One check indicator with `.row` as the full-width list layout variant. |
+| Selection radio | `RadioButton.uiSelectionRadio`, `Border.radioSelectionIndicator`, and `Ellipse.radioSelectionDot` in `UI/Components/Components.axaml` | Native `RadioButton` keeps group, keyboard, and accessible-name behavior. One shared template hosts the screen-provided indicator and label. |
+
+### Button and action variants
+
+| Role | Owner | Use |
+| --- | --- | --- |
+| Primary | `UI/Foundation/GlobalStyles.axaml`, `Button.primary` | Main confirmation or create action. |
+| Secondary and danger | `UI/Components/ManagerStyles.axaml`, `Button.managerAction` | Detail actions that need shared hierarchy, destructive state, and disabled state. |
+| Icon, back, and menu | `UI/Components/ManagerStyles.axaml`, `detailBack`, `articleAction`, and `managerCompactMenuAction` | Shared navigation and compact action menus. Keep a screen-specific action local when its behavior differs. |
+| Wizard | `UI/Components/Components.axaml`, `Button.wizardAction` | Wizard footer actions, including the create variant. |
+| Progress and cancel | `UI/Components/ManagerStyles.axaml`, `managerAction.primary.active` | Long-running manager actions that show progress and expose cancellation. |
+
+Keep these as `Button` variants so keyboard activation and commands stay on the native control. Add a wrapper only when it owns reusable behavior or structure.
+
+Settings categories are separate typed views. `SettingsView` owns category navigation and compact master-detail behavior. The category views receive `SettingsViewModel` as their inherited data context and own their XAML and local interaction handlers. See [SettingsGeneralView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsGeneralView.axaml), [SettingsDownloadsView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsDownloadsView.axaml), [SettingsJavaView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsJavaView.axaml), [SettingsVisualView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsVisualView.axaml), [SettingsNetworkView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsNetworkView.axaml), [SettingsDataView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsDataView.axaml), and [SettingsAboutView](../../../../Sources/Hyprism.Desktop/Screens/Settings/SettingsAboutView.axaml).
+
+### Screen feature views
+
+| View | Location | Ownership and API | Main states |
+| --- | --- | --- | --- |
+| `InstanceListView` | [`InstanceListView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceListView.axaml) and `.axaml.cs` | Renders the rail and item list. Exposes the rail and items to the host and raises selection, create, and drag-handle events. | Empty, selected, managed, compact navigation, drag preview. |
+| `InstanceOverviewView` | [`InstanceOverviewView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceOverviewView.axaml) and `.axaml.cs` | Renders instance status, summary, actions, and compact toolbar. Exposes its hub surface and toolbar; raises a back request. | Overview, action progress or cancellation, menu open, compact layout. |
+| `InstanceModsView` | [`InstanceModsView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceModsView.axaml) and `.axaml.cs` | Owns installed mods, catalog search and results, file-drop import, and catalog install transition. `SetMaximumWidth` receives responsive widths. | Loading, empty, populated, selected, update available, incompatible, installing. |
+| `InstanceWorldsView` | [`InstanceWorldsView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceWorldsView.axaml) and `.axaml.cs` | Owns the worlds list content. | Loading, empty, populated. |
+| `InstanceLogsView` | [`InstanceLogsView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceLogsView.axaml) and `.axaml.cs` | Owns log search, level filters, selection, copy, auto-scroll, and its responsive width. | Loading, empty, filtered, populated, compact layout. |
+| `InstanceCreatorView` | [`InstanceCreatorView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/InstanceCreatorView.axaml) and `.axaml.cs` | Owns the branch selector, version picker, loading state, and form actions. | Release or pre-release, loading, selected version. |
+| `ModCatalogPreviewView` and `ModCatalogInstallView` | [`ModCatalogPreviewView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/ModCatalogPreviewView.axaml) and [`ModCatalogInstallView.axaml`](../../../../Sources/Hyprism.Desktop/Screens/Instances/ModCatalogInstallView.axaml) | Own dialog content. The host keeps the `OverlayModal` instances and backdrop lifecycle. | Preview, file loading, install confirmation, install progress. |
+
+`InstancesView` owns section navigation, adaptive layout, and transitions between the overview, feature views, and creator shell. Feature views inherit the typed `InstancesViewModel`; the host passes responsive widths and handles the small set of cross-view navigation events.
+
+### Asset catalog and audit report
+
+Generate a local UI inventory when reviewing styles or assets:
+
+```bash
+python3 Scripts/desktop_ui_inventory.py --output Build/ui-inventory.json
+```
+
+The report lists AXAML style and template definitions, class selectors and uses, repeated screen colors and numeric literals, asset resource keys, binary asset formats, native image dimensions, declared image sizes, references, and SPDX identifiers found in files. Class matching is lexical, so dynamic class assignment and selector-only template parts remain review candidates rather than build failures. Review candidates before moving values into a token or deleting a class. The report does not block a build.
+
+`Assets/Icons/MaterialSymbols.axaml` records Apache-2.0 in its header. Brand dictionaries record their own SPDX identifiers or trademark terms. The report marks binary assets without license metadata in the asset file as unrecorded; check the source attribution before replacing or redistributing them. Vector geometry is colored by its consuming style when that style supplies a fill. Raster flags and illustrations retain their source colors. Instances and News use `RemoteBitmapLoader` for remote media. Profiles and Settings show initials when an avatar is unavailable.
+
+### Rendered component examples
+
+The deterministic screenshot test captures the shared selection states in English and Russian. The instance creation image shows the wizard shell and version picker. The Java view shows the radio option composition, and the Java argument image shows the shared modal form.
+
+| Contract | English | Russian |
+| --- | --- | --- |
+| Checkbox and radio states | [![Selected, disabled, and keyboard-focused selection controls](../../../static/img/user/en/selection-controls.png)](../../../static/img/user/en/selection-controls.png) | [![Выбранные, отключенные и сфокусированные элементы выбора](../../../static/img/user/ru/selection-controls.png)](../../../static/img/user/ru/selection-controls.png) |
+| Instance creation wizard | [![Instance creation wizard with a version selected](../../../static/img/user/en/instances-creator.png)](../../../static/img/user/en/instances-creator.png) | [![Мастер создания экземпляра с выбранной версией](../../../static/img/user/ru/instances-creator.png)](../../../static/img/user/ru/instances-creator.png) |
+| Settings form rows and radio options | [![Java settings rows and runtime options](../../../static/img/user/en/settings-java.png)](../../../static/img/user/en/settings-java.png) | [![Строки настроек Java и варианты среды](../../../static/img/user/ru/settings-java.png)](../../../static/img/user/ru/settings-java.png) |
+| Modal form | [![Java argument modal form](../../../static/img/user/en/java-arguments.png)](../../../static/img/user/en/java-arguments.png) | [![Модальная форма аргументов Java](../../../static/img/user/ru/java-arguments.png)](../../../static/img/user/ru/java-arguments.png) |
+| Manager rail | [![Instances manager rail and selected detail](../../../static/img/user/en/instances.png)](../../../static/img/user/en/instances.png) | [![Рейка Instances и выбранная деталь](../../../static/img/user/ru/instances.png)](../../../static/img/user/ru/instances.png) |
 
 ## Placement rules
 
@@ -80,7 +159,7 @@ Use a component from this catalog before adding a new selector or helper to a sc
 | A reusable behavior or control | `UI/Controls/<category>` | A static helper inside a view |
 | Window-only behavior | `Shell` | A screen folder |
 
-Each view includes its own style dictionary through `UserControl.Styles`. Shared manager rails, progress actions, detail toolbars, and loading placeholders use neutral class names and live in `UI/Components/ManagerStyles.axaml`
+Each view includes its own style dictionary through `UserControl.Styles`. Shared manager rails, progress actions, detail toolbars, and loading placeholders use neutral class names and live in `UI/Components/ManagerStyles.axaml`.
 
 ## Consuming a shared component
 
@@ -103,13 +182,44 @@ The screen supplies content and state. The component supplies hierarchy, spacing
 </controls:EmptyState>
 ```
 
-Keep screen strings and commands in the view model. Keep component properties small and typed around the visual contract. Prefer `DynamicResource` for tokens so theme changes propagate without copying values
+Keep screen strings and commands in the view model. Keep component properties small and typed around the visual contract. Prefer `DynamicResource` for tokens so theme changes propagate without copying values.
+
+```xml
+<controls:FormRow Label="{Binding JavaPathLabel}"
+                  Hint="{Binding JavaPathHint}"
+                  Error="{Binding JavaPathError}">
+  <TextBox Text="{Binding JavaPath}" />
+</controls:FormRow>
+```
+
+Use `FormRow.Error` for a validation message that belongs to one row. Use `ModalForm` for a form inside `OverlayModal`; `BackdropTarget` owns the blur and input block, while `InitialFocusTarget` names the first input. Closing the modal restores the backdrop effect and the element that had focus before opening.
+
+```xml
+<controls:OverlayModal IsOpen="{Binding IsEditorOpen}"
+                       DismissCommand="{Binding CloseEditorCommand}"
+                       BackdropTarget="{Binding ElementName=SettingsLayout}"
+                       InitialFocusTarget="{Binding ElementName=EditorTextBox}">
+  <controls:OverlayModal.ModalContent>
+    <controls:ModalForm Title="{Binding EditorTitle}"
+                        Description="{Binding EditorHint}"
+                        DismissLabel="{Binding CancelLabel}"
+                        DismissCommand="{Binding CloseEditorCommand}">
+      <TextBox x:Name="EditorTextBox" Text="{Binding EditorValue}" />
+      <controls:ModalForm.ActionsContent>
+        <Button Classes="primary" Command="{Binding SaveEditorCommand}">
+          <TextBlock Text="{Binding SaveLabel}" />
+        </Button>
+      </controls:ModalForm.ActionsContent>
+    </controls:ModalForm>
+  </controls:OverlayModal.ModalContent>
+</controls:OverlayModal>
+```
 
 ## Style and state contract
 
-Use a `ControlTheme` when a control family needs a complete template and named states. Use a plain `Style` for a selector, a class, or a narrow state adjustment. Use `Classes.<name>` bindings when a view model state changes a visual state
+Use a `ControlTheme` when a control family needs a complete template and named states. Use a plain `Style` for a selector, a class, or a narrow state adjustment. Use `Classes.<name>` bindings when a view model state changes a visual state.
 
-Every interactive shared component should account for the states that apply to it
+Every interactive shared component should account for the states that apply to it.
 
 | State | Expected review |
 | --- | --- |
@@ -123,41 +233,41 @@ Every interactive shared component should account for the states that apply to i
 | Success, warning, error | Status uses semantic brushes and localized text |
 | Empty | The user sees what is absent and the next useful action |
 
-Do not use animation as the only state signal. Keep transitions on render properties when a layout property would cause remeasure or scroll changes
+Do not use animation as the only state signal. Keep transitions on render properties when a layout property would cause remeasure or scroll changes.
 
 ## Screen templates and views
 
-Screen resource files follow the owning screen
+Screen resource files follow the owning screen.
 
 | Screen | Template resources | Style resources |
 | --- | --- | --- |
 | Instances | `Screens/Instances/InstancesTemplates.axaml` | `Screens/Instances/InstancesStyles.axaml` |
 | Profiles | `Screens/Profiles/ProfilesTemplates.axaml` | `Screens/Profiles/ProfilesStyles.axaml` |
 | News | `Screens/News/NewsArticleTemplates.axaml` | `Screens/News/NewsStyles.axaml` |
-| Settings | View-local resources and existing view composition | `Screens/Settings/SettingsStyles.axaml` |
+| Settings | `SettingsView` host, seven category views, and view-owned overlay instances | `Screens/Settings/SettingsStyles.axaml` |
 
-Templates are merged by the owning view when they are not application-wide. A template that references a view event handler stays in the view resource section because a standalone dictionary has no owner for that handler
+Templates are merged by the owning view when they are not application-wide. A template that references a view event handler stays in the view resource section because a standalone dictionary has no owner for that handler.
 
-Views keep `x:DataType` and use compiled bindings. A view may contain layout and event wiring, but it should not define a second application-wide button or input template
+Views keep `x:DataType` and use compiled bindings. A view may contain layout and event wiring, but it should not define a second application-wide button or input template.
 
 ## Responsive ownership
 
-`AdaptiveMasterDetailHost` owns the transition between wide and compact master-detail behavior. Screen view models own selected items and commands. The view owns size observation and visual host changes
+`AdaptiveMasterDetailHost` owns the transition between wide and compact master-detail behavior. Screen view models own selected items and commands. The view owns size observation and visual host changes.
 
-When adding a responsive state, review the wide and compact layouts together
+When adding a responsive state, review the wide and compact layouts together.
 
-- Keep the same command and localization contract
-- Preserve keyboard focus or provide a deterministic focus target after navigation
-- Keep destructive actions available through the compact action surface
-- Test long localized labels and narrow widths
-- Avoid duplicating a second state machine in code-behind
+- Keep the same command and localization contract.
+- Preserve keyboard focus or provide a deterministic focus target after navigation.
+- Keep destructive actions available through the compact action surface.
+- Test long localized labels and narrow widths.
+- Avoid duplicating a second state machine in code-behind.
 
 ## Tests and review gates
 
-UI changes require a Desktop build and the relevant headless tests. Reusable controls should have focused tests for their public properties and rendered states. Screen changes should cover the state transition that consumes the component
+UI changes require a Desktop build and the relevant headless tests. Reusable controls should have focused tests for their public properties and rendered states. Screen changes should cover the state transition that consumes the component.
 
-Useful existing test locations include `Tests/Hyprism.Desktop.Tests/NoteCardTests.cs`, `OverlayModalAnimationTests.cs`, `MainWindowRenderTests.cs`, and `InstanceSectionRenderTests.cs`
+Useful existing test locations include `Tests/Hyprism.Desktop.Tests/NoteCardTests.cs`, `OverlayModalAnimationTests.cs`, `MainWindowRenderTests.cs`, and `InstanceSectionRenderTests.cs`.
 
-Before merging a UI change, verify the resource path, the owner dictionary, the state matrix, English and Russian strings, keyboard behavior, compact layout, and the rendered result
+Before merging a UI change, verify the resource path, the owner dictionary, the state matrix, English and Russian strings, keyboard behavior, compact layout, and the rendered result.
 
-The higher-level composition rules remain in [Desktop architecture](/architecture/desktop)
+The higher-level composition rules remain in [Desktop architecture](/architecture/desktop).

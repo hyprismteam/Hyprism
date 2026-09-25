@@ -135,12 +135,6 @@ public sealed partial class ProfilesView : UserControl
 
     private void OnProfileSelectedClicked(object? sender, RoutedEventArgs args)
     {
-        if (sender is Button { DataContext: ProfileItemViewModel profile } &&
-            DataContext is ProfilesViewModel viewModel)
-        {
-            viewModel.SelectProfileCommand.Execute(profile);
-        }
-
         _layoutHost.RememberDetail();
         if (_layoutHost.IsCompact)
             _layoutHost.OpenDetail();

@@ -8,6 +8,7 @@ SPDX-License-Identifier: GPL-3.0-only
         xmlns:controls="using:Hyprism.Desktop.Controls"
         xmlns:easing="using:Avalonia.Animation.Easings">
   <Styles.Resources>
+
     <ControlTheme x:Key="UiComboBoxItemTheme" TargetType="ComboBoxItem">
       <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
       <Setter Property="Background" Value="Transparent" />
@@ -50,6 +51,125 @@ SPDX-License-Identifier: GPL-3.0-only
       </Style>
     </ControlTheme>
   </Styles.Resources>
+
+  <Style Selector="ContentControl.managerRailSurface">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Classes="managerRailContent">
+          <controls:SmoothScrollViewer Classes="managerRailScroll">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="Stretch"
+                              VerticalContentAlignment="Top" />
+          </controls:SmoothScrollViewer>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBox.instanceVirtualizedList">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <VirtualizingStackPanel CacheLength="1" />
+      </ItemsPanelTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBox.instanceVirtualizedList > ListBoxItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBox.instanceVirtualizedList > ListBoxItem:pointerover">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="ListBox.instanceVirtualizedList > ListBoxItem:selected">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="CheckBox.uiSelectionCheck">
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+
+  <Style Selector="CheckBox.uiSelectionCheck.row">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="10,9" />
+  </Style>
+
+  <Style Selector="Border.radioSelectionIndicator">
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="Background" Value="{DynamicResource RadioIndicatorBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource RadioIndicatorBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1.5" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Pill}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="RadioButton:checked Border.radioSelectionIndicator">
+    <Setter Property="BorderBrush" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="Ellipse.radioSelectionDot">
+    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="RadioButton:focus-visible Border.radioSelectionIndicator">
+    <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
+    <Setter Property="BorderThickness" Value="2" />
+  </Style>
+
+  <Style Selector="RadioButton.uiSelectionRadio">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}"
+                Padding="{TemplateBinding Padding}">
+          <Border.Transitions>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.16" />
+            </Transitions>
+          </Border.Transitions>
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
 
   <Style Selector="controls|FadingComboBox.uiComboBox">
     <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -288,8 +408,8 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="controls|FormRow">
-    <Setter Property="MinHeight" Value="66" />
-    <Setter Property="Padding" Value="18,14" />
+    <Setter Property="MinHeight" Value="{DynamicResource Size.Row}" />
+    <Setter Property="Padding" Value="{DynamicResource Inset.Card}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBrush}" />
     <Setter Property="BorderThickness" Value="0,0,0,3" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -303,6 +423,9 @@ SPDX-License-Identifier: GPL-3.0-only
             <StackPanel Spacing="3" VerticalAlignment="Center">
               <TextBlock Classes="formLabel" Text="{TemplateBinding Label}" />
               <TextBlock Classes="formHint" Text="{TemplateBinding Hint}" />
+              <TextBlock Classes="formError"
+                         Text="{TemplateBinding Error}"
+                         IsVisible="{TemplateBinding HasError}" />
             </StackPanel>
             <ContentPresenter Grid.Column="1"
                               Content="{TemplateBinding Content}"
@@ -313,6 +436,183 @@ SPDX-License-Identifier: GPL-3.0-only
         </Border>
       </ControlTemplate>
     </Setter>
+  </Style>
+
+  <Style Selector="controls|ModalForm">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid >
+          <Border Classes="modalFormContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{TemplateBinding Title}"
+                           FontSize="{DynamicResource FontSize.Title}"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        Classes="modalFormClose mirrorRemove"
+                        Command="{TemplateBinding DismissCommand}"
+                        ToolTip.Tip="{TemplateBinding DismissLabel}"
+                        AutomationProperties.Name="{TemplateBinding DismissLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <TextBlock Text="{TemplateBinding Description}"
+                         Classes="formHint"
+                         TextWrapping="Wrap" />
+              <ContentPresenter Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="Stretch" />
+              <ContentPresenter Content="{TemplateBinding ActionsContent}"
+                                HorizontalContentAlignment="Stretch" />
+            </StackPanel>
+          </Border>
+          <Border Classes="modalFormOutline" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.modalFormContent">
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+    <Setter Property="CornerRadius" Value="18,18,0,0" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+
+  <Style Selector="Border.modalFormOutline">
+    <Setter Property="Margin" Value="0,0,0,42" />
+    <Setter Property="BorderBrush" Value="{DynamicResource MainCardStrokeBrush}" />
+    <Setter Property="BorderThickness" Value="1,1,1,0" />
+    <Setter Property="CornerRadius" Value="18,18,0,0" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+
+  <Style Selector="Button.modalFormClose">
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+  </Style>
+
+  <Style Selector="Button.modalFormClose:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="Stretch" />
+          <Button Classes="modalTextFieldError"
+                  IsVisible="{TemplateBinding IsError}"
+                  ToolTip.Tip="{TemplateBinding ErrorMessage}"
+                  IsTabStop="False">
+            <PathIcon Classes="modalTextFieldErrorIcon"
+                      Data="{StaticResource WarningIcon}" />
+          </Button>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="Padding" Value="12,9,44,9" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox:focus">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox,
+                  controls|ModalTextField:error TextBox:focus">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox:pointerover:focus">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox /template/ Border#PART_BorderElement,
+                  controls|ModalTextField:error TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
+  </Style>
+
+  <Style Selector="controls|ModalTextField:error TextBox:pointerover:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceBrush}" />
+  </Style>
+
+  <Style Selector="Button.modalTextFieldError">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0,0,6,0" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+  </Style>
+
+  <Style Selector="PathIcon.modalTextFieldErrorIcon">
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.formError">
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Secondary}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
 
   <Style Selector="controls|EmptyState">
@@ -577,12 +877,12 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="Button.wizardAction.create">
     <Setter Property="MinWidth" Value="150" />
     <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="Button.wizardAction.create:pointerover">
     <Setter Property="Background" Value="White" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="Button.wizardAction.create:disabled">

@@ -257,7 +257,7 @@ SPDX-License-Identifier: GPL-3.0-only
                                     MaxWidth="760"
                                     Spacing="14">
                           <TextBlock Text="{Binding VideoTitle}"
-                                     Classes="articleVideoTitle"
+
                                      Foreground="White"
                                      FontSize="26"
                                      FontWeight="Bold"
@@ -275,7 +275,7 @@ SPDX-License-Identifier: GPL-3.0-only
                                     Background="#99080A10"
                                     CornerRadius="12"
                                     Padding="16,10">
-                              <Grid Classes="articleVideoActionContent"
+                              <Grid
                                     ColumnDefinitions="Auto,Auto">
                                 <Path Classes="articleVideoYoutubeIcon"
                                       Grid.Column="0"

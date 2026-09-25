@@ -16,7 +16,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F7F7F8" />
   <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A8A9AE" />
   <SolidColorBrush x:Key="TextMutedBrush" Color="#73757D" />
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#79B0F4" />
   <SolidColorBrush x:Key="AccentBrush" Color="#F5F5F6" />
+  <SolidColorBrush x:Key="AccentForegroundBrush" Color="#111111" />
   <SolidColorBrush x:Key="AccentSoftBrush" Color="#18FFFFFF" />
   <SolidColorBrush x:Key="NoteBrush" Color="#79B0F4" />
   <SolidColorBrush x:Key="NoteSurfaceBrush" Color="#1A79B0F4" />
@@ -34,6 +36,13 @@ SPDX-License-Identifier: GPL-3.0-only
   <SolidColorBrush x:Key="ControlSelectionBrush" Color="#55565A" />
   <SolidColorBrush x:Key="ControlKnobBrush" Color="#F4F5F6" />
   <SolidColorBrush x:Key="ControlKnobHoverBrush" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="CheckIndicatorBrush" Color="#34343A" />
+  <SolidColorBrush x:Key="CheckIndicatorHoverBrush" Color="#484850" />
+  <SolidColorBrush x:Key="CheckSelectedBrush" Color="#F1F1F3" />
+  <SolidColorBrush x:Key="CheckSelectedHoverBrush" Color="#DCDCE0" />
+  <SolidColorBrush x:Key="CheckGlyphBrush" Color="#151515" />
+  <SolidColorBrush x:Key="RadioIndicatorBrush" Color="#0F1012" />
+  <SolidColorBrush x:Key="RadioIndicatorBorderBrush" Color="#78FFFFFF" />
 
   <!-- Semantic states -->
   <SolidColorBrush x:Key="SuccessBrush" Color="#68CD8E" />

@@ -324,7 +324,8 @@ public sealed class InstanceSectionRenderTests
             .Single(textBox => textBox.IsEffectivelyVisible && textBox.Classes.Contains("instanceSearch"));
         Assert.Contains("catalogSearch", searchBox.Classes);
         Assert.Equal(new Thickness(0), searchBox.BorderThickness);
-        var searchButton = Assert.IsType<Button>(view.FindControl<Button>("ModCatalogSearchButton"));
+        var modsView = Assert.IsType<InstanceModsView>(view.FindControl<InstanceModsView>("InstanceModsContentView"));
+        var searchButton = Assert.IsType<Button>(modsView.FindControl<Button>("ModCatalogSearchButton"));
         Assert.Contains("hidden", searchButton.Classes);
         Assert.False(searchButton.IsHitTestVisible);
         viewModel.ModCatalogSearchQuery = "abcd";
@@ -382,7 +383,8 @@ public sealed class InstanceSectionRenderTests
         Assert.NotNull(installModal);
         Assert.Equal(674, installModal!.ShoulderMaxWidth);
         await WaitUntilAsync(() => viewModel.HasModCatalogInstallConfirmation && installModal!.IsEffectivelyVisible);
-        var installTable = view.FindControl<Border>("ModCatalogInstallTable");
+        var installContent = Assert.Single(installModal.GetVisualDescendants().OfType<ModCatalogInstallView>());
+        var installTable = installContent.FindControl<Border>("ModCatalogInstallTable");
         Assert.NotNull(installTable);
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
@@ -423,10 +425,10 @@ public sealed class InstanceSectionRenderTests
         Assert.Equal(
             "(Dependency 1.2)",
             viewModel.ModCatalogInstallItems[0].DependencyItems[0].VersionInParentheses);
-        var installConfirmButton = view.FindControl<Button>("ModCatalogInstallConfirmButton");
+        var installConfirmButton = installContent.FindControl<Button>("ModCatalogInstallConfirmButton");
         Assert.NotNull(installConfirmButton);
         Assert.Same(viewModel.InstallSelectedCatalogModsCommand, installConfirmButton!.Command);
-        var installResetButton = view.FindControl<Button>("ModCatalogInstallResetButton");
+        var installResetButton = installContent.FindControl<Button>("ModCatalogInstallResetButton");
         Assert.NotNull(installResetButton);
         Assert.Same(viewModel.ClearModCatalogSelectionCommand, installResetButton!.Command);
         Assert.Contains(
@@ -441,7 +443,7 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains("visible", catalogTopInstall.Classes);
 
         var installTask = viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
-        var installScreen = view.FindControl<Border>("ModCatalogInstallScreen");
+        var installScreen = modsView.FindControl<Border>("ModCatalogInstallScreen");
         Assert.NotNull(installScreen);
         await WaitUntilAsync(() => viewModel.IsInstallingSelectedCatalogMods && installScreen!.IsEffectivelyVisible);
         Assert.Equal("0/1", viewModel.ModCatalogInstallProgressText);
@@ -476,7 +478,7 @@ public sealed class InstanceSectionRenderTests
         Assert.True(modal.IsVisible);
         var blurEffect = Assert.IsType<BlurEffect>(instancesLayout?.Effect);
         Assert.NotEmpty(Assert.IsAssignableFrom<IEnumerable<ITransition>>(blurEffect.Transitions));
-        Assert.True(view.FindControl<Grid>("ModCatalogSection")?.IsVisible);
+        Assert.True(modsView.FindControl<Grid>("ModCatalogSection")?.IsVisible);
         Assert.Contains(
             preview.GetVisualDescendants(),
             element => element is ItemsControl items && items.Classes.Contains("instancePreviewFiles"));
@@ -604,11 +606,13 @@ public sealed class InstanceSectionRenderTests
         Assert.False(viewModel.HasModCatalogPreview);
         Assert.True(viewModel.IsInstanceBrowseSection);
         await WaitUntilAsync(() => !modal.IsVisible);
-        Assert.Equal(0, Assert.IsType<BlurEffect>(instancesLayout?.Effect).Radius);
+        Assert.True(instancesLayout!.IsHitTestVisible);
+        Assert.Null(instancesLayout.Effect);
 
-        Assert.Equal(720, view.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
-        Assert.Equal(820, view.FindControl<Grid>("ModCatalogSection")?.MaxWidth);
-        Assert.Equal(820, view.FindControl<Grid>("InstanceLogsSection")?.MaxWidth);
+        Assert.Equal(720, modsView.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
+        Assert.Equal(820, modsView.FindControl<Grid>("ModCatalogSection")?.MaxWidth);
+        Assert.Equal(820, view.FindControl<InstanceLogsView>("InstanceLogsContentView")?
+            .FindControl<Grid>("InstanceLogsSection")?.MaxWidth);
 
         viewModel.SelectInstanceSectionCommand.Execute("logs");
         Assert.Single(viewModel.LogsLines);
@@ -631,8 +635,10 @@ public sealed class InstanceSectionRenderTests
             text => text.Classes.Contains("logLevel") && text.Text == "ERROR");
         Assert.Equal(FontWeight.Bold, logLevel.FontWeight);
 
-        var levelButton = view.FindControl<ToggleButton>("LogsLevelButton");
-        var levelPopup = view.FindControl<FadingPopup>("LogsLevelPopup");
+        var logsView = view.FindControl<InstanceLogsView>("InstanceLogsContentView");
+        Assert.NotNull(logsView);
+        var levelButton = logsView!.FindControl<ToggleButton>("LogsLevelButton");
+        var levelPopup = logsView.FindControl<FadingPopup>("LogsLevelPopup");
         Assert.NotNull(levelButton);
         Assert.NotNull(levelPopup);
         Assert.Equal(44, levelButton!.Bounds.Height);
@@ -641,7 +647,7 @@ public sealed class InstanceSectionRenderTests
         levelButton.IsChecked = true;
         await WaitUntilAsync(() => levelPopup!.IsOpen);
         var levelChecks = levelPopup!.Child!.GetVisualDescendants()
-            .OfType<CheckBox>().Where(check => check.Classes.Contains("logsLevelCheck")).ToList();
+            .OfType<CheckBox>().Where(check => check.Classes.Contains("uiSelectionCheck") && check.Classes.Contains("row")).ToList();
         Assert.Equal(4, levelChecks.Count);
         var tracingCheck = levelChecks[3];
         var tracingCenter = tracingCheck.TranslatePoint(

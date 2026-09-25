@@ -1,0 +1,299 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsAboutView"
+             x:Name="SettingsAboutRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="AboutTeamMemberTemplate" x:DataType="vm:AboutTeamMemberViewModel">
+      <Button Classes="aboutTeamMember"
+              Command="{Binding DataContext.OpenTeamMemberCommand, ElementName=SettingsAboutRoot}"
+              CommandParameter="{Binding}">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+          <Border Classes="aboutTeamAvatar">
+            <Grid>
+              <Image Source="{Binding Avatar}"
+                     IsVisible="{Binding HasAvatar}"
+                     Stretch="UniformToFill" />
+              <TextBlock Text="{Binding Initials}"
+                         IsVisible="{Binding !HasAvatar}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         FontSize="12"
+                         FontWeight="Bold" />
+            </Grid>
+          </Border>
+          <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+            <TextBlock Text="{Binding DisplayName}"
+                       Classes="formLabel"
+                       MaxLines="1"
+                       TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{Binding Role}"
+                       Classes="aboutTeamRole"
+                       MaxLines="2"
+                       TextWrapping="Wrap"
+                       TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+        </Grid>
+      </Button>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AboutContributorTemplate" x:DataType="vm:AboutContributorViewModel">
+      <Button Classes="aboutContributor"
+              Command="{Binding DataContext.OpenContributorCommand, ElementName=SettingsAboutRoot}"
+              CommandParameter="{Binding}"
+              ToolTip.Tip="{Binding Login}">
+        <Border Classes="aboutContributorAvatar">
+          <Grid>
+            <Image Source="{Binding Avatar}"
+                   IsVisible="{Binding HasAvatar}"
+                   Stretch="UniformToFill" />
+            <TextBlock Text="{Binding Initial}"
+                       IsVisible="{Binding !HasAvatar}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="12"
+                       FontWeight="Bold" />
+          </Grid>
+        </Border>
+      </Button>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="22" IsVisible="{Binding IsAbout}">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AboutProjectTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="formRow aboutRow">
+                      <Grid MinHeight="66" Margin="18,0" ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                        <StackPanel Spacing="3" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding AboutCurrentVersionLabel}" Classes="formLabel" />
+                          <TextBlock Text="{Binding AboutCurrentVersionHint}" Classes="formHint" />
+                        </StackPanel>
+                        <Border Grid.Column="1" Classes="versionBadge">
+                          <TextBlock Text="{Binding AboutCurrentVersion}" />
+                        </Border>
+                      </Grid>
+                    </Border>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink"
+                              Command="{Binding OpenLatestCommitCommand}"
+                              IsEnabled="{Binding HasAboutLatestCommit}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutLatestCommitLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutLatestCommitHint}"
+                                       Classes="formHint"
+                                       MaxLines="1"
+                                       TextTrimming="CharacterEllipsis" />
+                          </StackPanel>
+                          <Border Grid.Column="1"
+                                  Classes="versionBadge"
+                                  IsVisible="{Binding HasAboutLatestCommit}">
+                            <TextBlock Text="{Binding AboutLatestCommitSha}" FontFamily="JetBrains Mono" />
+                          </Border>
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink" Command="{Binding OpenGitHubCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="GitHub" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutGitHubHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow last">
+                      <Button Classes="aboutLink" Command="{Binding OpenDocumentationCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutDocumentationLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutDocumentationHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AboutCommunityTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink" Command="{Binding OpenDiscordCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="Discord" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutDiscordHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow last">
+                      <Button Classes="aboutLink" Command="{Binding OpenBugReportCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding BugReportLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutBugReportHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AboutTeamTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup aboutTeamGroup">
+                  <ItemsControl ItemsSource="{Binding AboutTeamMembers}"
+                                ItemTemplate="{StaticResource AboutTeamMemberTemplate}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <UniformGrid Columns="3" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                  </ItemsControl>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AboutContributorsTitle}" Classes="settingsCategoryHeading" />
+                <Border x:Name="AboutContributorsContainer"
+                        Classes="formGroup aboutContributorsGroup"
+                        SizeChanged="OnAboutContributorsSizeChanged">
+                  <StackPanel x:Name="AboutContributorsRow"
+                              Orientation="Horizontal"
+                              HorizontalAlignment="Center">
+                    <ItemsControl ItemsSource="{Binding AboutContributors}"
+                                  ItemTemplate="{StaticResource AboutContributorTemplate}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <Button Classes="aboutContributor overflow"
+                            IsVisible="{Binding HasMoreAboutContributors}"
+                            Command="{Binding OpenAllContributorsCommand}"
+                            ToolTip.Tip="{Binding AboutContributorsTitle}">
+                      <Border Classes="aboutContributorAvatar overflow">
+                        <TextBlock Text="{Binding AboutContributorOverflow}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"
+                                   FontWeight="Bold" />
+                      </Border>
+                    </Button>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AboutLegalTitle}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink" Command="{Binding OpenLicenseCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutLicenseLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutLicenseHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Border Grid.Column="1" Classes="versionBadge">
+                            <TextBlock Text="GPL-3.0-only" />
+                          </Border>
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink" Command="{Binding OpenHytaleEulaCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutHytaleEulaLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutHytaleEulaHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow">
+                      <Button Classes="aboutLink" Command="{Binding OpenIcons8Command}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutCreditsLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutCreditsHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                    <Border Classes="formRow aboutRow last">
+                      <Button Classes="aboutLink" Command="{Binding OpenLordiconCommand}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                          <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding AboutLordiconLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding AboutLordiconHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Path Grid.Column="1" Classes="aboutOpenIcon" Data="{StaticResource OpenIcon}" />
+                        </Grid>
+                      </Button>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel x:Name="AboutTechnologyAttribution"
+                          Classes="aboutTechnologyAttribution"
+                          HorizontalAlignment="Center">
+                <TextBlock Text="{Binding AboutBuiltWithLabel}"
+                           Classes="aboutTechnologyCaption"
+                           HorizontalAlignment="Center" />
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            HorizontalAlignment="Center">
+                  <Button x:Name="AboutAvaloniaButton"
+                          Classes="aboutTechnologyLogo avalonia"
+                          Command="{Binding OpenAvaloniaCommand}"
+                          ToolTip.Tip="Avalonia UI">
+                    <Path x:Name="AboutAvaloniaMark"
+                          Classes="aboutTechnologyAvaloniaMark"
+                          Data="{StaticResource AvaloniaBrandIcon}" />
+                  </Button>
+                  <Button x:Name="AboutDotNetButton"
+                          Classes="aboutTechnologyLogo dotnet"
+                          Command="{Binding OpenDotNetCommand}"
+                          ToolTip.Tip=".NET">
+                    <Viewbox Width="38" Height="38" Stretch="Uniform">
+                      <Canvas Width="456" Height="456">
+                        <Path x:Name="AboutDotNetBackground"
+                              Classes="aboutTechnologyDotNetBackground"
+                              Data="{StaticResource DotNetBrandBackground}" />
+                        <Path x:Name="AboutDotNetWordmark"
+                              Classes="aboutTechnologyDotNetWordmark"
+                              Data="{StaticResource DotNetBrandWordmark}" />
+                      </Canvas>
+                    </Viewbox>
+                  </Button>
+                </StackPanel>
+                <TextBlock Text="{Binding AboutDisclaimer}"
+                           Classes="aboutDisclaimer aboutTechnologyDisclaimer"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap" />
+              </StackPanel>
+            </StackPanel>
+</UserControl>

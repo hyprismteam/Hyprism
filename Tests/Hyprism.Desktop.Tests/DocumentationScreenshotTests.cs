@@ -3,7 +3,10 @@
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -11,10 +14,12 @@ using Hyprism.Core.Game.Sources;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Models;
 using Hyprism.Desktop.Controls;
+using Hyprism.Desktop.Screens.Instances;
 using Hyprism.Desktop.Screens.Settings;
 using Hyprism.Desktop.Shell;
 using Moq;
 using Xunit;
+using Ellipse = Avalonia.Controls.Shapes.Ellipse;
 
 namespace Hyprism.Desktop.Tests;
 
@@ -114,6 +119,9 @@ public sealed class DocumentationScreenshotTests
 
         var versions = new Mock<IGameVersionCatalog>();
         versions
+            .Setup(service => service.GetVersionListAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([72, 71, 70]);
+        versions
             .Setup(service => service.ProbeSourceAvailabilityAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new MirrorSpeedTestResult
             {
@@ -147,6 +155,17 @@ public sealed class DocumentationScreenshotTests
         }
 
         await CapturePageAsync("instances", "instances.png");
+        var instancesView = window.GetVisualDescendants().OfType<InstancesView>().Single();
+        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => !viewModel.Instances.IsInstanceVersionsLoading &&
+                  viewModel.Instances.AvailableInstanceVersions.Count > 0,
+            "instance creator versions to load");
+        await WaitFramesAsync(20);
+        Capture(window, Path.Combine(outputDirectory, "instances-creator.png"));
+        viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
+        await WaitFramesAsync(16);
+
         await CapturePageAsync("profiles", "profiles.png");
 
         await CapturePageAsync("news", "news.png");
@@ -169,6 +188,7 @@ public sealed class DocumentationScreenshotTests
 
         SelectSettingsCategory(viewModel, "java");
         await WaitFramesAsync(4);
+        Capture(window, Path.Combine(outputDirectory, "settings-java.png"));
         var settingsView = window.GetVisualDescendants().OfType<SettingsView>().Single();
         var javaArgumentsModal = settingsView.FindControl<OverlayModal>("JavaArgumentModal");
         Assert.NotNull(javaArgumentsModal);
@@ -181,6 +201,100 @@ public sealed class DocumentationScreenshotTests
         dialogFrame.Save(Path.Combine(outputDirectory, "java-arguments.png"), PngBitmapEncoderOptions.Default);
 
         window.Close();
+        CaptureSelectionControls(outputDirectory, language);
+    }
+
+    private static void CaptureSelectionControls(string outputDirectory, string language)
+    {
+        var isRussian = language.StartsWith("ru", StringComparison.OrdinalIgnoreCase);
+        var selectionCheck = new CheckBox
+        {
+            Content = isRussian ? "Показывать экспериментальные моды" : "Show experimental mods",
+            IsChecked = true
+        };
+        selectionCheck.Classes.Add("uiSelectionCheck");
+        selectionCheck.Classes.Add("row");
+
+        var disabledCheck = new CheckBox
+        {
+            Content = isRussian ? "Недоступный параметр" : "Unavailable option",
+            IsEnabled = false
+        };
+        disabledCheck.Classes.Add("uiSelectionCheck");
+        disabledCheck.Classes.Add("row");
+
+        var bundledRuntime = CreateSelectionRadio(
+            isRussian ? "Встроенная среда Java" : "Bundled Java runtime",
+            selected: true);
+        var customRuntime = CreateSelectionRadio(
+            isRussian ? "Своя среда Java" : "Custom Java runtime",
+            selected: false);
+        var window = new Window
+        {
+            Width = 560,
+            Height = 380,
+            Content = new Border
+            {
+                Classes = { "card" },
+                Padding = new Thickness(24),
+                Margin = new Thickness(28),
+                Child = new StackPanel
+                {
+                    Spacing = 10,
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            Text = isRussian ? "Элементы выбора" : "Selection controls",
+                            Classes = { "formLabel" },
+                            FontSize = 17
+                        },
+                        selectionCheck,
+                        disabledCheck,
+                        bundledRuntime,
+                        customRuntime
+                    }
+                }
+            }
+        };
+
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        window.KeyPress(Key.Tab, RawInputModifiers.None, PhysicalKey.Tab, null);
+        Dispatcher.UIThread.RunJobs();
+        Capture(window, Path.Combine(outputDirectory, "selection-controls.png"));
+        window.Close();
+    }
+
+    private static RadioButton CreateSelectionRadio(string label, bool selected)
+    {
+        var radio = new RadioButton
+        {
+            GroupName = "JavaRuntime",
+            IsChecked = selected,
+            Padding = new Thickness(12, 8),
+            Content = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 10,
+                Children =
+                {
+                    new Border
+                    {
+                        Classes = { "radioSelectionIndicator" },
+                        Child = new Ellipse
+                        {
+                            Classes = { "radioSelectionDot" },
+                            IsVisible = selected
+                        }
+                    },
+                    new TextBlock { Text = label, VerticalAlignment = VerticalAlignment.Center }
+                }
+            }
+        };
+        radio.Classes.Add("uiSelectionRadio");
+        return radio;
     }
 
     private static void SelectSettingsCategory(MainWindowViewModel viewModel, string id)

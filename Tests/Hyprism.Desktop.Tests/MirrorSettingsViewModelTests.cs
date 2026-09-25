@@ -467,7 +467,7 @@ public sealed class MirrorSettingsViewModelTests
                         text.Text == viewModel.Categories.Single(category => category.Id == "downloads").Description);
             var categoryDescriptionSize = categoryDescription.Bounds.Size;
 
-            var table = Assert.IsType<Border>(view.FindControl<Border>("DownloadSourcesTable"));
+            var table = Assert.IsType<Border>(FindDownloadsView(view).FindControl<Border>("DownloadSourcesTable"));
             var visibleText = table.GetVisualDescendants()
                 .OfType<TextBlock>()
                 .Where(text => text.IsEffectivelyVisible)
@@ -520,7 +520,7 @@ public sealed class MirrorSettingsViewModelTests
             if (!string.IsNullOrWhiteSpace(checkingRenderPath))
                 window.CaptureRenderedFrame()!.Save(checkingRenderPath, PngBitmapEncoderOptions.Default);
 
-            var noteCard = Assert.IsType<NoteCard>(view.FindControl<NoteCard>("DownloadsNoteCard"));
+            var noteCard = Assert.IsType<NoteCard>(FindDownloadsView(view).FindControl<NoteCard>("DownloadsNoteCard"));
             Assert.Contains("note", noteCard.Classes);
             Assert.DoesNotContain("important", noteCard.Classes);
             Assert.Equal("Note", noteCard.Title);
@@ -578,7 +578,7 @@ public sealed class MirrorSettingsViewModelTests
             Assert.Same(source, removeAction.CommandParameter);
             source.IsMenuOpen = false;
 
-            var addButton = Assert.IsType<Button>(view.FindControl<Button>("AddDownloadSourceButton"));
+            var addButton = Assert.IsType<Button>(FindDownloadsView(view).FindControl<Button>("AddDownloadSourceButton"));
             Assert.Same(viewModel.ShowAddMirrorCommand, addButton.Command);
             viewModel.ShowAddMirrorCommand.Execute(null);
             var wizard = Assert.IsType<Border>(view.FindControl<Border>("DownloadSourceWizardScreen"));
@@ -688,4 +688,7 @@ public sealed class MirrorSettingsViewModelTests
         => control.TranslatePoint(
                new Point(control.Bounds.Width / 2, control.Bounds.Height / 2),
                relativeTo)!.Value.X;
+
+    private static SettingsDownloadsView FindDownloadsView(SettingsView view)
+        => Assert.Single(view.GetVisualDescendants().OfType<SettingsDownloadsView>());
 }

@@ -1,0 +1,296 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsJavaView"
+             x:Name="SettingsJavaRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="CustomJavaPathActionTemplate" x:DataType="vm:SettingsViewModel">
+      <Grid Classes="managedActionContent">
+        <StackPanel Classes="managedActionIdle"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+          <TextBlock Text="{Binding EditCustomJavaPathLabel}"
+                     VerticalAlignment="Center" />
+        </StackPanel>
+        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+          <Path Classes="managedActionSpinner"
+                controls:RotatingVisual.IsActive="{Binding IsBrowsingCustomJava}"
+                HorizontalAlignment="Center"
+                Data="M10,2 A8,8 0 1 1 2,10" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <ControlTheme x:Key="JavaSliderTrackButtonTheme" TargetType="RepeatButton">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Height="8"
+                  VerticalAlignment="Center"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="999">
+            <Border.Transitions>
+              <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.16" />
+              </Transitions>
+            </Border.Transitions>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="JavaSliderThumbTheme" TargetType="Thumb">
+      <Setter Property="Width" Value="18" />
+      <Setter Property="Height" Value="18" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border x:Name="JavaSliderThumbVisual"
+                  Width="{TemplateBinding Width}"
+                  Height="{TemplateBinding Height}"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="999"
+                  BoxShadow="0 2 6 0 #99000000">
+            <Border.Transitions>
+              <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.16" />
+              </Transitions>
+            </Border.Transitions>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="JavaMemorySliderTheme" TargetType="Slider">
+      <Setter Property="Height" Value="28" />
+      <Setter Property="Background" Value="#24FFFFFF" />
+      <Setter Property="Foreground" Value="#E8E8EA" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid Background="Transparent">
+            <Track x:Name="PART_Track"
+                   Minimum="{TemplateBinding Minimum}"
+                   Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}"
+                   Orientation="Horizontal">
+              <Track.DecreaseButton>
+                <RepeatButton Theme="{StaticResource JavaSliderTrackButtonTheme}"
+                              Background="{TemplateBinding Foreground}" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Theme="{StaticResource JavaSliderTrackButtonTheme}"
+                              Background="{TemplateBinding Background}" />
+              </Track.IncreaseButton>
+              <Track.Thumb>
+                <Thumb x:Name="JavaMemorySliderThumb"
+                       Theme="{StaticResource JavaSliderThumbTheme}"
+                       Background="{TemplateBinding Foreground}" />
+              </Track.Thumb>
+            </Track>
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="Background" Value="#32FFFFFF" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="22" IsVisible="{Binding IsJava}">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding JavaRuntimeLabel}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="formRow runtime">
+                    <RadioButton Classes="uiSelectionRadio javaRuntimeOption"
+                              AutomationProperties.Name="{Binding BundledJavaLabel}"
+                              GroupName="JavaRuntime"
+                              IsChecked="{Binding UseBundledJava, Mode=OneWay}"
+                              Command="{Binding SelectBundledJavaCommand}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                          <Border Classes="radioSelectionIndicator">
+                            <Ellipse Classes="radioSelectionDot" IsVisible="{Binding UseBundledJava}" />
+                          </Border>
+                          <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="{Binding BundledJavaLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding BundledJavaHint}" Classes="formHint" />
+                          </StackPanel>
+                        </Grid>
+                      </RadioButton>
+                    </Border>
+                    <Border Classes="formRow runtime last">
+                      <StackPanel>
+                        <Grid>
+                        <RadioButton Classes="uiSelectionRadio javaRuntimeOption"
+                                  AutomationProperties.Name="{Binding CustomJavaLabel}"
+                                  GroupName="JavaRuntime"
+                                  IsChecked="{Binding UseCustomJava, Mode=OneWay}"
+                                  Command="{Binding SelectCustomJavaCommand}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                              <Border Classes="radioSelectionIndicator">
+                                <Ellipse Classes="radioSelectionDot" IsVisible="{Binding UseCustomJava}" />
+                              </Border>
+                              <StackPanel Grid.Column="1" Spacing="2">
+                                <TextBlock Text="{Binding CustomJavaLabel}" Classes="formLabel" />
+                                <TextBlock Text="{Binding CustomJavaHint}" Classes="formHint" />
+                              </StackPanel>
+                            </Grid>
+                          </RadioButton>
+                          <Border Classes="customJavaPathActionHost"
+                                  Classes.open="{Binding UseCustomJava}">
+                            <Button VerticalAlignment="Center"
+                                    Margin="0,0,18,0"
+                                    Classes="settingsAction instanceFolderChangeAction"
+                                    Classes.active="{Binding IsBrowsingCustomJava}"
+                                    Command="{Binding BrowseJavaCommand}">
+                              <ContentControl Content="{Binding}"
+                                              ContentTemplate="{StaticResource CustomJavaPathActionTemplate}" />
+                            </Button>
+                          </Border>
+                        </Grid>
+                        <Border Classes="customJavaExpander"
+                                Classes.open="{Binding UseCustomJava}">
+                          <Border Classes="dataPathSurface" Margin="18,10,18,14">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                              <TextBlock Text="{Binding CustomJavaPathDisplay}"
+                                         Classes="dataPathText"
+                                         Classes.placeholder="{Binding !HasCustomJavaPath}"
+                                         TextTrimming="CharacterEllipsis"
+                                         ToolTip.Tip="{Binding CustomJavaPath}" />
+                              <Button Grid.Column="1"
+                                      Classes="dataPathOpen"
+                                      Command="{Binding OpenCustomJavaFolderCommand}"
+                                      IsVisible="{Binding HasCustomJavaPath}"
+                                      ToolTip.Tip="{Binding OpenFolderLabel}">
+                                <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </Border>
+                      </StackPanel>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding RamAllocationLabel}" Classes="settingsCategoryHeading" />
+                <Border Classes="formGroup">
+                  <StackPanel>
+                    <Border Classes="formRow">
+                      <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                          <TextBlock Text="{Binding MaximumRamLabel}" Classes="formLabel" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1" Text="{Binding JavaMaximumRamValue}" Classes="javaMemoryValue" />
+                        </Grid>
+                        <Slider x:Name="JavaMaximumMemorySlider"
+                                Theme="{StaticResource JavaMemorySliderTheme}"
+                                Minimum="{Binding MinimumJavaRamMb}"
+                                Maximum="{Binding MaximumJavaRamMb}"
+                                TickFrequency="{Binding JavaMemoryTickFrequency}"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding JavaMaximumRamMb, Mode=TwoWay}" />
+                      </StackPanel>
+                    </Border>
+                    <Border Classes="formRow last">
+                      <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                          <TextBlock Text="{Binding InitialRamLabel}" Classes="formLabel" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1" Text="{Binding JavaInitialRamValue}" Classes="javaMemoryValue" />
+                        </Grid>
+                        <Slider x:Name="JavaInitialMemorySlider"
+                                Theme="{StaticResource JavaMemorySliderTheme}"
+                                Minimum="{Binding MinimumJavaRamMb}"
+                                Maximum="{Binding JavaInitialRamMaximum}"
+                                TickFrequency="{Binding JavaMemoryTickFrequency}"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding JavaInitialRamMb, Mode=TwoWay}" />
+                      </StackPanel>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="*,Auto" Classes="settingsHeaderAction">
+                  <TextBlock Text="{Binding JavaArgumentsLabel}"
+                             Classes="settingsCategoryHeading" />
+                  <Button x:Name="AddJavaArgumentButton"
+                          Grid.Column="1"
+                          Classes="dataAddAction"
+                          Theme="{StaticResource SettingsActionButtonTheme}"
+                          Command="{Binding ShowAddJavaArgumentCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="+" FontSize="17" FontWeight="SemiBold" />
+                      <TextBlock Text="{Binding AddSourceButtonLabel}"
+                                 Classes="settingsHeaderActionLabel" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <Border x:Name="JavaArgumentsTable" Classes="formGroup" IsVisible="{Binding HasJavaArguments}">
+                  <StackPanel>
+                    <Border Classes="dataTableHeader">
+                      <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
+                        <TextBlock Text="{Binding JavaArgumentsLabel}" />
+                      </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding JavaArgumentItems}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:JavaArgumentItemViewModel">
+                          <Border Classes="formRow"
+                                  Classes.last="{Binding IsLast}">
+                            <Grid ColumnDefinitions="*,34" ColumnSpacing="10">
+                              <TextBlock Text="{Binding Value}"
+                                         Classes="dataTableValue link"
+                                         TextTrimming="CharacterEllipsis"
+                                         VerticalAlignment="Center" />
+                              <Button Grid.Column="1"
+                                      Classes="mirrorRemove"
+                                      Command="{Binding DataContext.RemoveJavaArgumentCommand, ElementName=SettingsJavaRoot}"
+                                      CommandParameter="{Binding}"
+                                      ToolTip.Tip="{Binding DataContext.RemoveLabel, ElementName=SettingsJavaRoot}">
+                                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </Border>
+                <Border x:Name="JavaArgumentsEmptyCard"
+                        Classes="formGroup"
+                        IsVisible="{Binding HasNoJavaArguments}">
+                  <StackPanel Spacing="12"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="0,26">
+                    <PathIcon Classes="emptyStateIcon"
+                              Data="{StaticResource ConsoleIcon}"
+                              HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding JavaArgumentsEmptyState}"
+                               Classes="formHint"
+                               TextAlignment="Center"
+                               MaxWidth="440"
+                               HorizontalAlignment="Center" />
+                  </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding JavaArgumentsHint}"
+                           Classes="formHint"
+                           Margin="4,0"
+                           IsVisible="{Binding HasJavaArguments}" />
+                <TextBlock Text="{Binding JavaArgumentsError}"
+                           Classes="formError"
+                           Margin="4,0"
+                           IsVisible="{Binding HasJavaArgumentsError}" />
+              </StackPanel>
+            </StackPanel>
+</UserControl>

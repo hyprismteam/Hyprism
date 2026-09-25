@@ -120,7 +120,7 @@ public sealed class DataSettingsViewModelTests
         Assert.False(viewModel.IsMovingInstanceFolder);
         Assert.Empty(viewModel.InstanceFolderChangeMetricText);
         Assert.False(viewModel.IsInstanceFolderChangeCancellationArmed);
-        var action = Assert.IsType<Button>(view.FindControl<Button>("SelectInstanceFolderButton"));
+        var action = Assert.IsType<Button>(FindDataView(view).FindControl<Button>("SelectInstanceFolderButton"));
         Assert.Contains("active", action.Classes);
         Assert.Contains(
             action.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
@@ -317,21 +317,22 @@ public sealed class DataSettingsViewModelTests
         window.Show();
         Dispatcher.UIThread.RunJobs();
 
-        var instanceCard = Assert.IsType<Border>(view.FindControl<Border>("InstanceFolderCard"));
-        var launcherCard = Assert.IsType<Border>(view.FindControl<Border>("LauncherDataCard"));
-        var launcherFilesCard = Assert.IsType<Border>(view.FindControl<Border>("LauncherFilesCard"));
-        var storageLegendCard = Assert.IsType<Border>(view.FindControl<Border>("StorageLegendCard"));
+        var dataView = FindDataView(view);
+        var instanceCard = Assert.IsType<Border>(dataView.FindControl<Border>("InstanceFolderCard"));
+        var launcherCard = Assert.IsType<Border>(dataView.FindControl<Border>("LauncherDataCard"));
+        var launcherFilesCard = Assert.IsType<Border>(dataView.FindControl<Border>("LauncherFilesCard"));
+        var storageLegendCard = Assert.IsType<Border>(dataView.FindControl<Border>("StorageLegendCard"));
         var storageUsageOverview = Assert.IsType<StackPanel>(
-            view.FindControl<StackPanel>("StorageUsageOverview"));
-        var warning = Assert.IsType<Border>(view.FindControl<Border>("DataGameRunningWarning"));
-        var selectButton = Assert.IsType<Button>(view.FindControl<Button>("SelectInstanceFolderButton"));
-        var resetButton = Assert.IsType<Button>(view.FindControl<Button>("ResetInstanceFolderButton"));
+            dataView.FindControl<StackPanel>("StorageUsageOverview"));
+        var warning = Assert.IsType<Border>(dataView.FindControl<Border>("DataGameRunningWarning"));
+        var selectButton = Assert.IsType<Button>(dataView.FindControl<Button>("SelectInstanceFolderButton"));
+        var resetButton = Assert.IsType<Button>(dataView.FindControl<Button>("ResetInstanceFolderButton"));
         var openLauncherDataButton = Assert.IsType<Button>(
-            view.FindControl<Button>("OpenLauncherDataFolderButton"));
+            dataView.FindControl<Button>("OpenLauncherDataFolderButton"));
         var instancePathSurface = Assert.IsType<Border>(
-            view.FindControl<Border>("InstanceFolderPathSurface"));
+            dataView.FindControl<Border>("InstanceFolderPathSurface"));
         var launcherPathSurface = Assert.IsType<Border>(
-            view.FindControl<Border>("LauncherDataPathSurface"));
+            dataView.FindControl<Border>("LauncherDataPathSurface"));
         Assert.True(instanceCard.IsEffectivelyVisible);
         Assert.True(launcherCard.IsEffectivelyVisible);
         Assert.True(launcherFilesCard.IsEffectivelyVisible);
@@ -389,10 +390,10 @@ public sealed class DataSettingsViewModelTests
         Assert.Equal("4", viewModel.StorageUsageItems[0].Count);
         Assert.Equal(
             "/home/user/Games/HyPrism",
-            view.FindControl<TextBlock>("InstanceFolderPath")?.Text);
+            dataView.FindControl<TextBlock>("InstanceFolderPath")?.Text);
         Assert.Equal(
             "/home/user/.local/share/HyPrism",
-            view.FindControl<TextBlock>("LauncherDataPath")?.Text);
+            dataView.FindControl<TextBlock>("LauncherDataPath")?.Text);
 
         running = false;
         gameProcess.Raise(
@@ -462,4 +463,7 @@ public sealed class DataSettingsViewModelTests
                 4 * 1024 * 1024));
         return settings;
     }
+
+    private static SettingsDataView FindDataView(SettingsView view)
+        => Assert.Single(view.GetVisualDescendants().OfType<SettingsDataView>());
 }

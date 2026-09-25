@@ -4,6 +4,7 @@
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -24,6 +25,12 @@ public sealed partial class OverlayModal : UserControl
     public static readonly StyledProperty<object?> ModalContentProperty =
         AvaloniaProperty.Register<OverlayModal, object?>(nameof(ModalContent));
 
+    public static readonly StyledProperty<Control?> BackdropTargetProperty =
+        AvaloniaProperty.Register<OverlayModal, Control?>(nameof(BackdropTarget));
+
+    public static readonly StyledProperty<Control?> InitialFocusTargetProperty =
+        AvaloniaProperty.Register<OverlayModal, Control?>(nameof(InitialFocusTarget));
+
     public static readonly StyledProperty<double> SheetMaxWidthProperty =
         AvaloniaProperty.Register<OverlayModal, double>(nameof(SheetMaxWidth), 720);
 
@@ -43,6 +50,11 @@ public sealed partial class OverlayModal : UserControl
         AvaloniaProperty.Register<OverlayModal, double>(nameof(HiddenOffset), 720);
 
     private CancellationTokenSource? _animationCancellation;
+    private Control? _activeBackdropTarget;
+    private IInputElement? _restoreFocusElement;
+    private IEffect? _previousBackdropEffect;
+    private BlurEffect? _backdropBlurEffect;
+    private bool _previousBackdropHitTestVisible;
     private bool _initialized;
 
     public OverlayModal()
@@ -71,6 +83,24 @@ public sealed partial class OverlayModal : UserControl
     {
         get => GetValue(ModalContentProperty);
         set => SetValue(ModalContentProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the control that is blurred and blocked while this modal is open.
+    /// </summary>
+    public Control? BackdropTarget
+    {
+        get => GetValue(BackdropTargetProperty);
+        set => SetValue(BackdropTargetProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the control that receives focus when the modal opens.
+    /// </summary>
+    public Control? InitialFocusTarget
+    {
+        get => GetValue(InitialFocusTargetProperty);
+        set => SetValue(InitialFocusTargetProperty, value);
     }
 
     public double SheetMaxWidth
@@ -116,24 +146,30 @@ public sealed partial class OverlayModal : UserControl
         if (!_initialized)
             return;
 
-        if (change.Property != IsOpenProperty)
-            return;
-
-        if (change.GetNewValue<bool>())
-            _ = ShowAsync();
-        else
-            _ = HideAsync();
+        if (change.Property == IsOpenProperty)
+        {
+            if (change.GetNewValue<bool>())
+                _ = ShowAsync();
+            else
+                _ = HideAsync();
+        }
+        else if (change.Property == BackdropTargetProperty && IsOpen)
+        {
+            ActivateBackdrop();
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         CancelAnimation();
+        RestoreBackdrop();
         base.OnDetachedFromVisualTree(e);
     }
 
     private async Task ShowAsync()
     {
         var cancellationToken = ReplaceAnimationCancellation();
+        ActivateBackdrop();
         OverlayModalBackdrop.Opacity = 0;
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = HiddenOffset;
         ((ScaleTransform)OverlayModalShoulders.RenderTransform!).ScaleY = 0;
@@ -148,7 +184,7 @@ public sealed partial class OverlayModal : UserControl
         OverlayModalBackdrop.Opacity = 1;
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = 0;
         ((ScaleTransform)OverlayModalShoulders.RenderTransform!).ScaleY = 1;
-        Focus();
+        FocusInitialTarget();
     }
 
     private async Task HideAsync()
@@ -158,6 +194,7 @@ public sealed partial class OverlayModal : UserControl
 
         var cancellationToken = ReplaceAnimationCancellation();
         IsHitTestVisible = false;
+        BeginBackdropClosing();
         OverlayModalBackdrop.Opacity = 0;
         SyncShoulderScaleWithSheetTravel(opening: false);
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = HiddenOffset;
@@ -176,6 +213,7 @@ public sealed partial class OverlayModal : UserControl
             return;
 
         IsVisible = false;
+        RestoreBackdrop();
         Closed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -187,6 +225,114 @@ public sealed partial class OverlayModal : UserControl
         OverlayModalBackdrop.Opacity = IsOpen ? 1 : 0;
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = IsOpen ? 0 : HiddenOffset;
         ((ScaleTransform)OverlayModalShoulders.RenderTransform!).ScaleY = IsOpen ? 1 : 0;
+        if (IsOpen)
+            ActivateBackdrop();
+        else
+            RestoreBackdrop();
+    }
+
+    private void ActivateBackdrop()
+    {
+        var target = BackdropTarget;
+        if (target is null)
+            return;
+
+        if (!ReferenceEquals(_activeBackdropTarget, target))
+        {
+            RestoreBackdrop();
+            _activeBackdropTarget = target;
+            _previousBackdropHitTestVisible = target.IsHitTestVisible;
+            _previousBackdropEffect = target.Effect;
+            _restoreFocusElement = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+
+            _backdropBlurEffect = target.Effect as BlurEffect ?? CreateBackdropBlurEffect();
+            if (!ReferenceEquals(target.Effect, _backdropBlurEffect))
+                target.Effect = _backdropBlurEffect;
+        }
+
+        if (_backdropBlurEffect is not null)
+            _backdropBlurEffect.Radius = 6;
+
+        target.IsHitTestVisible = false;
+    }
+
+    private void BeginBackdropClosing()
+    {
+        if (_activeBackdropTarget is { } target)
+            target.IsHitTestVisible = _previousBackdropHitTestVisible;
+
+        if (_backdropBlurEffect is not null)
+            _backdropBlurEffect.Radius = 0;
+    }
+
+    private static BlurEffect CreateBackdropBlurEffect()
+    {
+        var effect = new BlurEffect();
+        effect.Transitions = new Transitions
+        {
+            new DoubleTransition
+            {
+                Property = BlurEffect.RadiusProperty,
+                Duration = MotionDurations.ContentFade,
+                Easing = new CubicEaseOut()
+            }
+        };
+        return effect;
+    }
+
+    private void RestoreBackdrop()
+    {
+        if (_activeBackdropTarget is { } target)
+        {
+            if (_backdropBlurEffect is not null)
+                _backdropBlurEffect.Radius = 0;
+
+            if (!ReferenceEquals(target.Effect, _previousBackdropEffect))
+                target.Effect = _previousBackdropEffect;
+
+            target.IsHitTestVisible = _previousBackdropHitTestVisible;
+        }
+
+        var focusElement = _restoreFocusElement;
+        _activeBackdropTarget = null;
+        _restoreFocusElement = null;
+        _previousBackdropEffect = null;
+        _backdropBlurEffect = null;
+
+        if (focusElement is null)
+            return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (focusElement is Control control &&
+                control.IsVisible &&
+                control.IsEnabled &&
+                control.Focusable)
+            {
+                control.Focus();
+                return;
+            }
+
+            TopLevel.GetTopLevel(this)?.FocusManager?.Focus(
+                focusElement,
+                NavigationMethod.Tab,
+                KeyModifiers.None);
+        }, DispatcherPriority.Loaded);
+    }
+
+    private void FocusInitialTarget()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!IsOpen)
+                return;
+
+            var target = InitialFocusTarget;
+            if (target is { IsVisible: true, IsEnabled: true, Focusable: true })
+                target.Focus();
+            else
+                Focus();
+        }, DispatcherPriority.Loaded);
     }
 
     /// <summary>

@@ -56,10 +56,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 
 
-  <Style Selector="instances|InstancesView Border.instancesDetails">
-    <Setter Property="Background" Value="{DynamicResource NavigationPaneBrush}" />
-    <Setter Property="CornerRadius" Value="18" />
-  </Style>
+
 
 
 
@@ -208,7 +205,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Button.instanceConfirmAction.danger">
     <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
 
@@ -437,7 +434,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Button.instanceToolbarAction.primarySmall">
     <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.catalogInstallTopBar">
@@ -515,47 +512,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView ListBox.instanceVirtualizedList">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-    <Setter Property="ItemsPanel">
-      <ItemsPanelTemplate>
-        <VirtualizingStackPanel CacheLength="1" />
-      </ItemsPanelTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView ListBox.instanceVirtualizedList > ListBoxItem">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Margin" Value="0" />
-    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-    <Setter Property="Focusable" Value="False" />
-    <Setter Property="FocusAdorner" Value="{x:Null}" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Template">
-      <ControlTemplate>
-        <ContentPresenter Content="{TemplateBinding Content}"
-                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView ListBox.instanceVirtualizedList > ListBoxItem:pointerover">
-    <Setter Property="Background" Value="Transparent" />
-  </Style>
-
-  <Style Selector="instances|InstancesView ListBox.instanceVirtualizedList > ListBoxItem:selected">
-    <Setter Property="Background" Value="Transparent" />
-  </Style>
-
   <Style Selector="instances|InstancesView Border.instanceModIcon">
     <Setter Property="Width" Value="44" />
     <Setter Property="Height" Value="44" />
@@ -563,26 +519,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="12" />
   </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceModState">
-    <Setter Property="Padding" Value="9,5" />
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
-    <Setter Property="CornerRadius" Value="9" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceModState.enabled">
-    <Setter Property="Background" Value="#1735A85B" />
-  </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceModState TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-    <Setter Property="FontSize" Value="11" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-  </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceModState.enabled TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource SuccessSoftBrush}" />
-  </Style>
+
+
+
+
 
   <Style Selector="instances|InstancesView Button.instanceInstall">
     <Setter Property="MinWidth" Value="92" />
@@ -591,7 +534,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="10" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
@@ -670,7 +613,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Path.instanceButtonSpinner.light">
-    <Setter Property="Stroke" Value="#111111" />
+    <Setter Property="Stroke" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceBadge">
@@ -749,71 +692,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="20" />
     <Setter Property="MinWidth" Value="0" />
     <Setter Property="Padding" Value="0" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="FocusAdorner" Value="{x:Null}" />
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border x:Name="SelectionIndicator"
-                Width="20"
-                Height="20"
-                Background="#34343A"
-                BorderThickness="0"
-                CornerRadius="6">
-          <Border.Transitions>
-            <Transitions>
-              <BrushTransition Property="Background" Duration="0:0:0.16">
-                <BrushTransition.Easing><easing:CubicEaseOut /></BrushTransition.Easing>
-              </BrushTransition>
-            </Transitions>
-          </Border.Transitions>
-          <PathIcon x:Name="CheckGlyph"
-                    Width="11"
-                    Height="11"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Data="{StaticResource CheckIcon}"
-                    Foreground="#151515"
-                    Opacity="0"
-                    RenderTransform="scale(0.68)"
-                    RenderTransformOrigin="50%,50%">
-            <PathIcon.Transitions>
-              <Transitions>
-                <DoubleTransition Property="Opacity" Duration="0:0:0.14" />
-                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.16">
-                  <TransformOperationsTransition.Easing><easing:CubicEaseOut /></TransformOperationsTransition.Easing>
-                </TransformOperationsTransition>
-              </Transitions>
-            </PathIcon.Transitions>
-          </PathIcon>
-        </Border>
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:pointerover /template/ Border#SelectionIndicator">
-    <Setter Property="Background" Value="#484850" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:checked /template/ Border#SelectionIndicator">
-    <Setter Property="Background" Value="#F1F1F3" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:checked:pointerover /template/ Border#SelectionIndicator">
-    <Setter Property="Background" Value="#DCDCE0" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:checked /template/ PathIcon#CheckGlyph">
-    <Setter Property="Opacity" Value="1" />
-    <Setter Property="RenderTransform" Value="scale(1)" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:disabled">
-    <Setter Property="Cursor" Value="Arrow" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck:disabled /template/ Border#SelectionIndicator">
-    <Setter Property="Background" Value="#29292E" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceModIcon">
@@ -1136,7 +1014,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-    <Setter Property="Foreground" Value="#111111" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="FontWeight" Value="SemiBold" />
@@ -1389,11 +1267,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Opacity" Value="0.45" />
   </Style>
 
-  <Style Selector="instances|InstancesView TextBlock.instancePreviewLabel">
-    <Setter Property="FontSize" Value="10" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-  </Style>
+
 
 
   <Style Selector="instances|InstancesView ItemsControl.instancePreviewFiles > ContentPresenter">
@@ -1712,93 +1586,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Border.logsLevelPopup">
     <Setter Property="Width" Value="220" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck">
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border x:Name="RowBackground"
-                HorizontalAlignment="Stretch"
-                Background="Transparent"
-                CornerRadius="8"
-                Padding="10,9">
-          <Border.Transitions>
-            <Transitions>
-              <BrushTransition Property="Background" Duration="0:0:0.16" />
-            </Transitions>
-          </Border.Transitions>
-          <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
-            <Border x:Name="SelectionIndicator"
-                    Width="20" Height="20"
-                    Background="#34343A"
-                    CornerRadius="6">
-              <Border.Transitions>
-                <Transitions>
-                  <BrushTransition Property="Background" Duration="0:0:0.16" />
-                </Transitions>
-              </Border.Transitions>
-              <PathIcon x:Name="CheckGlyph"
-                        Width="11" Height="11"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Data="{StaticResource CheckIcon}"
-                        Foreground="#151515"
-                        Opacity="0">
-                <PathIcon.Transitions>
-                  <Transitions>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.12" />
-                  </Transitions>
-                </PathIcon.Transitions>
-              </PathIcon>
-            </Border>
-            <ContentPresenter Grid.Column="1"
-                              x:Name="CheckLabel"
-                              Content="{TemplateBinding Content}"
-                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                              Foreground="{TemplateBinding Foreground}"
-                              VerticalContentAlignment="Center">
-              <ContentPresenter.Transitions>
-                <Transitions>
-                  <BrushTransition Property="Foreground" Duration="0:0:0.16" />
-                </Transitions>
-              </ContentPresenter.Transitions>
-            </ContentPresenter>
-          </Grid>
-        </Border>
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:pointerover /template/ Border#RowBackground">
-    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:pointerover /template/ ContentPresenter#CheckLabel">
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked:pointerover /template/ Border#RowBackground">
-    <Setter Property="Background" Value="{DynamicResource ItemSelectedHoverBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked /template/ Border#SelectionIndicator">
-    <Setter Property="Background" Value="#F1F1F3" />
-  </Style>
-
-  <Style Selector="instances|InstancesView CheckBox.logsLevelCheck:checked /template/ PathIcon#CheckGlyph">
-    <Setter Property="Opacity" Value="1" />
   </Style>
 
   <Style Selector="instances|InstancesView ToggleButton.logsIconButton,

@@ -12,7 +12,7 @@ namespace Hyprism.Desktop.Controls;
 /// </summary>
 public sealed class AdaptiveMasterDetailHost
 {
-    public const double DefaultBreakpoint = 940;
+    public const double DefaultBreakpoint = ManagerLayoutMetrics.CompactBreakpoint;
     public const double DefaultContentMaxWidth = 720;
 
     private readonly Grid _layout;

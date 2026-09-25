@@ -161,7 +161,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
                 <StackPanel Margin="24" VerticalAlignment="Bottom" Spacing="8">
                   <Button IsVisible="{Binding IsWideNewsLayout}"
-                          Classes="articleAction articleHeaderAction"
+                          Classes="articleAction"
                           HorizontalAlignment="Left"
                           Command="{Binding SelectedNewsItem.OpenExternalCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="9">
@@ -189,13 +189,13 @@ SPDX-License-Identifier: GPL-3.0-only
                           Classes="articleBodySkeleton"
                           Classes.fading="{Binding IsNewsArticleBodySkeletonFadingOut}"
                           Spacing="20">
-                <Border Classes="contentTextSkeleton phase1"
+                <Border Classes="contentTextSkeleton"
                         Width="340"
                         Height="27"
                         HorizontalAlignment="Left" />
 
                 <StackPanel Spacing="10">
-                  <Border Classes="contentTextSkeleton phase1" Height="13" HorizontalAlignment="Stretch" />
+                  <Border Classes="contentTextSkeleton" Height="13" HorizontalAlignment="Stretch" />
                   <Border Classes="contentTextSkeleton phase2" Height="13" HorizontalAlignment="Stretch" />
                   <Border Classes="contentTextSkeleton phase3" Height="13" Width="610" HorizontalAlignment="Left" />
                 </StackPanel>
@@ -209,7 +209,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         Padding="18"
                         HorizontalAlignment="Stretch">
                   <StackPanel Spacing="11">
-                    <Border Classes="contentTextSkeleton phase1" Height="13" Width="520" HorizontalAlignment="Left" />
+                    <Border Classes="contentTextSkeleton" Height="13" Width="520" HorizontalAlignment="Left" />
                     <Border Classes="contentTextSkeleton phase2" Height="13" HorizontalAlignment="Stretch" />
                     <Border Classes="contentTextSkeleton phase3" Height="13" Width="590" HorizontalAlignment="Left" />
                   </StackPanel>
@@ -217,7 +217,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
                 <StackPanel Spacing="10">
                   <Border Classes="contentTextSkeleton phase3" Height="13" HorizontalAlignment="Stretch" />
-                  <Border Classes="contentTextSkeleton phase1" Height="13" HorizontalAlignment="Stretch" />
+                  <Border Classes="contentTextSkeleton" Height="13" HorizontalAlignment="Stretch" />
                   <Border Classes="contentTextSkeleton phase2" Height="13" Width="470" HorizontalAlignment="Left" />
                 </StackPanel>
               </StackPanel>

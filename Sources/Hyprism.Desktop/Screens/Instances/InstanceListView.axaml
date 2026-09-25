@@ -1,0 +1,103 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:easing="using:Avalonia.Animation.Easings"
+             x:Class="Hyprism.Desktop.Screens.Instances.InstanceListView"
+             x:Name="InstanceListRoot"
+             x:DataType="instances:InstancesViewModel">
+    <Border x:Name="InstancesListPane"
+            Classes="instancesListPane managerRail"
+            Grid.Row="0"
+            ClipToBounds="True"
+            IsVisible="{Binding HasInstances}">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.15">
+            <DoubleTransition.Easing><easing:CubicEaseOut /></DoubleTransition.Easing>
+          </DoubleTransition>
+        </Transitions>
+      </Border.Transitions>
+      <Border.RenderTransform>
+        <TranslateTransform>
+          <TranslateTransform.Transitions>
+            <Transitions>
+              <DoubleTransition Property="X" Duration="0:0:0.19">
+                <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+              </DoubleTransition>
+            </Transitions>
+          </TranslateTransform.Transitions>
+        </TranslateTransform>
+      </Border.RenderTransform>
+      <ContentControl Classes="managerRailSurface">
+        <StackPanel Classes="managerRailList">
+              <ItemsControl x:Name="InstancesItems" ItemsSource="{Binding AllInstances}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Stretch" Spacing="2" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="instances:InstanceItemViewModel">
+                    <Button Classes="managerRailCategory managerListItem"
+                            Classes.managed="{Binding IsManaged}"
+                            Click="OnInstanceClicked"
+                            Command="{Binding DataContext.OpenInstanceDetailsCommand, ElementName=InstanceListRoot}"
+                            CommandParameter="{Binding Id}">
+                      <Grid Classes="managerListItemLayout" ColumnDefinitions="Auto,*,22" ColumnSpacing="12">
+                        <Border Classes="managerListDragTarget"
+                                Cursor="Arrow"
+                                PointerPressed="OnInstanceDragHandlePressed"
+                                PointerMoved="OnInstanceDragHandleMoved"
+                                PointerReleased="OnInstanceDragHandleReleased">
+                          <Path Classes="managerListHandle"
+                                Data="{StaticResource DragIndicatorIcon}" />
+                        </Border>
+                        <Grid Grid.Column="1"
+                              Classes="managerListIdentity"
+                              ColumnDefinitions="Auto,*">
+                          <Image Classes="instancesListGameIcon"
+                                 Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                                 Stretch="Uniform"
+                                 IsHitTestVisible="False" />
+                          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                            <TextBlock Text="{Binding Name}"
+                                       Classes="settingsCategoryTitle managerListTitle"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" />
+                            <TextBlock Text="{Binding Branch}"
+                                       Classes="managerCategoryDescription"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" />
+                          </StackPanel>
+                        </Grid>
+                        <Path Grid.Column="2"
+                              Classes="managerListMore"
+                              Data="{StaticResource MoreVerticalIcon}" />
+                      </Grid>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <Button Classes="formNavigationRow managerAddRow last"
+                      Click="OnOpenCreatorClicked">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="9">
+                  <Path Width="14" Height="14" Stretch="Uniform" Data="{StaticResource AddIcon}" />
+                  <TextBlock Text="{Binding NewInstanceTitle}"
+                             Classes="formLabel"
+                             VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+        </StackPanel>
+      </ContentControl>
+    </Border>
+</UserControl>

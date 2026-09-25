@@ -5,8 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 <!--
   Hyprism default control themes. Every ControlTheme used by the application
-  is defined here with Hyprism tokens only, so no third-party theme resource
-  key is required.
+  is defined here with Hyprism tokens only
 -->
 
 <Styles xmlns="https://github.com/avaloniaui"
@@ -426,65 +425,103 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="CheckBox">
     <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
     <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="5" />
-    <Setter Property="Padding" Value="8,0,0,0" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="0" />
     <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Grid x:Name="RootGrid" ColumnDefinitions="20,*">
-          <Border x:Name="PART_Border"
-                  Grid.ColumnSpan="2"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}" />
-          <Grid VerticalAlignment="Top" Height="24">
+        <Border x:Name="RowBackground"
+                Background="{TemplateBinding Background}"
+                CornerRadius="{TemplateBinding CornerRadius}"
+                Padding="{TemplateBinding Padding}">
+          <Border.Transitions>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.16" />
+            </Transitions>
+          </Border.Transitions>
+          <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
             <Border x:Name="SelectionIndicator"
-                    Background="Transparent"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Height="18"
-                    Width="18" />
+                    Width="20"
+                    Height="20"
+                    Background="{DynamicResource CheckIndicatorBrush}"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    CornerRadius="{DynamicResource Radius.CheckIndicator}">
+              <Border.Transitions>
+                <Transitions>
+                  <BrushTransition Property="Background" Duration="0:0:0.16" />
+                </Transitions>
+              </Border.Transitions>
             <PathIcon x:Name="CheckGlyph"
-                      Foreground="{TemplateBinding Foreground}"
-                      Data="M5.5 10.586 1.707 6.793A1 1 0 0 0 .293 8.207l4.5 4.5a1 1 0 0 0 1.414 0l11-11A1 1 0 0 0 15.793.293L5.5 10.586Z"
-                      Background="Transparent"
-                      Width="10"
-                      Height="10"
-                      Opacity="0">
-              <PathIcon.RenderTransform>
-                <ScaleTransform ScaleX="0.6" ScaleY="0.6" />
-              </PathIcon.RenderTransform>
+                        Width="11"
+                        Height="11"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource CheckIcon}"
+                        Foreground="{DynamicResource CheckGlyphBrush}"
+                        Opacity="0"
+                        RenderTransform="scale(0.68)"
+                        RenderTransformOrigin="50%,50%">
+                <PathIcon.Transitions>
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.14" />
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.16" />
+                  </Transitions>
+                </PathIcon.Transitions>
             </PathIcon>
+            </Border>
+            <ContentPresenter x:Name="CheckLabel"
+                              Grid.Column="1"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              VerticalContentAlignment="Center">
+              <ContentPresenter.Transitions>
+                <Transitions>
+                  <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+                </Transitions>
+              </ContentPresenter.Transitions>
+            </ContentPresenter>
           </Grid>
-          <ContentPresenter x:Name="PART_ContentPresenter"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Content="{TemplateBinding Content}"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextWrapping="Wrap"
-                            Grid.Column="1" />
-        </Grid>
+        </Border>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:pointerover /template/ Border#RowBackground">
+      <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
+    </Style>
+    <Style Selector="^:checked:pointerover /template/ Border#RowBackground">
+      <Setter Property="Background" Value="{DynamicResource ItemSelectedHoverBrush}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#SelectionIndicator">
+      <Setter Property="Background" Value="{DynamicResource CheckIndicatorHoverBrush}" />
+    </Style>
     <Style Selector="^:checked /template/ Border#SelectionIndicator">
-      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Background" Value="{DynamicResource CheckSelectedBrush}" />
+    </Style>
+    <Style Selector="^:checked:pointerover /template/ Border#SelectionIndicator">
+      <Setter Property="Background" Value="{DynamicResource CheckSelectedHoverBrush}" />
     </Style>
     <Style Selector="^:checked /template/ PathIcon#CheckGlyph">
       <Setter Property="Opacity" Value="1" />
       <Setter Property="RenderTransform" Value="scale(1)" />
     </Style>
-    <Style Selector="^:disabled /template/ Border#SelectionIndicator">
-      <Setter Property="Opacity" Value="0.4" />
+    <Style Selector="^:pointerover /template/ ContentPresenter#CheckLabel">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#SelectionIndicator">
+      <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
+      <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.45" />
+      <Setter Property="Cursor" Value="Arrow" />
     </Style>
   </Style>
 

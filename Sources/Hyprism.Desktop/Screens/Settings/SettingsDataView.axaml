@@ -1,0 +1,239 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsDataView"
+             x:Name="SettingsDataRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="InstanceFolderChangeActionTemplate" x:DataType="vm:SettingsViewModel">
+      <Grid Classes="managedActionContent">
+        <StackPanel Classes="managedActionIdle"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+          <TextBlock Text="{Binding ChangeInstanceFolderLabel}"
+                     TextWrapping="NoWrap"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center" />
+        </StackPanel>
+        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+          <Path x:Name="InstanceFolderPickerSpinner"
+                Classes="managedActionSpinner"
+                IsVisible="{Binding !IsMovingInstanceFolder}"
+                controls:RotatingVisual.IsActive="{Binding IsChangingInstanceFolder}"
+                HorizontalAlignment="Center"
+                Data="M10,2 A8,8 0 1 1 2,10" />
+          <Grid x:Name="InstanceFolderMoveProgress"
+                Classes="instanceFolderMoveProgress"
+                ColumnDefinitions="48,*,48"
+                IsVisible="{Binding IsMovingInstanceFolder}"
+                VerticalAlignment="Center">
+            <Path Classes="managedActionSpinner"
+                  controls:RotatingVisual.IsActive="{Binding IsMovingInstanceFolder}"
+                  HorizontalAlignment="Center"
+                  Data="M10,2 A8,8 0 1 1 2,10" />
+            <controls:FadingTextBlock Grid.Column="1"
+                                      Classes="managedActionStatus"
+                                      Text="{Binding MovingDataLabel}"
+                                      Foreground="{Binding $parent[Button].Foreground}"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2"
+                       Classes="managedActionMetric"
+                       Text="{Binding InstanceFolderChangeMetricText}"
+                       Width="48"
+                       FontFeatures="tnum"
+                       TextAlignment="Right"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+          </Grid>
+        </Grid>
+        <TextBlock Classes="managedActionCancel"
+                   Text="{Binding CancelLabel}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="22" IsVisible="{Binding IsData}">
+              <Border x:Name="DataGameRunningWarning"
+                      Classes="dataWarning"
+                      IsVisible="{Binding IsGameRunning}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                  <Path Classes="dataWarningIcon" Data="{StaticResource WarningIcon}" />
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding GameRunningWarning}"
+                             Classes="dataWarningText" />
+                </Grid>
+              </Border>
+
+              <StackPanel x:Name="StorageUsageOverview"
+                          HorizontalAlignment="Stretch"
+                          Spacing="12">
+                <Border Classes="storageUsageCard">
+                  <Grid>
+                    <StackPanel Spacing="10" IsVisible="{Binding !IsStorageUsageLoading}">
+                     <TextBlock Text="{Binding StorageUsageSummary}"
+                                Classes="storageTotalValue storageUsageValue" />
+                     <Border Height="16"
+                             CornerRadius="8"
+                             ClipToBounds="True">
+                      <ItemsControl ItemsSource="{Binding StorageUsageItems}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><controls:StorageUsageBarPanel /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="controls:StorageUsageSegment">
+                            <Border Background="{Binding Brush}" CornerRadius="0" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </Border>
+                    </StackPanel>
+                    <StackPanel Spacing="8" IsVisible="{Binding IsStorageUsageLoading}">
+                    <ProgressBar Classes="storageLoadingProgress" IsIndeterminate="True" />
+                    <TextBlock Text="{Binding StorageLoadingLabel}" Classes="storageTotalLabel" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <Border x:Name="StorageLegendCard"
+                        Classes="storageLegendCard"
+                        HorizontalAlignment="Stretch">
+                  <ItemsControl ItemsSource="{Binding StorageUsageItems}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"
+                                     ColumnSpacing="2"
+                                     RowSpacing="2" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="controls:StorageUsageSegment">
+                        <Border Classes="storageLegendItem">
+                           <Grid RowDefinitions="Auto,Auto" RowSpacing="3" VerticalAlignment="Center">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="7">
+                              <Border Width="8"
+                                      Height="8"
+                                      CornerRadius="999"
+                                      Background="{Binding Brush}"
+                                      VerticalAlignment="Center" />
+                              <TextBlock Text="{Binding Label}"
+                                         Grid.Column="1"
+                                         Classes="storageLegendLabel"
+                                         VerticalAlignment="Center" />
+                            </Grid>
+                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                              <TextBlock Text="{Binding DisplaySize}"
+                                         Classes="storageLegendSize" />
+                              <TextBlock Grid.Column="1"
+                                         Text="{Binding Percentage}"
+                                         Classes="storageLegendPercent" />
+                            </Grid>
+                          </Grid>
+                        </Border>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding LauncherFilesLabel}" Classes="settingsCategoryHeading" />
+                <Border x:Name="LauncherFilesCard" Classes="formGroup">
+                  <StackPanel>
+                    <Border x:Name="InstanceFolderCard" Classes="formRow dataFileRow">
+                      <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                          <StackPanel Spacing="3" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding GameDirectoryLabel}" Classes="formLabel" />
+                            <TextBlock Text="{Binding GameDirectoryHint}" Classes="formHint" />
+                          </StackPanel>
+                          <Grid Grid.Column="1"
+                                Width="220"
+                                Height="36"
+                                ColumnDefinitions="100,10,110">
+                            <Button x:Name="ResetInstanceFolderButton"
+                                    Grid.Column="0"
+                                    Classes="dataAddAction"
+                                    Theme="{StaticResource SettingsActionButtonTheme}"
+                                    Command="{Binding ResetInstanceFolderCommand}"
+                                    IsVisible="{Binding !IsDefaultInstanceFolder}"
+                                    IsEnabled="{Binding CanResetInstanceFolder}">
+                              <StackPanel Orientation="Horizontal"
+                                          Spacing="7"
+                                          VerticalAlignment="Center">
+                                <Path Classes="dataActionIcon"
+                                      Data="{StaticResource RefreshIcon}"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding ResetInstanceFolderLabel}"
+                                           VerticalAlignment="Center" />
+                              </StackPanel>
+                            </Button>
+                            <Button x:Name="SelectInstanceFolderButton"
+                                    Grid.Column="2"
+                                    ZIndex="1"
+                                    Classes="settingsAction instanceFolderChangeAction"
+                                    Classes.active="{Binding IsChangingInstanceFolder}"
+                                    Classes.cancelArmed="{Binding IsInstanceFolderChangeCancellationArmed}"
+                                    Command="{Binding BrowseInstanceFolderCommand}"
+                                    IsEnabled="{Binding CanUseInstanceFolderChangeAction}"
+                                    PointerExited="OnInstanceFolderChangeActionPointerExited"
+                                    HorizontalAlignment="Right"
+                                    VerticalContentAlignment="Center">
+                              <ContentControl Content="{Binding}"
+                                              ContentTemplate="{StaticResource InstanceFolderChangeActionTemplate}" />
+                            </Button>
+                          </Grid>
+                        </Grid>
+                        <Border x:Name="InstanceFolderPathSurface" Classes="dataPathSurface">
+                          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <TextBlock x:Name="InstanceFolderPath"
+                                       Text="{Binding InstanceFolder}"
+                                       Classes="dataPathText"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding InstanceFolder}" />
+                            <Button Grid.Column="1"
+                                    Classes="dataPathOpen"
+                                    Command="{Binding OpenInstanceFolderCommand}"
+                                    ToolTip.Tip="{Binding OpenFolderLabel}">
+                              <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
+                            </Button>
+                          </Grid>
+                        </Border>
+                      </StackPanel>
+                    </Border>
+                    <Border x:Name="LauncherDataCard" Classes="formRow last dataFileRow">
+                      <StackPanel Spacing="12">
+                        <StackPanel Spacing="3">
+                          <TextBlock Text="{Binding LauncherDataFolderLabel}" Classes="formLabel" />
+                          <TextBlock Text="{Binding LauncherDataHint}" Classes="formHint" />
+                        </StackPanel>
+                        <Border x:Name="LauncherDataPathSurface" Classes="dataPathSurface">
+                          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <TextBlock x:Name="LauncherDataPath"
+                                       Text="{Binding LauncherDataFolder}"
+                                       Classes="dataPathText"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding LauncherDataFolder}" />
+                            <Button x:Name="OpenLauncherDataFolderButton"
+                                    Grid.Column="1"
+                                    Classes="dataPathOpen"
+                                    Command="{Binding OpenLauncherDataFolderCommand}"
+                                    ToolTip.Tip="{Binding OpenFolderLabel}">
+                              <Path Classes="dataPathOpenIcon" Data="{StaticResource OpenIcon}" />
+                            </Button>
+                          </Grid>
+                        </Border>
+                      </StackPanel>
+                    </Border>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </StackPanel>
+</UserControl>

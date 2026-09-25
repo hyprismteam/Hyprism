@@ -1,0 +1,353 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             xmlns:easing="using:Avalonia.Animation.Easings"
+             x:Class="Hyprism.Desktop.Screens.Instances.InstanceOverviewView"
+             x:Name="InstanceOverviewRoot"
+             x:DataType="instances:InstancesViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://Hyprism.Desktop/Screens/Instances/InstancesTemplates.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+          <Grid x:Name="InstanceHubScreen" RowDefinitions="Auto,*">
+            <Grid.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+                  <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                </DoubleTransition>
+              </Transitions>
+            </Grid.Transitions>
+            <Grid.RenderTransform>
+              <TranslateTransform>
+                <TranslateTransform.Transitions>
+                  <Transitions>
+                    <DoubleTransition Property="X" Duration="0:0:0.18">
+                      <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                    </DoubleTransition>
+                  </Transitions>
+                </TranslateTransform.Transitions>
+              </TranslateTransform>
+            </Grid.RenderTransform>
+
+            <Border x:Name="CompactInstanceToolbar"
+                    Classes="detailToolbar compact scrolled"
+                    IsVisible="False">
+              <Grid ColumnDefinitions="*,Auto,*">
+                <Button Classes="detailBack" HorizontalAlignment="Left" Click="OnCompactInstanceBackClicked">
+                  <StackPanel Orientation="Horizontal" Spacing="9">
+                    <Path Width="12" Height="12" Stretch="Uniform" Data="{StaticResource NextIcon}">
+                      <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
+                    </Path>
+                    <TextBlock Text="{Binding BackLabel}" VerticalAlignment="Center" />
+                  </StackPanel>
+                </Button>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="9"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                  <Image Classes="compactInstanceGameIcon"
+                         Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                         Stretch="Uniform" />
+                  <TextBlock Classes="detailToolbarTitle"
+                             Text="{Binding ManagedInstanceName}"
+                             MaxWidth="240"
+                             MaxLines="1"
+                             TextTrimming="CharacterEllipsis"
+                             FontSize="16"
+                             FontWeight="SemiBold"
+                             VerticalAlignment="Center" />
+                </StackPanel>
+
+                <Border Grid.Column="2"
+                        Classes="managerCompactSplitAction"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                  <Grid ColumnDefinitions="Auto,Auto">
+                    <Button x:Name="CompactInstancePrimaryAction"
+                            Classes="managerCompactActionPart main"
+                            Classes.active="{Binding IsManagedInstanceActionActive}"
+                            Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
+                            IsEnabled="{Binding CanRunManagedInstanceAction}"
+                            PointerExited="OnManagedInstanceActionPointerExited"
+                            Command="{Binding RunManagedInstanceCommand}">
+                      <ContentControl Content="{Binding}"
+                                      ContentTemplate="{StaticResource ManagedInstanceActionTemplate}" />
+                    </Button>
+
+                    <Button x:Name="CompactInstanceMoreButton"
+                            Grid.Column="1"
+                            Classes="managerCompactActionPart menu"
+                            Classes.actionActive="{Binding IsManagedInstanceActionActive}"
+                            IsEnabled="{Binding CanDeleteManagedInstance}"
+                            Click="OnToggleCompactInstanceMenuClicked">
+                      <PathIcon Classes="managerCompactActionChevron"
+                                Data="{StaticResource ExpandMoreIcon}" />
+                    </Button>
+
+                    <controls:FadingPopup x:Name="CompactInstanceMenuPopup"
+                                          Grid.Column="1"
+                                          Placement="BottomEdgeAlignedRight"
+                                          PlacementTarget="CompactInstanceMoreButton"
+                                          VerticalOffset="8">
+                      <Border Classes="uiPopupSurface managerCompactActionFlyout">
+                        <StackPanel Spacing="2">
+                          <Button Classes="managerCompactMenuAction"
+                                  IsEnabled="{Binding CanOpenManagedInstanceFolder}"
+                                  Command="{Binding OpenManagedInstanceFolderCommand}"
+                                  Click="OnCloseCompactInstanceMenuClicked">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                              <Path Classes="managerCompactMenuIcon"
+                                    Data="{StaticResource FolderOpenIcon}" />
+                              <TextBlock Text="{Binding ManagedInstanceOpenFolderLabel}"
+                                         VerticalAlignment="Center" />
+                            </StackPanel>
+                          </Button>
+
+                          <Button x:Name="CompactDeleteInstanceButton"
+                                  Classes="managerCompactMenuAction danger"
+                                  IsEnabled="{Binding CanDeleteManagedInstance}">
+                            <Button.Flyout>
+                              <Flyout Placement="BottomEdgeAlignedRight">
+                                <Border Classes="instanceDeleteConfirmation">
+                                  <StackPanel Width="300" Spacing="12">
+                                    <TextBlock Text="{Binding ManagedInstanceDeleteTitle}"
+                                               FontSize="17"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding ManagedInstanceDeleteHint}"
+                                               Classes="muted"
+                                               TextWrapping="Wrap" />
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                Spacing="8">
+                                      <Button Classes="instanceConfirmAction"
+                                              Click="OnCloseDeleteInstanceFlyoutClicked">
+                                        <TextBlock Text="{Binding CancelLabel}" />
+                                      </Button>
+                                      <Button Classes="instanceConfirmAction danger"
+                                              Command="{Binding DeleteManagedInstanceCommand}"
+                                              Click="OnCloseDeleteInstanceFlyoutClicked">
+                                        <TextBlock Text="{Binding ManagedInstanceDeleteLabel}" />
+                                      </Button>
+                                    </StackPanel>
+                                  </StackPanel>
+                                </Border>
+                              </Flyout>
+                            </Button.Flyout>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                              <Path Classes="managerCompactMenuIcon"
+                                    Data="{StaticResource DeleteIcon}" />
+                              <TextBlock Text="{Binding ManagedInstanceDeleteLabel}"
+                                         VerticalAlignment="Center" />
+                            </StackPanel>
+                          </Button>
+                        </StackPanel>
+                      </Border>
+                    </controls:FadingPopup>
+                  </Grid>
+                </Border>
+              </Grid>
+            </Border>
+
+            <controls:SmoothScrollViewer Grid.Row="1"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+              <StackPanel 
+                          x:Name="InstanceHubContent"
+                          Margin="32,28,32,40"
+                          MaxWidth="720"
+                          HorizontalAlignment="Stretch"
+                          Spacing="22">
+                <StackPanel Classes="instanceSummary" Spacing="22">
+                  <Image Classes="instanceGameIcon"
+                         Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                         Stretch="Uniform" />
+
+                  <Border Classes="managerWideSplitAction"
+                          HorizontalAlignment="Center">
+                    <StackPanel x:Name="WideInstanceActions"
+                                Classes="managerWideActions"
+                                Classes.actionActive="{Binding IsManagedInstanceActionActive}"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="0">
+                  <Button Classes="managerAction primary first"
+                          Classes.active="{Binding IsManagedInstanceActionActive}"
+                          Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
+                          IsEnabled="{Binding CanRunManagedInstanceAction}"
+                          PointerExited="OnManagedInstanceActionPointerExited"
+                          Command="{Binding RunManagedInstanceCommand}">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource ManagedInstanceActionTemplate}" />
+                  </Button>
+
+                  <Border Classes="managerWideActionDivider" />
+
+                  <Button Classes="managerAction secondary middle"
+                          IsEnabled="{Binding CanOpenManagedInstanceFolder}"
+                          Command="{Binding OpenManagedInstanceFolderCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Path Classes="managerActionIcon" Data="{StaticResource FolderOpenIcon}" />
+                      <TextBlock Text="{Binding ManagedInstanceOpenFolderLabel}"
+                                 VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+
+                  <Border Classes="managerWideActionDivider deleteDivider" />
+
+                  <Button x:Name="DeleteInstanceButton"
+                          Classes="managerAction secondary danger last deleteAction"
+                          IsEnabled="{Binding CanDeleteManagedInstance}">
+                    <Button.Flyout>
+                      <Flyout Placement="BottomEdgeAlignedRight">
+                        <Border Classes="instanceDeleteConfirmation">
+                          <StackPanel Width="300" Spacing="12">
+                            <TextBlock Text="{Binding ManagedInstanceDeleteTitle}"
+                                       FontSize="17"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding ManagedInstanceDeleteHint}"
+                                       Classes="muted"
+                                       TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        Spacing="8">
+                              <Button Classes="instanceConfirmAction"
+                                      Click="OnCloseDeleteInstanceFlyoutClicked">
+                                <TextBlock Text="{Binding CancelLabel}" />
+                              </Button>
+                              <Button Classes="instanceConfirmAction danger"
+                                      Command="{Binding DeleteManagedInstanceCommand}"
+                                      Click="OnCloseDeleteInstanceFlyoutClicked">
+                                <TextBlock Text="{Binding ManagedInstanceDeleteLabel}" />
+                              </Button>
+                            </StackPanel>
+                          </StackPanel>
+                        </Border>
+                      </Flyout>
+                    </Button.Flyout>
+                    <StackPanel Classes="managerDeleteActionContent"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="8">
+                      <Path Classes="managerActionIcon" Data="{StaticResource DeleteIcon}" />
+                      <TextBlock Text="{Binding ManagedInstanceDeleteLabel}"
+                                 VerticalAlignment="Center" />
+                    </StackPanel>
+                    </Button>
+                    </StackPanel>
+                  </Border>
+
+                  <Border Classes="managerInfoGroup">
+                  <Grid ColumnDefinitions="*,2,*" RowDefinitions="Auto,2,Auto">
+                    <Border Classes="managerInfoCell">
+                      <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding InstanceStatusInfoLabel}" Classes="managerInfoLabel" />
+                        <TextBlock Text="{Binding ManagedInstanceState}" Classes="managerInfoValue" />
+                      </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Background="{DynamicResource SurfaceBrush}" />
+                    <Border Grid.Column="2" Classes="managerInfoCell">
+                      <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding InstancePlayTimeInfoLabel}" Classes="managerInfoLabel" />
+                        <TextBlock Text="{Binding ManagedInstancePlayTime}" Classes="managerInfoValue" />
+                      </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource SurfaceBrush}" />
+
+                    <Border Grid.Row="2" Classes="managerInfoCell">
+                      <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding VersionLabel}" Classes="managerInfoLabel" />
+                        <TextBlock Text="{Binding ManagedInstanceVersion}" Classes="managerInfoValue" />
+                      </StackPanel>
+                    </Border>
+                    <Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource SurfaceBrush}" />
+                    <Border Grid.Row="2" Grid.Column="2" Classes="managerInfoCell">
+                      <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding BranchLabel}" Classes="managerInfoLabel" />
+                        <TextBlock Text="{Binding ManagedInstanceBranch}" Classes="managerInfoValue" />
+                      </StackPanel>
+                    </Border>
+                  </Grid>
+                  </Border>
+                </StackPanel>
+
+                <Border Classes="instanceMenuGroup">
+                  <StackPanel>
+                    <Button Classes="formNavigationRow instanceMenuRow"
+                            IsEnabled="{Binding IsManagedInstanceInstalled}"
+                            Command="{Binding SelectInstanceSectionCommand}"
+                            CommandParameter="mods">
+                      <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                        <Image Classes="instanceMenuIcon"
+                               Source="avares://Hyprism.Desktop/Assets/Fluent/puzzle.png"
+                               Stretch="Uniform" />
+                        <StackPanel Grid.Column="1" Spacing="3">
+                          <TextBlock Text="{Binding InstanceModsTitle}" Classes="formLabel instanceMenuTitle" />
+                          <TextBlock Text="{Binding InstanceModsHint}" Classes="formHint instanceMenuDescription" />
+                        </StackPanel>
+                        <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                      </Grid>
+                    </Button>
+                    <Button Classes="formNavigationRow instanceMenuRow"
+                            IsEnabled="{Binding IsManagedInstanceInstalled}"
+                            Command="{Binding SelectInstanceSectionCommand}"
+                            CommandParameter="browse">
+                      <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                        <Image Classes="instanceMenuIcon"
+                               Source="avares://Hyprism.Desktop/Assets/Fluent/compass.png"
+                               Stretch="Uniform" />
+                        <StackPanel Grid.Column="1" Spacing="3">
+                          <TextBlock Text="{Binding InstanceBrowseTitle}" Classes="formLabel instanceMenuTitle" />
+                          <TextBlock Text="{Binding InstanceBrowseHint}" Classes="formHint instanceMenuDescription" />
+                        </StackPanel>
+                        <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                      </Grid>
+                    </Button>
+                    <Button Classes="formNavigationRow instanceMenuRow"
+                            IsEnabled="{Binding IsManagedInstanceInstalled}"
+                            Command="{Binding SelectInstanceSectionCommand}"
+                            CommandParameter="worlds">
+                      <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                        <Image Classes="instanceMenuIcon"
+                               Source="avares://Hyprism.Desktop/Assets/Fluent/map.png"
+                               Stretch="Uniform" />
+                        <StackPanel Grid.Column="1" Spacing="3">
+                          <TextBlock Text="{Binding InstanceWorldsTitle}" Classes="formLabel instanceMenuTitle" />
+                          <TextBlock Text="{Binding InstanceWorldsHint}" Classes="formHint instanceMenuDescription" />
+                        </StackPanel>
+                        <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                      </Grid>
+                    </Button>
+                    <Button Classes="formNavigationRow instanceMenuRow last"
+                            IsEnabled="{Binding IsManagedInstanceInstalled}"
+                            Command="{Binding SelectInstanceSectionCommand}"
+                            CommandParameter="logs">
+                      <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                        <Image Classes="instanceMenuIcon"
+                               Source="avares://Hyprism.Desktop/Assets/Fluent/log.png"
+                               Stretch="Uniform" />
+                        <StackPanel Grid.Column="1" Spacing="3">
+                          <TextBlock Text="{Binding InstanceLogsTitle}" Classes="formLabel instanceMenuTitle" />
+                          <TextBlock Text="{Binding InstanceLogsHint}" Classes="formHint instanceMenuDescription" />
+                        </StackPanel>
+                        <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                      </Grid>
+                    </Button>
+                  </StackPanel>
+                </Border>
+
+              </StackPanel>
+            </controls:SmoothScrollViewer>
+          </Grid>
+</UserControl>
