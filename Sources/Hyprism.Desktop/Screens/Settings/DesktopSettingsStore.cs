@@ -12,6 +12,8 @@ namespace Hyprism.Desktop.Screens.Settings;
 /// </summary>
 public sealed class DesktopSettingsStore : IDesktopSettingsStore
 {
+    private const string LibraryDirectoryName = "HyprismLibrary";
+    private const string LibraryMarkerName = ".hyprism-library";
     private readonly IConfigStore _configStore;
     private readonly string _appDirectory;
 
@@ -155,10 +157,12 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
         var resetToDefault = string.IsNullOrWhiteSpace(path);
         var targetDirectory = resetToDefault
             ? DefaultInstanceDirectory
-            : NormalizeDirectory(path);
+            : GetLibraryDirectory(NormalizeDirectory(path));
         var currentDirectory = string.IsNullOrWhiteSpace(InstanceDirectory)
             ? DefaultInstanceDirectory
             : NormalizeDirectory(InstanceDirectory);
+        var ownedSource = DirectoriesEqual(currentDirectory, DefaultInstanceDirectory) ||
+                          IsManagedLibrary(currentDirectory);
 
         if (DirectoriesEqual(currentDirectory, targetDirectory))
         {
@@ -167,7 +171,7 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
             return true;
         }
 
-        if (IsNestedDirectory(currentDirectory, targetDirectory) ||
+        if ((ownedSource && IsNestedDirectory(currentDirectory, targetDirectory)) ||
             IsNestedDirectory(targetDirectory, currentDirectory))
         {
             Logger.Warning("Settings", "Instance storage cannot be moved into its current directory tree");
@@ -176,12 +180,16 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
 
         try
         {
+            if (!resetToDefault && !PrepareLibraryDirectory(targetDirectory))
+                return false;
+
             await Task.Run(
                 () => CopyDirectoryAsync(
                     currentDirectory,
                     targetDirectory,
                     cancellationToken,
-                    progress),
+                    progress,
+                    ownedSource),
                 cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var saved = resetToDefault
@@ -190,7 +198,8 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
             if (!saved)
                 return false;
 
-            TryRemovePreviousDirectory(currentDirectory);
+            if (ownedSource)
+                TryRemovePreviousDirectory(currentDirectory);
             return true;
         }
         catch (Exception exception) when (
@@ -237,18 +246,59 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
             : Path.Combine(_appDirectory, expanded));
     }
 
+    private static string GetLibraryDirectory(string selectedDirectory)
+        => string.Equals(
+            Path.GetFileName(Path.TrimEndingDirectorySeparator(selectedDirectory)),
+            LibraryDirectoryName,
+            PathComparison)
+            ? selectedDirectory
+            : Path.Combine(selectedDirectory, LibraryDirectoryName);
+
+    private static bool IsManagedLibrary(string directory)
+        => string.Equals(
+               Path.GetFileName(Path.TrimEndingDirectorySeparator(directory)),
+               LibraryDirectoryName,
+               PathComparison) &&
+           Directory.Exists(directory) &&
+           !File.GetAttributes(directory).HasFlag(FileAttributes.ReparsePoint) &&
+           File.Exists(Path.Combine(directory, LibraryMarkerName)) &&
+           !File.GetAttributes(Path.Combine(directory, LibraryMarkerName))
+               .HasFlag(FileAttributes.ReparsePoint);
+
+    private static bool PrepareLibraryDirectory(string directory)
+    {
+        if (IsManagedLibrary(directory))
+            return true;
+
+        if (Directory.Exists(directory) &&
+            Directory.EnumerateFileSystemEntries(directory).Any())
+        {
+            Logger.Warning("Settings", "The selected HyprismLibrary folder already contains unmanaged files");
+            return false;
+        }
+
+        Directory.CreateDirectory(directory);
+        if (File.GetAttributes(directory).HasFlag(FileAttributes.ReparsePoint))
+            throw new IOException("The HyprismLibrary folder cannot be a symbolic link");
+        File.WriteAllText(Path.Combine(directory, LibraryMarkerName), string.Empty);
+        return true;
+    }
+
     private static async Task CopyDirectoryAsync(
         string sourceDirectory,
         string targetDirectory,
         CancellationToken cancellationToken,
-        IProgress<InstanceDirectoryMoveProgress>? progress)
+        IProgress<InstanceDirectoryMoveProgress>? progress,
+        bool ownedSource)
     {
         cancellationToken.ThrowIfCancellationRequested();
         Directory.CreateDirectory(targetDirectory);
         if (!Directory.Exists(sourceDirectory))
             return;
 
-        var files = Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories)
+        var files = (ownedSource
+                ? Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories)
+                : EnumerateLegacyInstanceFiles(sourceDirectory))
             .Select(path => new FileInfo(path))
             .ToArray();
         var totalBytes = files.Sum(file => file.Length);
@@ -256,10 +306,9 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
         var lastReportedPercentage = -1;
         ReportProgress();
 
-        foreach (var directory in Directory.EnumerateDirectories(
-                     sourceDirectory,
-                     "*",
-                     SearchOption.AllDirectories))
+        foreach (var directory in ownedSource
+                     ? Directory.EnumerateDirectories(sourceDirectory, "*", SearchOption.AllDirectories)
+                     : Enumerable.Empty<string>())
         {
             cancellationToken.ThrowIfCancellationRequested();
             Directory.CreateDirectory(Path.Combine(
@@ -301,6 +350,53 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
             progress.Report(moveProgress);
         }
     }
+
+    private static IEnumerable<string> EnumerateLegacyInstanceFiles(string directory)
+    {
+        foreach (var name in new[] { "Instances.json", "instances.json" })
+        {
+            var cache = Path.Combine(directory, name);
+            if (File.Exists(cache))
+                yield return cache;
+        }
+
+        foreach (var child in Directory.EnumerateDirectories(directory))
+        {
+            if (File.GetAttributes(child).HasFlag(FileAttributes.ReparsePoint))
+                continue;
+
+            var name = Path.GetFileName(child);
+            if (Guid.TryParse(name, out _) && HasInstanceMetadata(child))
+            {
+                foreach (var file in EnumerateInstanceFiles(child))
+                    yield return file;
+            }
+            else if (name.Equals("release", StringComparison.OrdinalIgnoreCase) ||
+                     name.Equals("pre-release", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var instance in Directory.EnumerateDirectories(child))
+                {
+                    if (File.GetAttributes(instance).HasFlag(FileAttributes.ReparsePoint) ||
+                        !HasInstanceMetadata(instance))
+                        continue;
+                    foreach (var file in EnumerateInstanceFiles(instance))
+                        yield return file;
+                }
+            }
+        }
+    }
+
+    private static IEnumerable<string> EnumerateInstanceFiles(string directory)
+        => Directory.EnumerateFiles(directory, "*", new EnumerationOptions
+        {
+            RecurseSubdirectories = true,
+            AttributesToSkip = FileAttributes.ReparsePoint
+        });
+
+    private static bool HasInstanceMetadata(string directory)
+        => File.Exists(Path.Combine(directory, "Meta.json")) ||
+           File.Exists(Path.Combine(directory, "meta.json")) ||
+           File.Exists(Path.Combine(directory, "metadata.json"));
 
     internal static async Task CopyFileAsync(
         string source,

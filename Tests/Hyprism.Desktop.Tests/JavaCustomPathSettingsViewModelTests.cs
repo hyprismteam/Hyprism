@@ -126,6 +126,43 @@ public sealed class JavaCustomPathSettingsViewModelTests
         Assert.Equal(externalCustomJavaPath, settings.Object.CustomJavaPath);
     }
 
+    [AvaloniaFact]
+    public async Task MoveInstanceFolder_KeepsCustomJavaInRetainedLegacyRoot()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "hyprism-legacy-java-" + Guid.NewGuid());
+        Directory.CreateDirectory(root);
+        try
+        {
+            var configuredDirectory = root;
+            var movedDirectory = Path.Combine(root, "HyprismLibrary");
+            var customJavaPath = Path.Combine(root, "jdk", "bin", "java");
+            var settings = CreateSettingsStore(customJavaPath);
+            settings.SetupGet(service => service.InstanceDirectory).Returns(() => configuredDirectory);
+            settings
+                .Setup(service => service.SetInstanceDirectoryAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    It.IsAny<IProgress<InstanceDirectoryMoveProgress>?>()))
+                .Callback<string, CancellationToken, IProgress<InstanceDirectoryMoveProgress>?>(
+                    (_, _, _) => configuredDirectory = movedDirectory)
+                .ReturnsAsync(true);
+            var picker = CreatePicker(null, LauncherDataDirectory);
+            picker
+                .Setup(service => service.BrowseFolderAsync(It.IsAny<string?>()))
+                .ReturnsAsync(root);
+            using var viewModel = CreateViewModel(settings, picker);
+
+            await viewModel.BrowseInstanceFolderCommand.ExecuteAsync(null);
+
+            Assert.Equal(customJavaPath, viewModel.CustomJavaPath);
+            Assert.Equal(customJavaPath, settings.Object.CustomJavaPath);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     private static SettingsViewModel CreateViewModel(
         Mock<IDesktopSettingsStore> settings,
         Mock<IFilePicker> picker)

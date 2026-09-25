@@ -1586,7 +1586,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             ? _settings.DefaultInstanceDirectory
             : _settings.InstanceDirectory;
         RefreshStorageUsage();
-        InvalidateCustomJavaPathUnder(previousDirectory);
+        if (!Directory.Exists(previousDirectory))
+            InvalidateCustomJavaPathUnder(previousDirectory);
     }
 
     private void InvalidateCustomJavaPathUnder(string previousDirectory)

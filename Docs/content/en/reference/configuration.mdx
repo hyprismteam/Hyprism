@@ -56,12 +56,14 @@ GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` wh
 | `ShowDiscordAnnouncements` | `true` | Persisted announcement preference |
 | `DismissedAnnouncementIds` | `[]` | Previously dismissed announcement IDs |
 | `DisableNews` | `false` | News disabled preference |
-| `InstanceDirectory` | empty | Default instance root, or a custom path |
+| `InstanceDirectory` | empty | Default instance root, or the `HyprismLibrary` path created inside the directory selected in Desktop |
 | `ShowAlphaMods` | `false` | Include alpha mod releases |
 | `LastExportPath` | empty | Remembered mod export destination |
 | `HasCompletedOnboarding` | `false` | Compatibility state for onboarding |
 
 A persisted property does not imply a completed Desktop workflow. The current onboarding flow remains unfinished
+
+Older configurations can contain a custom instance root outside `HyprismLibrary`. Desktop recognizes those paths when reading configuration. When moving from such a path, it copies recognized instance data and leaves the old directory in place. Desktop marks libraries it creates with `.hyprism-library` and only removes marked custom roots after a successful move.
 
 ## Compatibility
 

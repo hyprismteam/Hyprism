@@ -55,7 +55,8 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     public async Task SetInstanceDirectoryAsync_MovesExistingDataAndPersistsTheNewRoot()
     {
         var originalDirectory = _settings.DefaultInstanceDirectory;
-        var targetDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismInstances_{Guid.NewGuid():N}");
+        var selectedDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismInstances_{Guid.NewGuid():N}");
+        var targetDirectory = Path.Combine(selectedDirectory, "HyprismLibrary");
         var originalFile = Path.Combine(originalDirectory, "release", "instance.json");
         Directory.CreateDirectory(Path.GetDirectoryName(originalFile)!);
         await File.WriteAllTextAsync(
@@ -71,7 +72,7 @@ public sealed class DesktopSettingsStoreTests : IDisposable
         try
         {
             var changed = await _settings.SetInstanceDirectoryAsync(
-                targetDirectory,
+                selectedDirectory,
                 TestContext.Current.CancellationToken,
                 progress.Object);
 
@@ -89,8 +90,8 @@ public sealed class DesktopSettingsStoreTests : IDisposable
         }
         finally
         {
-            if (Directory.Exists(targetDirectory))
-                Directory.Delete(targetDirectory, recursive: true);
+            if (Directory.Exists(selectedDirectory))
+                Directory.Delete(selectedDirectory, recursive: true);
         }
     }
 
@@ -98,8 +99,13 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     public async Task SetInstanceDirectoryAsync_ResetMovesDataBackToDefaultRoot()
     {
         var customDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismInstances_{Guid.NewGuid():N}");
-        var customFile = Path.Combine(customDirectory, "pre-release", "instance.json");
+        var instanceId = Guid.NewGuid().ToString();
+        var customFile = Path.Combine(customDirectory, instanceId, "instance.json");
         Directory.CreateDirectory(Path.GetDirectoryName(customFile)!);
+        await File.WriteAllTextAsync(
+            Path.Combine(customDirectory, instanceId, "Meta.json"),
+            "{}",
+            TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(
             customFile,
             "preview metadata",
@@ -119,16 +125,86 @@ public sealed class DesktopSettingsStoreTests : IDisposable
                 await File.ReadAllTextAsync(
                     Path.Combine(
                         _settings.DefaultInstanceDirectory,
-                        "pre-release",
+                        instanceId,
                         "instance.json"),
                     TestContext.Current.CancellationToken));
-            Assert.False(Directory.Exists(customDirectory));
+            Assert.True(Directory.Exists(customDirectory));
+            Assert.True(File.Exists(customFile));
         }
         finally
         {
             if (Directory.Exists(customDirectory))
                 Directory.Delete(customDirectory, recursive: true);
         }
+    }
+
+    [Fact]
+    public async Task SetInstanceDirectoryAsync_DiskLikeSelectionOnlyWritesInsideLibrary()
+    {
+        var selectedDirectory = Path.Combine(_directory, "SelectedDisk");
+        Directory.CreateDirectory(selectedDirectory);
+        var unrelatedFile = Path.Combine(selectedDirectory, "personal.txt");
+        await File.WriteAllTextAsync(unrelatedFile, "keep", TestContext.Current.CancellationToken);
+        var originalFile = Path.Combine(_settings.DefaultInstanceDirectory, "instance.json");
+        Directory.CreateDirectory(_settings.DefaultInstanceDirectory);
+        await File.WriteAllTextAsync(originalFile, "instance", TestContext.Current.CancellationToken);
+
+        Assert.True(await _settings.SetInstanceDirectoryAsync(
+            selectedDirectory,
+            TestContext.Current.CancellationToken));
+
+        var library = Path.Combine(selectedDirectory, "HyprismLibrary");
+        Assert.Equal(library, _config.Configuration.InstanceDirectory);
+        Assert.Equal("keep", await File.ReadAllTextAsync(unrelatedFile, TestContext.Current.CancellationToken));
+        Assert.True(File.Exists(Path.Combine(library, "instance.json")));
+
+        Assert.True(await _settings.SetInstanceDirectoryAsync(
+            string.Empty,
+            TestContext.Current.CancellationToken));
+        Assert.True(File.Exists(unrelatedFile));
+        Assert.False(Directory.Exists(library));
+        Assert.True(File.Exists(originalFile));
+    }
+
+    [Fact]
+    public async Task SetInstanceDirectoryAsync_LegacyDiskRootCopiesOnlyInstancesAndLeavesOriginals()
+    {
+        var diskRoot = Path.Combine(_directory, "LegacyDisk");
+        var instanceId = Guid.NewGuid().ToString();
+        var instanceRoot = Path.Combine(diskRoot, instanceId);
+        Directory.CreateDirectory(instanceRoot);
+        await File.WriteAllTextAsync(Path.Combine(instanceRoot, "Meta.json"), "{}", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(instanceRoot, "world.dat"), "world", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(diskRoot, "personal.txt"), "keep", TestContext.Current.CancellationToken);
+        await _config.SetInstanceDirectoryAsync(diskRoot);
+
+        Assert.True(await _settings.SetInstanceDirectoryAsync(diskRoot, TestContext.Current.CancellationToken));
+
+        var library = Path.Combine(diskRoot, "HyprismLibrary");
+        Assert.Equal(library, _config.Configuration.InstanceDirectory);
+        Assert.True(File.Exists(Path.Combine(library, instanceId, "world.dat")));
+        Assert.True(File.Exists(Path.Combine(instanceRoot, "world.dat")));
+        Assert.True(File.Exists(Path.Combine(diskRoot, "personal.txt")));
+
+        Assert.True(await _settings.SetInstanceDirectoryAsync(string.Empty, TestContext.Current.CancellationToken));
+        Assert.True(File.Exists(Path.Combine(diskRoot, "personal.txt")));
+        Assert.True(File.Exists(Path.Combine(instanceRoot, "world.dat")));
+    }
+
+    [Fact]
+    public async Task SetInstanceDirectoryAsync_RejectsNonemptyUnmanagedLibrary()
+    {
+        var selectedDirectory = Path.Combine(_directory, "SelectedDisk");
+        var library = Path.Combine(selectedDirectory, "HyprismLibrary");
+        Directory.CreateDirectory(library);
+        var personalFile = Path.Combine(library, "personal.txt");
+        await File.WriteAllTextAsync(personalFile, "keep", TestContext.Current.CancellationToken);
+
+        Assert.False(await _settings.SetInstanceDirectoryAsync(
+            selectedDirectory,
+            TestContext.Current.CancellationToken));
+        Assert.True(string.IsNullOrWhiteSpace(_config.Configuration.InstanceDirectory));
+        Assert.True(File.Exists(personalFile));
     }
 
     [Fact]
