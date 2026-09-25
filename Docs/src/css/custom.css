@@ -834,6 +834,24 @@ input {
   max-width: 66rem;
 }
 
+.hyprism-docs-home .hyprism-home-note {
+  text-align: center;
+}
+
+.hyprism-docs-home .hyprism-edit-link {
+  justify-content: center;
+  max-width: 66rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.hyprism-docs-home .hyprism-doc-main .pagination-nav {
+  max-width: 66rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .hyprism-home-hero {
   padding-bottom: clamp(42px, 6vw, 80px);
   position: relative;
