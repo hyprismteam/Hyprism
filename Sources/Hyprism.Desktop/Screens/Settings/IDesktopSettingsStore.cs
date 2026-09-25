@@ -57,9 +57,9 @@ public interface IDesktopSettingsStore
     string LauncherDataDirectory { get; }
 
     /// <summary>
-    /// Changes the game instance root and moves existing instance data
+    /// Creates a HyprismLibrary root inside the selected directory and moves instance data
     /// </summary>
-    /// <param name="path">New root, or an empty value to restore the default root</param>
+    /// <param name="path">Selected parent directory, or an empty value to restore the default root</param>
     /// <param name="cancellationToken">Cancellation requested by the active folder action</param>
     /// <param name="progress">Optional byte progress for files copied to the new root</param>
     /// <returns><see langword="true"/> when the root was changed successfully</returns>

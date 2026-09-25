@@ -41,7 +41,7 @@ HYPRISM_DATA="$hyprism_data" dotnet run \
 | `LocalNode/Certificate/` | Local certificate authority and server certificates |
 | `Runtime/GameProcesses.json` | Process identities used across launcher restarts |
 
-The instance locations above use the default root. A custom instance root moves the registry and installation directories together
+The instance locations above use the default root. When Desktop changes the location, it creates `HyprismLibrary` inside the selected directory and stores that path in `InstanceDirectory`. The registry and installation directories move together. Desktop only deletes the old default root or a custom `HyprismLibrary` root with its `.hyprism-library` marker after the copy and configuration update succeed. Older arbitrary custom roots remain in place after recognized instance data is copied.
 
 Back up profiles, worlds, configuration, and local account data before migration testing. Session files and certificate private keys must not appear in fixtures or bug reports
 

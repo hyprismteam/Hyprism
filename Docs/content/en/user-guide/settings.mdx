@@ -89,12 +89,14 @@ Official profiles always use official Hytale authentication. Local Node sessions
 
 ## Data {/* #data */}
 
-- **Instance folder** changes the root used for game installations
+- **Instance folder** changes where game installations are stored.
 - **Reset** moves instances back to the default location inside the Hyprism data directory
 - **Open folder** opens either the instance root or the complete launcher data directory
 - The storage chart groups instance files, mods, images, news, logs, and other data
 
-Changing the instance folder copies existing data, preserves Unix permissions where supported, and removes the previous folder only after success. The action is disabled while a game is running and can be canceled while copying
+To change the location, select **Instance folder**, choose a directory, and wait for the move to finish. Hyprism creates `HyprismLibrary` inside the selected directory and shows that path as the instance folder. Files beside `HyprismLibrary` remain in place. **Reset** moves the library back to the default location.
+
+Changing the instance folder copies existing data and preserves Unix permissions where supported. After success, Hyprism removes only its previous library folder. If an older configuration points to a general directory, Hyprism copies recognized instances and leaves the original directory and its files in place. A nonempty `HyprismLibrary` folder that was not created by Hyprism cannot be selected. The action is disabled while a game is running and can be canceled while copying.
 
 Back up important worlds before moving a large instance directory or changing disks
 
