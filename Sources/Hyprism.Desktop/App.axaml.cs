@@ -159,7 +159,8 @@ public sealed partial class App : Application
             services.GetRequiredService<IHytaleAuthenticator>(),
             services.GetRequiredService<RemoteImageCache>(),
             services.GetRequiredService<IGameConsoleService>(),
-            services.GetRequiredService<IGpuProvider>());
+            services.GetRequiredService<IGpuProvider>(),
+            services.GetRequiredService<LogSessionPaths>());
 
     private static async Task InitializeCoreAsync(
         IServiceProvider services,

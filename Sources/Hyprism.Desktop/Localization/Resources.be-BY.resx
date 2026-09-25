@@ -2829,18 +2829,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} г {1} хв</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>Кансоль</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>Каманды і вывад у рэальным часе для гэтага экзэмпляра</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>Кансоля яшчэ недаступная</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>Тут з’явіцца адсочванне кансолі для кожнага экзэмпляра</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>Журналы</value>
   </data>
@@ -2991,25 +2979,34 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Game running</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Not running</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Auto-scroll</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
+  <data name="instances.logs.wrap" xml:space="preserve">
     <value>Wrap</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
+  <data name="instances.logs.clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
+  <data name="instances.logs.search" xml:space="preserve">
     <value>Filter console output</value>
   </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>{0} lines</value>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Узровень журнала</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Адладка</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Папярэджанні</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Памылкі</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Трасіроўка</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Паказаць у папцы</value>
   </data>
 </root>

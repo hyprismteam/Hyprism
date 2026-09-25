@@ -353,4 +353,62 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="IsVisible" Value="False" />
     <Setter Property="Cursor" Value="Hand" />
   </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal">
+    <Setter Property="Height" Value="12" />
+    <Setter Property="Margin" Value="12,0,12,4" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ Rectangle#TrackRect">
+    <Setter Property="Fill" Value="Transparent" />
+    <Setter Property="Stroke" Value="Transparent" />
+    <Setter Property="Opacity" Value="0" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ Thumb">
+    <Setter Property="Height" Value="6" />
+    <Setter Property="MinHeight" Value="6" />
+    <Setter Property="MinWidth" Value="40" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="RenderTransform" Value="scaleY(0.5)" />
+    <Setter Property="RenderTransformOrigin" Value="50%,50%" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.16">
+          <TransformOperationsTransition.Easing>
+            <easing:CubicEaseInOut />
+          </TransformOperationsTransition.Easing>
+        </TransformOperationsTransition>
+        <BrushTransition Property="Background" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal[IsExpanded=true] /template/ Thumb">
+    <Setter Property="Height" Value="6" />
+    <Setter Property="Background" Value="{DynamicResource ScrollBarThumbBackgroundColor}" />
+    <Setter Property="RenderTransform" Value="scaleY(1)" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ Thumb:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ScrollBarThumbFillPointerOver}" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ Thumb:pressed">
+    <Setter Property="Background" Value="{DynamicResource ScrollBarThumbFillPressed}" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ Thumb /template/ Border">
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ RepeatButton#PART_LineUpButton">
+    <Setter Property="IsVisible" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="ScrollViewer /template/ ScrollBar:horizontal /template/ RepeatButton#PART_LineDownButton">
+    <Setter Property="IsVisible" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
 </Styles>

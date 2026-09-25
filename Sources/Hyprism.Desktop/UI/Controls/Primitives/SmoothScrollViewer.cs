@@ -27,6 +27,11 @@ public sealed class SmoothScrollViewer : ScrollViewer
             nameof(EnableMiddleClickAutoScroll),
             defaultValue: false);
 
+    public static readonly StyledProperty<bool> IsWheelEasingEnabledProperty =
+        AvaloniaProperty.Register<SmoothScrollViewer, bool>(
+            nameof(IsWheelEasingEnabled),
+            defaultValue: true);
+
     private const double WheelStep = 92;
     private const double WheelEasingPerTick = 0.16;
     private const double TickMilliseconds = 16.0;
@@ -80,11 +85,23 @@ public sealed class SmoothScrollViewer : ScrollViewer
         set => SetValue(EnableMiddleClickAutoScrollProperty, value);
     }
 
+    public bool IsWheelEasingEnabled
+    {
+        get => GetValue(IsWheelEasingEnabledProperty);
+        set => SetValue(IsWheelEasingEnabledProperty, value);
+    }
+
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
         => HandlePointerWheelChanged(e);
 
     internal void HandlePointerWheelChanged(PointerWheelEventArgs e)
     {
+        if (!IsWheelEasingEnabled)
+        {
+            base.OnPointerWheelChanged(e);
+            return;
+        }
+
         var maxX = Math.Max(0, Extent.Width - Viewport.Width);
         var maxY = Math.Max(0, Extent.Height - Viewport.Height);
         var wheelDelta = e.Delta;

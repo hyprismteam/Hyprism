@@ -8,6 +8,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
@@ -142,8 +143,8 @@ public sealed partial class InstancesView : UserControl
                 _ = PlayModCatalogInstallCloseAnimationAsync();
         }
 
-        if (args.PropertyName is nameof(InstancesViewModel.ConsoleRevision))
-            ScrollConsoleToBottom();
+        if (args.PropertyName is nameof(InstancesViewModel.LogsRevision))
+            Dispatcher.UIThread.Post(ScrollLogsToBottom, DispatcherPriority.Loaded);
 
         if (args.PropertyName is nameof(InstancesViewModel.IsInstanceCreatorOpen))
         {
@@ -277,7 +278,7 @@ public sealed partial class InstancesView : UserControl
         ModCatalogSection.MaxWidth = _layoutHost.IsCompact
             ? double.PositiveInfinity
             : ModCatalogContentMaxWidth;
-        InstanceConsoleSection.MaxWidth = maxWidth;
+        InstanceLogsSection.MaxWidth = ModCatalogSection.MaxWidth;
     }
 
     private void OnInstanceClicked(object? sender, RoutedEventArgs args)
@@ -1016,7 +1017,7 @@ public sealed partial class InstancesView : UserControl
 
     private void OnModCatalogScrollChanged(object? sender, ScrollChangedEventArgs args)
     {
-        if (args.OffsetDelta.Y == 0 ||
+        if (args.OffsetDelta.Y >= 0 ||
             sender is not ScrollViewer scrollViewer ||
             DataContext is not InstancesViewModel viewModel ||
             !viewModel.CanLoadMoreModCatalog)
@@ -1031,12 +1032,12 @@ public sealed partial class InstancesView : UserControl
         }
     }
 
-    private void OnConsoleScrollChanged(object? sender, ScrollChangedEventArgs args)
+    private void OnLogsScrollChanged(object? sender, ScrollChangedEventArgs args)
     {
         if (args.OffsetDelta.Y == 0 ||
             sender is not ScrollViewer scrollViewer ||
             DataContext is not InstancesViewModel viewModel ||
-            !viewModel.IsConsoleAutoScroll)
+            !viewModel.IsLogsAutoScroll)
         {
             return;
         }
@@ -1045,18 +1046,79 @@ public sealed partial class InstancesView : UserControl
                                  scrollViewer.Offset.Y -
                                  scrollViewer.Viewport.Height;
         if (distanceFromBottom > 24)
-            viewModel.IsConsoleAutoScroll = false;
+            viewModel.IsLogsAutoScroll = false;
     }
 
-    private void ScrollConsoleToBottom()
+    private void OnLogsContentPointerPressed(object? sender, PointerPressedEventArgs args)
     {
-        if (DataContext is not InstancesViewModel { IsConsoleAutoScroll: true } viewModel ||
-            viewModel.ConsoleLines.Count == 0)
+        if (args.Handled || DataContext is not InstancesViewModel viewModel)
+            return;
+
+        if (args.Source is Visual source &&
+            (source is ListBoxItem || source.GetVisualAncestors().OfType<ListBoxItem>().Any()))
         {
             return;
         }
 
-        ConsoleList.ScrollIntoView(viewModel.ConsoleLines[viewModel.ConsoleLines.Count - 1]);
+        viewModel.LogsSearchQuery = string.Empty;
+        LogsContentHost.Focus();
+    }
+
+    private void OnLogsSearchKeyDown(object? sender, KeyEventArgs args)
+    {
+        if (args.Handled || args.Key != Key.Escape || DataContext is not InstancesViewModel viewModel)
+            return;
+
+        viewModel.LogsSearchQuery = string.Empty;
+        LogsContentHost.Focus();
+        args.Handled = true;
+    }
+
+    private async void OnLogsListKeyDown(object? sender, KeyEventArgs args)
+    {
+        if (args.Handled || args.Source is TextBox || args.Key != Key.C ||
+            (args.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) == 0 ||
+            LogsList.SelectedItems is null)
+        {
+            return;
+        }
+
+        var textBlock = args.Source as SelectableTextBlock ??
+            (args.Source as Visual)?.FindAncestorOfType<SelectableTextBlock>();
+        if (textBlock is not null && !string.IsNullOrEmpty(textBlock.SelectedText))
+        {
+            return;
+        }
+
+        var lines = LogsList.SelectedItems.OfType<InstanceLogLineViewModel>()
+            .Select(line => string.Join("\t", line.Time, line.Level, line.Source, line.Text));
+        var text = string.Join(Environment.NewLine, lines);
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+        if (text.Length == 0 || clipboard is null)
+            return;
+
+        await clipboard.SetTextAsync(text);
+        args.Handled = true;
+    }
+
+    private void ScrollLogsToBottom()
+    {
+        if (DataContext is not InstancesViewModel { IsLogsAutoScroll: true } viewModel ||
+            viewModel.LogsLines.Count == 0)
+        {
+            return;
+        }
+
+        var scrollViewer = LogsList.GetVisualDescendants().OfType<SmoothScrollViewer>().FirstOrDefault();
+        if (scrollViewer is not null)
+        {
+            scrollViewer.Offset = new Vector(
+                scrollViewer.Offset.X,
+                Math.Max(0, scrollViewer.Extent.Height - scrollViewer.Viewport.Height));
+            return;
+        }
+
+        LogsList.ScrollIntoView(viewModel.LogsLines[^1]);
     }
 
     private void OnCloseModDeleteFlyoutClicked(object? sender, RoutedEventArgs args)

@@ -21,6 +21,7 @@ using Hyprism.Core.Game.Launch;
 using Hyprism.Core.Game.Mods;
 using Hyprism.Core.Game.Sources;
 using Hyprism.Core.Game.Versions;
+using Hyprism.Core.Infrastructure;
 
 namespace Hyprism.Desktop.Shell;
 
@@ -88,7 +89,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
         IHytaleAuthenticator? authenticator = null,
         RemoteImageCache? remoteImageCache = null,
         IGameConsoleService? gameConsole = null,
-        IGpuProvider? gpuProvider = null)
+        IGpuProvider? gpuProvider = null,
+        LogSessionPaths? logSession = null)
     {
         _instances = instances;
         _settingsStore = settingsStore;
@@ -131,7 +133,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
             versionCatalog,
             modManager,
             remoteImageCache,
-            gameConsole);
+            gameConsole,
+            logSession);
         Instances.PropertyChanged += OnInstancesPropertyChanged;
 
         UserName = profiles.GetNick();

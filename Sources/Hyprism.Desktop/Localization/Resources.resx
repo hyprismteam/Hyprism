@@ -2823,29 +2823,17 @@ You may need to reinstall the game if switching drives.</value>
   <data name="instances.info.playtimeValue" xml:space="preserve">
     <value>{0} h {1} min</value>
   </data>
-  <data name="instances.console.title" xml:space="preserve">
-    <value>Console</value>
-  </data>
-  <data name="instances.console.hint" xml:space="preserve">
-    <value>Commands and live output for this instance</value>
-  </data>
-  <data name="instances.console.emptyTitle" xml:space="preserve">
-    <value>Console is not available yet</value>
-  </data>
-  <data name="instances.console.emptyHint" xml:space="preserve">
-    <value>Per-instance console tracking will be added here</value>
-  </data>
   <data name="instances.logs.title" xml:space="preserve">
     <value>Logs</value>
   </data>
   <data name="instances.logs.hint" xml:space="preserve">
-    <value>Launch and game logs for this instance</value>
+    <value>Live game output for this instance</value>
   </data>
   <data name="instances.logs.emptyTitle" xml:space="preserve">
-    <value>No instance logs yet</value>
+    <value>No game output yet</value>
   </data>
   <data name="instances.logs.emptyHint" xml:space="preserve">
-    <value>Per-instance log history will appear here</value>
+    <value>Game output will appear here while Hyprism is open</value>
   </data>
   <data name="oauth.callback.successTitle" xml:space="preserve">
     <value>Authorization successful</value>
@@ -3000,25 +2988,34 @@ You may need to reinstall the game if switching drives.</value>
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
-  <data name="instances.console.running" xml:space="preserve">
-    <value>Game running</value>
-  </data>
-  <data name="instances.console.offline" xml:space="preserve">
-    <value>Not running</value>
-  </data>
-  <data name="instances.console.autoScroll" xml:space="preserve">
+  <data name="instances.logs.autoScroll" xml:space="preserve">
     <value>Auto-scroll</value>
   </data>
-  <data name="instances.console.wrap" xml:space="preserve">
-    <value>Wrap</value>
+  <data name="instances.logs.wrap" xml:space="preserve">
+    <value>Wrap lines</value>
   </data>
-  <data name="instances.console.clear" xml:space="preserve">
-    <value>Clear</value>
+  <data name="instances.logs.clear" xml:space="preserve">
+    <value>Clear logs</value>
   </data>
-  <data name="instances.console.search" xml:space="preserve">
-    <value>Filter console output</value>
+  <data name="instances.logs.search" xml:space="preserve">
+    <value>Filter game output</value>
   </data>
-  <data name="instances.console.lineCount" xml:space="preserve">
-    <value>{0} lines</value>
+  <data name="instances.logs.level" xml:space="preserve">
+    <value>Log level</value>
+  </data>
+  <data name="instances.logs.levelDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="instances.logs.levelWarnings" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="instances.logs.levelErrors" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="instances.logs.levelTracing" xml:space="preserve">
+    <value>Tracing</value>
+  </data>
+  <data name="instances.logs.showInFolder" xml:space="preserve">
+    <value>Show in folder</value>
   </data>
 </root>

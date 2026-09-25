@@ -10,10 +10,14 @@ namespace Hyprism.Core.Game.Launch;
 /// A single console line produced by a game process or by the launcher on its behalf
 /// </summary>
 /// <param name="InstanceId">Stable instance identifier the line belongs to.</param>
-/// <param name="Level">Severity tag: INF, WRN, ERR, or OUT.</param>
-/// <param name="Text">Raw line text without a trailing newline.</param>
-/// <param name="Timestamp">Local time when the line was captured.</param>
-public sealed record GameConsoleLine(string InstanceId, string Level, string Text, DateTimeOffset Timestamp);
+/// <param name="Level">Normalized severity: DEBUG, INFO, WARN, ERROR, or TRACE.</param>
+/// <param name="Text">Message without a trailing newline.</param>
+/// <param name="Timestamp">Local time of the game record or capture.</param>
+/// <param name="Source">Component that emitted the record.</param>
+/// <param name="IsTrace">Whether this is a stack trace line.</param>
+public sealed record GameConsoleLine(
+    string InstanceId, string Level, string Text, DateTimeOffset Timestamp,
+    string Source, bool IsTrace);
 
 /// <summary>
 /// Provides details when a game console line is captured
@@ -41,9 +45,13 @@ public interface IGameConsoleService
     /// Captures one console line for an instance
     /// </summary>
     /// <param name="instanceId">Stable instance identifier</param>
-    /// <param name="level">Severity tag such as INF, WRN, ERR, or OUT</param>
-    /// <param name="text">Raw line text</param>
-    void Append(string instanceId, string level, string text);
+    /// <param name="level">Severity tag such as INFO, WARN, ERROR, or TRACE</param>
+    /// <param name="text">Message text</param>
+    /// <param name="timestamp">Timestamp supplied by the game, if available</param>
+    /// <param name="source">Component supplied by the game, if available</param>
+    /// <param name="isTrace">Whether this is a stack trace line</param>
+    void Append(string instanceId, string level, string text,
+        DateTimeOffset? timestamp = null, string? source = null, bool isTrace = false);
 
     /// <summary>
     /// Gets the retained console lines for an instance in capture order
@@ -73,12 +81,15 @@ public sealed class GameConsoleService : IGameConsoleService
     public event EventHandler<GameConsoleLineEventArgs>? LineReceived;
 
     /// <inheritdoc/>
-    public void Append(string instanceId, string level, string text)
+    public void Append(string instanceId, string level, string text,
+        DateTimeOffset? timestamp = null, string? source = null, bool isTrace = false)
     {
         if (string.IsNullOrEmpty(instanceId) || string.IsNullOrEmpty(text))
             return;
 
-        var line = new GameConsoleLine(instanceId, level, text, DateTimeOffset.Now);
+        var normalizedLevel = GameLogParser.NormalizeLevel(level);
+        var line = new GameConsoleLine(instanceId, normalizedLevel, text,
+            timestamp ?? DateTimeOffset.Now, source ?? "Game", isTrace || normalizedLevel == "TRACE");
         var buffer = _buffers.GetOrAdd(instanceId, _ => new ConcurrentQueue<GameConsoleLine>());
         buffer.Enqueue(line);
         while (buffer.Count > MaxLinesPerInstance && buffer.TryDequeue(out _))

@@ -21,7 +21,7 @@ public sealed class GameConsoleServiceTests
         Assert.Equal(3, received.Count);
         var lines = console.GetLines("instance-a");
         Assert.Equal(["first", "second"], lines.Select(line => line.Text));
-        Assert.Equal(["OUT", "ERR"], lines.Select(line => line.Level));
+        Assert.Equal(["INFO", "ERROR"], lines.Select(line => line.Level));
         Assert.Single(console.GetLines("instance-b"));
     }
 

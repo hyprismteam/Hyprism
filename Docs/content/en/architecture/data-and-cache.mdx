@@ -70,7 +70,7 @@ Logs/<yyyy-MM-dd_HH-mm-ss.fff>/
   local-node-requests-<port>.ndjson
 ```
 
-Instance logs capture game standard output and standard error. Local Node logs record route status, timing, lifecycle, and failures; unknown-request journals exclude headers and bodies. A node can continue writing to its original log directory after Desktop closes
+Instance logs capture game standard output and standard error as `timestamp|level|source|message` records. HytaleClient timestamps, levels, and sources are preserved; exception stack lines use the `TRACE` level. Local Node logs record route status, timing, lifecycle, and failures; unknown-request journals exclude headers and bodies. A node can continue writing to its original log directory after Desktop closes
 
 ## Migration rules
 

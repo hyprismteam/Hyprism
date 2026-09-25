@@ -39,6 +39,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private readonly IGameVersionCatalog? _versionCatalog;
     private readonly IModManager? _modManager;
     private readonly IGameConsoleService? _gameConsole;
+    private readonly LogSessionPaths? _logSession;
     private readonly HttpClient _httpClient;
     private readonly RemoteImageCache? _remoteImageCache;
     private readonly StringLocalizer _localizer;
@@ -68,12 +69,18 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private bool _isManagedInstanceCancellationArmed;
     private string? _modsLoadedForInstanceId;
     private string? _worldsLoadedForInstanceId;
-    private readonly DispatcherTimer _consoleFlushTimer;
     private readonly object _pendingConsoleLock = new();
     private readonly List<GameConsoleLine> _pendingConsoleLines = [];
-    private readonly ObservableRangeCollection<ConsoleLineViewModel> _consoleLines = [];
+    private readonly HashSet<GameConsoleLine> _logsDisplayedLines = new(ReferenceEqualityComparer.Instance);
+    private readonly ObservableRangeCollection<InstanceLogLineViewModel> _consoleLines = [];
+    private string? _logsInstanceId;
+    private CancellationTokenSource? _logsRebuildCancellation;
+    private long _logsRebuildVersion;
+    private int _consoleLinesVersion;
+    private int _logsRebuildInProgress;
+    private int _consoleFlushScheduled;
+    private int _isDisposed;
     private readonly Dictionary<string, InstalledMod> _modUpdatesById = new(StringComparer.Ordinal);
-    private string? _consoleLoadedForInstanceId;
     private bool _modCatalogFiltersLoaded;
     private bool _suppressCatalogReload;
     private List<ModCategory> _loadedModCategories = [];
@@ -92,6 +99,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private string? _modCatalogGameVersion;
     private const int ModCatalogPageSize = 24;
     private const int MaxConsoleLines = 3000;
+    private const int SynchronousLogsRefreshLimit = 64;
+    private const int LogsRenderBatchSize = 64;
+    private static readonly TimeSpan LogsRenderBatchDelay = TimeSpan.FromMilliseconds(16);
     private static readonly IReadOnlyDictionary<string, string> ModCatalogCategoryResourceKeys =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -199,7 +209,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(IsDisplayedInstanceModsSection))]
     [NotifyPropertyChangedFor(nameof(IsDisplayedInstanceBrowseSection))]
     [NotifyPropertyChangedFor(nameof(IsDisplayedInstanceWorldsSection))]
-    [NotifyPropertyChangedFor(nameof(IsDisplayedInstanceConsoleSection))]
     [NotifyPropertyChangedFor(nameof(IsDisplayedInstanceLogsSection))]
     private string _displayedInstanceSection = string.Empty;
 
@@ -208,7 +217,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(IsInstanceModsSection))]
     [NotifyPropertyChangedFor(nameof(IsInstanceBrowseSection))]
     [NotifyPropertyChangedFor(nameof(IsInstanceWorldsSection))]
-    [NotifyPropertyChangedFor(nameof(IsInstanceConsoleSection))]
     [NotifyPropertyChangedFor(nameof(IsInstanceLogsSection))]
     [NotifyPropertyChangedFor(nameof(InstanceSectionTitle))]
     private string _instanceSection = string.Empty;
@@ -256,19 +264,33 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private bool _isApplyingModUpdates;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsConsoleEmpty))]
-    [NotifyPropertyChangedFor(nameof(HasConsoleLines))]
-    [NotifyPropertyChangedFor(nameof(ConsoleLineCountText))]
-    private string _consoleSearchQuery = string.Empty;
+    [NotifyPropertyChangedFor(nameof(IsLogsEmpty))]
+    [NotifyPropertyChangedFor(nameof(HasLogs))]
+    private string _logsSearchQuery = string.Empty;
 
     [ObservableProperty]
-    private bool _isConsoleAutoScroll = true;
+    private bool _isLogsAutoScroll = true;
 
     [ObservableProperty]
-    private bool _isConsoleWrap;
+    private bool _isLogsWrap;
 
     [ObservableProperty]
-    private int _consoleRevision;
+    private bool _isLogsDebugEnabled = true;
+
+    [ObservableProperty]
+    private bool _isLogsWarningsEnabled = true;
+
+    [ObservableProperty]
+    private bool _isLogsErrorsEnabled = true;
+
+    [ObservableProperty]
+    private bool _isLogsTracingEnabled;
+
+    [ObservableProperty]
+    private bool _isLogsLevelPopupOpen;
+
+    [ObservableProperty]
+    private int _logsRevision;
 
     [ObservableProperty]
     private InstanceListOptionViewModel? _selectedModCatalogCategory;
@@ -363,7 +385,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         IGameVersionCatalog? versionCatalog = null,
         IModManager? modManager = null,
         RemoteImageCache? remoteImageCache = null,
-        IGameConsoleService? gameConsole = null)
+        IGameConsoleService? gameConsole = null,
+        LogSessionPaths? logSession = null)
     {
         _instances = instances;
         _gameLaunchCoordinator = gameLaunchCoordinator;
@@ -375,6 +398,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         _versionCatalog = versionCatalog;
         _modManager = modManager;
         _gameConsole = gameConsole;
+        _logSession = logSession;
         _httpClient = httpClient;
         _remoteImageCache = remoteImageCache;
         _localizer = localizer;
@@ -394,11 +418,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         };
         _managedInstanceActionTimer.Tick += OnManagedInstanceActionTimerTick;
 
-        _consoleFlushTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(120)
-        };
-        _consoleFlushTimer.Tick += OnConsoleFlushTimerTick;
         if (_gameConsole is not null)
             _gameConsole.LineReceived += OnConsoleLineReceived;
         BuildModCatalogSortOptions();
@@ -417,7 +436,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public ObservableCollection<ModCatalogFileItemViewModel> ModCatalogPreviewFiles => _modCatalogPreviewFiles;
     public ObservableCollection<ModCatalogInstallItemViewModel> ModCatalogInstallItems => _modCatalogInstallItems;
     public ObservableCollection<InstanceWorldItemViewModel> InstanceWorlds => _instanceWorlds;
-    public ObservableCollection<ConsoleLineViewModel> ConsoleLines => _consoleLines;
+    public ObservableCollection<InstanceLogLineViewModel> LogsLines => _consoleLines;
     public ObservableCollection<InstanceListOptionViewModel> ModCatalogCategories { get; } = [];
     public ObservableCollection<InstanceListOptionViewModel> ModCatalogSortOptions { get; } = [];
 
@@ -454,10 +473,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public string InstanceWorldsHint => _localizer["instances.worlds.hint"];
     public string InstanceWorldsEmptyTitle => _localizer["instances.worlds.emptyTitle"];
     public string InstanceWorldsEmptyHint => _localizer["instances.worlds.emptyHint"];
-    public string InstanceConsoleTitle => _localizer["instances.console.title"];
-    public string InstanceConsoleHint => _localizer["instances.console.hint"];
-    public string InstanceConsoleEmptyTitle => _localizer["instances.console.emptyTitle"];
-    public string InstanceConsoleEmptyHint => _localizer["instances.console.emptyHint"];
     public string InstanceLogsTitle => _localizer["instances.logs.title"];
     public string InstanceLogsHint => _localizer["instances.logs.hint"];
     public string InstanceLogsEmptyTitle => _localizer["instances.logs.emptyTitle"];
@@ -497,16 +512,36 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public string ModCatalogGameVersionLabel => string.IsNullOrWhiteSpace(_modCatalogGameVersion)
         ? _localizer["instances.mods.compatibility.versionUnknown"]
         : _localizer.Format("instances.mods.compatibility.gameVersion", _modCatalogGameVersion);
-    public string ConsoleAutoScrollLabel => _localizer["instances.console.autoScroll"];
-    public string ConsoleClearLabel => _localizer["instances.console.clear"];
-    public string ConsoleSearchHint => _localizer["instances.console.search"];
-    public string ConsoleWrapLabel => _localizer["instances.console.wrap"];
+    public string LogsAutoScrollLabel => _localizer["instances.logs.autoScroll"];
+    public string LogsClearLabel => _localizer["instances.logs.clear"];
+    public string LogsSearchHint => _localizer["instances.logs.search"];
+    public string LogsWrapLabel => _localizer["instances.logs.wrap"];
+    public string LogsLevelLabel => _localizer["instances.logs.level"];
+    public string LogsDebugLabel => _localizer["instances.logs.levelDebug"];
+    public string LogsWarningsLabel => _localizer["instances.logs.levelWarnings"];
+    public string LogsErrorsLabel => _localizer["instances.logs.levelErrors"];
+    public string LogsTracingLabel => _localizer["instances.logs.levelTracing"];
+    public string LogsShowInFolderLabel => _localizer["instances.logs.showInFolder"];
+    public int SelectedLogsLevelCount =>
+        (IsLogsDebugEnabled ? 1 : 0) +
+        (IsLogsWarningsEnabled ? 1 : 0) +
+        (IsLogsErrorsEnabled ? 1 : 0) +
+        (IsLogsTracingEnabled ? 1 : 0);
+    public string LogsLevelSummary =>
+        IsLogsDebugEnabled ? LogsDebugLabel :
+        IsLogsWarningsEnabled ? LogsWarningsLabel :
+        IsLogsErrorsEnabled ? LogsErrorsLabel :
+        IsLogsTracingEnabled ? LogsTracingLabel : LogsLevelLabel;
+    public bool HasAdditionalLogsLevels => SelectedLogsLevelCount > 1;
+    public string LogsAdditionalLevelCountText => $"+{Math.Max(0, SelectedLogsLevelCount - 1)}";
+    public bool CanShowLogsInFolder => _logSession is not null &&
+        _managedInstance is { } instance &&
+        File.Exists(_logSession.GetInstanceLogPath(instance.Id));
 
     public bool HasModSelection => SelectedModCount > 0;
     public bool HasModUpdates => ModUpdateCount > 0;
-    public bool IsConsoleRunning => IsManagedInstanceRunning;
-    public bool HasConsoleLines => ConsoleLines.Count > 0;
-    public bool IsConsoleEmpty => ConsoleLines.Count == 0;
+    public bool HasLogs => LogsLines.Count > 0;
+    public bool IsLogsEmpty => LogsLines.Count == 0;
     public bool CanLoadMoreModCatalog => HasMoreModCatalog && !IsLoadingMoreModCatalog && !IsModCatalogLoading;
     public bool ShouldShowModCatalogSearchAction => ModCatalogSearchQuery.Trim().Length > 3;
     public bool CanSearchModCatalog => ShouldShowModCatalogSearchAction && !IsModCatalogLoading;
@@ -540,12 +575,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         _localizer.Format("instances.mods.updatesAvailable", ModUpdateCount);
     public string InstanceModsFooterText =>
         _localizer.Format("instances.mods.countInstalled", InstalledMods.Count);
-    public string ConsoleStatusText =>
-        IsConsoleRunning
-            ? _localizer["instances.console.running"]
-            : _localizer["instances.console.offline"];
-    public string ConsoleLineCountText =>
-        _localizer.Format("instances.console.lineCount", ConsoleLines.Count);
     public string InstanceNotInstalledTitle => _localizer["instances.content.notInstalledTitle"];
     public string InstanceNotInstalledHint => _localizer["instances.content.notInstalledHint"];
     public string RefreshLabel => _localizer["common.refresh"];
@@ -586,7 +615,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         "mods" => InstanceModsTitle,
         "browse" => InstanceBrowseTitle,
         "worlds" => InstanceWorldsTitle,
-        "console" => InstanceConsoleTitle,
         "logs" => InstanceLogsTitle,
         _ => ManagedInstanceName
     };
@@ -622,12 +650,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool IsInstanceModsSection => InstanceSection == "mods";
     public bool IsInstanceBrowseSection => InstanceSection == "browse";
     public bool IsInstanceWorldsSection => InstanceSection == "worlds";
-    public bool IsInstanceConsoleSection => InstanceSection == "console";
     public bool IsInstanceLogsSection => InstanceSection == "logs";
     public bool IsDisplayedInstanceModsSection => DisplayedInstanceSection == "mods";
     public bool IsDisplayedInstanceBrowseSection => DisplayedInstanceSection == "browse";
     public bool IsDisplayedInstanceWorldsSection => DisplayedInstanceSection == "worlds";
-    public bool IsDisplayedInstanceConsoleSection => DisplayedInstanceSection == "console";
     public bool IsDisplayedInstanceLogsSection => DisplayedInstanceSection == "logs";
     public bool HasInstalledMods => VisibleInstalledMods.Count > 0;
     public bool HasModCatalogItems => ModCatalogItems.Count > 0;
@@ -651,7 +677,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         if (_loadedModCategories.Count > 0)
             RebuildModCatalogCategories();
         BuildModCatalogSortOptions();
-        NotifyConsoleStateChanged();
+        NotifyLogsStateChanged();
 
         if (!IsInstanceOverviewSection)
             DisplayedInstanceSectionTitle = InstanceSectionTitle;
@@ -741,6 +767,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             UpdateManagedInstancePresentation();
             IsInstanceCreatorOpen = false;
             ResetInstanceCreatorState();
+            Volatile.Write(ref _logsInstanceId, null);
+            InvalidateLogsRebuild();
             InstanceSection = string.Empty;
             RefreshManagedInstanceContent();
         }
@@ -768,6 +796,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         RefreshInstanceInstalledState(instance);
         _managedInstance = instance;
         UpdateManagedInstanceListSelection(instance.Id);
+        Volatile.Write(ref _logsInstanceId, null);
+        InvalidateLogsRebuild();
         InstanceSection = string.Empty;
         UpdateManagedInstancePresentation();
         RefreshManagedInstanceContent();
@@ -787,13 +817,26 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SelectInstanceSection(string? section)
     {
-        if (section is not ("mods" or "browse" or "worlds" or "console" or "logs"))
+        if (section is not ("mods" or "browse" or "worlds" or "logs"))
             return;
+
+        var leavingLogs = section != "logs" && IsDisplayedInstanceLogsSection;
+        if (section == "logs")
+            Volatile.Write(ref _logsInstanceId, _managedInstance?.Id);
+        else
+        {
+            Volatile.Write(ref _logsInstanceId, null);
+            InvalidateLogsRebuild();
+        }
+
+        IsLogsLevelPopupOpen = false;
 
         DisplayedInstanceSectionTitle = GetInstanceSectionTitle(section);
         DisplayedInstanceSection = section;
         InstanceSection = section;
         InstanceContentError = string.Empty;
+        if (leavingLogs)
+            ApplyLogsLines([]);
 
         if (section == "mods" && !IsInstanceModsLoading &&
             !string.Equals(_modsLoadedForInstanceId, _managedInstance?.Id, StringComparison.Ordinal))
@@ -807,11 +850,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         else if (section == "worlds" && !IsInstanceWorldsLoading &&
                  !string.Equals(_worldsLoadedForInstanceId, _managedInstance?.Id, StringComparison.Ordinal))
             _ = LoadInstanceWorldsAsync();
-        else if (section == "console")
-        {
-            PrepareConsoleForCurrentInstance();
-            _consoleFlushTimer.Start();
-        }
+        else if (section == "logs")
+            PrepareLogsForCurrentInstance();
     }
 
     [RelayCommand]
@@ -820,17 +860,24 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         if (IsInstallingSelectedCatalogMods)
             return;
 
+        Volatile.Write(ref _logsInstanceId, null);
+        InvalidateLogsRebuild();
         InstanceSection = string.Empty;
+        IsLogsLevelPopupOpen = false;
         InstanceContentError = string.Empty;
         IsModCatalogInstallConfirmationOpen = false;
         ResetModCatalogPreview();
-        _consoleFlushTimer.Stop();
     }
 
     internal void CompleteInstanceSectionClose()
     {
         if (IsInstanceOverviewSection)
+        {
+            var leavingLogs = IsDisplayedInstanceLogsSection;
             DisplayedInstanceSection = string.Empty;
+            if (leavingLogs)
+                ApplyLogsLines([]);
+        }
     }
 
     internal void SynchronizeDisplayedInstanceSection()
@@ -2081,23 +2128,63 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     #region Game console
 
-    partial void OnConsoleSearchQueryChanged(string value)
-        => RebuildConsoleLines();
+    partial void OnIsLogsDebugEnabledChanged(bool value) => OnLogsLevelChanged();
+    partial void OnIsLogsWarningsEnabledChanged(bool value) => OnLogsLevelChanged();
+    partial void OnIsLogsErrorsEnabledChanged(bool value) => OnLogsLevelChanged();
+    partial void OnIsLogsTracingEnabledChanged(bool value) => OnLogsLevelChanged();
+
+    private void OnLogsLevelChanged()
+    {
+        OnPropertyChanged(nameof(SelectedLogsLevelCount));
+        OnPropertyChanged(nameof(LogsLevelSummary));
+        OnPropertyChanged(nameof(HasAdditionalLogsLevels));
+        OnPropertyChanged(nameof(LogsAdditionalLevelCountText));
+        RebuildLogsLines();
+    }
+
+    partial void OnLogsSearchQueryChanged(string value)
+        => RebuildLogsLines();
 
     private void OnConsoleLineReceived(object? sender, GameConsoleLineEventArgs e)
     {
+        if (Volatile.Read(ref _isDisposed) != 0)
+            return;
+
+        var instanceId = Volatile.Read(ref _logsInstanceId);
+        if (string.IsNullOrWhiteSpace(instanceId) ||
+            !string.Equals(e.Line.InstanceId, instanceId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
         lock (_pendingConsoleLock)
         {
+            if (_logsDisplayedLines.Remove(e.Line))
+                return;
+
             _pendingConsoleLines.Add(e.Line);
+            _consoleLinesVersion++;
             if (_pendingConsoleLines.Count > MaxConsoleLines * 2)
             {
                 _pendingConsoleLines.RemoveRange(0, _pendingConsoleLines.Count - MaxConsoleLines);
             }
         }
+
+        if (Volatile.Read(ref _logsRebuildInProgress) == 0 &&
+            Interlocked.Exchange(ref _consoleFlushScheduled, 1) == 0)
+            Dispatcher.UIThread.Post(FlushPendingConsoleLines);
     }
 
-    private void OnConsoleFlushTimerTick(object? sender, EventArgs args)
-        => FlushConsoleLines();
+    private void FlushPendingConsoleLines()
+    {
+        Interlocked.Exchange(ref _consoleFlushScheduled, 0);
+        if (Volatile.Read(ref _isDisposed) == 0 &&
+            Volatile.Read(ref _logsRebuildInProgress) == 0 &&
+            IsInstanceLogsSection)
+        {
+            FlushConsoleLines();
+        }
+    }
 
     private void FlushConsoleLines()
     {
@@ -2107,7 +2194,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             if (_pendingConsoleLines.Count == 0)
                 return;
 
-            pending = [.. _pendingConsoleLines];
+            pending = _pendingConsoleLines
+                .Where(line => !_logsDisplayedLines.Remove(line))
+                .ToList();
             _pendingConsoleLines.Clear();
         }
 
@@ -2115,78 +2204,384 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         if (string.IsNullOrWhiteSpace(instanceId))
             return;
 
-        var filter = ConsoleSearchQuery.Trim();
-        foreach (var line in pending.Where(line =>
-                     string.Equals(line.InstanceId, instanceId, StringComparison.Ordinal) &&
-                     MatchesConsoleFilter(line, filter)))
-        {
-            _consoleLines.Add(ToConsoleLineViewModel(line));
-        }
+        var filter = LogsSearchQuery.Trim();
+        var filteredLines = pending
+            .Where(line => string.Equals(line.InstanceId, instanceId, StringComparison.Ordinal) &&
+                MatchesConsoleFilter(line, filter) && MatchesLogsLevel(
+                line,
+                IsLogsDebugEnabled,
+                IsLogsWarningsEnabled,
+                IsLogsErrorsEnabled,
+                IsLogsTracingEnabled))
+            .Select(ToLogLineViewModel)
+            .TakeLast(MaxConsoleLines)
+            .ToList();
 
-        while (_consoleLines.Count > MaxConsoleLines)
-            _consoleLines.RemoveAt(0);
+        if (filteredLines.Count == 0)
+            return;
 
-        ConsoleRevision++;
-        NotifyConsoleStateChanged();
+        var excessCount = _consoleLines.Count + filteredLines.Count - MaxConsoleLines;
+        if (excessCount > 0)
+            _consoleLines.RemoveRange(0, excessCount);
+        _consoleLines.AddRange(filteredLines);
+
+        LogsRevision++;
+        NotifyLogsStateChanged();
     }
 
-    private void RebuildConsoleLines()
+    private void RebuildLogsLines()
     {
-        lock (_pendingConsoleLock)
-            _pendingConsoleLines.Clear();
+        var rebuildVersion = Interlocked.Increment(ref _logsRebuildVersion);
+        _logsRebuildCancellation?.Cancel();
+        _logsRebuildCancellation?.Dispose();
+        _logsRebuildCancellation = null;
+        Interlocked.Exchange(ref _logsRebuildInProgress, 0);
 
         var instanceId = _managedInstance?.Id;
         if (string.IsNullOrWhiteSpace(instanceId) || _gameConsole is null)
         {
-            _consoleLines.ReplaceRange([]);
-            ConsoleRevision++;
-            NotifyConsoleStateChanged();
+            lock (_pendingConsoleLock)
+                _pendingConsoleLines.Clear();
+
+            ApplyLogsLines([]);
             return;
         }
 
-        var filter = ConsoleSearchQuery.Trim();
-        var lines = _gameConsole
-            .GetLines(instanceId)
-            .Where(line => MatchesConsoleFilter(line, filter))
-            .ToList();
-        var skip = Math.Max(0, lines.Count - MaxConsoleLines);
-        _consoleLines.ReplaceRange(lines.Skip(skip).Select(ToConsoleLineViewModel));
-        ConsoleRevision++;
-        NotifyConsoleStateChanged();
+        var filter = LogsSearchQuery.Trim();
+        var showDebug = IsLogsDebugEnabled;
+        var showWarnings = IsLogsWarningsEnabled;
+        var showErrors = IsLogsErrorsEnabled;
+        var showTracing = IsLogsTracingEnabled;
+        int consoleLinesVersion;
+        lock (_pendingConsoleLock)
+        {
+            _pendingConsoleLines.Clear();
+            consoleLinesVersion = _consoleLinesVersion;
+        }
+
+        var snapshot = _gameConsole.GetLines(instanceId);
+        if (snapshot.Count <= SynchronousLogsRefreshLimit)
+        {
+            var filteredLines = FilterLogsLines(
+                snapshot,
+                filter,
+                showDebug,
+                showWarnings,
+                showErrors,
+                showTracing,
+                CancellationToken.None);
+            if (!IsLogsSnapshotCurrent(rebuildVersion, consoleLinesVersion, instanceId))
+            {
+                if (rebuildVersion == Volatile.Read(ref _logsRebuildVersion) && IsInstanceLogsSection)
+                    RebuildLogsLines();
+                return;
+            }
+
+            ApplyLogsLines(filteredLines);
+            return;
+        }
+
+        var cancellation = new CancellationTokenSource();
+        _logsRebuildCancellation = cancellation;
+        Interlocked.Exchange(ref _logsRebuildInProgress, 1);
+        _ = RebuildLogsLinesAsync(
+            snapshot,
+            filter,
+            showDebug,
+            showWarnings,
+            showErrors,
+            showTracing,
+            instanceId,
+            rebuildVersion,
+            cancellation);
     }
 
-    private void PrepareConsoleForCurrentInstance()
+    private async Task RebuildLogsLinesAsync(
+        IReadOnlyList<GameConsoleLine> snapshot,
+        string filter,
+        bool showDebug,
+        bool showWarnings,
+        bool showErrors,
+        bool showTracing,
+        string instanceId,
+        long rebuildVersion,
+        CancellationTokenSource cancellation)
     {
-        _consoleLoadedForInstanceId = _managedInstance?.Id;
-        RebuildConsoleLines();
+        List<InstanceLogLineViewModel> filteredLines;
+        var cancellationToken = cancellation.Token;
+        try
+        {
+            filteredLines = await Task.Run(
+                () => FilterLogsLines(
+                    snapshot,
+                    filter,
+                    showDebug,
+                    showWarnings,
+                    showErrors,
+                    showTracing,
+                    cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        try
+        {
+            await ApplyLogsLinesBatchedAsync(
+                filteredLines,
+                instanceId,
+                rebuildVersion,
+                cancellation,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private async Task ApplyLogsLinesBatchedAsync(
+        IReadOnlyList<InstanceLogLineViewModel> lines,
+        string instanceId,
+        long rebuildVersion,
+        CancellationTokenSource cancellation,
+        CancellationToken cancellationToken)
+    {
+        var started = await Dispatcher.UIThread.InvokeAsync(
+            () => BeginBatchedLogsApply(lines, instanceId, rebuildVersion),
+            DispatcherPriority.Background,
+            cancellationToken);
+        if (!started)
+            return;
+
+        for (var offset = 0; offset < lines.Count; offset += LogsRenderBatchSize)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var batch = lines.Skip(offset).Take(LogsRenderBatchSize).ToArray();
+            var appended = await Dispatcher.UIThread.InvokeAsync(
+                () => AppendBatchedLogs(batch, instanceId, rebuildVersion),
+                DispatcherPriority.Background,
+                cancellationToken);
+            if (!appended)
+                return;
+
+            if (offset + batch.Length < lines.Count)
+                await Task.Delay(LogsRenderBatchDelay, cancellationToken).ConfigureAwait(false);
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () => CompleteBatchedLogsApply(instanceId, rebuildVersion, cancellation),
+            DispatcherPriority.Background,
+            cancellationToken);
+    }
+
+    private bool BeginBatchedLogsApply(
+        IReadOnlyList<InstanceLogLineViewModel> lines,
+        string instanceId,
+        long rebuildVersion)
+    {
+        if (!IsLogsRebuildCurrent(rebuildVersion, instanceId))
+            return false;
+
+        lock (_pendingConsoleLock)
+        {
+            _logsDisplayedLines.Clear();
+            foreach (var line in lines)
+                _logsDisplayedLines.Add(line.OriginalLine);
+        }
+
+        if (_consoleLines.Count > 0)
+            _consoleLines.ReplaceRange([]);
+        return true;
+    }
+
+    private bool AppendBatchedLogs(
+        IReadOnlyList<InstanceLogLineViewModel> batch,
+        string instanceId,
+        long rebuildVersion)
+    {
+        if (!IsLogsRebuildCurrent(rebuildVersion, instanceId))
+            return false;
+
+        _consoleLines.AddRange(batch);
+        if (_consoleLines.Count == batch.Count)
+            NotifyLogsStateChanged();
+
+        return true;
+    }
+
+    private void CompleteBatchedLogsApply(
+        string instanceId,
+        long rebuildVersion,
+        CancellationTokenSource cancellation)
+    {
+        if (!IsLogsRebuildCurrent(rebuildVersion, instanceId))
+            return;
+
+        if (ReferenceEquals(_logsRebuildCancellation, cancellation))
+        {
+            _logsRebuildCancellation = null;
+            cancellation.Dispose();
+        }
+
+        Interlocked.Exchange(ref _logsRebuildInProgress, 0);
+        LogsRevision++;
+        NotifyLogsStateChanged();
+        SchedulePendingConsoleFlush();
+    }
+
+    private bool IsLogsRebuildCurrent(long rebuildVersion, string instanceId)
+        => Volatile.Read(ref _isDisposed) == 0 &&
+           rebuildVersion == Volatile.Read(ref _logsRebuildVersion) &&
+           IsInstanceLogsSection &&
+           string.Equals(_managedInstance?.Id, instanceId, StringComparison.Ordinal);
+
+    private static List<InstanceLogLineViewModel> FilterLogsLines(
+        IReadOnlyList<GameConsoleLine> lines,
+        string filter,
+        bool showDebug,
+        bool showWarnings,
+        bool showErrors,
+        bool showTracing,
+        CancellationToken cancellationToken)
+    {
+        var filtered = new List<InstanceLogLineViewModel>(Math.Min(lines.Count, MaxConsoleLines));
+        for (var index = 0; index < lines.Count; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var line = lines[index];
+            if (!MatchesConsoleFilter(line, filter) ||
+                !MatchesLogsLevel(line, showDebug, showWarnings, showErrors, showTracing))
+            {
+                continue;
+            }
+
+            filtered.Add(ToLogLineViewModel(line));
+        }
+
+        if (filtered.Count > MaxConsoleLines)
+            filtered.RemoveRange(0, filtered.Count - MaxConsoleLines);
+
+        return filtered;
+    }
+
+    private bool IsLogsSnapshotCurrent(long rebuildVersion, int consoleLinesVersion, string instanceId)
+    {
+        if (rebuildVersion != Volatile.Read(ref _logsRebuildVersion) ||
+            !IsInstanceLogsSection ||
+            !string.Equals(_managedInstance?.Id, instanceId, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        lock (_pendingConsoleLock)
+            return _consoleLinesVersion == consoleLinesVersion;
+    }
+
+    private void ApplyLogsLines(IReadOnlyList<InstanceLogLineViewModel> lines)
+    {
+        lock (_pendingConsoleLock)
+        {
+            if (lines.Count == 0 && !IsInstanceLogsSection)
+                _pendingConsoleLines.Clear();
+
+            _logsDisplayedLines.Clear();
+            foreach (var line in lines)
+                _logsDisplayedLines.Add(line.OriginalLine);
+            Interlocked.Exchange(ref _logsRebuildInProgress, 0);
+        }
+
+        _consoleLines.ReplaceRange(lines);
+        LogsRevision++;
+        NotifyLogsStateChanged();
+        SchedulePendingConsoleFlush();
+    }
+
+    private void InvalidateLogsRebuild()
+    {
+        Interlocked.Increment(ref _logsRebuildVersion);
+        _logsRebuildCancellation?.Cancel();
+        _logsRebuildCancellation?.Dispose();
+        _logsRebuildCancellation = null;
+        Interlocked.Exchange(ref _logsRebuildInProgress, 0);
+    }
+
+    private void SchedulePendingConsoleFlush()
+    {
+        if (Volatile.Read(ref _isDisposed) != 0 ||
+            Volatile.Read(ref _logsRebuildInProgress) != 0 ||
+            !IsInstanceLogsSection)
+        {
+            return;
+        }
+
+        lock (_pendingConsoleLock)
+        {
+            if (_pendingConsoleLines.Count == 0)
+                return;
+        }
+
+        if (Interlocked.Exchange(ref _consoleFlushScheduled, 1) == 0)
+            Dispatcher.UIThread.Post(FlushPendingConsoleLines);
+    }
+
+    private void PrepareLogsForCurrentInstance()
+    {
+        RebuildLogsLines();
     }
 
     [RelayCommand]
-    private void ClearConsole()
+    private void ClearLogs()
     {
         if (_managedInstance is { } instance)
             _gameConsole?.Clear(instance.Id);
 
-        RebuildConsoleLines();
+        RebuildLogsLines();
     }
 
     private static bool MatchesConsoleFilter(GameConsoleLine line, string filter)
         => string.IsNullOrEmpty(filter) ||
-           line.Text.Contains(filter, StringComparison.CurrentCultureIgnoreCase);
+           line.Text.Contains(filter, StringComparison.CurrentCultureIgnoreCase) ||
+           line.Source.Contains(filter, StringComparison.CurrentCultureIgnoreCase) ||
+           line.Level.Contains(filter, StringComparison.CurrentCultureIgnoreCase);
 
-    private static ConsoleLineViewModel ToConsoleLineViewModel(GameConsoleLine line)
+    private static bool MatchesLogsLevel(
+        GameConsoleLine line,
+        bool showDebug,
+        bool showWarnings,
+        bool showErrors,
+        bool showTracing)
+        => line.IsTrace || line.Level == "TRACE" ? showTracing :
+           line.Level == "WARN" ? showWarnings :
+           line.Level == "ERROR" ? showErrors :
+           showDebug;
+
+    private static InstanceLogLineViewModel ToLogLineViewModel(GameConsoleLine line)
         => new(
             line.Level,
-            line.Timestamp.ToLocalTime().ToString("HH:mm:ss"),
-            line.Text);
+            line.Timestamp.ToLocalTime().ToString("HH:mm:ss.ffff"),
+            line.Source,
+            line.Text,
+            line.IsTrace)
+        {
+            OriginalLine = line
+        };
 
-    private void NotifyConsoleStateChanged()
+    private void NotifyLogsStateChanged()
     {
-        OnPropertyChanged(nameof(HasConsoleLines));
-        OnPropertyChanged(nameof(IsConsoleEmpty));
-        OnPropertyChanged(nameof(ConsoleLineCountText));
-        OnPropertyChanged(nameof(ConsoleStatusText));
-        OnPropertyChanged(nameof(IsConsoleRunning));
+        OnPropertyChanged(nameof(HasLogs));
+        OnPropertyChanged(nameof(IsLogsEmpty));
+        OnPropertyChanged(nameof(CanShowLogsInFolder));
+    }
+
+    [RelayCommand]
+    private async Task ShowLogsInFolderAsync()
+    {
+        if (!CanShowLogsInFolder || _logSession is null)
+            return;
+
+        await _uriLauncher.LaunchDirectoryAsync(_logSession.SessionDirectory);
     }
 
     #endregion
@@ -2284,6 +2679,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
 
         _managedInstance = null;
+        Volatile.Write(ref _logsInstanceId, null);
+        InvalidateLogsRebuild();
         InstanceSection = string.Empty;
         RefreshManagedInstanceContent();
     }
@@ -2441,7 +2838,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         SelectedModCount = 0;
         InstanceContentError = string.Empty;
         RestartModIconFetch();
-        RebuildConsoleLines();
         NotifyInstanceContentCollectionsChanged();
 
         if (_managedInstance?.IsInstalled != true)
@@ -3165,7 +3561,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
             UpdateSelectedInstancePresentation();
             NotifyManagedInstanceActionStateChanged();
-            NotifyConsoleStateChanged();
         });
     }
 
@@ -3192,7 +3587,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
                 EndManagedInstanceAction();
             else
                 NotifyManagedInstanceActionStateChanged();
-            NotifyConsoleStateChanged();
         });
     }
 
@@ -3263,10 +3657,11 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         => FilterInstalledMods();
     public void Dispose()
     {
+        Interlocked.Exchange(ref _isDisposed, 1);
+        Volatile.Write(ref _logsInstanceId, null);
+        InvalidateLogsRebuild();
         _managedInstanceActionTimer.Stop();
         _managedInstanceActionTimer.Tick -= OnManagedInstanceActionTimerTick;
-        _consoleFlushTimer.Stop();
-        _consoleFlushTimer.Tick -= OnConsoleFlushTimerTick;
         if (_gameConsole is not null)
             _gameConsole.LineReceived -= OnConsoleLineReceived;
         UnsubscribeInstalledModItems();

@@ -17,7 +17,7 @@ Desktop instance action
   -> resumable download and Butler extraction
   -> runtime prerequisites
   -> GameLauncher authentication and client preparation
-  -> GameProcessTracker and per-instance console
+  -> GameProcessTracker and per-instance logs
 ```
 
 `GameInstallationWorkflow` rejects concurrent installation work for the same instance. Every instance targets an explicit branch and numeric version. It records `PendingVersion` before modifying an installation so an interrupted update can be resumed. An installed instance whose metadata matches the selected version uses a fast path without contacting version sources or mirrors

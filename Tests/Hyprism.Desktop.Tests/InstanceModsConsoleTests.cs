@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 using System.Net.Http;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
+using Avalonia.Input.Platform;
+using Avalonia.VisualTree;
 using Hyprism.Core.Accounts;
 using Hyprism.Core.Application.Ports;
 using Hyprism.Core.Application.Progress;
@@ -10,8 +16,10 @@ using Hyprism.Core.Game;
 using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Game.Launch;
 using Hyprism.Core.Game.Mods;
+using Hyprism.Core.Infrastructure;
 using Hyprism.Core.Models;
 using Hyprism.Desktop.Screens.News;
+using Hyprism.Desktop.Screens.Instances;
 using Hyprism.Desktop.Screens.Settings;
 using Hyprism.Desktop.Localization;
 using Hyprism.Desktop.Platform;
@@ -147,7 +155,7 @@ public sealed class InstanceModsConsoleTests
     }
 
     [AvaloniaFact]
-    public async Task ConsoleSectionStreamsFiltersAndClearsGameLines()
+    public async Task LogsSectionStreamsFiltersAndClearsGameLines()
     {
         const string instancePath = "/tmp/hyprism-console-test";
         var instance = new InstanceInfo
@@ -169,26 +177,125 @@ public sealed class InstanceModsConsoleTests
             new Mock<IModManager>(),
             console);
 
-        viewModel.SelectInstanceSectionCommand.Execute("console");
-        Assert.Single(viewModel.ConsoleLines);
-        Assert.Equal("hello from game", viewModel.ConsoleLines[0].Text);
+        viewModel.SelectInstanceSectionCommand.Execute("logs");
+        Assert.Single(viewModel.LogsLines);
+        Assert.Equal("hello from game", viewModel.LogsLines[0].Text);
 
         console.Append(instance.Id, "ERR", "boom");
-        await WaitUntilAsync(() => viewModel.ConsoleLines.Count == 2);
-        Assert.True(viewModel.ConsoleLines[1].IsError);
+        await WaitUntilAsync(() => viewModel.LogsLines.Count == 2);
+        Assert.True(viewModel.LogsLines[1].IsError);
 
         console.Append("other-instance", "OUT", "not ours");
-        Assert.Equal(2, viewModel.ConsoleLines.Count);
+        Assert.Equal(2, viewModel.LogsLines.Count);
 
-        viewModel.ConsoleSearchQuery = "boom";
-        Assert.Single(viewModel.ConsoleLines);
-        Assert.Equal("boom", viewModel.ConsoleLines[0].Text);
+        viewModel.LogsSearchQuery = "boom";
+        Assert.Single(viewModel.LogsLines);
+        Assert.Equal("boom", viewModel.LogsLines[0].Text);
 
-        viewModel.ConsoleSearchQuery = string.Empty;
-        Assert.Equal(2, viewModel.ConsoleLines.Count);
+        viewModel.LogsSearchQuery = string.Empty;
+        Assert.Equal(2, viewModel.LogsLines.Count);
 
-        viewModel.ClearConsoleCommand.Execute(null);
-        Assert.Empty(viewModel.ConsoleLines);
+        viewModel.ClearLogsCommand.Execute(null);
+        Assert.Empty(viewModel.LogsLines);
+
+        console.Append(instance.Id, "INFO", "normal output", source: "HytaleClient.AppStartup");
+        console.Append(instance.Id, "WARN", "retrying", source: "HytaleClient.Program");
+        console.Append(instance.Id, "ERROR", "request failed", source: "HytaleClient.Program");
+        console.Append(instance.Id, "TRACE", "at HytaleClient+0x123", source: "HytaleClient.Program",
+            isTrace: true);
+
+        viewModel.IsLogsDebugEnabled = false;
+        Assert.Equal(new[] { "WARN", "ERROR" }, viewModel.LogsLines.Select(line => line.Level));
+        viewModel.IsLogsWarningsEnabled = false;
+        Assert.Single(viewModel.LogsLines);
+        Assert.Equal("HytaleClient.Program", viewModel.LogsLines[0].Source);
+        viewModel.IsLogsTracingEnabled = true;
+        Assert.Equal(2, viewModel.LogsLines.Count);
+        Assert.True(viewModel.LogsLines[^1].IsTrace);
+    }
+
+    [AvaloniaFact]
+    public async Task LogsShowInFolderOpensTheCurrentSessionDirectory()
+    {
+        var instance = new InstanceInfo
+        {
+            Id = "log-file-instance",
+            Name = "Log File Instance",
+            Branch = "release",
+            Version = 20,
+            IsInstalled = true
+        };
+        var directory = Path.Combine(Path.GetTempPath(), "HyPrismLogFolderTests_" + Guid.NewGuid());
+        try
+        {
+            var logSession = new LogSessionPaths(directory, DateTimeOffset.Now);
+            File.WriteAllText(logSession.GetInstanceLogPath(instance.Id), "log record");
+            var (instances, profiles, profileRepository, launchCoordinator, installationWorkflow,
+                gameProcess, progress, settings, news, uriLauncher) =
+                CreateFakes(instance, Path.Combine(directory, "instance"));
+            uriLauncher.Setup(service => service.LaunchDirectoryAsync(
+                    logSession.SessionDirectory, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            using var viewModel = CreateViewModel(
+                instances, profiles, profileRepository, launchCoordinator, installationWorkflow,
+                gameProcess, progress, settings, news, uriLauncher,
+                new Mock<IModManager>(), logSession: logSession);
+            viewModel.SelectInstanceSectionCommand.Execute("logs");
+
+            Assert.True(viewModel.CanShowLogsInFolder);
+            await viewModel.ShowLogsInFolderCommand.ExecuteAsync(null);
+            uriLauncher.Verify(service => service.LaunchDirectoryAsync(
+                logSession.SessionDirectory, It.IsAny<CancellationToken>()), Times.Once);
+        }
+        finally
+        {
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task LogMessageCanBeSelectedWithTheMouse()
+    {
+        var instance = new InstanceInfo
+        {
+            Id = "selectable-log-instance",
+            Name = "Selectable Log Instance",
+            Branch = "release",
+            Version = 20,
+            IsInstalled = true
+        };
+        var (instances, profiles, profileRepository, launchCoordinator, installationWorkflow,
+            gameProcess, progress, settings, news, uriLauncher) =
+            CreateFakes(instance, "/tmp/hyprism-selectable-log-test");
+        var console = new GameConsoleService();
+        console.Append(instance.Id, "INFO", "select this log message");
+        using var viewModel = CreateViewModel(
+            instances, profiles, profileRepository, launchCoordinator, installationWorkflow,
+            gameProcess, progress, settings, news, uriLauncher,
+            new Mock<IModManager>(), console);
+        var view = new InstancesView { DataContext = viewModel.Instances };
+        var window = new Window { Width = 1180, Height = 760, Content = view };
+        window.Show();
+        viewModel.SelectInstanceSectionCommand.Execute("logs");
+        await WaitUntilAsync(() => view.FindControl<Grid>("InstanceSectionScreen") is
+            { IsHitTestVisible: true });
+        var message = view.GetVisualDescendants().OfType<SelectableTextBlock>()
+            .First(text => text.Classes.Contains("logText") && text.Text == "select this log message");
+        var start = message.TranslatePoint(new Point(2, message.Bounds.Height / 2), window);
+        var end = message.TranslatePoint(new Point(80, message.Bounds.Height / 2), window);
+        Assert.NotNull(start);
+        Assert.NotNull(end);
+        window.MouseMove(start!.Value);
+        window.MouseDown(start.Value, MouseButton.Left);
+        window.MouseMove(end!.Value, RawInputModifiers.LeftMouseButton);
+        window.MouseUp(end.Value, MouseButton.Left);
+
+        Assert.NotEmpty(message.SelectedText);
+        var selectedText = message.SelectedText;
+        window.KeyPress(Key.C, RawInputModifiers.Control, PhysicalKey.C, null);
+        Assert.Equal(selectedText, await window.Clipboard!.TryGetTextAsync());
     }
 
     private static (
@@ -238,7 +345,8 @@ public sealed class InstanceModsConsoleTests
         Mock<IHytaleNewsClient> news,
         Mock<IExternalUriLauncher> uriLauncher,
         Mock<IModManager> modManager,
-        IGameConsoleService? gameConsole = null)
+        IGameConsoleService? gameConsole = null,
+        LogSessionPaths? logSession = null)
         => new(
             instances.Object,
             profiles.Object,
@@ -253,7 +361,8 @@ public sealed class InstanceModsConsoleTests
             new HttpClient(),
             new StringLocalizer("en-US"),
             modManager: modManager.Object,
-            gameConsole: gameConsole);
+            gameConsole: gameConsole,
+            logSession: logSession);
 
     private static Task WaitUntilAsync(Func<bool> condition)
         => AvaloniaTestWait.UntilAsync(condition, "instance view-model state to settle");
