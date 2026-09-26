@@ -1248,7 +1248,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   <data name="onboarding.about" xml:space="preserve">
     <value>Sobre</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Sobre o Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Esta fonte de download já está configurada</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Verificando a compatibilidade da fonte</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>O Hyprism não pôde detectar um espelho compatível neste endereço</value>
   </data>
@@ -2693,18 +2690,6 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>A fonte de download não pôde ser removida</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Fonte de download adicionada</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Fonte de download removida</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Fonte de download habilitada</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Fonte de download desabilitada</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>Índice JSON</value>

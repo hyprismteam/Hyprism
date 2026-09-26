@@ -348,7 +348,7 @@ public sealed class MirrorSettingsViewModelTests
     }
 
     [AvaloniaFact]
-    public void ManualJsonWizardValidatesAndPersistsDownloadSource()
+    public async Task ManualJsonWizardValidatesAndPersistsDownloadSource()
     {
         var appDir = Path.Combine(Path.GetTempPath(), $"hyprism-manual-mirror-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(appDir);
@@ -373,8 +373,8 @@ public sealed class MirrorSettingsViewModelTests
             Assert.True(viewModel.IsManualSourceVisible);
 
             viewModel.ManualMirrorJson = "{";
-            viewModel.AddManualMirrorCommand.Execute(null);
-            Assert.True(viewModel.HasMirrorOperationError);
+            Assert.False(viewModel.CanSubmitManualMirror);
+            Assert.True(viewModel.IsManualMirrorInputError);
             Assert.Empty(catalog.GetAll());
 
             viewModel.ManualMirrorJson = """
@@ -388,7 +388,8 @@ public sealed class MirrorSettingsViewModelTests
                   }
                 }
                 """;
-            viewModel.AddManualMirrorCommand.Execute(null);
+            Assert.True(viewModel.CanSubmitManualMirror);
+            await viewModel.AddManualMirrorCommand.ExecuteAsync(null);
 
             var source = Assert.Single(viewModel.MirrorSources);
             Assert.Equal("manual-source", source.Id);
@@ -564,19 +565,37 @@ public sealed class MirrorSettingsViewModelTests
             if (!string.IsNullOrWhiteSpace(tableRenderPath))
                 window.CaptureRenderedFrame()!.Save(tableRenderPath, PngBitmapEncoderOptions.Default);
 
-            var actionPopup = Assert.Single(
-                table.GetVisualDescendants().OfType<FadingPopup>());
-            source.IsMenuOpen = true;
+            var actionFlyout = Assert.IsType<Border>(view.FindControl<Border>("MirrorActionFlyout"));
+            Assert.False(actionFlyout.IsVisible);
+            var menuTarget = Assert.Single(
+                table.GetVisualDescendants().OfType<Border>(),
+                border => border.Classes.Contains("sourceMoreTarget"));
+            var menuTargetPoint = menuTarget.TranslatePoint(
+                new Point(menuTarget.Bounds.Width / 2, menuTarget.Bounds.Height / 2),
+                window);
+            Assert.NotNull(menuTargetPoint);
+            window.MouseMove(menuTargetPoint!.Value);
+            window.MouseDown(menuTargetPoint.Value, MouseButton.Left);
+            window.MouseUp(menuTargetPoint.Value, MouseButton.Left);
             Dispatcher.UIThread.RunJobs();
-            Assert.True(actionPopup.IsRequestedOpen);
-            Assert.True(actionPopup.IsOpen);
+            Assert.True(source.IsMenuOpen);
+            Assert.True(actionFlyout.IsVisible);
+            await AvaloniaTestWait.UntilAsync(
+                () => actionFlyout.Opacity >= 0.99,
+                "download source action menu to fade in");
+            Assert.InRange(actionFlyout.Opacity, 0.99, 1);
             var removeAction = Assert.IsType<Button>(
-                actionPopup.Child!.GetVisualDescendants()
+                actionFlyout.GetVisualDescendants()
                     .OfType<Button>()
                     .Single(button => button.Classes.Contains("sourceMenuAction")));
             Assert.Same(viewModel.RequestDeleteMirrorCommand, removeAction.Command);
             Assert.Same(source, removeAction.CommandParameter);
-            source.IsMenuOpen = false;
+
+            window.MouseDown(menuTargetPoint.Value, MouseButton.Left);
+            window.MouseUp(menuTargetPoint.Value, MouseButton.Left);
+            await AvaloniaTestWait.UntilAsync(
+                () => !actionFlyout.IsVisible,
+                "download source action menu to close");
 
             var addButton = Assert.IsType<Button>(FindDownloadsView(view).FindControl<Button>("AddDownloadSourceButton"));
             Assert.Same(viewModel.ShowAddMirrorCommand, addButton.Command);

@@ -1350,7 +1350,7 @@ You may need to reinstall the game if switching drives</value>
   <data name="onboarding.about" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>About Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2106,9 +2106,6 @@ You may need to reinstall the game if switching drives</value>
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>This download source is already configured</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Checking source compatibility</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism could not detect a compatible mirror at this address</value>
   </data>
@@ -2120,18 +2117,6 @@ You may need to reinstall the game if switching drives</value>
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>The download source could not be removed</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Download source added</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Download source removed</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Download source enabled</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Download source disabled</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON index</value>

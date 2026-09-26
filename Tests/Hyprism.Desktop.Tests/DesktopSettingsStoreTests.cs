@@ -13,7 +13,7 @@ public sealed class DesktopSettingsStoreTests : IDisposable
 {
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(),
-        $"HyPrismDesktopSettings_{Guid.NewGuid():N}");
+        $"HyprismDesktopSettings_{Guid.NewGuid():N}");
     private readonly JsonConfigStore _config;
     private readonly DesktopSettingsStore _settings;
 
@@ -55,7 +55,7 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     public async Task SetInstanceDirectoryAsync_MovesExistingDataAndPersistsTheNewRoot()
     {
         var originalDirectory = _settings.DefaultInstanceDirectory;
-        var selectedDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismInstances_{Guid.NewGuid():N}");
+        var selectedDirectory = Path.Combine(Path.GetTempPath(), $"HyprismInstances_{Guid.NewGuid():N}");
         var targetDirectory = Path.Combine(selectedDirectory, "HyprismLibrary");
         var originalFile = Path.Combine(originalDirectory, "release", "instance.json");
         Directory.CreateDirectory(Path.GetDirectoryName(originalFile)!);
@@ -98,7 +98,7 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     [Fact]
     public async Task SetInstanceDirectoryAsync_ResetMovesDataBackToDefaultRoot()
     {
-        var customDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismInstances_{Guid.NewGuid():N}");
+        var customDirectory = Path.Combine(Path.GetTempPath(), $"HyprismInstances_{Guid.NewGuid():N}");
         var instanceId = Guid.NewGuid().ToString();
         var customFile = Path.Combine(customDirectory, instanceId, "instance.json");
         Directory.CreateDirectory(Path.GetDirectoryName(customFile)!);
@@ -212,7 +212,7 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     {
         var targetDirectory = Path.Combine(
             Path.GetTempPath(),
-            $"HyPrismInstances_{Guid.NewGuid():N}");
+            $"HyprismInstances_{Guid.NewGuid():N}");
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 

@@ -1,5 +1,5 @@
 CurseForge and the CurseForge logo are proprietary trademarks of Overwolf Ltd.
 
 No open-source or Creative Commons license is granted for the CurseForge brand assets.
-Their inclusion in HyPrism is limited to identifying and linking to the CurseForge service.
+Their inclusion in Hyprism is limited to identifying and linking to the CurseForge service.
 All trademark rights remain with their respective owner.

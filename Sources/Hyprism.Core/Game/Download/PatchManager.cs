@@ -6,6 +6,7 @@ using Hyprism.Core.Application.Progress;
 using Hyprism.Core.Game.Patching;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Migrations;
+using Hyprism.Core.Models;
 
 namespace Hyprism.Core.Game.Download;
 
@@ -64,27 +65,50 @@ public class PatchManager : IPatchManager
         var normalizedBranch = LauncherUtilities.NormalizeVersionType(branch);
         var os = LauncherUtilities.GetOS();
         var arch = LauncherUtilities.GetArch();
+        var officialSequence = _versions.GetPatchSequence(installedVersion, targetVersion);
+        var availableVersions = officialDown
+            ? null
+            : await _versions.GetVersionListWithSourcesAsync(normalizedBranch, ct);
+        var useMirrorRoute = officialDown || officialSequence.Any(version =>
+            availableVersions?.Versions.Any(entry =>
+                entry.Version == version && entry.Source == VersionSource.Official) != true);
 
         Logger.Info("Download", $"Differential update: v{installedVersion} -> v{targetVersion} (official={!officialDown})");
         _progress.ReportDownloadProgress("update", 0, $"Updating game from v{installedVersion} to v{targetVersion}...", null, 0, 0);
 
         await _butler.EnsureButlerInstalledAsync((_, _) => { }, ct);
 
-        // Release mirrors provide full copies; differential updates are reserved for pre-release
-        if (officialDown && !_versions.IsDiffBasedBranch(normalizedBranch))
+        if (useMirrorRoute && !_versions.IsDiffBasedBranch(normalizedBranch))
         {
             Logger.Info("Download", $"Mirror release: downloading full copy v{targetVersion}");
             await DownloadAndApplyMirrorFullCopyAsync(versionPath, normalizedBranch, os, arch, targetVersion, ct);
             return;
         }
 
-        var patchesToApply = _versions.GetPatchSequence(installedVersion, targetVersion);
-        Logger.Info("Download", $"Patches to apply: {string.Join(" -> ", patchesToApply)}");
+        var patchesToApply = useMirrorRoute
+            ? await _versions.GetMirrorPatchPlanAsync(normalizedBranch, installedVersion, targetVersion, ct)
+            : officialSequence
+                .Select(version => new CachedPatchStep { From = version - 1, To = version })
+                .ToList();
+
+        if (patchesToApply is null)
+        {
+            if (await _versions.GetMirrorDownloadUrlAsync(os, arch, normalizedBranch, targetVersion, ct) is not null)
+            {
+                await DownloadAndApplyMirrorFullCopyAsync(versionPath, normalizedBranch, os, arch, targetVersion, ct);
+                return;
+            }
+
+            throw new InvalidOperationException($"No mirror patch route from v{installedVersion} to v{targetVersion} for {os}/{arch}/{normalizedBranch}");
+        }
+
+        Logger.Info("Download", $"Patches to apply: {string.Join(", ", patchesToApply.Select(step => $"{step.From}->{step.To}"))}");
 
         for (int i = 0; i < patchesToApply.Count; i++)
         {
-            int patchVersion = patchesToApply[i];
-            int prevVersion = patchVersion - 1;
+            var patch = patchesToApply[i];
+            int patchVersion = patch.To;
+            int prevVersion = patch.From;
             ct.ThrowIfCancellationRequested();
 
             int baseProgress = (i * 90) / patchesToApply.Count;
@@ -95,13 +119,13 @@ public class PatchManager : IPatchManager
 
             string patchPwrPath = Path.Combine(
                 _downloadsCacheDirectory,
-                $"{branch}_patch_{patchVersion}.pwr");
+                $"{branch}_patch_{prevVersion}_to_{patchVersion}.pwr");
             Directory.CreateDirectory(Path.GetDirectoryName(patchPwrPath)!);
 
-            if (officialDown)
+            if (useMirrorRoute)
             {
                 await DownloadMirrorDiffAsync(os, arch, normalizedBranch, prevVersion, patchVersion,
-                    patchPwrPath, i, patchesToApply.Count, baseProgress, progressPerPatch, ct);
+                    patchPwrPath, i, patchesToApply.Count, baseProgress, progressPerPatch, ct, patch.PwrUrl);
             }
             else
             {
@@ -160,12 +184,13 @@ public class PatchManager : IPatchManager
 
         Logger.Info("Download", $"Downloading full copy from mirror: {mirrorUrl}");
         _progress.ReportDownloadProgress("update", 5, "launch.detail.downloading_mirror", null, 0, 0);
+        var mirrorHeaders = await _versions.GetMirrorRequestHeadersAsync(mirrorUrl, ct);
 
         await _downloader.DownloadFileAsync(mirrorUrl, pwrPath, (progress, dl, total) =>
         {
             int mappedProgress = 5 + (int)(progress * 0.45);
             _progress.ReportDownloadProgress("update", mappedProgress, "launch.detail.downloading_mirror", [progress], dl, total);
-        }, ct);
+        }, mirrorHeaders, ct);
 
         Logger.Success("Download", $"Full copy v{version} downloaded from mirror");
 
@@ -192,9 +217,12 @@ public class PatchManager : IPatchManager
         string destPath,
         int patchIndex, int totalPatches,
         int baseProgress, int progressPerPatch,
-        CancellationToken ct)
+        CancellationToken ct,
+        string? knownUrl = null)
     {
-        var mirrorUrl = await _versions.GetMirrorDiffUrlAsync(os, arch, branch, fromVersion, toVersion, ct) ?? throw new Exception($"Mirror does not have diff v{fromVersion}~{toVersion} for {os}/{arch}/{branch}");
+        var mirrorUrl = knownUrl ?? await _versions.GetMirrorDiffUrlAsync(os, arch, branch, fromVersion, toVersion, ct)
+            ?? throw new Exception($"Mirror does not have patch v{fromVersion}~{toVersion} for {os}/{arch}/{branch}");
+        var mirrorHeaders = await _versions.GetMirrorRequestHeadersAsync(mirrorUrl, ct);
         Logger.Info("Download", $"Downloading diff v{fromVersion}~{toVersion} from mirror: {mirrorUrl}");
         _progress.ReportDownloadProgress("update", baseProgress,
             $"Downloading patch {patchIndex + 1}/{totalPatches} from mirror (v{fromVersion}→v{toVersion})...", null, 0, 0);
@@ -204,7 +232,7 @@ public class PatchManager : IPatchManager
             int mappedProgress = baseProgress + (int)(progress * 0.5 * progressPerPatch / 100);
             _progress.ReportDownloadProgress("update", mappedProgress,
                 $"Downloading patch {patchIndex + 1}/{totalPatches} (mirror)... {progress}%", null, dl, total);
-        }, ct);
+        }, mirrorHeaders, ct);
 
         Logger.Success("Download", $"Diff v{fromVersion}~{toVersion} downloaded from mirror");
     }
@@ -252,6 +280,7 @@ public class PatchManager : IPatchManager
             {
                 try
                 {
+                    var mirrorHeaders = await _versions.GetMirrorRequestHeadersAsync(mirrorUrl, ct);
                     Logger.Info("Download", $"Retrying patch from mirror: {mirrorUrl}");
                     _progress.ReportDownloadProgress("update", baseProgress,
                         $"Downloading patch {patchIndex + 1}/{totalPatches} from mirror...", null, 0, 0);
@@ -261,7 +290,7 @@ public class PatchManager : IPatchManager
                         int mappedProgress = baseProgress + (int)(progress * 0.5 * progressPerPatch / 100);
                         _progress.ReportDownloadProgress("update", mappedProgress,
                             $"Downloading patch {patchIndex + 1}/{totalPatches} (mirror)... {progress}%", null, dl, total);
-                    }, ct);
+                    }, mirrorHeaders, ct);
                     downloaded = true;
                     Logger.Success("Download", $"Patch v{patchVersion} downloaded from mirror");
                 }

@@ -17,7 +17,7 @@ public class ProfileManagerTests : IDisposable
 
     public ProfileManagerTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "HyPrismProfileTests_" + Guid.NewGuid());
+        _tempDir = Path.Combine(Path.GetTempPath(), "HyprismProfileTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_tempDir);
         _config = new JsonConfigStore(_tempDir);
         _avatarMock = new Mock<IAvatarCache>();

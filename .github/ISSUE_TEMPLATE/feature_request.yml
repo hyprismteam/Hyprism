@@ -2,14 +2,14 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 name: Feature Request
-description: Suggest a new feature or enhancement for HyPrism
+description: Suggest a new feature or enhancement for Hyprism
 title: "[Feature]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Have an idea to improve HyPrism? We'd love to hear it!
+        Have an idea to improve Hyprism? We'd love to hear it!
         Please describe your suggestion in as much detail as possible
 
   - type: textarea
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Problem / Motivation
       description: Is your feature request related to a problem? What are you trying to accomplish?
-      placeholder: I'm always frustrated when... / I wish HyPrism could...
+      placeholder: I'm always frustrated when... / I wish Hyprism could...
     validations:
       required: true
 
@@ -33,7 +33,7 @@ body:
     id: area
     attributes:
       label: Area
-      description: Which part of HyPrism does this affect?
+      description: Which part of Hyprism does this affect?
       options:
         - Launcher / Game Launch
         - Mod Manager

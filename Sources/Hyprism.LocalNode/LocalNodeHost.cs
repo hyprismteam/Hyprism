@@ -422,7 +422,7 @@ public sealed class LocalNodeHost : ILocalNodeService, IAsyncDisposable
             BaseAddress = new Uri($"https://127.0.0.1:{_options.Port}"),
             Timeout = Timeout.InfiniteTimeSpan
         };
-        client.DefaultRequestHeaders.Add("X-HyPrism-Control", _controlSecret);
+        client.DefaultRequestHeaders.Add("X-Hyprism-Control", _controlSecret);
         return client;
     }
 

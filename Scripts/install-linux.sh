@@ -5,9 +5,9 @@
 
 set -eu
 
-GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/HyPrism/releases/latest/download"
-GITHUB_ICON_URL="https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Sources/Hyprism.Desktop/Assets/Images/logo.svg"
-APP_ID="io.github.hyprismteam.HyPrism"
+GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/Hyprism/releases/latest/download"
+GITHUB_ICON_URL="https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Sources/Hyprism.Desktop/Assets/Images/logo.svg"
+APP_ID="io.github.hyprismteam.Hyprism"
 APP_EXECUTABLE="Hyprism Launcher"
 LOCAL_NODE_EXECUTABLE="Hyprism.LocalNode"
 

@@ -46,6 +46,13 @@ public interface IGameVersionCatalog
     List<int> GetPatchSequence(int fromVersion, int toVersion);
 
     /// <summary>
+    /// Finds a route through published mirror patches from one build to another.
+    /// Every returned step belongs to the same mirror.
+    /// </summary>
+    Task<List<CachedPatchStep>?> GetMirrorPatchPlanAsync(
+        string branch, int fromVersion, int toVersion, CancellationToken ct = default);
+
+    /// <summary>
     /// Checks whether versions for a branch were sourced from the mirror
     /// (indicating the official server is down)
     /// </summary>
@@ -151,6 +158,14 @@ public interface IGameVersionCatalog
     /// <param name="ct">Cancellation token</param>
     /// <returns>Download URL from mirror, or null if not available</returns>
     Task<string?> GetMirrorDownloadUrlAsync(string os, string arch, string branch, int version, CancellationToken ct = default);
+
+    /// <summary>
+    /// Resolves custom request headers for a URL owned by a configured mirror.
+    /// </summary>
+    /// <param name="url">Mirror download URL.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Resolved headers, or null when the mirror has no custom headers.</returns>
+    Task<Dictionary<string, string>?> GetMirrorRequestHeadersAsync(string url, CancellationToken ct = default);
 
     /// <summary>
     /// Gets diff patch URL from mirror sources for applying incremental updates

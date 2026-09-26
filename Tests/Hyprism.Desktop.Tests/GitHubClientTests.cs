@@ -33,7 +33,7 @@ public sealed class GitHubClientTests
         Assert.Equal(1, handler.Requests.Count(uri => uri.AbsolutePath.EndsWith("/contributors")));
         Assert.Equal(1, handler.Requests.Count(uri => uri.AbsolutePath.EndsWith("/commits")));
         Assert.Equal(1, handler.Requests.Count(uri => uri.AbsolutePath.EndsWith("/commits/main")));
-        Assert.All(handler.Requests, uri => Assert.Contains("/repos/hyprismteam/HyPrism/", uri.AbsolutePath));
+        Assert.All(handler.Requests, uri => Assert.Contains("/repos/hyprismteam/Hyprism/", uri.AbsolutePath));
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class GitHubClientTests
                 : """
                   {
                     "sha": "abcdef1234567890",
-                    "html_url": "https://github.com/hyprismteam/HyPrism/commit/abcdef1",
+                    "html_url": "https://github.com/hyprismteam/Hyprism/commit/abcdef1",
                     "commit": {
                       "message": "feat: polish About page\n\nAdditional details"
                     }

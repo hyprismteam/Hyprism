@@ -1248,7 +1248,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.about" xml:space="preserve">
     <value>情報</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Hyprismについて</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>このダウンロードソースはすでに構成されています</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>ソースの互換性を確認中</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism はこのアドレスで互換性のあるミラーを検出できませんでした</value>
   </data>
@@ -2693,18 +2690,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>ダウンロードソースを削除できませんでした</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>ダウンロードソースが追加されました</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>ダウンロードソースが削除されました</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>ダウンロードソースが有効になりました</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>ダウンロードソースが無効になりました</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSONインデックス</value>

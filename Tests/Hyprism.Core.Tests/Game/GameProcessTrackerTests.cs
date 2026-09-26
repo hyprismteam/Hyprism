@@ -12,7 +12,7 @@ public sealed class GameProcessTrackerTests
     [Fact]
     public async Task PersistentRegistry_RestoresLiveProcessAndRemovesItAfterExit()
     {
-        var appDirectory = Path.Combine(Path.GetTempPath(), "HyPrismProcessTrackerTests_" + Guid.NewGuid());
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismProcessTrackerTests_" + Guid.NewGuid());
         var process = StartLongRunningProcess();
         var processId = process.Id;
         try
@@ -158,7 +158,7 @@ public sealed class GameProcessTrackerTests
     [Fact]
     public async Task PersistentRegistry_ReportsProcessThatExitedDuringLauncherDowntime()
     {
-        var appDirectory = Path.Combine(Path.GetTempPath(), "HyPrismProcessTrackerTests_" + Guid.NewGuid());
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismProcessTrackerTests_" + Guid.NewGuid());
         var process = StartLongRunningProcess();
         var processId = process.Id;
         try
@@ -197,7 +197,7 @@ public sealed class GameProcessTrackerTests
     [Fact]
     public void Registry_RefreshesProcessTrackedByAnotherLauncher()
     {
-        var appDirectory = Path.Combine(Path.GetTempPath(), "HyPrismProcessTrackerTests_" + Guid.NewGuid());
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismProcessTrackerTests_" + Guid.NewGuid());
         var process = StartLongRunningProcess();
         try
         {

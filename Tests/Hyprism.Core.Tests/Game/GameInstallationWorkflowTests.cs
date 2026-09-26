@@ -19,7 +19,7 @@ public sealed class GameInstallationWorkflowTests : IDisposable
 {
     private readonly string _temporaryDirectory = Path.Combine(
         Path.GetTempPath(),
-        $"HyPrismGameInstallationWorkflowTests_{Guid.NewGuid():N}");
+        $"HyprismGameInstallationWorkflowTests_{Guid.NewGuid():N}");
 
     [Fact]
     public async Task DownloadAndLaunchInstanceAsync_InstalledFixedVersionSkipsVersionCatalog()

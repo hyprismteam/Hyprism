@@ -19,7 +19,7 @@ public class ClientPatcherTests : IDisposable
 
     public ClientPatcherTests()
     {
-        _gameDir = Path.Combine(Path.GetTempPath(), "HyPrismPatcherTests_" + Guid.NewGuid());
+        _gameDir = Path.Combine(Path.GetTempPath(), "HyprismPatcherTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_gameDir);
     }
 

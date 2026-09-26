@@ -1248,7 +1248,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="onboarding.about" xml:space="preserve">
     <value>Hakkında</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Hyprism Hakkında</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Bu indirme kaynağı zaten yapılandırılmış</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Kaynak uyumluluğu kontrol ediliyor</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism bu adreste uyumlu bir ayna tespit edemedi</value>
   </data>
@@ -2693,18 +2690,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>İndirme kaynağı kaldırılamadı</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>İndirme kaynağı eklendi</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>İndirme kaynağı kaldırıldı</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>İndirme kaynağı etkinleştirildi</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>İndirme kaynağı devre dışı bırakıldı</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON dizini</value>

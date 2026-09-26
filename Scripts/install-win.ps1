@@ -3,9 +3,9 @@
 
 $ErrorActionPreference = 'Stop'
 
-$githubReleaseBaseUrl = 'https://github.com/hyprismteam/HyPrism/releases/latest/download'
-$githubIconUrl = 'https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico'
-$installerHeaders = @{ 'User-Agent' = 'HyPrism-Installer/1.0' }
+$githubReleaseBaseUrl = 'https://github.com/hyprismteam/Hyprism/releases/latest/download'
+$githubIconUrl = 'https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico'
+$installerHeaders = @{ 'User-Agent' = 'Hyprism-Installer/1.0' }
 $appExecutable = 'Hyprism Launcher.exe'
 $localNodeExecutable = 'Hyprism.LocalNode.exe'
 
@@ -26,11 +26,11 @@ if ([string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
     throw 'LOCALAPPDATA is not set'
 }
 
-$installDirectory = Join-Path $env:LOCALAPPDATA 'HyPrism'
+$installDirectory = Join-Path $env:LOCALAPPDATA 'Hyprism'
 $desktopDirectory = [Environment]::GetFolderPath('Desktop')
 $applicationDataDirectory = [Environment]::GetFolderPath('ApplicationData')
 $startMenuDirectory = Join-Path $applicationDataDirectory 'Microsoft\Windows\Start Menu\Programs'
-$temporaryDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('HyPrism-install-' + [Guid]::NewGuid().ToString('N'))
+$temporaryDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('Hyprism-install-' + [Guid]::NewGuid().ToString('N'))
 
 function Invoke-Download {
     param(

@@ -57,7 +57,7 @@ public sealed record GitHubCommit(string Sha, string Message, string HtmlUrl);
 /// </summary>
 public sealed class GitHubClient : IGitHubClient
 {
-    private const string RepositoryApi = "https://api.github.com/repos/hyprismteam/HyPrism";
+    private const string RepositoryApi = "https://api.github.com/repos/hyprismteam/Hyprism";
 
     private readonly HttpClient _httpClient;
     private readonly RemoteImageCache? _imageCache;

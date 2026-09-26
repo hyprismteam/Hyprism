@@ -157,6 +157,19 @@ public class GameVersionCatalog : IGameVersionCatalog
 
         foreach (var source in GetSourcesSnapshot())
         {
+            if (source.Type == VersionSourceType.Official)
+            {
+                snapshot.Data.Hytale?.Branches.Remove(normalizedBranch);
+                patchSnapshot.Data.Hytale?.Remove(normalizedBranch);
+            }
+            else
+            {
+                snapshot.Data.Mirrors.FirstOrDefault(m => m.MirrorId == source.SourceId)?
+                    .Branches.Remove(normalizedBranch);
+                patchSnapshot.Data.Mirrors.FirstOrDefault(m => m.MirrorId == source.SourceId)?
+                    .Branches.Remove(normalizedBranch);
+            }
+
             if (!source.IsAvailable)
             {
                 Logger.Debug("Version", $"Source {source.SourceId} not available, skipping");
@@ -657,7 +670,7 @@ public class GameVersionCatalog : IGameVersionCatalog
 
     /// <summary>
     /// Returns true if the specified branch uses diff-based patching (mirrors only).
-    /// Pre-release branch uses diffs, release uses full copies
+    /// Full builds remain available for fresh installs when a branch also has diffs.
     /// </summary>
     /// <returns>true when the branch uses differential updates; otherwise false</returns>
     public bool IsDiffBasedBranch(string branch)
@@ -738,6 +751,23 @@ public class GameVersionCatalog : IGameVersionCatalog
         return null;
     }
 
+    /// <inheritdoc/>
+    public async Task<Dictionary<string, string>?> GetMirrorRequestHeadersAsync(
+        string url, CancellationToken ct = default)
+    {
+        var selected = _selectedMirror as JsonMirrorSource;
+        if (selected?.OwnsDownloadUrl(url) == true)
+            return await selected.GetResolvedRequestHeadersAsync(ct);
+
+        foreach (var source in GetMirrorSourcesSnapshot().OfType<JsonMirrorSource>())
+        {
+            if (source.OwnsDownloadUrl(url))
+                return await source.GetResolvedRequestHeadersAsync(ct);
+        }
+
+        return null;
+    }
+
     private async Task<List<IVersionSource>> GetMirrorCandidatesAsync(CancellationToken ct)
     {
         var candidates = new List<IVersionSource>();
@@ -771,6 +801,77 @@ public class GameVersionCatalog : IGameVersionCatalog
             patches.Add(v);
         }
         return patches;
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<CachedPatchStep>?> GetMirrorPatchPlanAsync(
+        string branch, int fromVersion, int toVersion, CancellationToken ct = default)
+    {
+        if (fromVersion == toVersion)
+            return [];
+
+        var normalizedBranch = NormalizeBranch(branch);
+        var os = LauncherUtilities.GetOS();
+        var arch = LauncherUtilities.GetArch();
+        await GetVersionListAsync(normalizedBranch, ct);
+
+        var snapshot = _cache.LoadPatches();
+        foreach (var mirror in await GetMirrorCandidatesAsync(ct))
+        {
+            var steps = snapshot?.Os.Equals(os, StringComparison.OrdinalIgnoreCase) == true &&
+                        snapshot.Arch.Equals(arch, StringComparison.OrdinalIgnoreCase)
+                ? snapshot.Data.Mirrors.FirstOrDefault(entry => entry.MirrorId == mirror.SourceId)?
+                    .Branches.GetValueOrDefault(normalizedBranch)
+                : null;
+            steps ??= await mirror.GetPatchChainAsync(os, arch, normalizedBranch, ct);
+
+            var route = FindPatchRoute(steps, fromVersion, toVersion);
+            if (route is null)
+                continue;
+
+            _selectedMirror = mirror;
+            return route;
+        }
+
+        return null;
+    }
+
+    private static List<CachedPatchStep>? FindPatchRoute(
+        IEnumerable<CachedPatchStep> steps, int fromVersion, int toVersion)
+    {
+        var outgoing = steps.Where(step => step.From < step.To && !string.IsNullOrWhiteSpace(step.PwrUrl))
+            .GroupBy(step => step.From)
+            .ToDictionary(group => group.Key, group => group.ToList());
+        var previous = new Dictionary<int, CachedPatchStep>();
+        var visited = new HashSet<int> { fromVersion };
+        var pending = new Queue<int>();
+        pending.Enqueue(fromVersion);
+
+        while (pending.TryDequeue(out var from))
+        {
+            if (!outgoing.TryGetValue(from, out var nextSteps))
+                continue;
+
+            foreach (var step in nextSteps)
+            {
+                if (step.To > toVersion || !visited.Add(step.To))
+                    continue;
+
+                previous[step.To] = step;
+                if (step.To == toVersion)
+                {
+                    var route = new List<CachedPatchStep>();
+                    for (var current = toVersion; current != fromVersion; current = previous[current].From)
+                        route.Add(previous[current]);
+                    route.Reverse();
+                    return route;
+                }
+
+                pending.Enqueue(step.To);
+            }
+        }
+
+        return null;
     }
 
     /// <inheritdoc/>
@@ -1050,11 +1151,7 @@ public class GameVersionCatalog : IGameVersionCatalog
             Logger.Debug("Version", $"Mirror {source.SourceId}: priority={source.Priority}");
         }
 
-        if (!HasDownloadSources())
-        {
-            Logger.Info("Version", "No download sources available after reload, clearing version cache");
-            ClearVersionCache();
-        }
+        ClearVersionCache();
     }
 
     /// <inheritdoc/>

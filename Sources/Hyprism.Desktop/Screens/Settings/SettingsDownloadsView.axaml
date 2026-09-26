@@ -14,7 +14,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <DataTemplate x:Key="MirrorSourceTemplate" x:DataType="vm:MirrorSourceViewModel">
       <Border Classes="formRow mirrorSourceRow"
               Classes.last="{Binding IsLast}">
-        <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+        <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,40" ColumnSpacing="16">
           <TextBlock Text="{Binding Endpoint}"
                      Classes="dataTableValue link"
                      ToolTip.Tip="{Binding Name}"
@@ -60,27 +60,12 @@ SPDX-License-Identifier: GPL-3.0-only
           <Grid Grid.Column="4">
             <Border x:Name="MirrorMoreTarget"
                     Classes="sourceMoreTarget"
+                    Classes.open="{Binding IsMenuOpen}"
                     Cursor="Hand"
                     PointerPressed="OnMirrorMenuPointerPressed"
                     PointerReleased="OnToggleMirrorMenuPointerReleased">
-              <Path Classes="sourceMoreIcon" Data="{StaticResource MoreVerticalIcon}" />
+              <PathIcon Classes="sourceMoreIcon" Data="{StaticResource MoreVerticalIcon}" />
             </Border>
-            <controls:FadingPopup Placement="BottomEdgeAlignedRight"
-                                  PlacementTarget="MirrorMoreTarget"
-                                  VerticalOffset="8"
-                                  IsRequestedOpen="{Binding IsMenuOpen, Mode=TwoWay}">
-              <Border Classes="uiPopupSurface sourceActionFlyout">
-                <Button Classes="sourceMenuAction danger"
-                        Command="{Binding DataContext.RequestDeleteMirrorCommand, ElementName=SettingsDownloadsRoot}"
-                        CommandParameter="{Binding}"
-                        Click="OnCloseMirrorMenuClicked">
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Path Classes="sourceMenuIcon" Data="{StaticResource DeleteIcon}" />
-                    <TextBlock Text="{Binding DataContext.RemoveLabel, ElementName=SettingsDownloadsRoot}" />
-                  </StackPanel>
-                </Button>
-              </Border>
-            </controls:FadingPopup>
           </Grid>
         </Grid>
       </Border>
@@ -109,7 +94,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         Classes="formGroup">
                   <StackPanel>
                     <Border Classes="dataTableHeader">
-                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,40" ColumnSpacing="16">
                         <TextBlock Text="{Binding SourceLinkColumn}" />
                         <TextBlock Grid.Column="1" Text="{Binding SourceTypeColumn}" />
                         <TextBlock Grid.Column="2"
@@ -122,7 +107,7 @@ SPDX-License-Identifier: GPL-3.0-only
                     </Border>
                     <Border Classes="formRow"
                             Classes.last="{Binding HasNoMirrors}">
-                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,34" ColumnSpacing="16">
+                      <Grid ColumnDefinitions="2.4*,1.1*,1.05*,84,40" ColumnSpacing="16">
                         <TextBlock Text="{Binding OfficialSourceLink}"
                                    Classes="dataTableValue link"
                                    TextTrimming="CharacterEllipsis"
@@ -176,9 +161,6 @@ SPDX-License-Identifier: GPL-3.0-only
                              Foreground="{DynamicResource TextPrimaryBrush}" />
                 </controls:NoteCard>
 
-                <TextBlock Text="{Binding MirrorOperationStatus}"
-                           Classes="sourceOperationStatus"
-                           IsVisible="{Binding HasMirrorOperationStatus}" />
                 <TextBlock Text="{Binding MirrorOperationError}"
                            Classes="sourceOperationError"
                            IsVisible="{Binding HasMirrorOperationError}" />

@@ -43,7 +43,11 @@ public static partial class Bootstrapper
     /// <exception cref="InvalidOperationException">Thrown when the registered service graph cannot be constructed</exception>
     public static IServiceProvider Initialize(Action<IServiceCollection>? configureHost = null)
     {
-        var appPath = new AppPathConfiguration(LauncherUtilities.GetEffectiveAppDir());
+        var appDirectory = LauncherUtilities.GetEffectiveAppDir();
+        if (string.Equals(appDirectory, LauncherUtilities.GetDefaultAppDir(), StringComparison.Ordinal))
+            AppDataDirectoryMigration.Migrate(appDirectory);
+
+        var appPath = new AppPathConfiguration(appDirectory);
         var logSession = new LogSessionPaths(appPath);
         Logger.ConfigureFileLogging(logSession.LauncherLogPath);
         Logger.Info("Bootstrapper", "Initializing application services...");

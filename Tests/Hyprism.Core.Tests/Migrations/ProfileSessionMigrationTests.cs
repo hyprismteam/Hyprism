@@ -10,7 +10,7 @@ namespace Hyprism.Core.Tests.Migrations;
 
 public sealed class ProfileSessionMigrationTests : IDisposable
 {
-    private readonly string _temporaryDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismSessionMigrationTests_{Guid.NewGuid():N}");
+    private readonly string _temporaryDirectory = Path.Combine(Path.GetTempPath(), $"HyprismSessionMigrationTests_{Guid.NewGuid():N}");
 
     public ProfileSessionMigrationTests()
     {

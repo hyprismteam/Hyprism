@@ -12,8 +12,8 @@ namespace Hyprism.Desktop.Tests;
 
 public sealed class JavaCustomPathSettingsViewModelTests
 {
-    private const string LauncherDataDirectory = "C:\\HyPrism";
-    private const string DefaultInstanceDirectory = "C:\\HyPrism\\Instances";
+    private const string LauncherDataDirectory = "C:\\Hyprism";
+    private const string DefaultInstanceDirectory = "C:\\Hyprism\\Instances";
 
     [AvaloniaFact]
     public async Task BrowseJava_PersistsThePickedExecutableAndSwitchesToChange()

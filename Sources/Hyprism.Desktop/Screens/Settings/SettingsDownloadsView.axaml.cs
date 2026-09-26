@@ -3,7 +3,6 @@
 
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 
 namespace Hyprism.Desktop.Screens.Settings;
 
@@ -14,20 +13,16 @@ public sealed partial class SettingsDownloadsView : UserControl
         InitializeComponent();
     }
 
+    public event Action<Border, MirrorSourceViewModel>? MirrorMenuToggled;
+
     private static void OnMirrorMenuPointerPressed(object? sender, PointerPressedEventArgs args)
         => args.Handled = true;
 
     private void OnToggleMirrorMenuPointerReleased(object? sender, PointerReleasedEventArgs args)
     {
-        if (sender is Border { DataContext: MirrorSourceViewModel mirror })
-            mirror.IsMenuOpen = !mirror.IsMenuOpen;
+        if (sender is Border { DataContext: MirrorSourceViewModel mirror } target)
+            MirrorMenuToggled?.Invoke(target, mirror);
 
         args.Handled = true;
-    }
-
-    private void OnCloseMirrorMenuClicked(object? sender, RoutedEventArgs args)
-    {
-        if (sender is Button { DataContext: MirrorSourceViewModel mirror })
-            mirror.IsMenuOpen = false;
     }
 }

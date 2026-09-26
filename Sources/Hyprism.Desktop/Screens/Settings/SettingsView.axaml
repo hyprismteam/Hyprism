@@ -69,6 +69,26 @@ SPDX-License-Identifier: GPL-3.0-only
       </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="MirrorAddActionTemplate" x:DataType="vm:SettingsViewModel">
+      <Grid Classes="managedActionContent">
+        <StackPanel Classes="managedActionIdle"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+          <TextBlock Text="{Binding AddSourceLabel}" />
+        </StackPanel>
+        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+          <Path Classes="managedActionSpinner"
+                controls:RotatingVisual.IsActive="{Binding IsMirrorOperationBusy}"
+                HorizontalAlignment="Center"
+                Data="M10,2 A8,8 0 1 1 2,10" />
+        </Grid>
+        <TextBlock Classes="managedActionCancel"
+                   Text="{Binding CancelLabel}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+
 
 
 
@@ -258,7 +278,7 @@ SPDX-License-Identifier: GPL-3.0-only
               HorizontalAlignment="Stretch">
           <settings:SettingsGeneralView />
 
-          <settings:SettingsDownloadsView />
+          <settings:SettingsDownloadsView x:Name="DownloadsView" />
 
           <settings:SettingsJavaView />
 
@@ -277,6 +297,9 @@ SPDX-License-Identifier: GPL-3.0-only
       <Border x:Name="DownloadSourceWizardScreen"
               Grid.RowSpan="2"
               Classes="wizardScreen"
+              Focusable="True"
+              IsTabStop="False"
+              FocusAdorner="{x:Null}"
               IsVisible="False"
               Opacity="0">
         <Border.Transitions>
@@ -392,35 +415,41 @@ SPDX-License-Identifier: GPL-3.0-only
                          TextAlignment="Center"
                          TextWrapping="Wrap" />
 
-              <Border Classes="formGroup" Margin="0,16,0,0">
-                <Border Classes="formRow last">
-                  <TextBox Text="{Binding MirrorUrl, Mode=TwoWay}"
-                           PlaceholderText="{Binding MirrorUrlPlaceholder}"
-                           IsEnabled="{Binding !IsMirrorOperationBusy}" />
-                </Border>
-              </Border>
+              <controls:ModalTextField Margin="0,16,0,0"
+                                       IsError="{Binding IsAutomaticMirrorInputError}"
+                                       ErrorMessage="{Binding AutomaticMirrorInputErrorMessage}">
+                <TextBox x:Name="MirrorUrlTextBox"
+                         Text="{Binding MirrorUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="{Binding MirrorUrlPlaceholder}"
+                         IsEnabled="{Binding !IsMirrorOperationBusy}" />
+              </controls:ModalTextField>
               <TextBlock Text="{Binding MirrorOperationError}"
                          Classes="sourceOperationError"
                          TextAlignment="Center"
                          IsVisible="{Binding HasMirrorOperationError}" />
-              <ProgressBar Classes="sourceProgress"
-                           IsIndeterminate="True"
-                           IsVisible="{Binding IsMirrorOperationBusy}" />
-              <StackPanel Orientation="Horizontal"
-                          HorizontalAlignment="Center"
-                          Margin="0,10,0,0"
-                          Spacing="10">
+              <Grid Width="272"
+                    Height="50"
+                    ColumnDefinitions="112,10,150"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0">
                 <Button Classes="wizardAction"
                         Click="OnReturnToSourceAdditionChoiceClicked"
                         IsEnabled="{Binding !IsMirrorOperationBusy}">
                   <TextBlock Text="{Binding BackLabel}" />
                 </Button>
-                <Button Classes="wizardAction create"
+                <Button Grid.Column="2"
+                        ZIndex="1"
+                        HorizontalAlignment="Right"
+                        Classes="wizardAction create mirrorAddAction"
+                        Classes.active="{Binding IsMirrorOperationBusy}"
+                        Classes.cancelArmed="{Binding IsMirrorCancellationArmed}"
+                        PointerExited="OnMirrorAddPointerExited"
                         Command="{Binding AddMirrorCommand}"
-                        IsEnabled="{Binding !IsMirrorOperationBusy}">
-                  <TextBlock Text="{Binding AddSourceLabel}" />
+                        IsEnabled="{Binding CanSubmitAutomaticMirror}">
+                  <ContentControl Content="{Binding}"
+                                  ContentTemplate="{StaticResource MirrorAddActionTemplate}" />
                 </Button>
-              </StackPanel>
+              </Grid>
             </StackPanel>
 
             <StackPanel x:Name="ManualSourceAdditionContent"
@@ -439,72 +468,123 @@ SPDX-License-Identifier: GPL-3.0-only
                          TextAlignment="Center"
                          TextWrapping="Wrap" />
 
-              <Border Classes="formGroup" Margin="0,16,0,0">
-                <Border Classes="formRow last">
-                  <StackPanel Spacing="8">
-                    <TextBlock Text="{Binding ManualSourceJsonLabel}" Classes="formLabel" />
-                    <TextBox Classes="sourceJsonEditor"
-                             Text="{Binding ManualMirrorJson, Mode=TwoWay}"
-                             PlaceholderText="{Binding ManualSourceJsonPlaceholder}"
-                             AcceptsReturn="True"
-                             TextWrapping="NoWrap"
-                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             IsEnabled="{Binding !IsMirrorOperationBusy}" />
-                  </StackPanel>
-                </Border>
-              </Border>
+              <StackPanel Margin="0,16,0,0" Spacing="8">
+                <TextBlock Text="{Binding ManualSourceJsonLabel}" Classes="formLabel" />
+                <controls:ModalTextField Classes="multiline"
+                                         IsError="{Binding IsManualMirrorInputError}"
+                                         ErrorMessage="{Binding ManualMirrorInputErrorMessage}">
+                  <TextBox x:Name="ManualMirrorJsonTextBox"
+                           Classes="sourceJsonEditor"
+                           Text="{Binding ManualMirrorJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           PlaceholderText="{Binding ManualSourceJsonPlaceholder}"
+                           AcceptsReturn="True"
+                           TextWrapping="NoWrap"
+                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                           ScrollViewer.VerticalScrollBarVisibility="Auto"
+                           IsEnabled="{Binding !IsMirrorOperationBusy}" />
+                </controls:ModalTextField>
+              </StackPanel>
               <TextBlock Text="{Binding MirrorOperationError}"
                          Classes="sourceOperationError"
                          TextAlignment="Center"
                          IsVisible="{Binding HasMirrorOperationError}" />
-              <StackPanel Orientation="Horizontal"
-                          HorizontalAlignment="Center"
-                          Margin="0,10,0,0"
-                          Spacing="10">
+              <Grid Width="272"
+                    Height="50"
+                    ColumnDefinitions="112,10,150"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0">
                 <Button Classes="wizardAction"
-                        Click="OnReturnToSourceAdditionChoiceClicked">
+                        Click="OnReturnToSourceAdditionChoiceClicked"
+                        IsEnabled="{Binding !IsMirrorOperationBusy}">
                   <TextBlock Text="{Binding BackLabel}" />
                 </Button>
-                <Button Classes="wizardAction create"
-                        Command="{Binding AddManualMirrorCommand}">
-                  <TextBlock Text="{Binding AddSourceLabel}" />
+                <Button Grid.Column="2"
+                        ZIndex="1"
+                        HorizontalAlignment="Right"
+                        Classes="wizardAction create mirrorAddAction"
+                        Classes.active="{Binding IsMirrorOperationBusy}"
+                        Classes.cancelArmed="{Binding IsMirrorCancellationArmed}"
+                        PointerExited="OnMirrorAddPointerExited"
+                        Command="{Binding AddManualMirrorCommand}"
+                        IsEnabled="{Binding CanSubmitManualMirror}">
+                  <ContentControl Content="{Binding}"
+                                  ContentTemplate="{StaticResource MirrorAddActionTemplate}" />
                 </Button>
-              </StackPanel>
+              </Grid>
             </StackPanel>
           </StackPanel>
         </controls:SmoothScrollViewer>
       </Border>
     </Grid>
 
-    <Grid Grid.ColumnSpan="2"
-          IsVisible="{Binding HasPendingMirrorDelete}"
-          Background="{DynamicResource SurfaceElevatedBrush}"
-          ZIndex="110">
-      <Border Classes="sourceDeleteConfirmation"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center">
-        <StackPanel Spacing="12">
-          <TextBlock Text="{Binding DeleteSourceTitle}" FontSize="18" FontWeight="SemiBold" />
-          <TextBlock Text="{Binding DeleteSourceHint}" Classes="muted" FontSize="13" TextWrapping="Wrap" />
-          <TextBlock Text="{Binding PendingMirrorDelete.Name}"
-                     FontSize="16"
-                     FontWeight="SemiBold"
-                     TextTrimming="CharacterEllipsis" />
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button Classes="wizardAction" Command="{Binding CancelDeleteMirrorCommand}">
-              <TextBlock Text="{Binding CancelLabel}" />
-            </Button>
-            <Button Classes="wizardAction create"
-                    Background="{DynamicResource DangerBrush}"
-                    Command="{Binding ConfirmDeleteMirrorCommand}">
-              <TextBlock Text="{Binding RemoveLabel}" />
-            </Button>
-          </StackPanel>
-        </StackPanel>
-      </Border>
-    </Grid>
   </Grid>
+
+  <Canvas x:Name="MirrorMenuLayer" ZIndex="100" ClipToBounds="True">
+    <Border x:Name="MirrorActionFlyout"
+            Classes="uiPopupSurface sourceActionFlyout"
+            IsVisible="False"
+            Opacity="0">
+      <Button Classes="sourceMenuAction danger"
+              Command="{Binding DataContext.RequestDeleteMirrorCommand, ElementName=SettingsRoot}"
+              CommandParameter="{Binding}"
+              Click="OnRemoveMirrorClicked">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Path Classes="sourceMenuIcon" Data="{StaticResource DeleteIcon}" />
+          <TextBlock Text="{Binding DataContext.RemoveLabel, ElementName=SettingsRoot}" />
+        </StackPanel>
+      </Button>
+    </Border>
+  </Canvas>
+
+  <controls:OverlayModal x:Name="MirrorDeleteModal"
+                         IsOpen="{Binding IsMirrorDeletionOpen}"
+                         DismissCommand="{Binding CancelDeleteMirrorCommand}"
+                         Closed="OnMirrorDeleteModalClosed"
+                         SheetMaxWidth="480"
+                         SheetMaxHeight="420"
+                         SheetMargin="12,20,12,0"
+                         ShoulderMaxWidth="522"
+                         ShoulderMargin="12,0,12,0"
+                         HiddenOffset="500"
+                         ZIndex="220">
+    <controls:OverlayModal.ModalContent>
+      <Grid>
+        <Border Classes="editorModalContent">
+          <StackPanel Spacing="16">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+              <TextBlock Text="{Binding DeleteSourceTitle}"
+                         FontSize="22" FontWeight="Bold" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="editorModalClose mirrorRemove"
+                      Command="{Binding CancelDeleteMirrorCommand}"
+                      ToolTip.Tip="{Binding CancelLabel}"
+                      AutomationProperties.Name="{Binding CancelLabel}">
+                <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+              </Button>
+            </Grid>
+            <TextBlock Text="{Binding DeleteSourceHint}" Classes="muted" TextWrapping="Wrap" />
+            <Border Background="{DynamicResource ControlSurfaceBrush}"
+                    CornerRadius="11" Padding="14,12">
+              <TextBlock Text="{Binding PendingMirrorDelete.Name}"
+                         FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+            </Border>
+            <TextBlock IsVisible="{Binding HasMirrorOperationError}"
+                       Text="{Binding MirrorOperationError}"
+                       Foreground="{DynamicResource DangerBrush}"
+                       TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+              <Button Classes="wizardAction" Command="{Binding CancelDeleteMirrorCommand}">
+                <TextBlock Text="{Binding CancelLabel}" />
+              </Button>
+              <Button Classes="wizardAction danger" Command="{Binding ConfirmDeleteMirrorCommand}">
+                <TextBlock Text="{Binding RemoveLabel}" />
+              </Button>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+        <Border Classes="editorModalOutline" />
+      </Grid>
+    </controls:OverlayModal.ModalContent>
+  </controls:OverlayModal>
 
   <controls:OverlayModal x:Name="JavaArgumentModal"
 

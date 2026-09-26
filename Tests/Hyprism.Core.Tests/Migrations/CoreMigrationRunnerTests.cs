@@ -14,7 +14,7 @@ namespace Hyprism.Core.Tests.Migrations;
 
 public sealed class CoreMigrationRunnerTests : IDisposable
 {
-    private readonly string _temporaryDirectory = Path.Combine(Path.GetTempPath(), $"HyPrismMigrationTests_{Guid.NewGuid():N}");
+    private readonly string _temporaryDirectory = Path.Combine(Path.GetTempPath(), $"HyprismMigrationTests_{Guid.NewGuid():N}");
 
     public CoreMigrationRunnerTests()
     {

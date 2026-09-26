@@ -22,7 +22,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public void Factory_CreatesNodesWithSeparateEndpointsAndStateDirectories()
     {
-        var appDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeFactoryTests_" + Guid.NewGuid());
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeFactoryTests_" + Guid.NewGuid());
         try
         {
             var logSession = new LogSessionPaths(
@@ -57,7 +57,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public void CertificateStore_UsesOneCertificateForSeparateSessionDirectories()
     {
-        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeCertificateTests_" + Guid.NewGuid());
+        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeCertificateTests_" + Guid.NewGuid());
         try
         {
             var certificateDirectory = Path.Combine(rootDirectory, "Certificate");
@@ -92,9 +92,9 @@ public sealed class LocalNodeHostTests
     }
 
     [Fact]
-    public void TrustStore_FindsOnlyObsoleteHyPrismRootCertificates()
+    public void TrustStore_FindsOnlyObsoleteHyprismRootCertificates()
     {
-        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeTrustTests_" + Guid.NewGuid());
+        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeTrustTests_" + Guid.NewGuid());
         try
         {
             var currentOptions = new LocalNodeOptions(
@@ -128,7 +128,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public async Task AccountStore_PersistsProfilesAcrossIsolatedNodeSessions()
     {
-        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeAccountsTests_" + Guid.NewGuid());
+        var rootDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeAccountsTests_" + Guid.NewGuid());
         try
         {
             var accountDirectory = Path.Combine(rootDirectory, "LocalNode");
@@ -172,16 +172,16 @@ public sealed class LocalNodeHostTests
     [Fact]
     public void Options_Parse_PreservesSharedAccountDirectory()
     {
-        var accountDirectory = Path.Combine(Path.GetTempPath(), "HyPrismSharedAccounts");
-        var logFilePath = Path.Combine(Path.GetTempPath(), "HyPrismLogs", "local-node-8443.log");
+        var accountDirectory = Path.Combine(Path.GetTempPath(), "HyprismSharedAccounts");
+        var logFilePath = Path.Combine(Path.GetTempPath(), "HyprismLogs", "local-node-8443.log");
         var requestJournalPath = Path.Combine(
             Path.GetTempPath(),
-            "HyPrismLogs",
+            "HyprismLogs",
             "local-node-requests-8443.ndjson");
 
         var options = LocalNodeOptions.Parse(
         [
-            "--data-directory", Path.Combine(Path.GetTempPath(), "HyPrismSession"),
+            "--data-directory", Path.Combine(Path.GetTempPath(), "HyprismSession"),
             "--account-data-directory", accountDirectory,
             "--log-file", logFilePath,
             "--request-journal", requestJournalPath
@@ -195,7 +195,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public async Task Host_ExecutesAutonomousSessionAndAccountFlow()
     {
-        var dataDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeTests_" + Guid.NewGuid());
+        var dataDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeTests_" + Guid.NewGuid());
         var centralLogDirectory = Path.Combine(dataDirectory, "Logs", "test-session");
         var nodeLogPath = Path.Combine(centralLogDirectory, "local-node-8443.log");
         var requestJournalPath = Path.Combine(centralLogDirectory, "local-node-requests-8443.ndjson");
@@ -366,7 +366,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public async Task Cosmetics_ReturnsInstalledAssetIdsInUpstreamShape()
     {
-        var testDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeCosmeticsTests_" + Guid.NewGuid());
+        var testDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeCosmeticsTests_" + Guid.NewGuid());
         var dataDirectory = Path.Combine(testDirectory, "LocalNode");
         var gameDirectory = Path.Combine(testDirectory, "Game");
         Directory.CreateDirectory(gameDirectory);
@@ -417,7 +417,7 @@ public sealed class LocalNodeHostTests
     [Fact]
     public async Task Host_TransfersLifetimeToGameAndNodeStopsAfterGameExit()
     {
-        var testDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLocalNodeLifetimeTests_" + Guid.NewGuid());
+        var testDirectory = Path.Combine(Path.GetTempPath(), "HyprismLocalNodeLifetimeTests_" + Guid.NewGuid());
         var options = new LocalNodeOptions(testDirectory, "127.0.0.1", GetAvailablePort())
         {
             ConfigureSystemTrust = false

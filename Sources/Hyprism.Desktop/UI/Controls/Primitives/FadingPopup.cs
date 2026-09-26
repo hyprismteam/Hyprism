@@ -235,9 +235,11 @@ public sealed class FadingPopup : Popup
     {
         CancelPendingAnimation();
         _placeAbove = null;
-        SetCurrentValue(PlacementProperty, PlacementMode.Bottom);
         if (PlacementGap > 0)
+        {
+            SetCurrentValue(PlacementProperty, PlacementMode.Bottom);
             SetCurrentValue(VerticalOffsetProperty, PlacementGap);
+        }
 
         if (Child is not null)
             Child.Opacity = 0;

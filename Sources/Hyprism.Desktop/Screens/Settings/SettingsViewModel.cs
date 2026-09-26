@@ -4,6 +4,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -68,6 +69,10 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     private bool _storageUsageLoadStarted;
     private bool _disposed;
     private CancellationTokenSource? _sourceProbeCancellation;
+    private CancellationTokenSource? _mirrorAdditionCancellation;
+    private bool _isMirrorCancellationArmed;
+    private string? _lastCheckedMirrorUrl;
+    private string? _lastCheckedManualMirrorJson;
     private CancellationTokenSource? _authServerProbeCancellation;
     private CancellationTokenSource? _authServerAddCancellation;
     private bool _isAuthServerCancellationArmed;
@@ -176,22 +181,33 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string _aboutContributorOverflow = string.Empty;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasMirrorOperationError))]
+    [NotifyPropertyChangedFor(nameof(AutomaticMirrorInputErrorMessage))]
+    [NotifyPropertyChangedFor(nameof(ManualMirrorInputErrorMessage))]
+    [NotifyPropertyChangedFor(nameof(IsAutomaticMirrorInputError))]
+    [NotifyPropertyChangedFor(nameof(IsManualMirrorInputError))]
     private string _mirrorOperationError = string.Empty;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasMirrorOperationStatus))]
-    private string _mirrorOperationStatus = string.Empty;
-    [ObservableProperty] private string _mirrorUrl = string.Empty;
-    [ObservableProperty] private string _manualMirrorJson = string.Empty;
+    [NotifyPropertyChangedFor(nameof(CanSubmitAutomaticMirror))]
+    [NotifyPropertyChangedFor(nameof(IsAutomaticMirrorInputError))]
+    [NotifyPropertyChangedFor(nameof(AutomaticMirrorInputErrorMessage))]
+    private string _mirrorUrl = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSubmitManualMirror))]
+    [NotifyPropertyChangedFor(nameof(IsManualMirrorInputError))]
+    private string _manualMirrorJson = string.Empty;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAddSourceChoiceVisible))]
     [NotifyPropertyChangedFor(nameof(IsAutomaticSourceVisible))]
     [NotifyPropertyChangedFor(nameof(IsManualSourceVisible))]
     private DownloadSourceAdditionStep _mirrorAdditionStep;
     [ObservableProperty] private bool _isAddingMirror;
-    [ObservableProperty] private bool _isMirrorOperationBusy;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasPendingMirrorDelete))]
-    private MirrorSourceViewModel? _pendingMirrorDelete;
+    [NotifyPropertyChangedFor(nameof(CanSubmitAutomaticMirror))]
+    [NotifyPropertyChangedFor(nameof(CanSubmitManualMirror))]
+    [NotifyPropertyChangedFor(nameof(IsMirrorCancellationArmed))]
+    private bool _isMirrorOperationBusy;
+    [ObservableProperty] private MirrorSourceViewModel? _pendingMirrorDelete;
+    [ObservableProperty] private bool _isMirrorDeletionOpen;
 
     public SettingsViewModel(
         IDesktopSettingsStore settings,
@@ -321,8 +337,32 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public bool HasMirrors => MirrorSources.Count > 0;
     public bool HasNoMirrors => MirrorSources.Count == 0;
     public bool HasMirrorOperationError => !string.IsNullOrWhiteSpace(MirrorOperationError);
-    public bool HasMirrorOperationStatus => !string.IsNullOrWhiteSpace(MirrorOperationStatus);
-    public bool HasPendingMirrorDelete => PendingMirrorDelete is not null;
+    public bool CanSubmitAutomaticMirror => IsMirrorOperationBusy ||
+        (_mirrorCatalog is not null && _mirrorDiscovery is not null && _versionCatalog is not null &&
+         IsValidNewMirrorUrl(MirrorUrl, out var uri) &&
+         !MirrorSources.Any(source => EndpointsEqual(source.Endpoint, uri)) &&
+         !string.Equals(NormalizeMirrorUrl(MirrorUrl), _lastCheckedMirrorUrl, StringComparison.OrdinalIgnoreCase));
+    public bool CanSubmitManualMirror => IsMirrorOperationBusy ||
+        (_mirrorCatalog is not null && _versionCatalog is not null &&
+         TryParseNewManualMirror(ManualMirrorJson, out _, out _) &&
+         !string.Equals(ManualMirrorJson, _lastCheckedManualMirrorJson, StringComparison.Ordinal));
+    public bool IsAutomaticMirrorInputError => !string.IsNullOrWhiteSpace(MirrorUrl) &&
+        (!IsValidNewMirrorUrl(MirrorUrl, out var uri) ||
+         MirrorSources.Any(source => EndpointsEqual(source.Endpoint, uri)) ||
+         HasMirrorOperationError && string.Equals(NormalizeMirrorUrl(MirrorUrl), _lastCheckedMirrorUrl, StringComparison.OrdinalIgnoreCase));
+    public bool IsManualMirrorInputError => !string.IsNullOrWhiteSpace(ManualMirrorJson) &&
+        (!TryParseNewManualMirror(ManualMirrorJson, out _, out _) ||
+         HasMirrorOperationError && string.Equals(ManualMirrorJson, _lastCheckedManualMirrorJson, StringComparison.Ordinal));
+    public string AutomaticMirrorInputErrorMessage => HasMirrorOperationError
+        ? MirrorOperationError
+        : IsValidNewMirrorUrl(MirrorUrl, out var uri) &&
+          MirrorSources.Any(source => EndpointsEqual(source.Endpoint, uri))
+            ? _localizer["settings.downloads.sourceAlreadyExists"]
+            : _localizer["settings.downloads.invalidSourceUrl"];
+    public string ManualMirrorInputErrorMessage => HasMirrorOperationError
+        ? MirrorOperationError
+        : _localizer["settings.downloads.invalidSourceJson"];
+    public bool IsMirrorCancellationArmed => IsMirrorOperationBusy && _isMirrorCancellationArmed;
     public bool IsAddSourceChoiceVisible => MirrorAdditionStep == DownloadSourceAdditionStep.ChooseMethod;
     public bool IsAutomaticSourceVisible => MirrorAdditionStep == DownloadSourceAdditionStep.Automatic;
     public bool IsManualSourceVisible => MirrorAdditionStep == DownloadSourceAdditionStep.Manual;
@@ -541,7 +581,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         ManualSourceJsonPlaceholder = _localizer["settings.downloads.manualSourceJsonPlaceholder"];
         CancelLabel = _localizer["common.cancel"];
         RemoveLabel = _localizer["common.remove"];
-        DeleteSourceTitle = _localizer["settings.downloads.deleteSourceTitle"];
+        DeleteSourceTitle = _localizer["confirmation.title"];
         DeleteSourceHint = _localizer["settings.downloads.deleteSourceHint"];
         MusicLabel = _localizer["desktopSettings.music"];
         MusicHint = _localizer["desktopSettings.musicHint"];
@@ -710,6 +750,23 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         IsAuthServerAddError = false;
         AuthServerAddStatus = string.Empty;
     }
+    partial void OnMirrorUrlChanged(string value)
+    {
+        if (!IsMirrorOperationBusy)
+            MirrorOperationError = string.Empty;
+        AddMirrorCommand.NotifyCanExecuteChanged();
+    }
+    partial void OnManualMirrorJsonChanged(string value)
+    {
+        if (!IsMirrorOperationBusy)
+            MirrorOperationError = string.Empty;
+        AddManualMirrorCommand.NotifyCanExecuteChanged();
+    }
+    partial void OnIsMirrorOperationBusyChanged(bool value)
+    {
+        AddMirrorCommand.NotifyCanExecuteChanged();
+        AddManualMirrorCommand.NotifyCanExecuteChanged();
+    }
     partial void OnUseCustomJavaChanged(bool value)
     {
         _settings.UseCustomJava = value;
@@ -774,13 +831,14 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ShowAddMirror()
     {
+        _lastCheckedMirrorUrl = null;
+        _lastCheckedManualMirrorJson = null;
         MirrorAdditionStep = DownloadSourceAdditionStep.ChooseMethod;
         IsAddingMirror = true;
         PendingMirrorDelete = null;
         MirrorUrl = string.Empty;
         ManualMirrorJson = string.Empty;
         MirrorOperationError = string.Empty;
-        MirrorOperationStatus = string.Empty;
     }
 
     [RelayCommand]
@@ -807,8 +865,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void CancelAddMirror()
     {
+        CancelActiveMirrorAddition();
         IsAddingMirror = false;
     }
+
+    public void CancelActiveMirrorAddition()
+        => _mirrorAdditionCancellation?.Cancel();
 
     internal void CompleteMirrorAdditionTransition()
     {
@@ -821,11 +883,17 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         MirrorOperationError = string.Empty;
     }
 
-    [RelayCommand]
+    private bool CanAddMirror() => CanSubmitAutomaticMirror;
+
+    [RelayCommand(AllowConcurrentExecutions = true, CanExecute = nameof(CanAddMirror))]
     private async Task AddMirror()
     {
         if (IsMirrorOperationBusy)
+        {
+            if (IsMirrorCancellationArmed)
+                _mirrorAdditionCancellation?.Cancel();
             return;
+        }
 
         if (_mirrorCatalog is null || _mirrorDiscovery is null || _versionCatalog is null)
         {
@@ -834,7 +902,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         var normalizedUrl = NormalizeMirrorUrl(MirrorUrl);
-        if (!IsAllowedMirrorUrl(normalizedUrl, out var uri))
+        if (!IsValidNewMirrorUrl(MirrorUrl, out var uri))
         {
             MirrorOperationError = _localizer["settings.downloads.invalidSourceUrl"];
             return;
@@ -846,12 +914,17 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             return;
         }
 
+        using var cancellation = new CancellationTokenSource();
+        _mirrorAdditionCancellation = cancellation;
+        _isMirrorCancellationArmed = false;
+        _lastCheckedMirrorUrl = normalizedUrl;
+        OnPropertyChanged(nameof(CanSubmitAutomaticMirror));
         IsMirrorOperationBusy = true;
         MirrorOperationError = string.Empty;
-        MirrorOperationStatus = _localizer["settings.downloads.detectingSource"];
         try
         {
-            var result = await _mirrorDiscovery.DiscoverMirrorAsync(normalizedUrl);
+            var result = await _mirrorDiscovery.DiscoverMirrorAsync(normalizedUrl, ct: cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
             if (!result.Success || result.Mirror is null)
             {
                 if (!string.IsNullOrWhiteSpace(result.Error))
@@ -870,12 +943,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             _versionCatalog.ReloadMirrorSources();
 
             IsAddingMirror = false;
-            MirrorOperationStatus = _localizer["settings.downloads.sourceAdded"];
-            ReloadMirrorItems(clearStatus: false);
+            ReloadMirrorItems();
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
         {
-            MirrorOperationError = _localizer["settings.downloads.sourceDetectionFailed"];
+            _lastCheckedMirrorUrl = null;
         }
         catch (Exception ex)
         {
@@ -884,15 +956,26 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         }
         finally
         {
+            if (ReferenceEquals(_mirrorAdditionCancellation, cancellation))
+                _mirrorAdditionCancellation = null;
+            _isMirrorCancellationArmed = false;
             IsMirrorOperationBusy = false;
+            OnPropertyChanged(nameof(CanSubmitAutomaticMirror));
+            OnPropertyChanged(nameof(IsMirrorCancellationArmed));
         }
     }
 
-    [RelayCommand]
-    private void AddManualMirror()
+    private bool CanAddManualMirror() => CanSubmitManualMirror;
+
+    [RelayCommand(AllowConcurrentExecutions = true, CanExecute = nameof(CanAddManualMirror))]
+    private async Task AddManualMirror()
     {
         if (IsMirrorOperationBusy)
+        {
+            if (IsMirrorCancellationArmed)
+                _mirrorAdditionCancellation?.Cancel();
             return;
+        }
 
         if (_mirrorCatalog is null || _versionCatalog is null)
         {
@@ -900,9 +983,16 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             return;
         }
 
+        using var cancellation = new CancellationTokenSource();
+        _mirrorAdditionCancellation = cancellation;
+        _isMirrorCancellationArmed = false;
+        _lastCheckedManualMirrorJson = ManualMirrorJson;
+        OnPropertyChanged(nameof(CanSubmitManualMirror));
+        IsMirrorOperationBusy = true;
         MirrorOperationError = string.Empty;
         try
         {
+            await Task.Delay(450, cancellation.Token);
             var mirror = JsonSerializer.Deserialize<MirrorMeta>(
                 ManualMirrorJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -925,8 +1015,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             _versionCatalog.ReloadMirrorSources();
 
             IsAddingMirror = false;
-            MirrorOperationStatus = _localizer["settings.downloads.sourceAdded"];
-            ReloadMirrorItems(clearStatus: false);
+            ReloadMirrorItems();
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+            _lastCheckedManualMirrorJson = null;
         }
         catch (JsonException exception)
         {
@@ -943,32 +1036,62 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             Logger.Warning("Settings", $"Failed to add manual download source: {exception.Message}");
             MirrorOperationError = _localizer["settings.downloads.sourceSaveFailed"];
         }
+        finally
+        {
+            if (ReferenceEquals(_mirrorAdditionCancellation, cancellation))
+                _mirrorAdditionCancellation = null;
+            _isMirrorCancellationArmed = false;
+            IsMirrorOperationBusy = false;
+            OnPropertyChanged(nameof(CanSubmitManualMirror));
+            OnPropertyChanged(nameof(IsMirrorCancellationArmed));
+        }
+    }
+
+    public void ArmMirrorAdditionCancellation()
+    {
+        if (!IsMirrorOperationBusy || _isMirrorCancellationArmed)
+            return;
+
+        _isMirrorCancellationArmed = true;
+        OnPropertyChanged(nameof(IsMirrorCancellationArmed));
     }
 
     [RelayCommand]
     private void RequestDeleteMirror(MirrorSourceViewModel? mirror)
     {
+        if (mirror is null)
+            return;
+
         PendingMirrorDelete = mirror;
+        IsMirrorDeletionOpen = true;
         IsAddingMirror = false;
         MirrorOperationError = string.Empty;
     }
 
     [RelayCommand]
-    private void CancelDeleteMirror() => PendingMirrorDelete = null;
+    private void CancelDeleteMirror() => IsMirrorDeletionOpen = false;
+
+    public void CompleteMirrorDeletionClose()
+    {
+        if (IsMirrorDeletionOpen)
+            return;
+
+        PendingMirrorDelete = null;
+    }
 
     [RelayCommand]
     private void ConfirmDeleteMirror()
     {
-        if (PendingMirrorDelete is null || _mirrorCatalog is null || _versionCatalog is null)
+        var mirror = PendingMirrorDelete;
+        if (mirror is null || _mirrorCatalog is null || _versionCatalog is null)
             return;
 
         try
         {
-            _mirrorCatalog.Delete(PendingMirrorDelete.Id);
+            _mirrorCatalog.Delete(mirror.Id);
             _versionCatalog.ReloadMirrorSources();
-            PendingMirrorDelete = null;
-            MirrorOperationStatus = _localizer["settings.downloads.sourceRemoved"];
-            ReloadMirrorItems(clearStatus: false);
+            IsMirrorDeletionOpen = false;
+            ReloadMirrorItems();
         }
         catch (Exception ex)
         {
@@ -1487,11 +1610,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     private Task OpenLauncherDataFolder()
         => _uriLauncher.LaunchDirectoryAsync(LauncherDataFolder);
 
-    [RelayCommand] private Task OpenGitHub() => LaunchExternalAsync("https://github.com/hyprismteam/HyPrism");
-    [RelayCommand] private Task OpenDocumentation() => LaunchExternalAsync("https://hyprismteam.github.io/HyPrism/docs/");
+    [RelayCommand] private Task OpenGitHub() => LaunchExternalAsync("https://github.com/hyprismteam/Hyprism");
+    [RelayCommand] private Task OpenDocumentation() => LaunchExternalAsync("https://hyprismteam.github.io/Hyprism/docs/");
     [RelayCommand] private Task OpenDiscord() => LaunchExternalAsync("https://discord.gg/hyprism");
-    [RelayCommand] private Task OpenBugReport() => LaunchExternalAsync("https://github.com/hyprismteam/HyPrism/issues/new/choose");
-    [RelayCommand] private Task OpenLicense() => LaunchExternalAsync("https://github.com/hyprismteam/HyPrism/blob/main/LICENSE");
+    [RelayCommand] private Task OpenBugReport() => LaunchExternalAsync("https://github.com/hyprismteam/Hyprism/issues/new/choose");
+    [RelayCommand] private Task OpenLicense() => LaunchExternalAsync("https://github.com/hyprismteam/Hyprism/blob/main/LICENSE");
     [RelayCommand] private Task OpenHytaleEula() => LaunchExternalAsync("https://hytale.com/eula");
     [RelayCommand] private Task OpenIcons8() => LaunchExternalAsync("https://icons8.com");
     [RelayCommand] private Task OpenLordicon() => LaunchExternalAsync("https://lordicon.com/");
@@ -1513,7 +1636,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private Task OpenAllContributors()
-        => LaunchExternalAsync("https://github.com/hyprismteam/HyPrism/graphs/contributors");
+        => LaunchExternalAsync("https://github.com/hyprismteam/Hyprism/graphs/contributors");
 
     private Task LaunchExternalAsync(string? url)
         => Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
@@ -2002,14 +2125,10 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void ShowSaved() => StatusMessage = "✓";
 
-    private void ReloadMirrorItems(bool clearStatus = true)
+    private void ReloadMirrorItems()
     {
         _downloadSourcesProbeStarted = false;
-        if (clearStatus)
-        {
-            MirrorOperationError = string.Empty;
-            MirrorOperationStatus = string.Empty;
-        }
+        MirrorOperationError = string.Empty;
 
         MirrorSources.Clear();
         if (_mirrorCatalog is not null)
@@ -2169,9 +2288,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             _mirrorCatalog.Save(source.Definition);
             _versionCatalog.ReloadMirrorSources();
             MirrorOperationError = string.Empty;
-            MirrorOperationStatus = source.IsEnabled
-                ? _localizer["settings.downloads.sourceEnabled"]
-                : _localizer["settings.downloads.sourceDisabled"];
             if (source.IsEnabled)
             {
                 source.SetChecking(_localizer["settings.downloads.checkingAvailability"]);
@@ -2311,6 +2427,50 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         return normalized.Contains("://", StringComparison.Ordinal)
             ? normalized
             : $"https://{normalized}";
+    }
+
+    private static bool IsValidNewMirrorUrl(string value, out Uri uri)
+    {
+        uri = null!;
+        if (string.IsNullOrWhiteSpace(value) || value.Any(char.IsWhiteSpace))
+            return false;
+
+        var normalized = NormalizeMirrorUrl(value);
+        return IsAllowedMirrorUrl(normalized, out uri) &&
+               uri.IsWellFormedOriginalString() &&
+               string.IsNullOrEmpty(uri.UserInfo) &&
+               (uri.Host.Contains('.', StringComparison.Ordinal) || uri.IsLoopback);
+    }
+
+    private bool TryParseNewManualMirror(string json, out MirrorMeta mirror, out Uri endpoint)
+    {
+        mirror = null!;
+        endpoint = null!;
+        if (string.IsNullOrWhiteSpace(json))
+            return false;
+
+        try
+        {
+            var candidate = JsonSerializer.Deserialize<MirrorMeta>(json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (candidate is null || candidate.SchemaVersion != 1 ||
+                !Regex.IsMatch(candidate.Id, "^[a-z0-9][a-z0-9._-]{0,63}$", RegexOptions.CultureInvariant) ||
+                string.IsNullOrWhiteSpace(candidate.Name) ||
+                candidate.SourceType is not ("pattern" or "json-index") ||
+                !TryGetMirrorEndpoint(candidate, out var parsedEndpoint) ||
+                MirrorSources.Any(source =>
+                    string.Equals(source.Id, candidate.Id, StringComparison.OrdinalIgnoreCase) ||
+                    EndpointsEqual(source.Endpoint, parsedEndpoint)))
+                return false;
+
+            mirror = candidate;
+            endpoint = parsedEndpoint;
+            return true;
+        }
+        catch (Exception exception) when (exception is JsonException or ArgumentException)
+        {
+            return false;
+        }
     }
 
     private static bool IsAllowedMirrorUrl(string value, out Uri uri)
@@ -2512,6 +2672,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         _disposed = true;
         _sourceProbeCancellation?.Cancel();
         _sourceProbeCancellation?.Dispose();
+        _mirrorAdditionCancellation?.Cancel();
         _authServerProbeCancellation?.Cancel();
         _authServerAddCancellation?.Cancel();
         _storageUsageCancellation?.Cancel();

@@ -1,5 +1,5 @@
 YouTube and the YouTube logo are proprietary trademarks of Google LLC.
 
 No open-source or Creative Commons license is granted for the YouTube brand asset.
-Its inclusion in HyPrism is limited to identifying and linking to the YouTube service.
+Its inclusion in Hyprism is limited to identifying and linking to the YouTube service.
 All trademark rights remain with Google LLC.

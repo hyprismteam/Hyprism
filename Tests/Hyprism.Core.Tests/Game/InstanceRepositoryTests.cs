@@ -17,7 +17,7 @@ public class InstanceRepositoryTests : IDisposable
 
     public InstanceRepositoryTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "HyPrismInstanceRepoTests_" + Guid.NewGuid());
+        _tempDir = Path.Combine(Path.GetTempPath(), "HyprismInstanceRepoTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_tempDir);
         _config = new JsonConfigStore(_tempDir);
         _svc = new InstanceRepository(_tempDir, _config);

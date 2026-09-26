@@ -17,7 +17,7 @@ public class JsonConfigStoreTests : IDisposable
 
     public JsonConfigStoreTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "HyPrismTests_" + Guid.NewGuid());
+        _tempDir = Path.Combine(Path.GetTempPath(), "HyprismTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_tempDir);
     }
 

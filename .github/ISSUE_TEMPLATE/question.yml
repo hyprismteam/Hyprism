@@ -2,14 +2,14 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 name: Question / Support
-description: Ask a question or get help with HyPrism
+description: Ask a question or get help with Hyprism
 title: "[Question]: "
 labels: ["question"]
 body:
   - type: markdown
     attributes:
       value: |
-        Before asking, please check the [documentation](https://hyprismteam.github.io/HyPrism/docs/)
+        Before asking, please check the [documentation](https://hyprismteam.github.io/Hyprism/docs/)
         and existing issues. You can also join our [Discord](https://discord.com/invite/ekZqTtynjp) for faster support
 
   - type: textarea
@@ -33,7 +33,7 @@ body:
   - type: input
     id: hyprism_version
     attributes:
-      label: HyPrism Version
+      label: Hyprism Version
       placeholder: e.g. v1.2.0 (or "built from source")
 
   - type: textarea

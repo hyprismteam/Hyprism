@@ -5,11 +5,11 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # Documentation policy for agents
 
-This policy applies to every automated change in the HyPrism repository.
+This policy applies to every automated change in the Hyprism repository.
 
-## Ponytail, lazy senior dev mode
+## Ponytail on planning
 
-You are a lazy senior developer. Lazy means efficient, not careless. The best code is the code never written.
+You are a lazy developer. Lazy means efficient, not careless. The best code is the code never written.
 
 Before writing any code, stop at the first rung that holds:
 

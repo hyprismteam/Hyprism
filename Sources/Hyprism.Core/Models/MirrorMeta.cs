@@ -67,7 +67,7 @@ public class MirrorMeta
     /// <summary>
     /// Custom HTTP headers to send with requests to this mirror.
     /// Format in UI: header=value or header="value with spaces"
-    /// Supports variables: {hytaleAgent} - official Hytale launcher User-Agent
+    /// Supports {hytaleAgent} and {hytaleVersion} from the current official launcher release.
     /// </summary>
     public Dictionary<string, string>? Headers { get; set; }
 }
@@ -120,7 +120,7 @@ public class MirrorPatternConfig
     public Dictionary<string, string>? BranchMapping { get; set; }
 
     /// <summary>
-    /// List of branches that use diff-based patching (e.g. ["pre-release"]).
+    /// Branches that can fall back to differential patches when a full build is unavailable.
     /// </summary>
     public List<string> DiffBasedBranches { get; set; } = [];
 }
@@ -131,7 +131,7 @@ public class MirrorPatternConfig
 public class VersionDiscoveryConfig
 {
     /// <summary>
-    /// Discovery method: "json-api", "html-autoindex", "manifest", or "static-list".
+    /// Discovery method: "json-api", "html-autoindex", "manifest", "head-probe", or "static-list".
     /// </summary>
     public string Method { get; set; } = "json-api";
 
@@ -161,6 +161,11 @@ public class VersionDiscoveryConfig
     /// Minimum file size in bytes for html-autoindex filtering.
     /// </summary>
     public long MinFileSizeBytes { get; set; } = 0;
+
+    /// <summary>
+    /// Highest build to inspect when using head-probe discovery.
+    /// </summary>
+    public int MaxProbeVersion { get; set; } = 256;
 
     /// <summary>
     /// For static-list: explicit list of version numbers.
@@ -199,7 +204,7 @@ public class MirrorJsonIndexConfig
     public FileNamePatternConfig FileNamePattern { get; set; } = new();
 
     /// <summary>
-    /// List of branches that use diff-based patching.
+    /// Branches that can fall back to differential patches when a full build is unavailable.
     /// </summary>
     public List<string> DiffBasedBranches { get; set; } = [];
 }

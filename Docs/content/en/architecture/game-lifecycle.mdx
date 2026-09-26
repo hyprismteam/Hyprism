@@ -22,6 +22,8 @@ Desktop instance action
 
 `GameInstallationWorkflow` rejects concurrent installation work for the same instance. Every instance targets an explicit branch and numeric version. It records `PendingVersion` before modifying an installation so an interrupted update can be resumed. An installed instance whose metadata matches the selected version uses a fast path without contacting version sources or mirrors
 
+`GameVersionCatalog` selects a mirror and resolves its request headers for the selected download URL. `GameInstallationWorkflow` and `PatchManager` pass those headers to `HttpFileDownloader` for file size checks and transfers. Mirror discovery and availability checks use the same launcher version placeholders. See [mirror definitions](/reference/mirrors) for discovery methods and header fields.
+
 Game payloads are cached under `Cache/Game/Downloads`. Transfer and patching propagate cancellation through network I/O, writes, extraction, and process waits. A successful installation automatically starts the game
 
 ## Authentication and patching

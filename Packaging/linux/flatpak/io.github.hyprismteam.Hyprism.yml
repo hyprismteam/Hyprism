@@ -1,7 +1,7 @@
 # Copyright (C) 2026 Hyprism Launcher
 # SPDX-License-Identifier: GPL-3.0-only
 
-app-id: io.github.hyprismteam.HyPrism
+app-id: io.github.hyprismteam.Hyprism
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
@@ -20,12 +20,12 @@ modules:
       - install -d /app/lib/hyprism /app/bin
       - cp -a . /app/lib/hyprism/
       - ln -s '../lib/hyprism/Hyprism Launcher' /app/bin/hyprism
-      - install -Dm644 io.github.hyprismteam.HyPrism.desktop /app/share/applications/io.github.hyprismteam.HyPrism.desktop
-      - install -Dm644 io.github.hyprismteam.HyPrism.svg /app/share/icons/hicolor/scalable/apps/io.github.hyprismteam.HyPrism.svg
+      - install -Dm644 io.github.hyprismteam.Hyprism.desktop /app/share/applications/io.github.hyprismteam.Hyprism.desktop
+      - install -Dm644 io.github.hyprismteam.Hyprism.svg /app/share/icons/hicolor/scalable/apps/io.github.hyprismteam.Hyprism.svg
     sources:
       - type: dir
         path: publish
       - type: file
-        path: io.github.hyprismteam.HyPrism.desktop
+        path: io.github.hyprismteam.Hyprism.desktop
       - type: file
-        path: io.github.hyprismteam.HyPrism.svg
+        path: io.github.hyprismteam.Hyprism.svg

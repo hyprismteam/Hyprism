@@ -9,7 +9,7 @@ description: Выбор и установка подходящего пакет�
 
 ## Загрузка релиза
 
-Откройте [релизы Hyprism на GitHub](https://github.com/hyprismteam/HyPrism/releases) и выберите пакет для своей системы
+Откройте [релизы Hyprism на GitHub](https://github.com/hyprismteam/Hyprism/releases) и выберите пакет для своей системы
 
 | Платформа | Архитектура | Пакеты |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ description: Выбор и установка подходящего пакет�
 ### Linux x64
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-linux.sh | sh
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-linux.sh | sh
 ```
 
 Установщик сохраняет версии в `~/.local/share/hyprism`, создает `~/.local/bin/hyprism` и запись приложения. Если `~/.local/bin` еще не входит в `PATH`, добавьте его вручную
@@ -35,15 +35,15 @@ curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/in
 ### Windows x64
 
 ```powershell
-irm https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-win.ps1 | iex
+irm https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-win.ps1 | iex
 ```
 
-Установщик сохраняет Hyprism Launcher в `%LOCALAPPDATA%\HyPrism`, создает ярлыки на рабочем столе и в меню «Пуск», а также добавляет каталог установки в пользовательский `PATH`
+Установщик сохраняет Hyprism Launcher в `%LOCALAPPDATA%\Hyprism`, создает ярлыки на рабочем столе и в меню «Пуск», а также добавляет каталог установки в пользовательский `PATH`
 
 ### macOS Apple Silicon
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-macos.sh | sh
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-macos.sh | sh
 ```
 
 Установщик проверяет DMG, монтирует его и сохраняет Hyprism Launcher в `~/Applications` без запроса `sudo`. Текущие релизы используют ad hoc подпись, поэтому при первом запуске macOS может потребовать разрешение в разделе Privacy & Security
@@ -53,7 +53,7 @@ curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/in
 Пользователи Nix могут запустить flake напрямую при включенной поддержке flakes
 
 ```bash
-nix run 'github:hyprismteam/HyPrism?dir=Packaging/linux/flake#hyprism'
+nix run 'github:hyprismteam/Hyprism?dir=Packaging/linux/flake#hyprism'
 ```
 
 Flake сейчас предназначен для `x86_64-linux`. На macOS используйте описанный ниже сценарий с DMG
@@ -90,8 +90,8 @@ flatpak install ./Hyprism-linux-x64-4.0.0.flatpak
 Разработчикам нужны .NET 10 SDK и Git
 
 ```bash
-git clone https://github.com/hyprismteam/HyPrism.git
-cd HyPrism
+git clone https://github.com/hyprismteam/Hyprism.git
+cd Hyprism
 dotnet restore Hyprism.slnx
 dotnet run --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
 ```

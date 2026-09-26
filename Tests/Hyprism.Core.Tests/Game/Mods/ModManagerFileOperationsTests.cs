@@ -22,7 +22,7 @@ public class ModManagerFileOperationsTests : IDisposable
 
     public ModManagerFileOperationsTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "HyPrismModManagerTests_" + Guid.NewGuid());
+        _tempDir = Path.Combine(Path.GetTempPath(), "HyprismModManagerTests_" + Guid.NewGuid());
         _instancePath = Path.Combine(_tempDir, "instance");
         _modsPath = Path.Combine(_instancePath, "UserData", "Mods");
         Directory.CreateDirectory(_modsPath);

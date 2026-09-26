@@ -10,7 +10,7 @@ namespace Hyprism.Core.Game.Launch;
 /// </summary>
 internal sealed class OfficialLaunchGate : IDisposable
 {
-    private readonly Mutex _mutex = new(false, "HyPrism.OfficialLaunchGate");
+    private readonly Mutex _mutex = new(false, "Hyprism.OfficialLaunchGate");
     private bool _entered;
 
     public void Enter()

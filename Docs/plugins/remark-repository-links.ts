@@ -24,7 +24,7 @@ export default function repositoryLinks(options: { repositoryRoot: string }) {
           }
           const kind = statSync(absolute).isDirectory() ? 'tree' : 'blob'
           const encoded = relative.split(path.sep).map(encodeURIComponent).join('/')
-          node.url = `https://github.com/hyprismteam/HyPrism/${kind}/main/${encoded}${anchor ? `#${anchor}` : ''}`
+          node.url = `https://github.com/hyprismteam/Hyprism/${kind}/main/${encoded}${anchor ? `#${anchor}` : ''}`
         }
       }
       node.children?.forEach(visit)

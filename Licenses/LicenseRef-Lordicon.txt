@@ -1,7 +1,7 @@
 Lordicon Free License attribution notice
 
 The Lordicon animation asset covered by this notice is used under the Lordicon Free License. They are not licensed under the
-HyPrism project's GPL-3.0-only license.
+Hyprism project's GPL-3.0-only license.
 
 License terms:
 https://lordicon.com/docs/license/free
