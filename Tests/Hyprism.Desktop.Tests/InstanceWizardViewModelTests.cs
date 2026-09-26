@@ -93,7 +93,7 @@ public sealed class InstanceWizardViewModelTests
     }
 
     [AvaloniaFact]
-    public void ClosingCreatorClearsSelectionAndRestoresReleaseBranch()
+    public void ClosingCreatorKeepsSelectionUntilExitAnimationCompletes()
     {
         var instances = new Mock<IInstanceRepository>();
         var profiles = new Mock<IProfileManager>();
@@ -146,6 +146,11 @@ public sealed class InstanceWizardViewModelTests
         viewModel.CloseInstanceCreatorCommand.Execute(null);
 
         Assert.False(viewModel.IsInstanceCreatorOpen);
+        Assert.Equal("pre-release", viewModel.NewInstanceBranch);
+        Assert.Equal(61, viewModel.SelectedNewInstanceVersion?.Version);
+
+        viewModel.Instances.CompleteInstanceCreatorClose();
+
         Assert.Equal("release", viewModel.NewInstanceBranch);
         Assert.Null(viewModel.SelectedNewInstanceVersion);
         Assert.Empty(viewModel.AvailableInstanceVersions);
@@ -160,7 +165,7 @@ public sealed class InstanceWizardViewModelTests
     }
 
     [AvaloniaFact]
-    public void VersionNamesAreDisplayedWithoutPrefixAndBuildEntriesAreListedLast()
+    public void BuildNumbersAreShownWithAvailableGameVersions()
     {
         var instances = new Mock<IInstanceRepository>();
         var profiles = new Mock<IProfileManager>();
@@ -206,10 +211,11 @@ public sealed class InstanceWizardViewModelTests
 
         viewModel.OpenInstanceCreatorCommand.Execute(null);
 
-        Assert.Equal(
-            ["2026.09.08-e1d69dd", "0.6.4", "build-100"],
-            viewModel.AvailableInstanceVersions.Select(item => item.Label));
-        Assert.Equal("2026.09.08-e1d69dd", viewModel.SelectedNewInstanceVersion?.Label);
+        Assert.Equal([102, 101, 100],
+            viewModel.AvailableInstanceVersions.Select(item => item.Version));
+        Assert.Equal(["(2026.09.08-e1d69dd)", "(0.6.4)", null],
+            viewModel.AvailableInstanceVersions.Select(item => item.GameVersionLabel));
+        Assert.Equal("(2026.09.08-e1d69dd)", viewModel.SelectedNewInstanceVersion?.GameVersionLabel);
     }
 
     [AvaloniaFact]

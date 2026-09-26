@@ -157,6 +157,7 @@ public class GameVersionCatalog : IGameVersionCatalog
 
         foreach (var source in GetSourcesSnapshot())
         {
+            ct.ThrowIfCancellationRequested();
             if (source.Type == VersionSourceType.Official)
             {
                 snapshot.Data.Hytale?.Branches.Remove(normalizedBranch);
@@ -205,11 +206,16 @@ public class GameVersionCatalog : IGameVersionCatalog
                     Logger.Warning("Version", $"{source.SourceId} returned no versions for {normalizedBranch}");
                 }
             }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.Warning("Version", $"{source.SourceId} fetch failed for {normalizedBranch}: {ex.Message}");
             }
 
+            ct.ThrowIfCancellationRequested();
             try
             {
                 var patchSteps = await source.GetPatchChainAsync(osName, arch, normalizedBranch, ct);
@@ -234,12 +240,17 @@ public class GameVersionCatalog : IGameVersionCatalog
                     Logger.Success("Version", $"{source.SourceId} returned {patchSteps.Count} patch steps for {normalizedBranch}");
                 }
             }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.Debug("Version", $"{source.SourceId} patch chain fetch failed for {normalizedBranch}: {ex.Message}");
             }
         }
 
+        ct.ThrowIfCancellationRequested();
         snapshot.BranchFetchedAt[normalizedBranch] = DateTime.UtcNow;
 
         _cache.Save(snapshot);

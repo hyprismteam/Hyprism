@@ -45,6 +45,17 @@ public sealed partial class ProfilesView : UserControl
             new WizardStepDefinition(
                 OfficialProfileCreationContent,
                 "/Assets/Lotties/avatar-looking.json"));
+        _creatorWizard.ConfigureNavigation(
+            () => DataContext is ProfilesViewModel { IsCreationVisible: true },
+            () => (DataContext as ProfilesViewModel)?.CancelCreationCommand.Execute(null));
+        _creatorWizard.RegisterPreviousStep(
+            OfflineProfileCreationContent,
+            ProfileCreationChoiceContent,
+            () => (DataContext as ProfilesViewModel)?.ReturnToCreationChoiceCommand.Execute(null));
+        _creatorWizard.RegisterPreviousStep(
+            OfficialProfileCreationContent,
+            ProfileCreationChoiceContent,
+            () => (DataContext as ProfilesViewModel)?.ReturnToCreationChoiceCommand.Execute(null));
         _layoutHost = new AdaptiveMasterDetailHost(
             ProfilesLayout,
             ProfilesListPane,
@@ -120,7 +131,20 @@ public sealed partial class ProfilesView : UserControl
         if (width <= 0 || DataContext is not ProfilesViewModel viewModel)
             return;
 
+        var wasCompact = _layoutHost.IsCompact;
+        if (viewModel.IsCreationVisible && !wasCompact &&
+            width < AdaptiveMasterDetailHost.DefaultBreakpoint)
+            _layoutHost.RememberDetail();
         _layoutHost.Update(width, viewModel.HasProfiles, viewModel.IsProfileEditorVisible);
+        if (wasCompact != _layoutHost.IsCompact)
+        {
+            ++_creatorNavigationRevision;
+            _creatorTransitionActive = false;
+            _creatorWizard.SyncLayout(viewModel.IsCreationVisible);
+            _creatorOpenedFromCompactList = false;
+            if (!viewModel.IsCreationVisible)
+                viewModel.CompleteCreationTransition();
+        }
 
         if (!viewModel.HasProfiles)
         {
@@ -189,20 +213,7 @@ public sealed partial class ProfilesView : UserControl
     }
 
     private async void OnReturnToProfileCreationChoiceClicked(object? sender, RoutedEventArgs args)
-    {
-        if (DataContext is not ProfilesViewModel viewModel)
-            return;
-
-        var outgoingStep = viewModel.IsOfficialCreationVisible
-            ? OfficialProfileCreationContent
-            : OfflineProfileCreationContent;
-        await _creatorWizard.SwitchStepAsync(
-            outgoingStep,
-            ProfileCreationChoiceContent,
-            forward: false,
-            () => viewModel.ReturnToCreationChoiceCommand.Execute(null),
-            () => viewModel.IsCreationVisible);
-    }
+        => await _creatorWizard.NavigateBackAsync();
 
     private void OnAuthenticationActionPointerExited(object? sender, PointerEventArgs args)
     {
@@ -279,14 +290,11 @@ public sealed partial class ProfilesView : UserControl
 
     public bool TryCloseCompactContent()
     {
+        if (_creatorWizard.TryNavigateBack())
+            return true;
+
         if (!_layoutHost.IsCompact || !_layoutHost.IsDetailOpen)
             return false;
-
-        if (DataContext is ProfilesViewModel { IsCreationVisible: true } viewModel)
-        {
-            viewModel.CancelCreationCommand.Execute(null);
-            return true;
-        }
 
         return _layoutHost.TryCloseDetail();
     }

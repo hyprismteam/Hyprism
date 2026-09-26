@@ -178,6 +178,7 @@ public sealed class WizardScreenTransition
             return;
         }
 
+        RevealOverviewBehindWizard();
         _wizard.IsHitTestVisible = false;
 
         try
@@ -408,6 +409,21 @@ public sealed class WizardScreenTransition
         _wizard.Transitions = wizardTransitions;
         overviewTranslation.Transitions = overviewTranslationTransitions;
         wizardTranslation.Transitions = wizardTranslationTransitions;
+    }
+
+    private void RevealOverviewBehindWizard()
+    {
+        var translation = GetTranslation(_overview);
+        var overviewTransitions = _overview.Transitions;
+        var translationTransitions = translation.Transitions;
+        _overview.Transitions = null;
+        translation.Transitions = null;
+        _overview.IsVisible = true;
+        _overview.Opacity = 1;
+        _overview.IsHitTestVisible = false;
+        translation.X = 0;
+        _overview.Transitions = overviewTransitions;
+        translation.Transitions = translationTransitions;
     }
 
     private static void PrepareForEntry(Control control, double offset)

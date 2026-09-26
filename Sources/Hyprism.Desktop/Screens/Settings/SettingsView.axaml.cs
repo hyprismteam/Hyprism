@@ -18,9 +18,6 @@ public sealed partial class SettingsView : UserControl
     private readonly AdaptiveMasterDetailHost _layoutHost;
     private INotifyPropertyChanged? _viewModel;
     private bool _isDownloadSourceWizardVisible;
-    private bool _isSourceStepTransitioning;
-    private bool _isSourceStepTransitionForward;
-    private bool _returnAfterSourceStepTransition;
     private MirrorSourceViewModel? _activeMirrorMenu;
     private Border? _activeMirrorMenuTarget;
     private CancellationTokenSource? _mirrorMenuCloseCancellation;
@@ -40,6 +37,24 @@ public sealed partial class SettingsView : UserControl
             SourceAdditionChoiceContent,
             AutomaticSourceAdditionContent,
             ManualSourceAdditionContent);
+        _downloadSourceWizard.ConfigureNavigation(
+            () => DataContext is SettingsViewModel { IsAddingMirror: true },
+            () => (DataContext as SettingsViewModel)?.CancelAddMirrorCommand.Execute(null),
+            () =>
+            {
+                if (DataContext is not SettingsViewModel { IsMirrorOperationBusy: true } viewModel)
+                    return false;
+                viewModel.CancelActiveMirrorAddition();
+                return true;
+            });
+        _downloadSourceWizard.RegisterPreviousStep(
+            AutomaticSourceAdditionContent,
+            SourceAdditionChoiceContent,
+            () => (DataContext as SettingsViewModel)?.ReturnToMirrorAdditionChoiceCommand.Execute(null));
+        _downloadSourceWizard.RegisterPreviousStep(
+            ManualSourceAdditionContent,
+            SourceAdditionChoiceContent,
+            () => (DataContext as SettingsViewModel)?.ReturnToMirrorAdditionChoiceCommand.Execute(null));
         _layoutHost = new AdaptiveMasterDetailHost(
             SettingsLayout,
             SettingsCategoryRail,
@@ -71,11 +86,6 @@ public sealed partial class SettingsView : UserControl
             OnWizardPointerPressed,
             RoutingStrategies.Tunnel,
             handledEventsToo: true);
-        _mirrorMenuTopLevel?.AddHandler(
-            KeyDownEvent,
-            OnWizardKeyDown,
-            RoutingStrategies.Tunnel,
-            handledEventsToo: true);
         _mirrorMenuWindow = _mirrorMenuTopLevel as Window;
         if (_mirrorMenuWindow is not null)
             _mirrorMenuWindow.Deactivated += OnMirrorMenuWindowDeactivated;
@@ -86,7 +96,6 @@ public sealed partial class SettingsView : UserControl
         _mirrorMenuTopLevel?.RemoveHandler(PointerPressedEvent, OnMirrorMenuPointerPressed);
         _mirrorMenuTopLevel?.RemoveHandler(KeyDownEvent, OnMirrorMenuKeyDown);
         _mirrorMenuTopLevel?.RemoveHandler(PointerPressedEvent, OnWizardPointerPressed);
-        _mirrorMenuTopLevel?.RemoveHandler(KeyDownEvent, OnWizardKeyDown);
         if (_mirrorMenuWindow is not null)
             _mirrorMenuWindow.Deactivated -= OnMirrorMenuWindowDeactivated;
         _mirrorMenuTopLevel = null;
@@ -222,36 +231,6 @@ public sealed partial class SettingsView : UserControl
         DownloadSourceWizardScreen.Focus();
     }
 
-    private void OnWizardKeyDown(object? sender, KeyEventArgs args)
-    {
-        if (args.Handled || args.Key != Key.Escape ||
-            DataContext is not SettingsViewModel { IsAddingMirror: true } viewModel)
-            return;
-
-        if (GetFocusedMirrorInput() is not null)
-        {
-            DownloadSourceWizardScreen.Focus();
-        }
-        else if (_isSourceStepTransitioning)
-        {
-            _returnAfterSourceStepTransition = _isSourceStepTransitionForward;
-        }
-        else if (viewModel.IsAddSourceChoiceVisible)
-        {
-            viewModel.CancelAddMirrorCommand.Execute(null);
-        }
-        else if (viewModel.IsMirrorOperationBusy)
-        {
-            viewModel.CancelActiveMirrorAddition();
-        }
-        else
-        {
-            _ = ReturnToSourceAdditionChoiceAsync();
-        }
-
-        args.Handled = true;
-    }
-
     private TextBox? GetFocusedMirrorInput()
     {
         var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
@@ -321,10 +300,17 @@ public sealed partial class SettingsView : UserControl
     private void OnSettingsViewSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         CloseMirrorMenu();
+        var wasCompact = _layoutHost.IsCompact;
+        if (DataContext is SettingsViewModel { IsAddingMirror: true } &&
+            !wasCompact && e.NewSize.Width < AdaptiveMasterDetailHost.DefaultBreakpoint)
+            _layoutHost.RememberDetail();
         _layoutHost.Update(e.NewSize.Width, hasMaster: true);
         var viewModel = DataContext as SettingsViewModel;
         if (viewModel is not null)
             viewModel.IsCompactLayout = _layoutHost.IsCompact;
+
+        if (wasCompact != _layoutHost.IsCompact)
+            _downloadSourceWizard.SyncLayout(viewModel?.IsAddingMirror == true);
 
         if (_layoutHost.IsCompact)
         {
@@ -369,12 +355,12 @@ public sealed partial class SettingsView : UserControl
         if (DataContext is not SettingsViewModel viewModel)
             return;
 
-        await SwitchSourceStepAsync(
+        await _downloadSourceWizard.SwitchStepAsync(
             SourceAdditionChoiceContent,
             AutomaticSourceAdditionContent,
             forward: true,
             () => viewModel.BeginAutomaticMirrorAdditionCommand.Execute(null),
-            viewModel);
+            () => viewModel.IsAddingMirror);
     }
 
     private async void OnBeginManualSourceAdditionClicked(object? sender, RoutedEventArgs args)
@@ -382,68 +368,16 @@ public sealed partial class SettingsView : UserControl
         if (DataContext is not SettingsViewModel viewModel)
             return;
 
-        await SwitchSourceStepAsync(
+        await _downloadSourceWizard.SwitchStepAsync(
             SourceAdditionChoiceContent,
             ManualSourceAdditionContent,
             forward: true,
             () => viewModel.BeginManualMirrorAdditionCommand.Execute(null),
-            viewModel);
+            () => viewModel.IsAddingMirror);
     }
 
     private async void OnReturnToSourceAdditionChoiceClicked(object? sender, RoutedEventArgs args)
-        => await ReturnToSourceAdditionChoiceAsync();
-
-    private async Task ReturnToSourceAdditionChoiceAsync()
-    {
-        if (DataContext is not SettingsViewModel viewModel)
-            return;
-
-        var outgoingStep = viewModel.IsManualSourceVisible
-            ? ManualSourceAdditionContent
-            : AutomaticSourceAdditionContent;
-        await SwitchSourceStepAsync(
-            outgoingStep,
-            SourceAdditionChoiceContent,
-            forward: false,
-            () => viewModel.ReturnToMirrorAdditionChoiceCommand.Execute(null),
-            viewModel);
-    }
-
-    private async Task SwitchSourceStepAsync(
-        Control outgoingStep,
-        Control incomingStep,
-        bool forward,
-        Action switchStep,
-        SettingsViewModel viewModel)
-    {
-        if (_isSourceStepTransitioning)
-        {
-            if (!forward)
-                _returnAfterSourceStepTransition = _isSourceStepTransitionForward;
-            return;
-        }
-
-        _isSourceStepTransitioning = true;
-        _isSourceStepTransitionForward = forward;
-        try
-        {
-            await _downloadSourceWizard.SwitchStepAsync(
-                outgoingStep,
-                incomingStep,
-                forward,
-                switchStep,
-                () => viewModel.IsAddingMirror);
-        }
-        finally
-        {
-            _isSourceStepTransitioning = false;
-            var returnToChoice = _returnAfterSourceStepTransition &&
-                                 viewModel.IsAddingMirror && !viewModel.IsAddSourceChoiceVisible;
-            _returnAfterSourceStepTransition = false;
-            if (returnToChoice)
-                await ReturnToSourceAdditionChoiceAsync();
-        }
-    }
+        => await _downloadSourceWizard.NavigateBackAsync();
 
     public bool TryCloseCompactContent()
     {
@@ -467,17 +401,7 @@ public sealed partial class SettingsView : UserControl
 
         if (DataContext is SettingsViewModel { IsAddingMirror: true } viewModel)
         {
-            if (GetFocusedMirrorInput() is not null)
-                DownloadSourceWizardScreen.Focus();
-            else if (_isSourceStepTransitioning)
-                _returnAfterSourceStepTransition = _isSourceStepTransitionForward;
-            else if (viewModel.IsAddSourceChoiceVisible)
-                viewModel.CancelAddMirrorCommand.Execute(null);
-            else if (viewModel.IsMirrorOperationBusy)
-                viewModel.CancelActiveMirrorAddition();
-            else
-                _ = ReturnToSourceAdditionChoiceAsync();
-            return true;
+            return _downloadSourceWizard.TryNavigateBack();
         }
 
         return _layoutHost.TryCloseDetail();

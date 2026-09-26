@@ -68,6 +68,8 @@ At the same priority, a later matching style wins. Class and pseudo-class select
 
 Use a component from this catalog before adding a new selector or helper to a screen. If the existing API cannot express the screen state, extend the component contract or record why the screen must stay local.
 
+`WizardHost` handles Escape in the active wizard: it releases a focused text field, cancels a registered operation, returns to the previous step, or closes the wizard. Screens register their step commands and close action. When the master-detail layout crosses its compact breakpoint, screens synchronize the host with the current wizard state to finish an interrupted transition.
+
 The ownership chain is `token -> theme or class -> component -> screen`. Keep shared values, control appearance, reusable structure, and screen state in those respective layers.
 
 `FadingPopup` preserves an explicitly configured placement. Popups with `PlacementGap` use adaptive placement above or below their target.

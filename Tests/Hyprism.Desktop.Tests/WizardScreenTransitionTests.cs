@@ -6,6 +6,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -214,6 +215,145 @@ public sealed class WizardScreenTransitionTests
         Assert.True(callbackInvoked);
         Assert.True(overview.IsVisible);
         Assert.False(wizard.IsVisible);
+    }
+
+    [AvaloniaFact]
+    public async Task WizardHostEscapeReleasesInputThenReturnsToThePreviousStepAndCloses()
+    {
+        var overview = CreateControl();
+        var wizard = CreateControl();
+        var choice = CreateControl();
+        var form = CreateControl();
+        var input = new TextBox { Width = 180, Height = 40 };
+        var externalButton = new Button { Width = 80, Height = 40 };
+        form.Child = input;
+        choice.IsVisible = false;
+        wizard.Child = new Grid { Children = { choice, form } };
+        var root = new Grid { Children = { overview, wizard, externalButton } };
+        var window = new Window { Width = 500, Height = 400, Content = root };
+        var host = new WizardHost(overview, wizard, steps: [choice, form]);
+        var isOpen = true;
+        host.ConfigureNavigation(() => isOpen, () => isOpen = false);
+        host.RegisterPreviousStep(form, choice, () =>
+        {
+            form.IsVisible = false;
+            choice.IsVisible = true;
+        });
+        window.Show();
+        host.ShowWizardImmediately();
+        Dispatcher.UIThread.RunJobs();
+        input.Focus();
+        Assert.Same(input, window.FocusManager?.GetFocusedElement());
+
+        window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        window.KeyRelease(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        Assert.Same(wizard, window.FocusManager?.GetFocusedElement());
+        Assert.True(form.IsVisible);
+
+        externalButton.Focus();
+        Assert.Same(externalButton, window.FocusManager?.GetFocusedElement());
+        window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        window.KeyRelease(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        await AvaloniaTestWait.UntilAsync(
+            () => choice.IsVisible && choice.IsHitTestVisible,
+            "Escape to return to the wizard choice");
+        Assert.True(isOpen);
+
+        window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        window.KeyRelease(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+        Assert.False(isOpen);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task WizardHostQueuesEscapeWhileEnteringANewStep()
+    {
+        var overview = CreateControl();
+        var wizard = CreateControl();
+        var choice = CreateControl();
+        var form = CreateControl();
+        form.IsVisible = false;
+        var host = new WizardHost(overview, wizard, steps: [choice, form]);
+        host.ConfigureNavigation(() => true, () => { });
+        host.RegisterPreviousStep(form, choice, () =>
+        {
+            form.IsVisible = false;
+            choice.IsVisible = true;
+        });
+        host.ShowWizardImmediately();
+
+        var forward = host.SwitchStepAsync(
+            choice,
+            form,
+            forward: true,
+            () =>
+            {
+                choice.IsVisible = false;
+                form.IsVisible = true;
+            },
+            () => true);
+        Assert.True(host.TryNavigateBack());
+        await forward;
+
+        Assert.True(choice.IsVisible);
+        Assert.False(form.IsVisible);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WizardHostFinishesCloseWhenLayoutChangesMidTransition(bool compact)
+    {
+        var overview = CreateControl();
+        var wizard = CreateControl();
+        var host = new WizardHost(overview, wizard);
+        host.ShowWizardImmediately();
+        var closeCount = 0;
+
+        var close = compact
+            ? host.CloseCompactOverlayAsync(() => true, 500, () => closeCount++)
+            : host.CloseAsync(() => true, () => closeCount++);
+        Assert.False(close.IsCompleted);
+        host.SyncLayout(isOpen: false);
+        await close;
+
+        Assert.Equal(1, closeCount);
+        Assert.True(overview.IsVisible);
+        Assert.True(overview.IsHitTestVisible);
+        Assert.False(wizard.IsVisible);
+        Assert.False(wizard.IsHitTestVisible);
+        Assert.Equal(0, Assert.IsType<TranslateTransform>(overview.RenderTransform).X);
+    }
+
+    [AvaloniaFact]
+    public async Task CompactWizardCloseShowsOverviewBeforeSlideFinishes()
+    {
+        var overview = CreateControl();
+        var wizard = CreateControl();
+        var window = new Window
+        {
+            Width = 500,
+            Height = 400,
+            Content = new Grid { Children = { overview, wizard } }
+        };
+        var host = new WizardHost(overview, wizard);
+        window.Show();
+        host.ShowWizardImmediately();
+        host.SyncLayout(isOpen: true);
+
+        var close = host.CloseCompactOverlayAsync(() => true, 500);
+
+        Assert.False(close.IsCompleted);
+        Assert.True(wizard.IsVisible);
+        Assert.True(overview.IsVisible);
+        Assert.Equal(1, overview.Opacity);
+        Assert.Equal(0, Assert.IsType<TranslateTransform>(overview.RenderTransform).X);
+        Assert.False(overview.IsHitTestVisible);
+
+        await close;
+        Assert.False(wizard.IsVisible);
+        Assert.True(overview.IsHitTestVisible);
+        window.Close();
     }
 
     [AvaloniaFact]

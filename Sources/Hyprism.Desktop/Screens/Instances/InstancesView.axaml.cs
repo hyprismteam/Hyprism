@@ -50,6 +50,9 @@ public sealed partial class InstancesView : UserControl
             InstanceCreatorContentView.Reveal.Anchor,
             InstanceCreatorContentView.Reveal.MotionTarget,
             InstanceCreatorContentView.Reveal.Animation);
+        _creatorWizard.ConfigureNavigation(
+            () => DataContext is InstancesViewModel { IsInstanceCreatorOpen: true },
+            () => (DataContext as InstancesViewModel)?.CloseInstanceCreatorCommand.Execute(null));
         _layoutHost = new AdaptiveMasterDetailHost(
             InstancesLayout,
             InstanceListContentView.Rail,
@@ -170,9 +173,21 @@ public sealed partial class InstancesView : UserControl
 
         var hasInstances = viewModel.HasInstances;
         var wasCompact = _layoutHost.IsCompact;
+        if (viewModel.IsInstanceCreatorOpen && !wasCompact &&
+            width < AdaptiveMasterDetailHost.DefaultBreakpoint)
+            _layoutHost.RememberDetail();
         _layoutHost.Update(width, hasInstances);
         UpdateInstanceSectionContentWidth();
         var layoutModeChanged = wasCompact != _layoutHost.IsCompact;
+        if (layoutModeChanged)
+        {
+            ++_creatorNavigationRevision;
+            _creatorTransitionActive = false;
+            _creatorWizard.SyncLayout(viewModel.IsInstanceCreatorOpen);
+            if (!viewModel.IsInstanceCreatorOpen)
+                viewModel.CompleteInstanceCreatorClose();
+            _creatorOpenedFromCompactList = false;
+        }
 
         if (!hasInstances)
         {
@@ -291,14 +306,11 @@ public sealed partial class InstancesView : UserControl
 
     public bool TryCloseCompactContent()
     {
+        if (_creatorWizard.TryNavigateBack())
+            return true;
+
         if (!_layoutHost.IsCompact || !_layoutHost.IsDetailOpen)
             return false;
-
-        if (DataContext is InstancesViewModel { IsInstanceCreatorOpen: true } viewModel)
-        {
-            viewModel.CloseInstanceCreatorCommand.Execute(null);
-            return true;
-        }
 
         return _layoutHost.TryCloseDetail();
     }
@@ -306,6 +318,9 @@ public sealed partial class InstancesView : UserControl
     public bool TryNavigateBack()
     {
         if (TryCloseModCatalogPreview() || TryCloseModCatalogInstallConfirmation())
+            return true;
+
+        if (_creatorWizard.TryNavigateBack())
             return true;
 
         if (DataContext is InstancesViewModel { IsInstanceOverviewSection: false } viewModel)
@@ -374,6 +389,7 @@ public sealed partial class InstancesView : UserControl
                 {
                     _creatorWizard.ShowOverviewImmediately();
                     _creatorOpenedFromCompactList = false;
+                    (DataContext as InstancesViewModel)?.CompleteInstanceCreatorClose();
                 }
 
                 return;
@@ -390,6 +406,7 @@ public sealed partial class InstancesView : UserControl
                     }
 
                     _creatorOpenedFromCompactList = false;
+                    (DataContext as InstancesViewModel)?.CompleteInstanceCreatorClose();
                 });
         }
         finally
@@ -409,6 +426,7 @@ public sealed partial class InstancesView : UserControl
         _creatorTransitionActive = false;
         _creatorOpenedFromCompactList = false;
         _creatorWizard.ShowOverviewImmediately();
+        (DataContext as InstancesViewModel)?.CompleteInstanceCreatorClose();
         if (!_layoutHost.IsCompact &&
             DataContext is InstancesViewModel { HasInstances: true })
         {

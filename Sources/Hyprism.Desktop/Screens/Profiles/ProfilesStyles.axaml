@@ -112,31 +112,6 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
     </Style>
 
-    <Style Selector="TextBox.profileInput">
-      <Setter Property="MinHeight" Value="44" />
-      <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
-      <Setter Property="BorderBrush" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="CornerRadius" Value="11" />
-      <Setter Property="Padding" Value="13,8" />
-      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    </Style>
-
-    <Style Selector="TextBox.profileInput /template/ Border#PART_BorderElement">
-      <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
-      <Setter Property="BorderBrush" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="CornerRadius" Value="11" />
-    </Style>
-
-    <Style Selector="TextBox.profileInput:pointerover /template/ Border#PART_BorderElement">
-      <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
-    </Style>
-
-    <Style Selector="TextBox.profileInput:focus /template/ Border#PART_BorderElement">
-      <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-    </Style>
-
     <Style Selector="Button.officialSignInAction">
       <Setter Property="Width" Value="150" />
       <Setter Property="CornerRadius" Value="14" />

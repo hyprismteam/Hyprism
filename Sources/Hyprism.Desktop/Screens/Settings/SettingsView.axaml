@@ -74,7 +74,7 @@ SPDX-License-Identifier: GPL-3.0-only
         <StackPanel Classes="managedActionIdle"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-          <TextBlock Text="{Binding AddSourceLabel}" />
+          <TextBlock Text="{Binding AddSourceButtonLabel}" TextWrapping="NoWrap" />
         </StackPanel>
         <Grid Classes="managedActionProgress" VerticalAlignment="Center">
           <Path Classes="managedActionSpinner"
@@ -352,8 +352,8 @@ SPDX-License-Identifier: GPL-3.0-only
                           Classes="formNavigationRow"
                           Click="OnBeginAutomaticSourceAdditionClicked">
                     <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="sourceWizardChoiceIcon">
-                        <Path Width="21" Height="21" Data="{StaticResource DownloadIcon}" />
+                      <Border Classes="wizardChoiceIcon">
+                        <Path Data="{StaticResource SearchIcon}" />
                       </Border>
                       <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <TextBlock Text="{Binding AutomaticSourceLabel}" Classes="formLabel" />
@@ -372,8 +372,10 @@ SPDX-License-Identifier: GPL-3.0-only
                           Classes="formNavigationRow last"
                           Click="OnBeginManualSourceAdditionClicked">
                     <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="sourceWizardChoiceIcon">
-                        <Path Width="21" Height="21" Data="{StaticResource SettingsIcon}" />
+                      <Border Classes="wizardChoiceIcon">
+                        <Path Data="{StaticResource DataObjectIcon}">
+                          <Path.RenderTransform><TranslateTransform Y="2" /></Path.RenderTransform>
+                        </Path>
                       </Border>
                       <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <TextBlock Text="{Binding ManualSourceLabel}" Classes="formLabel" />
@@ -468,22 +470,20 @@ SPDX-License-Identifier: GPL-3.0-only
                          TextAlignment="Center"
                          TextWrapping="Wrap" />
 
-              <StackPanel Margin="0,16,0,0" Spacing="8">
-                <TextBlock Text="{Binding ManualSourceJsonLabel}" Classes="formLabel" />
-                <controls:ModalTextField Classes="multiline"
-                                         IsError="{Binding IsManualMirrorInputError}"
-                                         ErrorMessage="{Binding ManualMirrorInputErrorMessage}">
-                  <TextBox x:Name="ManualMirrorJsonTextBox"
-                           Classes="sourceJsonEditor"
-                           Text="{Binding ManualMirrorJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                           PlaceholderText="{Binding ManualSourceJsonPlaceholder}"
-                           AcceptsReturn="True"
-                           TextWrapping="NoWrap"
-                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                           IsEnabled="{Binding !IsMirrorOperationBusy}" />
-                </controls:ModalTextField>
-              </StackPanel>
+              <controls:ModalTextField Classes="multiline"
+                                       Margin="0,16,0,0"
+                                       IsError="{Binding IsManualMirrorInputError}"
+                                       ErrorMessage="{Binding ManualMirrorInputErrorMessage}">
+                <TextBox x:Name="ManualMirrorJsonTextBox"
+                         Classes="sourceJsonEditor"
+                         Text="{Binding ManualMirrorJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="{Binding ManualSourceJsonPlaceholder}"
+                         AcceptsReturn="True"
+                         TextWrapping="NoWrap"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         IsEnabled="{Binding !IsMirrorOperationBusy}" />
+              </controls:ModalTextField>
               <TextBlock Text="{Binding MirrorOperationError}"
                          Classes="sourceOperationError"
                          TextAlignment="Center"

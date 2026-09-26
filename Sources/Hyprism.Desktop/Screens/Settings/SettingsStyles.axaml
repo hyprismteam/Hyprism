@@ -955,18 +955,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <!-- Screen-specific wizard styles -->
 
-  <Style Selector="settings|SettingsView Border.sourceWizardChoiceIcon">
-    <Setter Property="Width" Value="44" />
-    <Setter Property="Height" Value="44" />
-    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
-    <Setter Property="CornerRadius" Value="999" />
-  </Style>
-  <Style Selector="settings|SettingsView Border.sourceWizardChoiceIcon Path">
-    <Setter Property="HorizontalAlignment" Value="Center" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="Stretch" Value="Uniform" />
-    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
-  </Style>
   <Style Selector="settings|SettingsView TextBox.sourceJsonEditor">
     <Setter Property="Height" Value="260" />
     <Setter Property="FontFamily" Value="monospace" />

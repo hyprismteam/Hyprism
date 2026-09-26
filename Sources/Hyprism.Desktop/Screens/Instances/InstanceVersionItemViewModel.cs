@@ -25,7 +25,13 @@ public sealed record InstanceVersionItemViewModel(int Version, bool IsSelected)
     public string? VersionName { get; init; }
 
     /// <summary>
-    /// Gets the display label for the version.
+    /// Gets the game version shown beside the numeric build when available.
     /// </summary>
-    public string Label => string.IsNullOrWhiteSpace(VersionName) ? Version.ToString() : VersionName;
+    public string? GameVersionLabel => string.IsNullOrWhiteSpace(VersionName) ||
+                                       VersionName.TrimStart().StartsWith("build", StringComparison.OrdinalIgnoreCase) ||
+                                       VersionName.Trim() == Version.ToString()
+        ? null
+        : $"({VersionName.Trim()})";
+
+    public bool HasGameVersionLabel => GameVersionLabel is not null;
 }
