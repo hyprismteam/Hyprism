@@ -29,10 +29,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>세그먼트 컨트롤</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>최신 Hyprism을 다운로드 폴더에 다운로드했습니다.</value>
+    <value>최신 Hyprism을 다운로드 폴더에 다운로드했습니다</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>설치를 위해 파일을 열려고 시도했습니다. 열리지 않으면 다운로드로 이동하여 수동으로 실행하세요.</value>
+    <value>설치를 위해 파일을 열려고 시도했습니다. 열리지 않으면 다운로드로 이동하여 수동으로 실행하세요</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Hyprism 인스턴스를 저장할 전체 경로를 입력하세요:</value>
@@ -61,7 +61,7 @@ SPDX-License-Identifier: GPL-3.0-only
 • 런처 설정
 • WebView2 (EBWebView 폴더)
 
-드라이브를 전환하는 경우 게임을 다시 설치해야 할 수 있습니다.</value>
+드라이브를 전환하는 경우 게임을 다시 설치해야 할 수 있습니다</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>잘못된 닉네임</value>
@@ -70,7 +70,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>닉네임은 1-16자 사이여야 합니다</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>경로를 사용할 수 없습니다. 경로가 존재하고 쓰기 권한이 있는지 확인하세요.</value>
+    <value>경로를 사용할 수 없습니다. 경로가 존재하고 쓰기 권한이 있는지 확인하세요</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -202,7 +202,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>게임 설치</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>사용자 데이터 및 스킨 프리셋은 보존됩니다.</value>
+    <value>사용자 데이터 및 스킨 프리셋은 보존됩니다</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>게임을 삭제하시겠습니까?</value>
@@ -217,7 +217,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>취소</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>이 작업은 되돌릴 수 없습니다.</value>
+    <value>이 작업은 되돌릴 수 없습니다</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>프로필 삭제</value>
@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>스킨 및 아바타</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>프로필을 삭제하시겠습니까?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>확인</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>다음을 포함한 모든 프로필 데이터가 영구적으로 삭제됩니다:</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>인스턴스 편집</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>이 인스턴스의 이름 또는 아이콘을 변경합니다</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>편집</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>이름은 1~64자, 설명은 최대 2000자로 입력하세요</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>인스턴스 아이콘</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>올바른 PNG 또는 JPEG 이미지를 선택하세요</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>인스턴스 변경 사항을 저장할 수 없습니다</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>인스턴스 내보내기 실패</value>
@@ -439,7 +454,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>버전을 변경하면 게임 파일이 삭제됩니다</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>게임 클라이언트가 삭제되며 이 버전을 다시 다운로드해야 합니다. 저장 파일과 모드 같은 사용자 데이터는 유지됩니다.</value>
+    <value>게임 클라이언트가 삭제되며 이 버전을 다시 다운로드해야 합니다. 저장 파일과 모드 같은 사용자 데이터는 유지됩니다</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>언어 변경</value>
@@ -685,7 +700,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>교육 목적입니다. 마음에 드시나요?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>교육 목적 전용.</value>
+    <value>교육 목적 전용</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>종료</value>
@@ -766,7 +781,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>제작자</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>백엔드가 이 모드 설치를 거부했습니다. 다시 시도하세요.</value>
+    <value>백엔드가 이 모드 설치를 거부했습니다. 다시 시도하세요</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>모드 찾아보기</value>
@@ -832,7 +847,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>닫기</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>{{count}}개 모드를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</value>
+    <value>{{count}}개 모드를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>{{count}}개 모드를 다운로드하시겠습니까?</value>
@@ -943,7 +958,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>모드 목록 가져오는 중...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>모드 설치 실패. 다시 시도하세요.</value>
+    <value>모드 설치 실패. 다시 시도하세요</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>선택 항목 설치</value>
@@ -1006,7 +1021,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>설명 없음</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>선택한 모드에 다운로드 가능한 파일이 없습니다.</value>
+    <value>선택한 모드에 다운로드 가능한 파일이 없습니다</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>사용 가능한 파일 없음</value>
@@ -1243,22 +1258,22 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>인증 중...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Hytale 계정에서 프로필을 생성하지 못했습니다.</value>
+    <value>Hytale 계정에서 프로필을 생성하지 못했습니다</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Hytale 계정으로 로그인하세요. 게임을 아직 구매하지 않은 경우 건너뛰기를 클릭하세요.</value>
+    <value>Hytale 계정으로 로그인하세요. 게임을 아직 구매하지 않은 경우 건너뛰기를 클릭하세요</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>인증 중 오류가 발생했습니다.</value>
+    <value>인증 중 오류가 발생했습니다</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>인증 실패. 다시 시도하세요.</value>
+    <value>인증 실패. 다시 시도하세요</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Hytale로 로그인</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>계정에 아직 Hytale 액세스 권한이 없습니다. 공식 웹사이트에서 게임을 구매할 수 있습니다.</value>
+    <value>계정에 아직 Hytale 액세스 권한이 없습니다. 공식 웹사이트에서 게임을 구매할 수 있습니다</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>건너뛰기</value>
@@ -1291,7 +1306,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>모양 사용자 정의</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism은 Hytale의 비공식 런처입니다. 이 프로젝트는 Hypixel Studios와 관련이 없습니다.</value>
+    <value>Hyprism은 Hytale의 비공식 런처입니다. 이 프로젝트는 Hypixel Studios와 관련이 없습니다</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>런처 시작</value>
@@ -1351,7 +1366,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>위치</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>게임 인스턴스를 저장할 위치를 선택하세요. 기본값으로 두거나 사용자 정의 위치를 선택할 수 있습니다.</value>
+    <value>게임 인스턴스를 저장할 위치를 선택하세요. 기본값으로 두거나 사용자 정의 위치를 선택할 수 있습니다</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>관리자 및 개발자</value>
@@ -1438,7 +1453,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>사용자명</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16자여야 합니다</value>
+    <value>3-16자여야 합니다</value>
+  </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>사용자 이름을 입력하세요</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>사용자 이름은 3자 이상이어야 합니다</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>사용자 이름은 16자를 초과할 수 없습니다</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>영문자, 숫자, 하이픈, 밑줄만 사용하세요</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1446,11 +1473,20 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>프로필의 고유 식별자</value>
   </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>UUID를 입력하세요</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>올바른 UUID를 입력하세요. 예: 12345678-1234-1234-1234-123456789abc</value>
+  </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>UUID 복사</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>새 프로필 생성</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>프로필을 삭제하지 못했습니다</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>프로필 삭제</value>
@@ -1506,9 +1542,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>UUID 저장</value>
   </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>프로필 저장됨!</value>
-  </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>저장된 프로필</value>
   </data>
@@ -1516,19 +1549,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>프로필</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>브라우저에서 Hytale 로그인 페이지로 리디렉션됩니다. 로그인 후 프로필이 자동으로 생성됩니다.</value>
+    <value>브라우저에서 Hytale 로그인 페이지로 리디렉션됩니다. 로그인 후 프로필이 자동으로 생성됩니다</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>로그인 중 오류가 발생했습니다. 다시 시도하세요.</value>
+    <value>로그인 중 오류가 발생했습니다. 다시 시도하세요</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>로그인이 완료되지 않았습니다. 다시 시도하세요.</value>
+    <value>로그인이 완료되지 않았습니다. 다시 시도하세요</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Hytale로 로그인</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>브라우저에서 로그인을 완료하세요. 이 창은 자동으로 업데이트됩니다.</value>
+    <value>브라우저에서 로그인을 완료하세요. 이 창은 자동으로 업데이트됩니다</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>자</value>
@@ -1540,10 +1573,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>프로필 생성</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>프로필 생성 중 오류가 발생했습니다.</value>
+    <value>프로필 생성 중 오류가 발생했습니다</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>프로필 생성에 실패했습니다. 다시 시도하세요.</value>
+    <value>프로필 생성에 실패했습니다. 다시 시도하세요</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>로그인</value>
@@ -1558,13 +1591,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>닉네임 선택</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>닉네임은 3-16자여야 합니다: 영문, 숫자, 대시 또는 밑줄.</value>
+    <value>닉네임은 3-16자여야 합니다: 영문, 숫자, 대시 또는 밑줄</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>A-Z, 0-9, -와 _만 가능</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Hytale 계정에 아직 게임 프로필이 없습니다. 처음 게임에 접속할 때 프로필이 생성됩니다.</value>
+    <value>Hytale 계정에 아직 게임 프로필이 없습니다. 처음 게임에 접속할 때 프로필이 생성됩니다</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>공식 Hytale 계정</value>
@@ -1624,7 +1657,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Hytale을 위한 현대적인 런처</value>
   </data>
   <data name="settings.aboutSettings.disclaimer" xml:space="preserve">
-    <value>Hyprism은 Hytale의 비공식 런처입니다. 이 프로젝트는 Hypixel Studios와 관련이 없습니다.</value>
+    <value>Hyprism은 Hytale의 비공식 런처입니다. 이 프로젝트는 Hypixel Studios와 관련이 없습니다</value>
   </data>
   <data name="settings.aboutSettings.builtWith" xml:space="preserve">
     <value>사용 기술</value>
@@ -1696,10 +1729,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>게임 디렉토리</value>
   </data>
   <data name="settings.dataSettings.gameDirectoryHint" xml:space="preserve">
-    <value>설치된 게임 인스턴스가 저장되는 위치입니다.</value>
+    <value>설치된 게임 인스턴스가 저장되는 위치입니다</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>게임이 실행 중일 때 일부 옵션을 사용할 수 없습니다. 이 설정을 변경하려면 게임을 종료하세요.</value>
+    <value>게임이 실행 중일 때 일부 옵션을 사용할 수 없습니다. 이 설정을 변경하려면 게임을 종료하세요</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>인스턴스 폴더</value>
@@ -1711,7 +1744,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>런처 데이터 폴더</value>
   </data>
   <data name="settings.dataSettings.launcherDataHint" xml:space="preserve">
-    <value>런처 구성 및 자산이 저장되는 위치입니다.</value>
+    <value>런처 구성 및 자산이 저장되는 위치입니다</value>
   </data>
   <data name="settings.dataSettings.launcherFiles" xml:space="preserve"><value>런처 파일</value></data>
   <data name="settings.dataSettings.storageUsed" xml:space="preserve"><value>사용 공간</value></data>
@@ -1735,13 +1768,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>데이터 관리</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>설정, 캐시, 다운로드한 파일을 포함한 모든 런처 데이터가 삭제됩니다. 이 작업은 취소할 수 없습니다.</value>
+    <value>설정, 캐시, 다운로드한 파일을 포함한 모든 런처 데이터가 삭제됩니다. 이 작업은 취소할 수 없습니다</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>모든 데이터를 삭제하시겠습니까?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>{{branch}} {{version}} 인스턴스와 모든 데이터가 삭제됩니다. 이 작업은 취소할 수 없습니다.</value>
+    <value>{{branch}} {{version}} 인스턴스와 모든 데이터가 삭제됩니다. 이 작업은 취소할 수 없습니다</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>인스턴스를 삭제하시겠습니까?</value>
@@ -1768,7 +1801,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>활성화</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>형식: header=value 또는 header="공백이 있는 값". 공식 User-Agent에는 {hytaleAgent}를 사용하세요.</value>
+    <value>형식: header=value 또는 header="공백이 있는 값". 공식 User-Agent에는 {hytaleAgent}를 사용하세요</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>사용자 정의 헤더 (선택사항): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1777,10 +1810,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>다운로드 작동 방식</value>
   </data>
   <data name="settings.downloads.howDownloadsWorkDescription" xml:space="preserve">
-    <value>Hyprism은 게임 파일을 다운로드하기 위해 가장 빠른 소스를 자동으로 선택합니다. "속도 테스트"를 눌러 연결을 확인하세요.</value>
+    <value>Hyprism은 게임 파일을 다운로드하기 위해 가장 빠른 소스를 자동으로 선택합니다. "속도 테스트"를 눌러 연결을 확인하세요</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Hytale 미러의 기본 URL을 입력하세요. 런처가 구성을 자동으로 감지합니다.</value>
+    <value>Hytale 미러의 기본 URL을 입력하세요. 런처가 구성을 자동으로 감지합니다</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>커뮤니티 미러</value>
@@ -1849,7 +1882,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>런처 저장소</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>런처 데이터와 게임 파일이 저장되는 위치입니다.</value>
+    <value>런처 데이터와 게임 파일이 저장되는 위치입니다</value>
   </data>
   <data name="settings.generalSettings.showAlphaMods" xml:space="preserve">
     <value>알파 모드 표시</value>
@@ -1909,7 +1942,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>게임 성능 향상을 위한 최적화 모드 다운로드 및 설치</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>GPU가 하나만 감지됨 — 자동 모드로 잠김.</value>
+    <value>GPU가 하나만 감지됨 — 자동 모드로 잠김</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>그래픽 설정</value>
@@ -1936,7 +1969,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>인스턴스 삭제</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>설치된 게임 버전을 관리합니다.</value>
+    <value>설치된 게임 버전을 관리합니다</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>ZIP 또는 PWR을 드롭하여 인스턴스 가져오기</value>
@@ -2101,7 +2134,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>런처 인터페이스에 선호하는 언어를 선택하세요</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>참고: 전체 현지화가 완료될 때까지 일부 텍스트는 영어로 유지될 수 있습니다. 개발자들이 모든 사용자가 즐겁게 사용할 수 있도록 런처를 적극적으로 현지화하고 있습니다.</value>
+    <value>참고: 전체 현지화가 완료될 때까지 일부 텍스트는 영어로 유지될 수 있습니다. 개발자들이 모든 사용자가 즐겁게 사용할 수 있도록 런처를 적극적으로 현지화하고 있습니다</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>언어 선택</value>
@@ -2134,7 +2167,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>인증 서버</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>온라인 플레이 인증에 사용할 서버 주소를 입력하세요.</value>
+    <value>온라인 플레이 인증에 사용할 서버 주소를 입력하세요</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>예: sessions.example.com</value>
@@ -2161,7 +2194,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>표시 이름</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>게임 내 이름 (1-16자).</value>
+    <value>게임 내 이름 (1-16자)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>Hytale에는 특정 닉네임 패턴이 있습니다. 특수 기호와 공백을 피하고 영어 문자와 숫자(0-9)만 사용하십시오 (예외: '-', '_')</value>
@@ -2281,7 +2314,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>게임이 준비되면 자동으로 실행됩니다.</value>
+    <value>게임이 준비되면 자동으로 실행됩니다</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>다운로드 중...</value>
@@ -2293,7 +2326,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>실행 중...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>게임 파일을 다운로드하고 설치하는 동안 기다려 주세요.</value>
+    <value>게임 파일을 다운로드하고 설치하는 동안 기다려 주세요</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>저장된 데이터를 새 버전으로 복사하시겠습니까?</value>
@@ -2302,7 +2335,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>현재 버전</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>새 게임 버전을 사용할 수 있습니다. 현재 버전에는 저장된 데이터(설정, 모드 등)가 있습니다.</value>
+    <value>새 게임 버전을 사용할 수 있습니다. 현재 버전에는 저장된 데이터(설정, 모드 등)가 있습니다</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>새 버전</value>
@@ -2323,7 +2356,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>복사 없이 업데이트</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>업데이트가 완료되면 런처가 자동으로 다시 시작됩니다.</value>
+    <value>업데이트가 완료되면 런처가 자동으로 다시 시작됩니다</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>업데이트 실패</value>
@@ -2332,7 +2365,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>설치 중</value>
   </data>
   <data name="updateOverlay.message" xml:space="preserve">
-    <value>Hyprism의 최신 버전을 다운로드하고 설치하는 동안 기다려 주세요.</value>
+    <value>Hyprism의 최신 버전을 다운로드하고 설치하는 동안 기다려 주세요</value>
   </data>
   <data name="updateOverlay.title" xml:space="preserve">
     <value>런처 업데이트 중</value>
@@ -2440,10 +2473,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>삭제</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>"{0}" 및 모든 데이터를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>인스턴스를 삭제하시겠습니까?</value>
+    <value>"{0}" 및 모든 데이터를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>설치</value>
@@ -2473,7 +2503,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>GitHub에서 릴리스를 보려면 클릭</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>기사를 불러올 수 없습니다. 그래도 hytale.com에서 열 수 있습니다.</value>
+    <value>기사를 불러올 수 없습니다. 그래도 hytale.com에서 열 수 있습니다</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>기사 불러오는 중...</value>
@@ -2488,7 +2518,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>더 보기</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>여기에서 읽으려면 뉴스 항목을 선택하세요.</value>
+    <value>여기에서 읽으려면 뉴스 항목을 선택하세요</value>
   </data>
   <data name="onboarding.warning.back" xml:space="preserve">
     <value>로그인으로 돌아가기</value>
@@ -2497,13 +2527,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>계속</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Hytale 계정이 없으면 공식 서버에서 게임 파일을 다운로드할 수 없습니다.</value>
+    <value>Hytale 계정이 없으면 공식 서버에서 게임 파일을 다운로드할 수 없습니다</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>다운로드할 수 있는 웹 리소스가 없습니다</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>게임을 다운로드하려면 설정 → 다운로드에서 미러를 추가하거나 나중에 Hytale 계정으로 로그인해야 합니다.</value>
+    <value>게임을 다운로드하려면 설정 → 다운로드에서 미러를 추가하거나 나중에 Hytale 계정으로 로그인해야 합니다</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>다운로드 소스 없음</value>
@@ -2683,7 +2713,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>URL 템플릿</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>공식 서버를 사용할 수 없을 때 게임 파일의 대체 소스로 커뮤니티 미러가 사용됩니다.</value>
+    <value>공식 서버를 사용할 수 없을 때 게임 파일의 대체 소스로 커뮤니티 미러가 사용됩니다</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>미러 설정</value>
@@ -2710,13 +2740,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>확인 중...</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>공식 서버는 항상 사용 가능한 것으로 간주됩니다.</value>
+    <value>공식 서버는 항상 사용 가능한 것으로 간주됩니다</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>오프라인</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>인증 서버에 연결할 수 없습니다. 온라인 모드가 일시적으로 비활성화되었습니다.</value>
+    <value>인증 서버에 연결할 수 없습니다. 온라인 모드가 일시적으로 비활성화되었습니다</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>온라인</value>
@@ -2728,13 +2758,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>인증 서버 상태</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>인증 서버가 연결 가능한지 확인하세요.</value>
+    <value>인증 서버가 연결 가능한지 확인하세요</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>공식 계정은 공식 Hytale 인증만 사용할 수 있습니다.</value>
+    <value>공식 계정은 공식 Hytale 인증만 사용할 수 있습니다</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>비공식 계정은 공식 Hytale 인증을 사용할 수 없습니다.</value>
+    <value>비공식 계정은 공식 Hytale 인증을 사용할 수 없습니다</value>
   </data>
   <data name="desktopSettings.categories.language" xml:space="preserve">
     <value>언어</value>

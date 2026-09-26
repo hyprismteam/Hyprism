@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>皮肤和头像</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>删除配置文件？</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>确认</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>这将永久删除所有配置文件数据，包括：</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>编辑实例</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>更改此实例的名称或图标</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>请输入 1 至 64 个字符的名称和不超过 2000 个字符的描述。</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>实例图标</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>请选择有效的 PNG 或 JPEG 图像。</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>无法保存实例更改。</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>导出实例失败</value>
@@ -1438,7 +1453,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>用户名</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>必须是 1-16 个字符</value>
+    <value>必须是 3-16 个字符</value>
+  </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>请输入用户名。</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>用户名至少需要 3 个字符。</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>用户名不能超过 16 个字符。</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>只能使用英文字母、数字、连字符和下划线。</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1446,11 +1473,20 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>配置文件的唯一标识符</value>
   </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>请输入 UUID。</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>请输入有效的 UUID，例如 12345678-1234-1234-1234-123456789abc。</value>
+  </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>复制 UUID</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>创建新配置文件</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>无法删除配置文件。</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>删除配置文件</value>
@@ -1505,9 +1541,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>保存 UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>配置文件已保存！</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>已保存的配置文件</value>
@@ -2441,9 +2474,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>删除 "{0}" 及其所有数据？此操作无法撤销。</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>删除实例？</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>安装</value>

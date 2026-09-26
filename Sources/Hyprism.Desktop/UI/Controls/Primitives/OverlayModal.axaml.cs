@@ -146,6 +146,9 @@ public sealed partial class OverlayModal : UserControl
         if (!_initialized)
             return;
 
+        if (change.Property == IsVisibleProperty)
+            UpdateFrameBorder();
+
         if (change.Property == IsOpenProperty)
         {
             if (change.GetNewValue<bool>())
@@ -161,14 +164,22 @@ public sealed partial class OverlayModal : UserControl
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        UpdateFrameBorder(excludeSelf: true);
         CancelAnimation();
         RestoreBackdrop();
         base.OnDetachedFromVisualTree(e);
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        UpdateFrameBorder();
+    }
+
     private async Task ShowAsync()
     {
         var cancellationToken = ReplaceAnimationCancellation();
+        _restoreFocusElement = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         ActivateBackdrop();
         OverlayModalBackdrop.Opacity = 0;
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = HiddenOffset;
@@ -229,6 +240,19 @@ public sealed partial class OverlayModal : UserControl
             ActivateBackdrop();
         else
             RestoreBackdrop();
+    }
+
+    private void UpdateFrameBorder(bool excludeSelf = false)
+    {
+        var frame = this.GetVisualAncestors()
+            .OfType<Border>()
+            .FirstOrDefault(border => border.Classes.Contains("mainSceneFrame"));
+        if (frame is null)
+            return;
+
+        frame.Classes.Set("bottomSheetOpen", frame.GetVisualDescendants()
+            .OfType<OverlayModal>()
+            .Any(modal => modal.IsVisible && (!excludeSelf || !ReferenceEquals(modal, this))));
     }
 
     private void ActivateBackdrop()

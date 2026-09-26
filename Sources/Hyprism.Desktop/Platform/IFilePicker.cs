@@ -42,4 +42,7 @@ public interface IFilePicker
     /// </summary>
     /// <returns>The selected local path, or <see langword="null"/> when cancelled</returns>
     Task<string?> BrowseInstanceArchiveAsync();
+
+    /// <summary>Selects a PNG or JPEG image for an instance icon</summary>
+    Task<string?> BrowseImageAsync(string title);
 }

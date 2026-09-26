@@ -373,6 +373,47 @@ public sealed class ProfilesViewModelTests
     }
 
     [Fact]
+    public void ConfirmProfileDeletion_KeepsConfirmationOpenUntilDeletionSucceeds()
+    {
+        var profiles = new List<Profile>
+        {
+            new() { Id = "active", Name = "Active", UUID = Guid.NewGuid().ToString() },
+            new() { Id = "inactive", Name = "Inactive", UUID = Guid.NewGuid().ToString() }
+        };
+        var profileManager = new Mock<IProfileManager>();
+        var profileRepository = new Mock<IProfileRepository>();
+        var uriLauncher = new Mock<IExternalUriLauncher>();
+        profileRepository.Setup(repository => repository.GetProfiles()).Returns(profiles);
+        profileRepository.Setup(repository => repository.GetSelectedProfileId()).Returns("active");
+        profileRepository.SetupSequence(repository => repository.DeleteProfile("inactive"))
+            .Returns(false)
+            .Returns(true);
+
+        using var viewModel = new ProfilesViewModel(
+            profileManager.Object,
+            profileRepository.Object,
+            uriLauncher.Object,
+            new StringLocalizer("en-US"));
+
+        viewModel.RequestProfileDeletionCommand.Execute(
+            viewModel.Profiles.Single(profile => profile.Id == "inactive"));
+        profileRepository.Verify(repository => repository.DeleteProfile(It.IsAny<string>()), Times.Never);
+
+        viewModel.ConfirmProfileDeletionCommand.Execute(null);
+        Assert.True(viewModel.HasPendingProfileDeletion);
+        Assert.True(viewModel.IsStatusError);
+        Assert.Equal("Could not delete the profile", viewModel.StatusMessage);
+
+        viewModel.ConfirmProfileDeletionCommand.Execute(null);
+        Assert.False(viewModel.IsProfileDeletionOpen);
+        Assert.True(viewModel.HasPendingProfileDeletion);
+        viewModel.CompleteProfileDeletionClose();
+        Assert.False(viewModel.HasPendingProfileDeletion);
+        Assert.False(viewModel.IsStatusError);
+        profileRepository.Verify(repository => repository.DeleteProfile("inactive"), Times.Exactly(2));
+    }
+
+    [Fact]
     public async Task OpenProfileFolder_UsesDisplayedProfileInsteadOfActiveProfile()
     {
         var profiles = new List<Profile>

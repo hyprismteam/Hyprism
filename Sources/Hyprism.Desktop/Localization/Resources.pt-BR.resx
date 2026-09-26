@@ -29,10 +29,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Controle segmentado</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>A última versão do Hyprism foi baixada na pasta Downloads.</value>
+    <value>A última versão do Hyprism foi baixada na pasta Downloads</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>Tentamos abrir o arquivo para você instalar. Se não abriu, vá até Downloads e execute o arquivo manualmente.</value>
+    <value>Tentamos abrir o arquivo para você instalar. Se não abriu, vá até Downloads e execute o arquivo manualmente</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Digite o caminho completo onde você quer armazenar as instâncias do Hyprism:</value>
@@ -61,7 +61,7 @@ Nota: Os seguintes itens permanecem no AppData:
 • Configurações do launcher
 • WebView2 (pasta EBWebView)
 
-Você pode precisar reinstalar o jogo se trocar de unidade.</value>
+Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>Apelido Inválido</value>
@@ -70,7 +70,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>O apelido deve ter entre 1 e 16 caracteres</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>O caminho não pôde ser usado. Verifique se ele existe e se você tem permissão de escrita.</value>
+    <value>O caminho não pôde ser usado. Verifique se ele existe e se você tem permissão de escrita</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -202,7 +202,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Instalação do jogo</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>Seus dados de usuário e presets de skin serão preservados.</value>
+    <value>Seus dados de usuário e presets de skin serão preservados</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>Excluir Jogo?</value>
@@ -217,7 +217,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Cancelar</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>Esta ação não pode ser desfeita.</value>
+    <value>Esta ação não pode ser desfeita</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>Excluir Perfil</value>
@@ -246,8 +246,8 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin e avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Excluir Perfil?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Confirmação</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Isso excluirá permanentemente todos os dados do perfil, incluindo:</value>
@@ -336,8 +336,23 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Editar Instância</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Alterar o nome ou ícone desta instância</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Digite um nome de 1 a 64 caracteres e uma descrição de até 2000 caracteres</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Ícone da instância</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Selecione uma imagem PNG ou JPEG válida</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Não foi possível salvar as alterações da instância</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Falha ao exportar instância</value>
@@ -439,7 +454,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Alterar a versão removerá os arquivos do jogo</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>O cliente do jogo será excluído e você precisará baixar esta versão novamente. Os dados do usuário, como saves e mods, serão mantidos.</value>
+    <value>O cliente do jogo será excluído e você precisará baixar esta versão novamente. Os dados do usuário, como saves e mods, serão mantidos</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>Mudar Idioma</value>
@@ -685,7 +700,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Apenas fins educativos. Curtiu?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>Apenas para fins educacionais.</value>
+    <value>Apenas para fins educacionais</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>SAIR</value>
@@ -766,7 +781,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Autor</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>O backend recusou a instalação deste mod. Por favor, tente novamente.</value>
+    <value>O backend recusou a instalação deste mod. Por favor, tente novamente</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>Explorar Mods</value>
@@ -832,7 +847,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Fechar</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>Tem certeza que deseja excluir {{count}} mod(s)? Isso não pode ser desfeito.</value>
+    <value>Tem certeza que deseja excluir {{count}} mod(s)? Isso não pode ser desfeito</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>Tem certeza que deseja baixar {{count}} mod(s)?</value>
@@ -943,7 +958,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Importando lista de mods...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>Falha ao instalar mods. Por favor, tente novamente.</value>
+    <value>Falha ao instalar mods. Por favor, tente novamente</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>Instalar Selecionados</value>
@@ -1006,7 +1021,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Sem descrição</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>Nenhum arquivo para download encontrado para os mods selecionados.</value>
+    <value>Nenhum arquivo para download encontrado para os mods selecionados</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>Nenhum arquivo disponível</value>
@@ -1243,22 +1258,22 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Autenticando...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Falha ao criar perfil a partir da conta Hytale.</value>
+    <value>Falha ao criar perfil a partir da conta Hytale</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Faça login com sua conta Hytale. Se você ainda não comprou o jogo, clique em Pular.</value>
+    <value>Faça login com sua conta Hytale. Se você ainda não comprou o jogo, clique em Pular</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>Ocorreu um erro durante a autenticação.</value>
+    <value>Ocorreu um erro durante a autenticação</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>Autenticação falhou. Por favor, tente novamente.</value>
+    <value>Autenticação falhou. Por favor, tente novamente</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Entrar com Hytale</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>Sua conta ainda não tem acesso ao Hytale. Você pode comprar o jogo no site oficial.</value>
+    <value>Sua conta ainda não tem acesso ao Hytale. Você pode comprar o jogo no site oficial</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>Pular</value>
@@ -1291,7 +1306,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Personalizar aparência</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism é um launcher não oficial para Hytale. Este projeto não é afiliado à Hypixel Studios.</value>
+    <value>Hyprism é um launcher não oficial para Hytale. Este projeto não é afiliado à Hypixel Studios</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>Entrar no Launcher</value>
@@ -1351,7 +1366,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Localização</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>Selecione onde armazenar suas instâncias do jogo. Você pode deixar como padrão ou escolher um local personalizado.</value>
+    <value>Selecione onde armazenar suas instâncias do jogo. Você pode deixar como padrão ou escolher um local personalizado</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>Mantenedor &amp; Desenvolvedor</value>
@@ -1438,7 +1453,19 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Usuário</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 caracteres</value>
+    <value>3-16 caracteres</value>
+  </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>Digite um nome de usuário</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>O nome de usuário deve ter pelo menos 3 caracteres</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>O nome de usuário não pode ter mais de 16 caracteres</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>Use apenas letras latinas, números, hífens e sublinhados</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1446,11 +1473,20 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>ID único</value>
   </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>Digite um UUID</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>Digite um UUID válido, por exemplo 12345678-1234-1234-1234-123456789abc</value>
+  </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>Copiar UUID</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Criar Novo Perfil</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Não foi possível excluir o perfil</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Excluir Perfil</value>
@@ -1506,9 +1542,6 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Salvar UUID</value>
   </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Perfil salvo!</value>
-  </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Perfis Salvos</value>
   </data>
@@ -1516,19 +1549,19 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Perfis</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>Você será redirecionado para a página de login do Hytale no seu navegador. Após entrar, seu perfil será criado automaticamente.</value>
+    <value>Você será redirecionado para a página de login do Hytale no seu navegador. Após entrar, seu perfil será criado automaticamente</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>Ocorreu um erro durante o login. Por favor, tente novamente.</value>
+    <value>Ocorreu um erro durante o login. Por favor, tente novamente</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>O login não foi concluído. Por favor, tente novamente.</value>
+    <value>O login não foi concluído. Por favor, tente novamente</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Entrar com Hytale</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>Complete o login no seu navegador. Esta janela será atualizada automaticamente.</value>
+    <value>Complete o login no seu navegador. Esta janela será atualizada automaticamente</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>caracteres</value>
@@ -1540,10 +1573,10 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Criar Perfil</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>Ocorreu um erro ao criar o perfil.</value>
+    <value>Ocorreu um erro ao criar o perfil</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>Falha ao criar o perfil. Por favor, tente novamente.</value>
+    <value>Falha ao criar o perfil. Por favor, tente novamente</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>Entrar</value>
@@ -1558,13 +1591,13 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Escolha um Apelido</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>O apelido deve ter 3-16 caracteres: letras inglesas, dígitos, hífen ou sublinhado.</value>
+    <value>O apelido deve ter 3-16 caracteres: letras inglesas, dígitos, hífen ou sublinhado</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>Apenas A-Z, 0-9, - e _</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Sua conta Hytale ainda não possui perfis de jogo. Um perfil será criado quando você acessar o jogo pela primeira vez.</value>
+    <value>Sua conta Hytale ainda não possui perfis de jogo. Um perfil será criado quando você acessar o jogo pela primeira vez</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>Conta Oficial Hytale</value>
@@ -1624,7 +1657,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Um launcher moderno para Hytale</value>
   </data>
   <data name="settings.aboutSettings.disclaimer" xml:space="preserve">
-    <value>Hyprism é um launcher não oficial para Hytale. Este projeto não é afiliado à Hypixel Studios.</value>
+    <value>Hyprism é um launcher não oficial para Hytale. Este projeto não é afiliado à Hypixel Studios</value>
   </data>
   <data name="settings.aboutSettings.builtWith" xml:space="preserve">
     <value>Criado com</value>
@@ -1696,10 +1729,10 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Diretório do Jogo</value>
   </data>
   <data name="settings.dataSettings.gameDirectoryHint" xml:space="preserve">
-    <value>Local onde as instâncias do jogo instaladas são armazenadas.</value>
+    <value>Local onde as instâncias do jogo instaladas são armazenadas</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>Algumas opções não estão disponíveis enquanto o jogo está em execução. Feche o jogo para alterar essas configurações.</value>
+    <value>Algumas opções não estão disponíveis enquanto o jogo está em execução. Feche o jogo para alterar essas configurações</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>Pasta de Instâncias</value>
@@ -1711,7 +1744,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Pasta de Dados do Launcher</value>
   </data>
   <data name="settings.dataSettings.launcherDataHint" xml:space="preserve">
-    <value>Local onde a configuração e arquivos do launcher são armazenados.</value>
+    <value>Local onde a configuração e arquivos do launcher são armazenados</value>
   </data>
   <data name="settings.dataSettings.launcherFiles" xml:space="preserve"><value>Arquivos do launcher</value></data>
   <data name="settings.dataSettings.storageUsed" xml:space="preserve"><value>Espaço utilizado</value></data>
@@ -1735,13 +1768,13 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Gerenciamento de Dados</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>Isso excluirá todos os dados do launcher, incluindo configurações, cache e arquivos baixados. Esta ação não pode ser desfeita.</value>
+    <value>Isso excluirá todos os dados do launcher, incluindo configurações, cache e arquivos baixados. Esta ação não pode ser desfeita</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>Excluir Todos os Dados?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>Isso excluirá a instância {{branch}} {{version}} e todos os seus dados. Esta ação não pode ser desfeita.</value>
+    <value>Isso excluirá a instância {{branch}} {{version}} e todos os seus dados. Esta ação não pode ser desfeita</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>Excluir Instância?</value>
@@ -1768,7 +1801,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Ativar</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>Formato: header=valor ou header="valor com espaços". Use {hytaleAgent} para o User-Agent oficial.</value>
+    <value>Formato: header=valor ou header="valor com espaços". Use {hytaleAgent} para o User-Agent oficial</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>Cabeçalhos personalizados (opcional): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1777,10 +1810,10 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Como funcionam os downloads</value>
   </data>
   <data name="settings.downloads.howDownloadsWorkDescription" xml:space="preserve">
-    <value>O Hyprism seleciona automaticamente a fonte mais rápida disponível para baixar os arquivos do jogo. Pressione "Testar Velocidade" para verificar sua conexão.</value>
+    <value>O Hyprism seleciona automaticamente a fonte mais rápida disponível para baixar os arquivos do jogo. Pressione "Testar Velocidade" para verificar sua conexão</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Digite a URL base de um espelho Hytale. O launcher tentará detectar automaticamente a configuração.</value>
+    <value>Digite a URL base de um espelho Hytale. O launcher tentará detectar automaticamente a configuração</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>Espelhos da Comunidade</value>
@@ -1849,7 +1882,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Armazenamento do Launcher</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>Local onde os dados do launcher e arquivos do jogo são armazenados.</value>
+    <value>Local onde os dados do launcher e arquivos do jogo são armazenados</value>
   </data>
   <data name="settings.generalSettings.showAlphaMods" xml:space="preserve">
     <value>Mostrar Mods Alpha</value>
@@ -1909,7 +1942,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Baixar e instalar mods de otimização para melhorar o desempenho do jogo</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>Apenas uma GPU detectada — seleção bloqueada no modo Auto.</value>
+    <value>Apenas uma GPU detectada — seleção bloqueada no modo Auto</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>Configurações Gráficas</value>
@@ -1936,7 +1969,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Excluir Instância</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>Gerencie suas versões instaladas do jogo.</value>
+    <value>Gerencie suas versões instaladas do jogo</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>Solte o ZIP ou PWR para importar instância</value>
@@ -2101,7 +2134,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Escolha seu idioma preferido para a interface do launcher</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>Nota: Alguns textos podem permanecer em inglês até que a localização completa seja concluída. Os desenvolvedores estão localizando ativamente o launcher para que todos possam aproveitar.</value>
+    <value>Nota: Alguns textos podem permanecer em inglês até que a localização completa seja concluída. Os desenvolvedores estão localizando ativamente o launcher para que todos possam aproveitar</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>Selecionar Idioma</value>
@@ -2134,7 +2167,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Servidor de Auth</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>Insira o endereço do servidor usado para autenticar o jogo online.</value>
+    <value>Insira o endereço do servidor usado para autenticar o jogo online</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>Por exemplo, sessions.example.com</value>
@@ -2161,7 +2194,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Nome de Exibição</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>Este nome será exibido no jogo (1-16 caracteres).</value>
+    <value>Este nome será exibido no jogo (1-16 caracteres)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>O Hytale tem um padrão específico de apelidos. Use apenas caracteres em inglês e números (0-9), evitando símbolos especiais e espaços (exceções: '-', '_')</value>
@@ -2281,7 +2314,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>O jogo iniciará automaticamente quando estiver pronto.</value>
+    <value>O jogo iniciará automaticamente quando estiver pronto</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>Baixando...</value>
@@ -2293,7 +2326,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Iniciando...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>Por favor, aguarde enquanto baixamos e instalamos os arquivos do jogo.</value>
+    <value>Por favor, aguarde enquanto baixamos e instalamos os arquivos do jogo</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>Você gostaria de copiar seus dados salvos para a nova versão?</value>
@@ -2302,7 +2335,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Versão Atual</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>Uma nova versão do jogo está disponível. Sua versão atual possui dados salvos (configurações, mods, etc.).</value>
+    <value>Uma nova versão do jogo está disponível. Sua versão atual possui dados salvos (configurações, mods, etc.)</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>Nova Versão</value>
@@ -2323,7 +2356,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Atualizar Sem Copiar</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>O launcher reiniciará automaticamente quando a atualização estiver concluída.</value>
+    <value>O launcher reiniciará automaticamente quando a atualização estiver concluída</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>Falha na atualização</value>
@@ -2332,7 +2365,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Instalando</value>
   </data>
   <data name="updateOverlay.message" xml:space="preserve">
-    <value>Por favor, aguarde enquanto baixamos e instalamos a versão mais recente do Hyprism.</value>
+    <value>Por favor, aguarde enquanto baixamos e instalamos a versão mais recente do Hyprism</value>
   </data>
   <data name="updateOverlay.title" xml:space="preserve">
     <value>ATUALIZANDO LAUNCHER</value>
@@ -2440,10 +2473,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Excluir</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>Excluir "{0}" e todos os seus dados? Esta ação não pode ser desfeita.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Excluir instância?</value>
+    <value>Excluir "{0}" e todos os seus dados? Esta ação não pode ser desfeita</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Instalar</value>
@@ -2473,7 +2503,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Clique para ver o lançamento no GitHub</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>O artigo não pôde ser carregado. Você ainda pode abri-lo em hytale.com.</value>
+    <value>O artigo não pôde ser carregado. Você ainda pode abri-lo em hytale.com</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>Carregando artigo...</value>
@@ -2488,7 +2518,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Carregar Mais</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>Selecione uma notícia para lê-la aqui.</value>
+    <value>Selecione uma notícia para lê-la aqui</value>
   </data>
   <data name="onboarding.warning.back" xml:space="preserve">
     <value>Voltar para Login</value>
@@ -2497,13 +2527,13 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Continuar</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Sem uma conta Hytale, você não pode baixar arquivos do jogo dos servidores oficiais.</value>
+    <value>Sem uma conta Hytale, você não pode baixar arquivos do jogo dos servidores oficiais</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>Nenhum recurso web disponível para download</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>Para baixar o jogo, você precisará adicionar um espelho em Configurações → Downloads, ou fazer login com sua conta Hytale mais tarde.</value>
+    <value>Para baixar o jogo, você precisará adicionar um espelho em Configurações → Downloads, ou fazer login com sua conta Hytale mais tarde</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>Nenhuma Fonte de Download</value>
@@ -2683,7 +2713,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Padrão de URL</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>O espelho da comunidade é usado como fonte alternativa para arquivos do jogo quando os servidores oficiais estão indisponíveis.</value>
+    <value>O espelho da comunidade é usado como fonte alternativa para arquivos do jogo quando os servidores oficiais estão indisponíveis</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>Configurações de Espelho</value>
@@ -2710,13 +2740,13 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Verificando...</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>Servidores oficiais são sempre considerados disponíveis.</value>
+    <value>Servidores oficiais são sempre considerados disponíveis</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>Offline</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>Servidor de autenticação inacessível. Modo online temporariamente desativado.</value>
+    <value>Servidor de autenticação inacessível. Modo online temporariamente desativado</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>Online</value>
@@ -2728,13 +2758,13 @@ Você pode precisar reinstalar o jogo se trocar de unidade.</value>
     <value>Status do Servidor de Autenticação</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>Verifique se o servidor de autenticação está acessível.</value>
+    <value>Verifique se o servidor de autenticação está acessível</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>Contas oficiais só podem usar a autenticação oficial do Hytale.</value>
+    <value>Contas oficiais só podem usar a autenticação oficial do Hytale</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>Contas não oficiais não podem usar a autenticação oficial do Hytale.</value>
+    <value>Contas não oficiais não podem usar a autenticação oficial do Hytale</value>
   </data>
   <data name="desktopSettings.categories.language" xml:space="preserve">
     <value>Idioma</value>

@@ -124,6 +124,18 @@ public sealed partial class InstancesView : UserControl
             viewModel.CompleteModCatalogInstallConfirmationClose();
     }
 
+    private void OnInstanceDeleteModalClosed(object? sender, EventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel)
+            viewModel.CompleteManagedInstanceDeletionClose();
+    }
+
+    private void OnInstanceEditModalClosed(object? sender, EventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel)
+            viewModel.CompleteInstanceEditClose();
+    }
+
     private void OnInstancesKeyDown(object? sender, KeyEventArgs args)
     {
         if (args.Key is not Key.Escape ||

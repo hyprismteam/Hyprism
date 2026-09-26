@@ -508,7 +508,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <controls:OverlayModal x:Name="JavaArgumentModal"
 
-                         BackdropTarget="{Binding ElementName=SettingsLayout}"
                          InitialFocusTarget="{Binding ElementName=NewJavaArgumentTextBox}"
                          IsOpen="{Binding IsAddingJavaArgument}"
                          DismissCommand="{Binding CancelAddJavaArgumentCommand}"
@@ -554,7 +553,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </controls:OverlayModal>
   <controls:OverlayModal x:Name="EnvironmentVariableModal"
 
-                         BackdropTarget="{Binding ElementName=SettingsLayout}"
                          InitialFocusTarget="{Binding ElementName=NewEnvironmentVariableTextBox}"
                          IsOpen="{Binding IsAddingEnvironmentVariable}"
                          DismissCommand="{Binding CancelAddEnvironmentVariableCommand}"
@@ -600,7 +598,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </controls:OverlayModal>
   <controls:OverlayModal x:Name="AuthServerModal"
 
-                         BackdropTarget="{Binding ElementName=SettingsLayout}"
                          InitialFocusTarget="{Binding ElementName=NewAuthServerTextBox}"
                          IsOpen="{Binding IsAddingAuthServer}"
                          DismissCommand="{Binding CancelAddAuthServerCommand}"

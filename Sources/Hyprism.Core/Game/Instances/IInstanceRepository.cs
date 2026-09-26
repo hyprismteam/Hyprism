@@ -92,7 +92,8 @@ public interface IInstanceRepository
     bool DeleteGame(string branch, int versionNumber);
 
     /// <summary>
-    /// Deletes a game instance from disk by its unique ID
+    /// Deletes an instance directory from the current or a recognized legacy root by ID.
+    /// If the directory is already missing, removes its stale registry entry
     /// </summary>
     /// <param name="instanceId">The instance ID</param>
     /// <returns><c>true</c> if the instance was successfully deleted; otherwise, <c>false</c></returns>

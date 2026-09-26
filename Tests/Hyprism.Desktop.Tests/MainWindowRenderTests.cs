@@ -1049,6 +1049,10 @@ public sealed class MainWindowRenderTests
                 .FindControl<Button>("CompactInstanceMoreButton")!
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("deleteAction"));
+        var collapsingEditAction = compact
+            ? null
+            : instancesView.GetVisualDescendants().OfType<Button>()
+                .Single(button => button.Classes.Contains("editAction"));
         if (compact)
         {
             var instanceRow = instancesView.GetVisualDescendants().OfType<Button>()
@@ -1080,14 +1084,17 @@ public sealed class MainWindowRenderTests
         var launchOperation = viewModel.RunManagedInstanceCommand.ExecuteAsync(null);
         await WaitForConditionAsync(
             () => primaryAction.Classes.Contains("active") &&
-                  collapsingAction.Bounds.Width <= 0.5,
+                  collapsingAction.Bounds.Width <= 0.5 &&
+                  (collapsingEditAction is null || collapsingEditAction.Bounds.Width <= 0.5),
             "managed instance action to enter progress state");
         Dispatcher.UIThread.RunJobs();
         Assert.Contains("active", primaryAction.Classes);
         Assert.DoesNotContain("cancelArmed", primaryAction.Classes);
         Assert.True(primaryAction.IsEffectivelyVisible);
-        Assert.InRange(primaryAction.Bounds.Width, compact ? 215.5 : 264.5, compact ? 216.5 : 265.5);
+        Assert.InRange(primaryAction.Bounds.Width, compact ? 215.5 : 437.5, compact ? 216.5 : 438.5);
         Assert.InRange(collapsingAction.Bounds.Width, 0, 0.5);
+        if (collapsingEditAction is not null)
+            Assert.InRange(collapsingEditAction.Bounds.Width, 0, 0.5);
         var progressContent = Assert.Single(
             primaryAction.GetVisualDescendants().OfType<Grid>(),
             grid => grid.Classes.Contains("managedActionProgress"));
@@ -2382,31 +2389,6 @@ public sealed class MainWindowRenderTests
         Assert.False(mainSceneFrame!.ClipToBounds);
         Assert.Equal(new CornerRadius(24), mainSceneFrame.CornerRadius);
         Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.SelectedModCatalogPreview = new ModCatalogItemViewModel(
-            "frame-preview", "Frame Preview", "Hyprism", "", "1");
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.SelectedModCatalogPreview = null;
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddJavaArgumentCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddJavaArgumentCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddEnvironmentVariableCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddEnvironmentVariableCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddAuthServerCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddAuthServerCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
         Assert.NotNull(mainSceneSurface);
         Assert.True(mainSceneSurface!.ClipToBounds);
         Assert.Equal(new CornerRadius(23), mainSceneSurface.CornerRadius);
@@ -2565,9 +2547,9 @@ public sealed class MainWindowRenderTests
         Assert.Equal(15, managedInstanceTitle.FontSize);
         Assert.Equal(11, managedInstanceDescription.FontSize);
         var managedInstanceGameIcon = Assert.Single(
-            managedInstanceRow.GetVisualDescendants().OfType<Image>(),
-            image => image.Classes.Contains("instancesListGameIcon"));
-        Assert.NotNull(managedInstanceGameIcon.Source);
+            managedInstanceRow.GetVisualDescendants().OfType<Grid>(),
+            icon => icon.Classes.Contains("instancesListGameIcon"));
+        Assert.NotNull(Assert.Single(managedInstanceGameIcon.Children.OfType<Image>(), image => image.IsVisible).Source);
         Assert.Equal(usesCompactInstancesLayout, managedInstanceGameIcon.IsVisible);
         Assert.Equal(usesCompactInstancesLayout ? 38 : 0, managedInstanceGameIcon.Width);
         Assert.Equal(usesCompactInstancesLayout ? 38 : 0, managedInstanceGameIcon.Height);
@@ -2678,8 +2660,9 @@ public sealed class MainWindowRenderTests
             .OfType<Button>()
             .Where(button => button.Classes.Contains("managerAction"))
             .ToList();
-        Assert.Equal(3, managerActions.Count);
+        Assert.Equal(4, managerActions.Count);
         Assert.Single(managerActions, button => button.Classes.Contains("primary"));
+        Assert.Single(managerActions, button => button.Classes.Contains("editAction"));
         Assert.Single(managerActions, button => button.Classes.Contains("danger"));
         var instanceMenuRows = instancesView.GetVisualDescendants()
             .OfType<Button>()
@@ -2703,18 +2686,18 @@ public sealed class MainWindowRenderTests
             instancesView.GetVisualDescendants().OfType<Button>(),
             button => button.Classes.Contains("instanceLaunch"));
         var instanceGameIcon = Assert.Single(
-            instancesView.GetVisualDescendants().OfType<Image>(),
-            image => image.Classes.Contains("instanceGameIcon"));
+            instancesView.GetVisualDescendants().OfType<Grid>(),
+            icon => icon.Classes.Contains("instanceGameIcon"));
         Assert.Equal(144, instanceGameIcon.Width);
         Assert.Equal(144, instanceGameIcon.Height);
-        Assert.NotNull(instanceGameIcon.Source);
+        Assert.NotNull(Assert.Single(instanceGameIcon.Children.OfType<Image>(), image => image.IsVisible).Source);
         Assert.Equal(instancesView.Bounds.Width >= 940, instanceGameIcon.IsVisible);
         var compactInstanceGameIcon = Assert.Single(
-            instancesView.GetVisualDescendants().OfType<Image>(),
-            image => image.Classes.Contains("compactInstanceGameIcon"));
+            instancesView.GetVisualDescendants().OfType<Grid>(),
+            icon => icon.Classes.Contains("compactInstanceGameIcon"));
         Assert.Equal(30, compactInstanceGameIcon.Width);
         Assert.Equal(30, compactInstanceGameIcon.Height);
-        Assert.NotNull(compactInstanceGameIcon.Source);
+        Assert.NotNull(Assert.Single(compactInstanceGameIcon.Children.OfType<Image>(), image => image.IsVisible).Source);
         var instanceSummary = Assert.Single(
             instancesView.GetVisualDescendants().OfType<StackPanel>(),
             panel => panel.Classes.Contains("instanceSummary"));
@@ -3754,6 +3737,28 @@ public sealed class MainWindowRenderTests
 
         viewModel.NavigateCommand.Execute("settings");
         Dispatcher.UIThread.RunJobs();
+
+        viewModel.Settings.ShowAddJavaArgumentCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddJavaArgumentCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after Java argument modal closes");
+        viewModel.Settings.ShowAddEnvironmentVariableCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddEnvironmentVariableCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after environment variable modal closes");
+        viewModel.Settings.ShowAddAuthServerCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddAuthServerCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after auth server modal closes");
 
         var settingsView = window.GetVisualDescendants().OfType<SettingsView>().Single();
         var settingsScroll = settingsView.FindControl<ScrollViewer>("SettingsContent");

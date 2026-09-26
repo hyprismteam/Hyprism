@@ -29,10 +29,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Bölümlü kontrol</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>En son Hyprism sürümü İndirilenler klasörüne indirildi.</value>
+    <value>En son Hyprism sürümü İndirilenler klasörüne indirildi</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>Yükleyebilmeniz için dosyayı açmaya çalıştık. Açılmadıysa, İndirilenler klasörüne gidin ve dosyayı manuel olarak çalıştırın.</value>
+    <value>Yükleyebilmeniz için dosyayı açmaya çalıştık. Açılmadıysa, İndirilenler klasörüne gidin ve dosyayı manuel olarak çalıştırın</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Hyprism örneklerinin saklanacağı tam yolu girin:</value>
@@ -61,7 +61,7 @@ Not: Aşağıdakiler AppData'da kalır:
 • Başlatıcı ayarları
 • WebView2 (EBWebView klasörü)
 
-Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
+Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>Geçersiz Takma Ad</value>
@@ -70,7 +70,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Takma ad 1 ile 16 karakter arasında olmalıdır</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>Yol kullanılamadı. Lütfen var olduğunu ve yazma izniniz olduğunu kontrol edin.</value>
+    <value>Yol kullanılamadı. Lütfen var olduğunu ve yazma izniniz olduğunu kontrol edin</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -202,7 +202,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Oyun kurulumu</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>Kullanıcı verileriniz ve skin ön ayarlarınız korunacaktır.</value>
+    <value>Kullanıcı verileriniz ve skin ön ayarlarınız korunacaktır</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>Oyunu Sil?</value>
@@ -217,7 +217,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>İptal</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>Bu işlem geri alınamaz.</value>
+    <value>Bu işlem geri alınamaz</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>Profili Sil</value>
@@ -246,8 +246,8 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin ve avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Profili Sil?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Onay</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Bu işlem aşağıdakileri kalıcı olarak silecektir:</value>
@@ -336,8 +336,23 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Örneği Düzenle</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Bu örneğin adını veya simgesini değiştirin</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Düzenle</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>1 ila 64 karakterlik bir ad ve en fazla 2000 karakterlik bir açıklama girin</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Açıklama</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Örnek simgesi</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Geçerli bir PNG veya JPEG görseli seçin</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Örnek değişiklikleri kaydedilemedi</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Örnek dışa aktarılamadı</value>
@@ -439,7 +454,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Sürümü değiştirmek oyun dosyalarını kaldıracak</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>Oyun istemcisi silinecek ve bu sürümü yeniden indirmen gerekecek. Kayıtlar ve modlar gibi kullanıcı verileri korunacak.</value>
+    <value>Oyun istemcisi silinecek ve bu sürümü yeniden indirmen gerekecek. Kayıtlar ve modlar gibi kullanıcı verileri korunacak</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>Dil Değiştir</value>
@@ -685,7 +700,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Sadece eğitim amaçlıdır. Beğendin mi?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>Sadece eğitim amaçlı.</value>
+    <value>Sadece eğitim amaçlı</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>ÇIKIŞ</value>
@@ -766,7 +781,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Yazar</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>Sunucu bu modu kurmayı reddetti. Lütfen tekrar deneyin.</value>
+    <value>Sunucu bu modu kurmayı reddetti. Lütfen tekrar deneyin</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>Modlara Göz At</value>
@@ -832,7 +847,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kapat</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>{{count}} mod silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</value>
+    <value>{{count}} mod silmek istediğinize emin misiniz? Bu işlem geri alınamaz</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>{{count}} mod indirmek istediğinize emin misiniz?</value>
@@ -943,7 +958,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Mod listesi içe aktarılıyor...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>Modlar kurulamadı. Lütfen tekrar deneyin.</value>
+    <value>Modlar kurulamadı. Lütfen tekrar deneyin</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>Seçilenleri Kur</value>
@@ -1006,7 +1021,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Açıklama yok</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>Seçilen modlar için indirilebilir dosya bulunamadı.</value>
+    <value>Seçilen modlar için indirilebilir dosya bulunamadı</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>Dosya mevcut değil</value>
@@ -1243,22 +1258,22 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kimlik doğrulanıyor...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Hytale hesabından profil oluşturulamadı.</value>
+    <value>Hytale hesabından profil oluşturulamadı</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Hytale hesabınızla giriş yapın. Henüz oyunu satın almadıysanız, Atla'ya tıklayın.</value>
+    <value>Hytale hesabınızla giriş yapın. Henüz oyunu satın almadıysanız, Atla'ya tıklayın</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>Kimlik doğrulama sırasında bir hata oluştu.</value>
+    <value>Kimlik doğrulama sırasında bir hata oluştu</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>Kimlik doğrulama başarısız oldu. Lütfen tekrar deneyin.</value>
+    <value>Kimlik doğrulama başarısız oldu. Lütfen tekrar deneyin</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Hytale ile Giriş Yap</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>Hesabınızın henüz Hytale'a erişimi yok. Oyunu resmi web sitesinden satın alabilirsiniz.</value>
+    <value>Hesabınızın henüz Hytale'a erişimi yok. Oyunu resmi web sitesinden satın alabilirsiniz</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>Atla</value>
@@ -1291,7 +1306,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Görünümü özelleştir</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism, Hytale için resmi olmayan bir başlatıcıdır. Bu proje Hypixel Studios ile bağlantılı değildir.</value>
+    <value>Hyprism, Hytale için resmi olmayan bir başlatıcıdır. Bu proje Hypixel Studios ile bağlantılı değildir</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>Başlatıcıya Gir</value>
@@ -1351,7 +1366,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Konum</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>Oyun örneklerinizin nerede saklanacağını seçin. Varsayılanı bırakabilir veya özel bir konum seçebilirsiniz.</value>
+    <value>Oyun örneklerinizin nerede saklanacağını seçin. Varsayılanı bırakabilir veya özel bir konum seçebilirsiniz</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>Sürdürücü &amp; Geliştirici</value>
@@ -1438,7 +1453,19 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kullanıcı Adı</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 karakter olmalıdır</value>
+    <value>3-16 karakter olmalıdır</value>
+  </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>Bir kullanıcı adı girin</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>Kullanıcı adı en az 3 karakter içermelidir</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>Kullanıcı adı 16 karakteri aşamaz</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>Yalnızca Latin harfleri, rakamlar, kısa çizgi ve alt çizgi kullanın</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1446,11 +1473,20 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>Profiliniz için benzersiz tanımlayıcı</value>
   </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>Bir UUID girin</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>Geçerli bir UUID girin; örneğin 12345678-1234-1234-1234-123456789abc</value>
+  </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>UUID'yi Kopyala</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Yeni Profil Oluştur</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Profil silinemedi</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Profili Sil</value>
@@ -1506,9 +1542,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>UUID'yi Kaydet</value>
   </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Profil kaydedildi!</value>
-  </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Kayıtlı Profiller</value>
   </data>
@@ -1516,19 +1549,19 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Profiller</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>Tarayıcınızda Hytale giriş sayfasına yönlendirileceksiniz. Giriş yaptıktan sonra profiliniz otomatik olarak oluşturulacak.</value>
+    <value>Tarayıcınızda Hytale giriş sayfasına yönlendirileceksiniz. Giriş yaptıktan sonra profiliniz otomatik olarak oluşturulacak</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.</value>
+    <value>Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>Giriş tamamlanamadı. Lütfen tekrar deneyin.</value>
+    <value>Giriş tamamlanamadı. Lütfen tekrar deneyin</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Hytale ile Giriş Yap</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>Tarayıcınızda girişi tamamlayın. Bu pencere otomatik olarak güncellenecek.</value>
+    <value>Tarayıcınızda girişi tamamlayın. Bu pencere otomatik olarak güncellenecek</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>karakter</value>
@@ -1540,10 +1573,10 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Profil Oluştur</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>Profil oluşturulurken bir hata oluştu.</value>
+    <value>Profil oluşturulurken bir hata oluştu</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>Profil oluşturulamadı. Lütfen tekrar deneyin.</value>
+    <value>Profil oluşturulamadı. Lütfen tekrar deneyin</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>Giriş yap</value>
@@ -1558,13 +1591,13 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Takma Ad Seçin</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>Takma ad 3-16 karakter olmalıdır: İngilizce harfler, rakamlar, tire veya alt çizgi.</value>
+    <value>Takma ad 3-16 karakter olmalıdır: İngilizce harfler, rakamlar, tire veya alt çizgi</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>Sadece A-Z, 0-9, - ve _</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Hytale hesabınızda henüz oyun profili yok. Oyuna ilk eriştiğinizde bir profil oluşturulacak.</value>
+    <value>Hytale hesabınızda henüz oyun profili yok. Oyuna ilk eriştiğinizde bir profil oluşturulacak</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>Resmi Hytale Hesabı</value>
@@ -1624,7 +1657,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Hytale için modern bir başlatıcı</value>
   </data>
   <data name="settings.aboutSettings.disclaimer" xml:space="preserve">
-    <value>Hyprism, Hytale için resmi olmayan bir başlatıcıdır. Bu proje Hypixel Studios ile bağlantılı değildir.</value>
+    <value>Hyprism, Hytale için resmi olmayan bir başlatıcıdır. Bu proje Hypixel Studios ile bağlantılı değildir</value>
   </data>
   <data name="settings.aboutSettings.builtWith" xml:space="preserve">
     <value>Şununla oluşturuldu</value>
@@ -1696,10 +1729,10 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Oyun Dizini</value>
   </data>
   <data name="settings.dataSettings.gameDirectoryHint" xml:space="preserve">
-    <value>Yüklü oyun örneklerinin saklandığı konum.</value>
+    <value>Yüklü oyun örneklerinin saklandığı konum</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>Oyun çalışırken bazı seçenekler kullanılamaz. Bu ayarları değiştirmek için lütfen oyunu kapatın.</value>
+    <value>Oyun çalışırken bazı seçenekler kullanılamaz. Bu ayarları değiştirmek için lütfen oyunu kapatın</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>Örnek Klasörü</value>
@@ -1711,7 +1744,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Başlatıcı Veri Klasörü</value>
   </data>
   <data name="settings.dataSettings.launcherDataHint" xml:space="preserve">
-    <value>Başlatıcı yapılandırması ve varlıklarının saklandığı konum.</value>
+    <value>Başlatıcı yapılandırması ve varlıklarının saklandığı konum</value>
   </data>
   <data name="settings.dataSettings.launcherFiles" xml:space="preserve"><value>Başlatıcı dosyaları</value></data>
   <data name="settings.dataSettings.storageUsed" xml:space="preserve"><value>Kullanılan alan</value></data>
@@ -1735,13 +1768,13 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Veri Yönetimi</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>Bu, ayarlar, önbellek ve indirilen dosyalar dahil tüm başlatıcı verilerini silecektir. Bu işlem geri alınamaz.</value>
+    <value>Bu, ayarlar, önbellek ve indirilen dosyalar dahil tüm başlatıcı verilerini silecektir. Bu işlem geri alınamaz</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>Tüm Verileri Sil?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>Bu, {{branch}} {{version}} örneğini ve tüm verilerini silecektir. Bu işlem geri alınamaz.</value>
+    <value>Bu, {{branch}} {{version}} örneğini ve tüm verilerini silecektir. Bu işlem geri alınamaz</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>Örneği Sil?</value>
@@ -1768,7 +1801,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Etkinleştir</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>Format: header=değer veya header="boşluklu değer". Resmi User-Agent için {hytaleAgent} kullanın.</value>
+    <value>Format: header=değer veya header="boşluklu değer". Resmi User-Agent için {hytaleAgent} kullanın</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>Özel başlıklar (isteğe bağlı): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1777,10 +1810,10 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>İndirmeler nasıl çalışır</value>
   </data>
   <data name="settings.downloads.howDownloadsWorkDescription" xml:space="preserve">
-    <value>Hyprism, oyun dosyalarını indirmek için en hızlı kaynağı otomatik olarak seçer. Bağlantınızı kontrol etmek için "Hızı Test Et" düğmesine basın.</value>
+    <value>Hyprism, oyun dosyalarını indirmek için en hızlı kaynağı otomatik olarak seçer. Bağlantınızı kontrol etmek için "Hızı Test Et" düğmesine basın</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Hytale aynasının temel URL'sini girin. Başlatıcı yapılandırmayı otomatik olarak algılamaya çalışacaktır.</value>
+    <value>Hytale aynasının temel URL'sini girin. Başlatıcı yapılandırmayı otomatik olarak algılamaya çalışacaktır</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>Topluluk Aynaları</value>
@@ -1849,7 +1882,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Başlatıcı Depolama</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>Başlatıcı verileri ve oyun dosyalarının saklandığı konum.</value>
+    <value>Başlatıcı verileri ve oyun dosyalarının saklandığı konum</value>
   </data>
   <data name="settings.generalSettings.showAlphaMods" xml:space="preserve">
     <value>Alfa Modları Göster</value>
@@ -1909,7 +1942,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Oyun performansını artırmak için optimizasyon modlarını indirin ve kurun</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>Sadece bir GPU algılandı — seçim Otomatik moda kilitli.</value>
+    <value>Sadece bir GPU algılandı — seçim Otomatik moda kilitli</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>Grafik Ayarları</value>
@@ -1936,7 +1969,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Örneği Sil</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>Yüklü oyun sürümlerinizi yönetin.</value>
+    <value>Yüklü oyun sürümlerinizi yönetin</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>Örnek içe aktarmak için ZIP veya PWR bırakın</value>
@@ -2101,7 +2134,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Başlatıcı arayüzü için tercih ettiğiniz dili seçin</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>Not: Tam yerelleştirme tamamlanana kadar bazı metinler İngilizce kalabilir. Geliştiriciler herkesin kullanabilmesi için başlatıcıyı aktif olarak yerelleştiriyor.</value>
+    <value>Not: Tam yerelleştirme tamamlanana kadar bazı metinler İngilizce kalabilir. Geliştiriciler herkesin kullanabilmesi için başlatıcıyı aktif olarak yerelleştiriyor</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>Dil Seç</value>
@@ -2134,7 +2167,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kimlik Doğrulama Sunucusu</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>Çevrimiçi oyun kimlik doğrulaması için kullanılacak sunucunun adresini girin.</value>
+    <value>Çevrimiçi oyun kimlik doğrulaması için kullanılacak sunucunun adresini girin</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>Örneğin, sessions.example.com</value>
@@ -2161,7 +2194,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Görünen Ad</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>Oyundaki adınız (1-16 karakter).</value>
+    <value>Oyundaki adınız (1-16 karakter)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>Hytale belirli bir takma ad desenine sahiptir. Yalnızca İngilizce karakterleri ve sayıları (0-9) kullanın, özel sembollerden ve boşluklardan kaçının (istisnalar: '-', '_')</value>
@@ -2281,7 +2314,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>Hazır olduğunda oyun otomatik olarak başlayacak.</value>
+    <value>Hazır olduğunda oyun otomatik olarak başlayacak</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>İndiriliyor...</value>
@@ -2293,7 +2326,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Başlatılıyor...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>Lütfen oyun dosyalarını indirip kuruyoruz bekleyin.</value>
+    <value>Lütfen oyun dosyalarını indirip kuruyoruz bekleyin</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>Kayıtlı verilerinizi yeni sürüme kopyalamak ister misiniz?</value>
@@ -2302,7 +2335,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Mevcut Sürüm</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>Yeni bir oyun sürümü mevcut. Mevcut sürümünüzde kayıtlı veriler (ayarlar, modlar vb.) var.</value>
+    <value>Yeni bir oyun sürümü mevcut. Mevcut sürümünüzde kayıtlı veriler (ayarlar, modlar vb.) var</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>Yeni Sürüm</value>
@@ -2323,7 +2356,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kopyalamadan Güncelle</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>Güncelleme tamamlandığında başlatıcı otomatik olarak yeniden başlayacak.</value>
+    <value>Güncelleme tamamlandığında başlatıcı otomatik olarak yeniden başlayacak</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>Güncelleme başarısız oldu</value>
@@ -2332,7 +2365,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kuruluyor</value>
   </data>
   <data name="updateOverlay.message" xml:space="preserve">
-    <value>Hyprism'in en son sürümü indiriliyor ve kuruluyor, lütfen bekleyin.</value>
+    <value>Hyprism'in en son sürümü indiriliyor ve kuruluyor, lütfen bekleyin</value>
   </data>
   <data name="updateOverlay.title" xml:space="preserve">
     <value>BAŞLATICI GÜNCELLENİYOR</value>
@@ -2440,10 +2473,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Sil</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>"{0}" ve tüm verilerini silmek istiyor musun? Bu işlem geri alınamaz.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Örneği silmek istiyor musun?</value>
+    <value>"{0}" ve tüm verilerini silmek istiyor musun? Bu işlem geri alınamaz</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Yükle</value>
@@ -2473,7 +2503,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>GitHub'daki sürümü görüntülemek için tıklayın</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>Makale yüklenemedi. Yine de hytale.com üzerinde açabilirsiniz.</value>
+    <value>Makale yüklenemedi. Yine de hytale.com üzerinde açabilirsiniz</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>Makale yükleniyor...</value>
@@ -2488,7 +2518,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Daha Fazla Yükle</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>Burada okumak için bir haber öğesi seçin.</value>
+    <value>Burada okumak için bir haber öğesi seçin</value>
   </data>
   <data name="onboarding.warning.back" xml:space="preserve">
     <value>Girişe Geri Dön</value>
@@ -2497,13 +2527,13 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Devam Et</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Bir Hytale hesabınız olmadan, oyun dosyalarını resmi sunuculardan indiremezsiniz.</value>
+    <value>Bir Hytale hesabınız olmadan, oyun dosyalarını resmi sunuculardan indiremezsiniz</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>İndirilecek web kaynağı yok</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>Oyunu indirmek için Ayarlar → İndirilenler bölümüne bir ayna eklemeniz veya daha sonra Hytale hesabınızla giriş yapmanız gerekecek.</value>
+    <value>Oyunu indirmek için Ayarlar → İndirilenler bölümüne bir ayna eklemeniz veya daha sonra Hytale hesabınızla giriş yapmanız gerekecek</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>İndirme Kaynağı Yok</value>
@@ -2683,7 +2713,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>URL şablonu</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>Resmi sunucular kullanılamadığında oyun dosyaları için alternatif kaynak olarak topluluk aynası kullanılır.</value>
+    <value>Resmi sunucular kullanılamadığında oyun dosyaları için alternatif kaynak olarak topluluk aynası kullanılır</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>Ayna Ayarları</value>
@@ -2710,13 +2740,13 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kontrol ediliyor...</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>Resmi sunucular her zaman kullanılabilir olarak kabul edilir.</value>
+    <value>Resmi sunucular her zaman kullanılabilir olarak kabul edilir</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>Çevrimdışı</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>Kimlik doğrulama sunucusuna ulaşılamıyor. Çevrimiçi mod geçici olarak devre dışı.</value>
+    <value>Kimlik doğrulama sunucusuna ulaşılamıyor. Çevrimiçi mod geçici olarak devre dışı</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>Çevrimiçi</value>
@@ -2728,13 +2758,13 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kimlik Doğrulama Sunucusu Durumu</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>Kimlik doğrulama sunucusuna ulaşılıp ulaşılamadığını kontrol edin.</value>
+    <value>Kimlik doğrulama sunucusuna ulaşılıp ulaşılamadığını kontrol edin</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>Resmi hesaplar yalnızca resmi Hytale kimlik doğrulamasını kullanabilir.</value>
+    <value>Resmi hesaplar yalnızca resmi Hytale kimlik doğrulamasını kullanabilir</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>Resmi olmayan hesaplar resmi Hytale kimlik doğrulamasını kullanamaz.</value>
+    <value>Resmi olmayan hesaplar resmi Hytale kimlik doğrulamasını kullanamaz</value>
   </data>
   <data name="desktopSettings.categories.language" xml:space="preserve">
     <value>Dil</value>

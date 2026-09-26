@@ -60,10 +60,14 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Grid Grid.Column="1"
                               Classes="managerListIdentity"
                               ColumnDefinitions="Auto,*">
-                          <Image Classes="instancesListGameIcon"
-                                 Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
-                                 Stretch="Uniform"
-                                 IsHitTestVisible="False" />
+                          <Border Classes="instanceIconClip list" IsHitTestVisible="False">
+                            <Grid Classes="instancesListGameIcon">
+                              <Image Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                                     IsVisible="{Binding !HasIcon}" Stretch="Uniform" />
+                              <Image Source="{Binding Icon}"
+                                     IsVisible="{Binding HasIcon}" Stretch="UniformToFill" />
+                            </Grid>
+                          </Border>
                           <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
                             <TextBlock Text="{Binding Name}"
                                        Classes="settingsCategoryTitle managerListTitle"

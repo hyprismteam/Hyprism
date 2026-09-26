@@ -142,6 +142,36 @@ public sealed class OverlayModalAnimationTests
     }
 
     [AvaloniaFact]
+    public async Task FrameBorderStaysOpenUntilLastModalCloses()
+    {
+        var first = new OverlayModal();
+        var second = new OverlayModal();
+        var frame = new Border
+        {
+            Classes = { "mainSceneFrame" },
+            Child = new Grid { Children = { first, second } }
+        };
+        var window = new Window { Width = WindowWidth, Height = WindowHeight, Content = frame };
+        window.Show();
+
+        Assert.Equal(new Thickness(1), frame.BorderThickness);
+        first.IsOpen = true;
+        Assert.Equal(new Thickness(1, 1, 1, 0), frame.BorderThickness);
+        second.IsOpen = true;
+        first.IsOpen = false;
+        await AvaloniaTestWait.UntilAsync(
+            () => !first.IsVisible,
+            "first modal close");
+        Assert.Equal(new Thickness(1, 1, 1, 0), frame.BorderThickness);
+
+        second.IsOpen = false;
+        await AvaloniaTestWait.UntilAsync(
+            () => frame.BorderThickness == new Thickness(1),
+            "frame border after last modal closes");
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void ShouldersStaySyncedWithSheetMotion()
     {
         var modal = new OverlayModal

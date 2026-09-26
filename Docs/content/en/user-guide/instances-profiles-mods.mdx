@@ -9,8 +9,6 @@ An instance is one Hytale installation with its own version, game files, mods, w
 
 When an available source provides a human-readable version name, Hyprism uses it on the instance card and in the details. Existing instances are updated automatically when the launcher finds a missing name
 
-[![Instances list and the selected instance workspace](../../../static/img/user/en/instances.png)](../../../static/img/user/en/instances.png)
-
 ## Create an instance
 
 1. Open **Instances** and select **New Instance**
@@ -34,11 +32,22 @@ Select an instance card, then use its main action:
 
 Only one process can use an instance at a time. Different instances can run together because their files and user data are separate
 
+## Edit an instance
+
+1. Open **Instances** and select the instance.
+2. Select **Edit** in the action row or the compact menu.
+3. Use the icon card at the top to select **Select Icon** and choose a PNG or JPEG image. **Reset** appears when a custom icon is shown and returns it to the default icon. Change the **Instance Name** or **Description** below the card.
+4. Select **Save** to apply the changes or **Cancel** to discard them.
+
+The updated name appears below the instance icon in the details view. Images larger than 512 pixels on either side are scaled down proportionally when saved; smaller images keep their original dimensions. If saving fails, read the error in the editor and try again.
+
+**Edit** remains available while the game is running. It is unavailable during installation. **Delete** is unavailable during installation or while the game is running. Branch and version changes can remove installed client files; this editor does not change them.
+
 ## Manage files
 
 **Open Folder** opens the instance directory. Use it only when no installation, update, or game process is writing to that instance
 
-**Delete** removes the instance and its game data after confirmation. Back up worlds or other files you want to keep before deleting it
+To remove an instance, select it, choose **Delete**, review its name in the **Confirmation** overlay, then choose **Delete** again. This removes the instance and its game data. Back up worlds or other files you want to keep first. If deletion fails, the overlay stays open and shows an error.
 
 Dragging a card by its handle changes and saves the list order. Opening a card changes the workspace displayed on the right
 

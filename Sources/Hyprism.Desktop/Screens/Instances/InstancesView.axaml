@@ -302,5 +302,177 @@ SPDX-License-Identifier: GPL-3.0-only
         <instances:ModCatalogInstallView />
       </controls:OverlayModal.ModalContent>
     </controls:OverlayModal>
+    <controls:OverlayModal x:Name="InstanceEditModal"
+                           IsOpen="{Binding IsEditingInstance}"
+                           DismissCommand="{Binding CancelEditManagedInstanceCommand}"
+                           Closed="OnInstanceEditModalClosed"
+                           SheetMaxWidth="560"
+                           SheetMaxHeight="600"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="608"
+                           ShoulderMargin="12,0,12,0"
+                           HiddenOffset="650"
+                           ZIndex="210">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding EditInstanceTitle}"
+                           FontSize="22" FontWeight="Bold" VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelEditManagedInstanceCommand}"
+                        ToolTip.Tip="{Binding CancelInstanceEditLabel}"
+                        AutomationProperties.Name="{Binding CancelInstanceEditLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <Border Classes="instanceEditorIconCard">
+                <Grid ColumnDefinitions="72,*" ColumnSpacing="16">
+                  <Border Classes="instanceEditorIconPreview">
+                    <Border Classes="instanceIconClip editor" Width="64" Height="64">
+                      <Grid>
+                        <Image Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                               IsVisible="{Binding !HasEditInstanceIcon}" Stretch="Uniform" />
+                        <Image Source="{Binding EditInstanceIcon}"
+                               IsVisible="{Binding HasEditInstanceIcon}" Stretch="UniformToFill" />
+                      </Grid>
+                    </Border>
+                  </Border>
+                  <Grid Grid.Column="1" RowDefinitions="Auto,Auto" RowSpacing="8"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding EditInstanceIconTitle}"
+                               Classes="formLabel" FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                      <Button Classes="dataEditAction instanceEditorIconChoose"
+                              Classes.active="{Binding IsChoosingInstanceIcon}"
+                              IsEnabled="{Binding CanChooseInstanceIcon}"
+                              Command="{Binding ChooseInstanceIconCommand}">
+                        <Grid Classes="managedActionContent">
+                          <StackPanel Classes="managedActionIdle"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
+                            <TextBlock Text="{Binding EditInstanceIconLabel}" />
+                          </StackPanel>
+                          <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+                            <Path Classes="managedActionSpinner"
+                                  controls:RotatingVisual.IsActive="{Binding IsChoosingInstanceIcon}"
+                                  HorizontalAlignment="Center"
+                                  Data="M10,2 A8,8 0 1 1 2,10" />
+                          </Grid>
+                        </Grid>
+                      </Button>
+                      <Border Grid.Column="1"
+                              Classes="instanceEditorIconResetSlot"
+                              Classes.open="{Binding HasEditInstanceIcon}"
+                              IsHitTestVisible="{Binding HasEditInstanceIcon}">
+                        <Button Classes="dataAddAction"
+                                Theme="{StaticResource InlineTextActionButtonTheme}"
+                                Margin="8,0,0,0"
+                                IsEnabled="{Binding HasEditInstanceIcon}"
+                                IsTabStop="{Binding HasEditInstanceIcon}"
+                                Command="{Binding ResetInstanceIconCommand}">
+                          <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                            <Path Classes="dataActionIcon"
+                                  Data="{StaticResource RefreshIcon}"
+                                  VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ResetInstanceIconLabel}"
+                                       VerticalAlignment="Center" />
+                          </StackPanel>
+                        </Button>
+                      </Border>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Border>
+              <StackPanel Spacing="8">
+                <TextBlock Text="{Binding EditInstanceNameLabel}" Classes="formLabel" />
+                <controls:ModalTextField>
+                  <TextBox Text="{Binding EditInstanceName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           MaxLength="64"
+                           PlaceholderText="{Binding EditInstanceNamePlaceholder}" />
+                </controls:ModalTextField>
+              </StackPanel>
+              <StackPanel Spacing="8">
+                <TextBlock Text="{Binding EditInstanceNotesLabel}" Classes="formLabel" />
+                <controls:ModalTextField Classes="multiline">
+                  <TextBox Text="{Binding EditInstanceNotes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           AcceptsReturn="True" TextWrapping="Wrap"
+                           MaxLength="2000" Height="88" />
+                </controls:ModalTextField>
+              </StackPanel>
+              <TextBlock IsVisible="{Binding HasInstanceEditorError}"
+                         Text="{Binding InstanceEditorError}"
+                         Foreground="{DynamicResource DangerBrush}"
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelEditManagedInstanceCommand}">
+                  <TextBlock Text="{Binding CancelInstanceEditLabel}" />
+                </Button>
+                <Button Classes="wizardAction create" Command="{Binding SaveManagedInstanceEditCommand}">
+                  <TextBlock Text="{Binding SaveInstanceLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
+
+    <controls:OverlayModal x:Name="InstanceDeleteModal"
+                           IsOpen="{Binding IsManagedInstanceDeletionOpen}"
+                           DismissCommand="{Binding CancelManagedInstanceDeletionCommand}"
+                           Closed="OnInstanceDeleteModalClosed"
+                           SheetMaxWidth="480"
+                           SheetMaxHeight="420"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="522"
+                           ShoulderMargin="12,0,12,0"
+                           HiddenOffset="500"
+                           ZIndex="220">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding ManagedInstanceDeleteTitle}"
+                           FontSize="22" FontWeight="Bold" VerticalAlignment="Center" />
+                <Button Grid.Column="1" Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelManagedInstanceDeletionCommand}"
+                        ToolTip.Tip="{Binding CancelLabel}"
+                        AutomationProperties.Name="{Binding CancelLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <TextBlock Text="{Binding ManagedInstanceDeleteHint}"
+                         Classes="muted" TextWrapping="Wrap" />
+              <Border Background="{DynamicResource ControlSurfaceBrush}"
+                      CornerRadius="11" Padding="14,12">
+                <TextBlock Text="{Binding PendingManagedInstanceName}"
+                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              </Border>
+              <TextBlock IsVisible="{Binding HasInstanceDeletionError}"
+                         Text="{Binding InstanceDeletionError}"
+                         Foreground="{DynamicResource DangerBrush}"
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelManagedInstanceDeletionCommand}">
+                  <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+                <Button Classes="wizardAction danger"
+                        Command="{Binding ConfirmManagedInstanceDeletionCommand}"
+                        IsEnabled="{Binding CanDeleteManagedInstance}">
+                  <TextBlock Text="{Binding ManagedInstanceDeleteLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
   </Grid>
 </UserControl>

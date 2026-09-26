@@ -57,12 +57,47 @@ public class InstanceRepositoryTests : IDisposable
     public void DeleteGameById_RemovesInstanceFromCacheAndRaisesInstancesChanged()
     {
         var meta = _svc.CreateInstanceMeta("release", 42);
+        var instancePath = _svc.GetInstancePathById(meta.Id)!;
         var raised = 0;
         _svc.InstancesChanged += () => raised++;
 
         Assert.True(_svc.DeleteGameById(meta.Id));
 
         Assert.Equal(1, raised);
+        Assert.DoesNotContain(_svc.GetCachedInstances(), instance => instance.Id == meta.Id);
+        Assert.False(Directory.Exists(instancePath));
+    }
+
+    [Fact]
+    public void DeleteGameById_RemovesInstanceFromLegacyRoot()
+    {
+        var id = Guid.NewGuid().ToString();
+        var instancePath = Path.Combine(_tempDir, "instance", id);
+        Directory.CreateDirectory(instancePath);
+        _svc.SaveInstanceMeta(instancePath, new InstanceMeta
+        {
+            Id = id,
+            Name = "Legacy Instance",
+            Branch = "release",
+            Version = 42
+        });
+        _svc.SyncInstancesWithConfig();
+
+        Assert.Equal(instancePath, _svc.GetInstancePathById(id));
+        Assert.True(_svc.DeleteGameById(id));
+
+        Assert.False(Directory.Exists(instancePath));
+        Assert.DoesNotContain(_svc.GetCachedInstances(), instance => instance.Id == id);
+    }
+
+    [Fact]
+    public void DeleteGameById_DropsStaleCacheEntryWhenDirectoryIsMissing()
+    {
+        var meta = _svc.CreateInstanceMeta("release", 42);
+        Directory.Delete(_svc.GetInstancePathById(meta.Id)!, recursive: true);
+
+        Assert.True(_svc.DeleteGameById(meta.Id));
+
         Assert.DoesNotContain(_svc.GetCachedInstances(), instance => instance.Id == meta.Id);
     }
 

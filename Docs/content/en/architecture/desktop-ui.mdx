@@ -76,7 +76,7 @@ The ownership chain is `token -> theme or class -> component -> screen`. Keep sh
 | --- | --- | --- | --- |
 | `FormRow` | [`FormRow.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/FormRow.cs), `Label`, `Hint`, `Error`, and trailing `Content` | Rest, optional error, compact width, long text | [Settings rows](../../../static/img/user/en/settings-general.png) |
 | `ModalForm` | [`ModalForm.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalForm.cs), `Title`, `Description`, `DismissLabel`, `DismissCommand`, body `Content`, and `ActionsContent` | Open, close, validation error, compact sheet | [Java argument form](../../../static/img/user/en/java-arguments.png) |
-| `ModalTextField` | [`ModalTextField.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalTextField.cs), a `TextBox` content slot, `IsError`, and `ErrorMessage` | Rest, hover, focus, and validation error with a warning tooltip | [Java argument form](../../../static/img/user/en/java-arguments.png) |
+| `ModalTextField` | [`ModalTextField.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalTextField.cs), a `TextBox` content slot, `IsError`, and `ErrorMessage`; used by settings forms and profile and instance editors | Rest, hover, focus, multiline input, and validation error with a warning tooltip | [Java argument form](../../../static/img/user/en/java-arguments.png) |
 | `OverlayModal` | [`OverlayModal.axaml.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/OverlayModal.axaml.cs), `IsOpen`, `DismissCommand`, `BackdropTarget`, `InitialFocusTarget`, and `ModalContent` | Open, dismiss, Escape, blocked backdrop, focus restore | [Java argument form](../../../static/img/user/en/java-arguments.png) |
 | `CheckBox.uiSelectionCheck` | [`HyprismTheme.axaml`](../../../../Sources/Hyprism.Desktop/UI/Foundation/Themes/HyprismTheme.axaml) and [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml) | Rest, hover, pressed, keyboard focus, selected, disabled | [Selection controls](../../../static/img/user/en/selection-controls.png) |
 | `RadioButton.uiSelectionRadio` | [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml), native group behavior with a shared content template | Rest, hover, pressed, keyboard focus, selected, disabled | [Selection controls](../../../static/img/user/en/selection-controls.png) |
@@ -192,12 +192,13 @@ Keep screen strings and commands in the view model. Keep component properties sm
 </controls:FormRow>
 ```
 
-Use `FormRow.Error` for a validation message that belongs to one row. Use `ModalForm` for a form inside `OverlayModal`; `BackdropTarget` owns the blur and input block, while `InitialFocusTarget` names the first input. Closing the modal restores the backdrop effect and the element that had focus before opening.
+Use `FormRow.Error` for a validation message that belongs to one row. `ModalForm` provides the shared form layout inside `OverlayModal`; the profile and instance editors compose their own sheets. `BackdropTarget` optionally blurs and blocks the underlying view. Settings modals omit it and use only the overlay dimming. `InitialFocusTarget` names the first input. Closing the modal restores the previous focus and any backdrop effect.
+
+`OverlayModal` draws the bottom edge of an open sheet and updates the ancestor `mainSceneFrame` border while any sheet remains visible. The frame regains its bottom border after the final closing animation. New modals do not need a shell view model registration for this state.
 
 ```xml
 <controls:OverlayModal IsOpen="{Binding IsEditorOpen}"
                        DismissCommand="{Binding CloseEditorCommand}"
-                       BackdropTarget="{Binding ElementName=SettingsLayout}"
                        InitialFocusTarget="{Binding ElementName=EditorTextBox}">
   <controls:OverlayModal.ModalContent>
     <controls:ModalForm Title="{Binding EditorTitle}"

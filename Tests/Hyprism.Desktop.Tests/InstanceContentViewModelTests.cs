@@ -48,6 +48,7 @@ public sealed class InstanceContentViewModelTests
             Branch = "release",
             Version = 19
         };
+        var cachedInstances = new List<InstanceInfo> { managed, other, selectedForLaunch };
         var instances = new Mock<IInstanceRepository>();
         var profiles = new Mock<IProfileManager>();
         var profileRepository = new Mock<IProfileRepository>();
@@ -60,7 +61,7 @@ public sealed class InstanceContentViewModelTests
         var uriLauncher = new Mock<IExternalUriLauncher>();
         var modManager = new Mock<IModManager>();
 
-        instances.Setup(service => service.GetCachedInstances()).Returns([managed, other, selectedForLaunch]);
+        instances.Setup(service => service.GetCachedInstances()).Returns(() => cachedInstances.ToList());
         instances.Setup(service => service.GetSelectedInstance()).Returns(selectedForLaunch);
         instances.Setup(service => service.GetInstancePathById(managed.Id)).Returns(instancePath);
         instances.Setup(service => service.IsClientPresent(instancePath)).Returns(true);
@@ -114,7 +115,9 @@ public sealed class InstanceContentViewModelTests
             .ReturnsAsync(new DownloadProgress { Success = true });
         uriLauncher.Setup(service => service.LaunchDirectoryAsync(instancePath, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        instances.Setup(service => service.DeleteGameById(other.Id)).Returns(true);
+        instances.Setup(service => service.DeleteGameById(other.Id))
+            .Callback(() => cachedInstances.Remove(other))
+            .Returns(true);
 
         using var viewModel = new MainWindowViewModel(
             instances.Object,
@@ -195,7 +198,16 @@ public sealed class InstanceContentViewModelTests
                 ids.SequenceEqual(new[] { other.Id, selectedForLaunch.Id, managed.Id }))), Times.Once);
 
         viewModel.DeleteManagedInstanceCommand.Execute(null);
+        Assert.True(viewModel.Instances.HasPendingManagedInstanceDeletion);
+        instances.Verify(service => service.DeleteGameById(It.IsAny<string>()), Times.Never);
+
+        viewModel.Instances.ConfirmManagedInstanceDeletionCommand.Execute(null);
         instances.Verify(service => service.DeleteGameById(other.Id), Times.Once);
+        Assert.False(viewModel.Instances.IsManagedInstanceDeletionOpen);
+        Assert.True(viewModel.Instances.HasPendingManagedInstanceDeletion);
+        viewModel.Instances.CompleteManagedInstanceDeletionClose();
+        Assert.False(viewModel.Instances.HasPendingManagedInstanceDeletion);
+        Assert.DoesNotContain(viewModel.AllInstances, instance => instance.Id == other.Id);
     }
 
     [AvaloniaFact]

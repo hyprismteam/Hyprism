@@ -519,7 +519,7 @@ public sealed partial class MainWindowViewModel
     public IAsyncRelayCommand ShowLogsInFolderCommand => Instances.ShowLogsInFolderCommand;
     public IAsyncRelayCommand RunManagedInstanceCommand => Instances.RunManagedInstanceCommand;
     public IAsyncRelayCommand OpenManagedInstanceFolderCommand => Instances.OpenManagedInstanceFolderCommand;
-    public IRelayCommand DeleteManagedInstanceCommand => Instances.DeleteManagedInstanceCommand;
+    public IRelayCommand DeleteManagedInstanceCommand => Instances.RequestManagedInstanceDeletionCommand;
     public IRelayCommand CancelActivityCommand => Instances.CancelActivityCommand;
 
     public void MoveInstance(string instanceId, int targetIndex)

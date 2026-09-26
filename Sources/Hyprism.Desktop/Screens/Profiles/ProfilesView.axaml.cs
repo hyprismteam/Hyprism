@@ -64,6 +64,18 @@ public sealed partial class ProfilesView : UserControl
         DataContextChanged += OnDataContextChanged;
     }
 
+    private void OnProfileDeleteModalClosed(object? sender, EventArgs args)
+    {
+        if (DataContext is ProfilesViewModel viewModel)
+            viewModel.CompleteProfileDeletionClose();
+    }
+
+    private void OnProfileEditModalClosed(object? sender, EventArgs args)
+    {
+        if (DataContext is ProfilesViewModel viewModel)
+            viewModel.CompleteProfileEditClose();
+    }
+
     private void OnDataContextChanged(object? sender, EventArgs args)
     {
         if (_viewModel is not null)

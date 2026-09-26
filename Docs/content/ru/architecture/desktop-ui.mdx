@@ -76,7 +76,7 @@ UI Desktop разделён на пять слоёв.
 | --- | --- | --- | --- |
 | `FormRow` | [`FormRow.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/FormRow.cs), `Label`, `Hint`, `Error` и конечное `Content` | Обычная строка, необязательная ошибка, компактная ширина, длинный текст | [Строки Settings](../../../static/img/user/ru/settings-general.png) |
 | `ModalForm` | [`ModalForm.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalForm.cs), `Title`, `Description`, `DismissLabel`, `DismissCommand`, `Content` формы и `ActionsContent` | Открыто, закрытие, ошибка проверки, компактная панель | [Форма аргументов Java](../../../static/img/user/ru/java-arguments.png) |
-| `ModalTextField` | [`ModalTextField.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalTextField.cs), слот `TextBox`, `IsError` и `ErrorMessage` | Обычное состояние, наведение, фокус и ошибка проверки с подсказкой у значка | [Форма аргументов Java](../../../static/img/user/ru/java-arguments.png) |
+| `ModalTextField` | [`ModalTextField.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/ModalTextField.cs), слот `TextBox`, `IsError` и `ErrorMessage`; используется в формах настроек и редакторах профилей и экземпляров | Обычное состояние, наведение, фокус, многострочный ввод и ошибка проверки с подсказкой у значка | [Форма аргументов Java](../../../static/img/user/ru/java-arguments.png) |
 | `OverlayModal` | [`OverlayModal.axaml.cs`](../../../../Sources/Hyprism.Desktop/UI/Controls/Primitives/OverlayModal.axaml.cs), `IsOpen`, `DismissCommand`, `BackdropTarget`, `InitialFocusTarget` и слот `ModalContent` | Открытие, закрытие, Escape, блокировка фона, восстановление фокуса | [Форма аргументов Java](../../../static/img/user/ru/java-arguments.png) |
 | `CheckBox.uiSelectionCheck` | [`HyprismTheme.axaml`](../../../../Sources/Hyprism.Desktop/UI/Foundation/Themes/HyprismTheme.axaml) и [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml) | Обычное, наведение, нажатие, фокус клавиатуры, выбрано, отключено | [Элементы выбора](../../../static/img/user/ru/selection-controls.png) |
 | `RadioButton.uiSelectionRadio` | [`Components.axaml`](../../../../Sources/Hyprism.Desktop/UI/Components/Components.axaml), системная группировка и общий шаблон содержимого | Обычное, наведение, нажатие, фокус клавиатуры, выбрано, отключено | [Элементы выбора](../../../static/img/user/ru/selection-controls.png) |
@@ -192,12 +192,13 @@ python3 Scripts/desktop_ui_inventory.py --output Build/ui-inventory.json
 </controls:FormRow>
 ```
 
-Для ошибки валидации одной строки используйте `FormRow.Error`. Для формы в `OverlayModal` используйте `ModalForm`; `BackdropTarget` отвечает за blur и блокировку ввода, а `InitialFocusTarget` задает первое поле. При закрытии модалки восстанавливаются эффект фона и фокус элемента, который был активен перед открытием.
+Для ошибки валидации одной строки используйте `FormRow.Error`. `ModalForm` задает общий макет формы внутри `OverlayModal`; редакторы профиля и экземпляра собирают собственные панели. Необязательный `BackdropTarget` размывает и блокирует основной экран. Модалки настроек не задают его и используют только затемнение оверлея. `InitialFocusTarget` задает первое поле. При закрытии восстанавливаются прежний фокус и эффект фона, если он был задан.
+
+`OverlayModal` рисует нижнюю линию открытой панели и управляет нижней обводкой родительской рамки `mainSceneFrame`, пока видна хотя бы одна панель. Рамка возвращает нижнюю обводку после завершения последней анимации закрытия. Для новых модалок не нужно регистрировать это состояние в модели окна.
 
 ```xml
 <controls:OverlayModal IsOpen="{Binding IsEditorOpen}"
                        DismissCommand="{Binding CloseEditorCommand}"
-                       BackdropTarget="{Binding ElementName=SettingsLayout}"
                        InitialFocusTarget="{Binding ElementName=EditorTextBox}">
   <controls:OverlayModal.ModalContent>
     <controls:ModalForm Title="{Binding EditorTitle}"

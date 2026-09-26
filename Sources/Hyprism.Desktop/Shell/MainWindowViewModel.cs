@@ -107,7 +107,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
         _isOfficialProfile = profileRepository.GetSelectedProfile()?.IsOfficial == true;
 
         Settings = CreateSettingsViewModel(profileRepository);
-        Settings.PropertyChanged += OnSettingsPropertyChanged;
         Profiles = new ProfilesViewModel(
             profiles,
             profileRepository,
@@ -169,13 +168,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     public bool IsProfiles => CurrentPage == ProfilesPage;
     public bool IsSettings => CurrentPage == SettingsPage;
     public bool IsPlaceholderPage => !IsInstances && !IsNews && !IsProfiles && !IsSettings;
-
-    public bool IsBottomSheetMounted =>
-        Instances.IsModCatalogPreviewMounted ||
-        Instances.HasModCatalogInstallConfirmation ||
-        Settings.IsAddingJavaArgument ||
-        Settings.IsAddingEnvironmentVariable ||
-        Settings.IsAddingAuthServer;
 
     [RelayCommand]
     private void Navigate(string? page)
@@ -266,22 +258,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
         OnPropertyChanged(string.Empty);
     }
 
-    private void OnSettingsPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is nameof(SettingsViewModel.IsAddingJavaArgument) or
-            nameof(SettingsViewModel.IsAddingEnvironmentVariable) or
-            nameof(SettingsViewModel.IsAddingAuthServer))
-            OnPropertyChanged(nameof(IsBottomSheetMounted));
-    }
-
     private void OnInstancesPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        OnPropertyChanged(e.PropertyName);
-        if (e.PropertyName is nameof(InstancesViewModel.IsModCatalogPreviewMounted) or
-            nameof(InstancesViewModel.HasModCatalogInstallConfirmation) or
-            nameof(InstancesViewModel.IsBottomSheetMounted))
-            OnPropertyChanged(nameof(IsBottomSheetMounted));
-    }
+        => OnPropertyChanged(e.PropertyName);
 
     private void OnNewsPropertyChanged(object? sender, PropertyChangedEventArgs e)
         => OnPropertyChanged(e.PropertyName);
@@ -326,7 +304,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     public void Dispose()
     {
         _localizer.LanguageChanged -= ApplyLanguage;
-        Settings.PropertyChanged -= OnSettingsPropertyChanged;
         Profiles.ActiveProfileChanged -= OnActiveProfileChanged;
         Profiles.PropertyChanged -= OnProfilesPropertyChanged;
         Instances.PropertyChanged -= OnInstancesPropertyChanged;

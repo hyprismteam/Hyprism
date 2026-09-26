@@ -29,10 +29,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Сегментний контрол</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>Останню версію Hyprism завантажено у вашу папку "Завантаження".</value>
+    <value>Останню версію Hyprism завантажено у вашу папку "Завантаження"</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>Ми спробували відкрити файл, щоб ви могли його встановити. Якщо він не відкрився, перейдіть до "Завантаження" та запустіть файл вручну.</value>
+    <value>Ми спробували відкрити файл, щоб ви могли його встановити. Якщо він не відкрився, перейдіть до "Завантаження" та запустіть файл вручну</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Введіть повний шлях, де ви хочете зберігати екземпляри Hyprism:</value>
@@ -61,7 +61,7 @@ SPDX-License-Identifier: GPL-3.0-only
 • Налаштування запуску
 • WebView2 (папка EBWebView)
 
-Можливо, вам доведеться перевстановити гру, якщо ви перемикаєте диск.</value>
+Можливо, вам доведеться перевстановити гру, якщо ви перемикаєте диск</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>Недійсний псевдонім</value>
@@ -70,7 +70,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Псевдонім має містити від 1 до 16 символів</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>Шлях не вдалося використати. Перевірте, чи існує він, і чи маєте ви права на запис.</value>
+    <value>Шлях не вдалося використати. Перевірте, чи існує він, і чи маєте ви права на запис</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -202,7 +202,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Встановлену гру</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>Профілі та налаштування будуть збережені.</value>
+    <value>Профілі та налаштування будуть збережені</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>Видалити гру?</value>
@@ -217,7 +217,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Скасувати</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>Цю дію неможливо скасувати.</value>
+    <value>Цю дію неможливо скасувати</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>Видалити профіль</value>
@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Скін та аватар</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Видалити профіль?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Підтвердження</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Це видалить усі дані профілю, включаючи:</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>Редагувати екземпляр</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Змінити назву або іконку цього екземпляра</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Введіть назву від 1 до 64 символів і опис до 2000 символів</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Іконка екземпляра</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Виберіть коректне зображення PNG або JPEG</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти зміни екземпляра</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Не вдалося експортувати екземпляр</value>
@@ -439,7 +454,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Зміна версії видалить файли гри</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>Клієнт гри буде видалено, і цю версію доведеться завантажити знову. Дані користувача, як-от збереження та моди, залишаться.</value>
+    <value>Клієнт гри буде видалено, і цю версію доведеться завантажити знову. Дані користувача, як-от збереження та моди, залишаться</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>Змінити мову</value>
@@ -685,7 +700,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Лише для освітніх цілей. Подобається?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>Лише в освітніх цілях.</value>
+    <value>Лише в освітніх цілях</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>ВИЙТИ</value>
@@ -766,7 +781,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Автор</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>Бекенд відмовився встановлювати цей мод. Спробуйте ще раз.</value>
+    <value>Бекенд відмовився встановлювати цей мод. Спробуйте ще раз</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>Огляд модів</value>
@@ -832,7 +847,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Закрити</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>Ви впевнені, що хочете видалити {{count}} мод(ів)? Цю дію неможливо скасувати.</value>
+    <value>Ви впевнені, що хочете видалити {{count}} мод(ів)? Цю дію неможливо скасувати</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>Ви впевнені, що хочете завантажити {{count}} мод(ів)?</value>
@@ -943,7 +958,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Імпорт списку модів...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>Не вдалося встановити моди. Спробуйте ще раз.</value>
+    <value>Не вдалося встановити моди. Спробуйте ще раз</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>Встановити вибране</value>
@@ -1006,7 +1021,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Без опису</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>Не знайдено файлів для завантаження для вибраних модів.</value>
+    <value>Не знайдено файлів для завантаження для вибраних модів</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>Немає доступних файлів</value>
@@ -1243,22 +1258,22 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Автентифікація...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Не вдалося створити профіль з облікового запису Hytale.</value>
+    <value>Не вдалося створити профіль з облікового запису Hytale</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Увійдіть за допомогою облікового запису Hytale. Якщо ви ще не придбали гру, натисніть Пропустити.</value>
+    <value>Увійдіть за допомогою облікового запису Hytale. Якщо ви ще не придбали гру, натисніть Пропустити</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>Під час автентифікації сталася помилка.</value>
+    <value>Під час автентифікації сталася помилка</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>Автентифікація не вдалася. Спробуйте ще раз.</value>
+    <value>Автентифікація не вдалася. Спробуйте ще раз</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Увійти з Hytale</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>Ваш обліковий запис ще не має доступу до Hytale. Ви можете придбати гру на офіційному сайті.</value>
+    <value>Ваш обліковий запис ще не має доступу до Hytale. Ви можете придбати гру на офіційному сайті</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>Пропустити</value>
@@ -1291,7 +1306,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Налаштуйте зовнішній вигляд</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism — це неофіційний лаунчер для Hytale. Цей проект не пов'язаний з Hypixel Studios.</value>
+    <value>Hyprism — це неофіційний лаунчер для Hytale. Цей проект не пов'язаний з Hypixel Studios</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>Увійти в лаунчер</value>
@@ -1351,7 +1366,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Розташування</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>Виберіть, де зберігати ваші екземпляри гри. Ви можете залишити значення за замовчуванням або вибрати власне розташування.</value>
+    <value>Виберіть, де зберігати ваші екземпляри гри. Ви можете залишити значення за замовчуванням або вибрати власне розташування</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>Мейнтейнер та Розробник</value>
@@ -1414,7 +1429,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Скасувати</value>
   </data>
   <data name="profileEditor.copy" xml:space="preserve">
-    <value>Коп.</value>
+    <value>Коп</value>
   </data>
   <data name="profileEditor.dropSkin" xml:space="preserve">
     <value>Перетягніть скін сюди</value>
@@ -1438,7 +1453,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Нікнейм</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 символів</value>
+    <value>3-16 символів</value>
+  </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>Введіть нікнейм</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>Нікнейм має містити щонайменше 3 символи</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>Нікнейм не може бути довшим за 16 символів</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>Використовуйте лише латинські літери, цифри, дефіси та підкреслення</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1446,11 +1473,20 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>Унікальний ID профілю</value>
   </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>Введіть UUID</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>Введіть коректний UUID, наприклад 12345678-1234-1234-1234-123456789abc</value>
+  </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>Копіювати UUID</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Створити новий профіль</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Не вдалося видалити профіль</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Видалити профіль</value>
@@ -1506,9 +1542,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Зберегти UUID</value>
   </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Профіль збережено!</value>
-  </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Збережені профілі</value>
   </data>
@@ -1516,19 +1549,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Профілі</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>Ви будете перенаправлені на сторінку входу Hytale у вашому браузері. Після входу ваш профіль буде створено автоматично.</value>
+    <value>Ви будете перенаправлені на сторінку входу Hytale у вашому браузері. Після входу ваш профіль буде створено автоматично</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>Під час входу сталася помилка. Будь ласка, спробуйте ще раз.</value>
+    <value>Під час входу сталася помилка. Будь ласка, спробуйте ще раз</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>Вхід не було завершено. Будь ласка, спробуйте ще раз.</value>
+    <value>Вхід не було завершено. Будь ласка, спробуйте ще раз</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Увійти з Hytale</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>Завершіть вхід у вашому браузері. Це вікно оновиться автоматично.</value>
+    <value>Завершіть вхід у вашому браузері. Це вікно оновиться автоматично</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>символів</value>
@@ -1540,10 +1573,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Створити Профіль</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>Під час створення профілю сталася помилка.</value>
+    <value>Під час створення профілю сталася помилка</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>Не вдалося створити профіль. Будь ласка, спробуйте ще раз.</value>
+    <value>Не вдалося створити профіль. Будь ласка, спробуйте ще раз</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>Увійти</value>
@@ -1558,13 +1591,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Виберіть Нікнейм</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>Нікнейм повинен містити 3-16 символів: англійські літери, цифри, дефіс або підкреслення.</value>
+    <value>Нікнейм повинен містити 3-16 символів: англійські літери, цифри, дефіс або підкреслення</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>Тільки A-Z, 0-9, - та _</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Ваш обліковий запис Hytale ще не має ігрових профілів. Ігровий профіль буде створено при першому вході в гру.</value>
+    <value>Ваш обліковий запис Hytale ще не має ігрових профілів. Ігровий профіль буде створено при першому вході в гру</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>Офіційний Обліковий Запис Hytale</value>
@@ -1699,7 +1732,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Місце зберігання встановлених екземплярів гри</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>Деякі параметри недоступні, поки гра запущена. Закрийте гру, щоб змінити ці налаштування.</value>
+    <value>Деякі параметри недоступні, поки гра запущена. Закрийте гру, щоб змінити ці налаштування</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>Папка екземпляра</value>
@@ -1735,13 +1768,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Керування даними</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>Це видалить усі дані панелі запуску, включаючи налаштування, кеш і завантажені файли. Цю дію не можна скасувати.</value>
+    <value>Це видалить усі дані панелі запуску, включаючи налаштування, кеш і завантажені файли. Цю дію не можна скасувати</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>Видалити всі дані?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>Це видалить екземпляр {{branch}} {{version}} та всі його дані. Цю дію не можна скасувати.</value>
+    <value>Це видалить екземпляр {{branch}} {{version}} та всі його дані. Цю дію не можна скасувати</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>Видалити екземпляр?</value>
@@ -1768,7 +1801,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Увімкнути</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>Формат: header=value або header="значення з пробілами". Використовуйте {hytaleAgent} для офіційного User-Agent.</value>
+    <value>Формат: header=value або header="значення з пробілами". Використовуйте {hytaleAgent} для офіційного User-Agent</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>Власні заголовки (необов'язково): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1777,10 +1810,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Як працюють завантаження</value>
   </data>
   <data name="settings.downloads.howDownloadsWorkDescription" xml:space="preserve">
-    <value>Hyprism автоматично вибирає найшвидше доступне джерело для завантаження файлів гри. Натисніть «Тест швидкості», щоб перевірити з'єднання.</value>
+    <value>Hyprism автоматично вибирає найшвидше доступне джерело для завантаження файлів гри. Натисніть «Тест швидкості», щоб перевірити з'єднання</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Введіть базову URL дзеркала Hytale. Лаунчер спробує автоматично визначити конфігурацію.</value>
+    <value>Введіть базову URL дзеркала Hytale. Лаунчер спробує автоматично визначити конфігурацію</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>Дзеркала спільноти</value>
@@ -1843,13 +1876,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Закрити лаунчер</value>
   </data>
   <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Закрити після запуску гри.</value>
+    <value>Закрити після запуску гри</value>
   </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Сховище лаунчера</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>Де зберігаються ігри та дані.</value>
+    <value>Де зберігаються ігри та дані</value>
   </data>
   <data name="settings.generalSettings.showAlphaMods" xml:space="preserve">
     <value>Показати альфа-моди</value>
@@ -1909,7 +1942,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Завантажте та встановіть моди оптимізації для покращення продуктивності гри</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>Виявлено лише один графічний процесор — вибір заблоковано в автоматичному режимі.</value>
+    <value>Виявлено лише один графічний процесор — вибір заблоковано в автоматичному режимі</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>Налаштування графіки</value>
@@ -1936,13 +1969,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Видалити екземпляр</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>Керування вашими встановленими версіями гри.</value>
+    <value>Керування вашими встановленими версіями гри</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>Перетягнути ZIP або PWR для імпорту екземпляра</value>
   </data>
   <data name="settings.instanceSettings.empty" xml:space="preserve">
-    <value>Що, ви ще нічого не завантажили.</value>
+    <value>Що, ви ще нічого не завантажили</value>
   </data>
   <data name="settings.instanceSettings.exportFailed" xml:space="preserve">
     <value>Не вдалося експортувати екземпляр</value>
@@ -2101,7 +2134,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Оберіть мову лаунчера</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>Примітка: Деякий текст може залишатися англійською мовою до завершення повної локалізації. Розробники активно локалізують лаунчер, щоб кожен міг насолоджуватися його використанням.</value>
+    <value>Примітка: Деякий текст може залишатися англійською мовою до завершення повної локалізації. Розробники активно локалізують лаунчер, щоб кожен міг насолоджуватися його використанням</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>Вибір мови</value>
@@ -2134,7 +2167,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Сервер автентифікації</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>Укажіть адресу сервера, який використовуватиметься для автентифікації в онлайн-грі.</value>
+    <value>Укажіть адресу сервера, який використовуватиметься для автентифікації в онлайн-грі</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>Наприклад, sessions.example.com</value>
@@ -2155,13 +2188,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Аватар</value>
   </data>
   <data name="settings.profile.copy" xml:space="preserve">
-    <value>Коп.</value>
+    <value>Коп</value>
   </data>
   <data name="settings.profile.displayName" xml:space="preserve">
     <value>Нікнейм</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>Ім'я в грі (1-16 символів).</value>
+    <value>Ім'я в грі (1-16 символів)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>Hytale має певний шаблон нікнеймів. Використовуйте лише англійські символи та цифри (0-9), уникаючи спеціальних символів та пробілів (винятки: '-', '_')</value>
@@ -2281,7 +2314,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>Гра запуститься автоматично.</value>
+    <value>Гра запуститься автоматично</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>Завантаження...</value>
@@ -2293,7 +2326,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Запуск...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>Зачекайте, завантажуємо файли гри.</value>
+    <value>Зачекайте, завантажуємо файли гри</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>Бажаєте скопіювати збережені дані до нової версії?</value>
@@ -2302,7 +2335,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Поточна версія</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>Доступна нова версія гри. Ваша поточна версія має збережені дані (налаштування, моди тощо).</value>
+    <value>Доступна нова версія гри. Ваша поточна версія має збережені дані (налаштування, моди тощо)</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>Нова версія</value>
@@ -2323,7 +2356,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Оновити без копіювання</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>Лаунчер перезапуститься автоматично.</value>
+    <value>Лаунчер перезапуститься автоматично</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>Помилка оновлення</value>
@@ -2440,10 +2473,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Видалити</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>Видалити "{0}" та всі його дані? Цю дію не можна скасувати.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Видалити екземпляр?</value>
+    <value>Видалити "{0}" та всі його дані? Цю дію не можна скасувати</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Встановити</value>
@@ -2473,7 +2503,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Натисніть, щоб переглянути реліз на GitHub</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>Не вдалося завантажити статтю. Ви все ще можете відкрити її на hytale.com.</value>
+    <value>Не вдалося завантажити статтю. Ви все ще можете відкрити її на hytale.com</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>Завантаження статті...</value>
@@ -2488,7 +2518,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Завантажити ще</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>Виберіть новину, щоб прочитати її тут.</value>
+    <value>Виберіть новину, щоб прочитати її тут</value>
   </data>
   <data name="onboarding.warning.back" xml:space="preserve">
     <value>Повернутися до входу</value>
@@ -2497,13 +2527,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Продовжити</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Без облікового запису Hytale ви не можете завантажувати файли гри з офіційних серверів.</value>
+    <value>Без облікового запису Hytale ви не можете завантажувати файли гри з офіційних серверів</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>Веб-ресурси для завантаження відсутні</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>Щоб завантажити гру, вам потрібно додати дзеркало в Налаштування → Завантаження, або ввійти з обліковим записом Hytale пізніше.</value>
+    <value>Щоб завантажити гру, вам потрібно додати дзеркало в Налаштування → Завантаження, або ввійти з обліковим записом Hytale пізніше</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>Джерела завантаження відсутні</value>
@@ -2683,7 +2713,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Шаблон URL</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>Дзеркало спільноти використовується як альтернативне джерело файлів гри, коли офіційні сервери недоступні.</value>
+    <value>Дзеркало спільноти використовується як альтернативне джерело файлів гри, коли офіційні сервери недоступні</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>Налаштування дзеркала</value>
@@ -2710,13 +2740,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Перевірка...</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>Офіційні сервери завжди вважаються доступними.</value>
+    <value>Офіційні сервери завжди вважаються доступними</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>В офлайні</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>Сервер автентифікації недоступний. Режим онлайн тимчасово відключено.</value>
+    <value>Сервер автентифікації недоступний. Режим онлайн тимчасово відключено</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>Онлайн</value>
@@ -2728,13 +2758,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Статус сервера автентифікації</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>Перевірте, чи доступний сервер автентифікації.</value>
+    <value>Перевірте, чи доступний сервер автентифікації</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>Офіційні облікові записи можуть використовувати лише офіційну автентифікацію Hytale.</value>
+    <value>Офіційні облікові записи можуть використовувати лише офіційну автентифікацію Hytale</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>Неофіційні облікові записи не можуть використовувати офіційну автентифікацію Hytale.</value>
+    <value>Неофіційні облікові записи не можуть використовувати офіційну автентифікацію Hytale</value>
   </data>
   <data name="desktopSettings.categories.language" xml:space="preserve">
     <value>Мова</value>

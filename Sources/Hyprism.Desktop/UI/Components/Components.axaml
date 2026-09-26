@@ -8,6 +8,38 @@ SPDX-License-Identifier: GPL-3.0-only
         xmlns:controls="using:Hyprism.Desktop.Controls"
         xmlns:easing="using:Avalonia.Animation.Easings">
   <Styles.Resources>
+    <ControlTheme x:Key="InlineTextActionButtonTheme" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+        </Transitions>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover, ^:pressed">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+      </Style>
+    </ControlTheme>
+
 
     <ControlTheme x:Key="UiComboBoxItemTheme" TargetType="ComboBoxItem">
       <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
@@ -169,6 +201,31 @@ SPDX-License-Identifier: GPL-3.0-only
         </Border>
       </ControlTemplate>
     </Setter>
+  </Style>
+
+  <Style Selector="Button.dataEditAction">
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Foreground" Value="#111214" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button.dataEditAction:pointerover">
+    <Setter Property="Background" Value="#E1E2E5" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+  </Style>
+
+  <Style Selector="Button.dataEditAction:pressed">
+    <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
   <Style Selector="controls|FadingComboBox.uiComboBox">
@@ -533,6 +590,10 @@ SPDX-License-Identifier: GPL-3.0-only
     </Setter>
   </Style>
 
+  <Style Selector="controls|ModalTextField.multiline TextBox">
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+  </Style>
+
   <Style Selector="controls|ModalTextField TextBox:pointerover">
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
   </Style>
@@ -887,5 +948,41 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="Button.wizardAction.create:disabled">
     <Setter Property="Opacity" Value="0.45" />
+  </Style>
+  <Style Selector="Button.wizardAction.danger">
+    <Setter Property="MinWidth" Value="150" />
+    <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="Button.wizardAction.danger:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerActionHoverBrush}" />
+  </Style>
+
+  <Style Selector="Button.wizardAction.danger:disabled">
+    <Setter Property="Opacity" Value="0.45" />
+  </Style>
+
+  <Style Selector="Border.editorModalContent">
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+    <Setter Property="CornerRadius" Value="18,18,0,0" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+
+  <Style Selector="Border.editorModalOutline">
+    <Setter Property="Margin" Value="0,0,0,42" />
+    <Setter Property="BorderBrush" Value="{DynamicResource MainCardStrokeBrush}" />
+    <Setter Property="BorderThickness" Value="1,1,1,0" />
+    <Setter Property="CornerRadius" Value="18,18,0,0" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+
+  <Style Selector="Button.editorModalClose">
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+  </Style>
+
+  <Style Selector="Button.editorModalClose:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 </Styles>

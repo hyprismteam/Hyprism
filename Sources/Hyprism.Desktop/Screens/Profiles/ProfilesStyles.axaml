@@ -53,14 +53,6 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="ColumnSpacing" Value="14" />
     </Style>
 
-    <Style Selector="Border.profileDeleteConfirmation">
-      <Setter Property="Width" Value="300" />
-      <Setter Property="Padding" Value="18" />
-      <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-      <Setter Property="CornerRadius" Value="14" />
-      <Setter Property="BoxShadow" Value="{DynamicResource PopupShadow}" />
-    </Style>
-
     <Style Selector="Border.profileHeroAvatar">
       <Setter Property="Width" Value="144" />
       <Setter Property="Height" Value="144" />
@@ -99,6 +91,27 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
     </Style>
 
+    <Style Selector="Button.profileIconButton.editorRandomizeButton">
+      <Setter Property="Width" Value="44" />
+      <Setter Property="Height" Value="44" />
+      <Setter Property="Padding" Value="12" />
+      <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
+      <Setter Property="CornerRadius" Value="11" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.18" />
+          <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Button.profileIconButton.editorRandomizeButton:pointerover">
+      <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+    </Style>
+
     <Style Selector="TextBox.profileInput">
       <Setter Property="MinHeight" Value="44" />
       <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
@@ -122,20 +135,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
     <Style Selector="TextBox.profileInput:focus /template/ Border#PART_BorderElement">
       <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-    </Style>
-
-    <Style Selector="Border.profileStatus">
-      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
-      <Setter Property="CornerRadius" Value="12" />
-      <Setter Property="Padding" Value="13,10" />
-    </Style>
-
-    <Style Selector="TextBlock.profileStatusText">
-      <Setter Property="Foreground" Value="{DynamicResource SuccessSoftBrush}" />
-    </Style>
-
-    <Style Selector="TextBlock.profileStatusText.error">
-      <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
     </Style>
 
     <Style Selector="Button.officialSignInAction">
@@ -215,5 +214,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
     <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="profiles|ProfilesView Border.managerWideSplitAction Path.profileActivationIcon">
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
   </Style>
 </Styles>
