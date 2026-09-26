@@ -173,9 +173,13 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     public bool IsBottomSheetMounted =>
         Instances.IsModCatalogPreviewMounted ||
         Instances.HasModCatalogInstallConfirmation ||
+        Instances.IsInstanceEditMounted ||
+        Instances.HasPendingManagedInstanceDeletion ||
         Settings.IsAddingJavaArgument ||
         Settings.IsAddingEnvironmentVariable ||
-        Settings.IsAddingAuthServer;
+        Settings.IsAddingAuthServer ||
+        Profiles.IsProfileEditMounted ||
+        Profiles.HasPendingProfileDeletion;
 
     [RelayCommand]
     private void Navigate(string? page)
@@ -279,6 +283,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
         OnPropertyChanged(e.PropertyName);
         if (e.PropertyName is nameof(InstancesViewModel.IsModCatalogPreviewMounted) or
             nameof(InstancesViewModel.HasModCatalogInstallConfirmation) or
+            nameof(InstancesViewModel.IsInstanceEditMounted) or
+            nameof(InstancesViewModel.HasPendingManagedInstanceDeletion) or
             nameof(InstancesViewModel.IsBottomSheetMounted))
             OnPropertyChanged(nameof(IsBottomSheetMounted));
     }
@@ -300,6 +306,10 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
 
     private void OnProfilesPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName is nameof(ProfilesViewModel.IsProfileEditMounted) or
+            nameof(ProfilesViewModel.HasPendingProfileDeletion))
+            OnPropertyChanged(nameof(IsBottomSheetMounted));
+
         if (e.PropertyName is nameof(ProfilesViewModel.ActiveProfile) or null)
         {
             OnPropertyChanged(nameof(ActiveProfileAvatar));

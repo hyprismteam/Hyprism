@@ -246,8 +246,8 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin ve avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Profili Sil?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Onay</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Bu işlem aşağıdakileri kalıcı olarak silecektir:</value>
@@ -336,8 +336,23 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Örneği Düzenle</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Bu örneğin adını veya simgesini değiştirin</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Düzenle</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>1 ila 64 karakterlik bir ad ve en fazla 2000 karakterlik bir açıklama girin.</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Açıklama</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Örnek simgesi</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Geçerli bir PNG veya JPEG görseli seçin.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Örnek değişiklikleri kaydedilemedi.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Örnek dışa aktarılamadı</value>
@@ -1438,7 +1453,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
     <value>Kullanıcı Adı</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 karakter olmalıdır</value>
+    <value>3-16 karakter olmalıdır</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Yeni Profil Oluştur</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Profil silinemedi.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Profili Sil</value>
@@ -1505,9 +1523,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>UUID'yi Kaydet</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Profil kaydedildi!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Kayıtlı Profiller</value>
@@ -2441,9 +2456,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir.</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>"{0}" ve tüm verilerini silmek istiyor musun? Bu işlem geri alınamaz.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Örneği silmek istiyor musun?</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Yükle</value>

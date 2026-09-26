@@ -246,8 +246,8 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin y avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>¿Eliminar Perfil?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Confirmación</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Esto eliminará permanentemente todos los datos del perfil, incluyendo:</value>
@@ -336,8 +336,23 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Editar Instancia</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Cambiar el nombre o icono de esta instancia</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Introduce un nombre de 1 a 64 caracteres y una descripción de hasta 2000 caracteres.</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Icono de la instancia</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Selecciona una imagen PNG o JPEG válida.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>No se pudieron guardar los cambios de la instancia.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Error al exportar instancia</value>
@@ -1438,7 +1453,7 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
     <value>Nombre de Usuario</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>Debe tener 1-16 caracteres</value>
+    <value>Debe tener 3-16 caracteres</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Crear Nuevo Perfil</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>No se pudo eliminar el perfil.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Eliminar Perfil</value>
@@ -1505,9 +1523,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Guardar UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>¡Perfil guardado!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Perfiles Guardados</value>
@@ -2441,9 +2456,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad.</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>¿Eliminar "{0}" y todos sus datos? Esta acción no se puede deshacer.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>¿Eliminar instancia?</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Instalar</value>

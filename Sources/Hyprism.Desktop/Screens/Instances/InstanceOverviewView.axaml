@@ -56,9 +56,14 @@ SPDX-License-Identifier: GPL-3.0-only
                             Spacing="9"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-                  <Image Classes="compactInstanceGameIcon"
-                         Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
-                         Stretch="Uniform" />
+                  <Border Classes="instanceIconClip toolbar">
+                    <Grid Classes="compactInstanceGameIcon">
+                      <Image Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                             IsVisible="{Binding !HasManagedInstanceIcon}" Stretch="Uniform" />
+                      <Image Source="{Binding ManagedInstanceIcon}"
+                             IsVisible="{Binding HasManagedInstanceIcon}" Stretch="UniformToFill" />
+                    </Grid>
+                  </Border>
                   <TextBlock Classes="detailToolbarTitle"
                              Text="{Binding ManagedInstanceName}"
                              MaxWidth="240"
@@ -77,6 +82,7 @@ SPDX-License-Identifier: GPL-3.0-only
                     <Button x:Name="CompactInstancePrimaryAction"
                             Classes="managerCompactActionPart main"
                             Classes.active="{Binding IsManagedInstanceActionActive}"
+                            Classes.editAvailable="{Binding IsManagedInstanceActionRunning}"
                             Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
                             IsEnabled="{Binding CanRunManagedInstanceAction}"
                             PointerExited="OnManagedInstanceActionPointerExited"
@@ -88,8 +94,8 @@ SPDX-License-Identifier: GPL-3.0-only
                     <Button x:Name="CompactInstanceMoreButton"
                             Grid.Column="1"
                             Classes="managerCompactActionPart menu"
-                            Classes.actionActive="{Binding IsManagedInstanceActionActive}"
-                            IsEnabled="{Binding CanDeleteManagedInstance}"
+                            Classes.actionActive="{Binding IsManagedInstanceEditActionCollapsed}"
+                            IsEnabled="{Binding CanOpenManagedInstanceFolder}"
                             Click="OnToggleCompactInstanceMenuClicked">
                       <PathIcon Classes="managerCompactActionChevron"
                                 Data="{StaticResource ExpandMoreIcon}" />
@@ -114,36 +120,23 @@ SPDX-License-Identifier: GPL-3.0-only
                             </StackPanel>
                           </Button>
 
-                          <Button x:Name="CompactDeleteInstanceButton"
+                          <Button Classes="managerCompactMenuAction"
+                                  IsEnabled="{Binding CanEditManagedInstance}"
+                                  Command="{Binding BeginEditManagedInstanceCommand}"
+                                  Click="OnCloseCompactInstanceMenuClicked">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                              <Path Classes="managerCompactMenuIcon"
+                                    Data="{StaticResource EditRoundedIcon}" />
+                              <TextBlock Text="{Binding EditInstanceLabel}"
+                                         VerticalAlignment="Center" />
+                            </StackPanel>
+                          </Button>
+
+                          <Button
                                   Classes="managerCompactMenuAction danger"
-                                  IsEnabled="{Binding CanDeleteManagedInstance}">
-                            <Button.Flyout>
-                              <Flyout Placement="BottomEdgeAlignedRight">
-                                <Border Classes="instanceDeleteConfirmation">
-                                  <StackPanel Width="300" Spacing="12">
-                                    <TextBlock Text="{Binding ManagedInstanceDeleteTitle}"
-                                               FontSize="17"
-                                               FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding ManagedInstanceDeleteHint}"
-                                               Classes="muted"
-                                               TextWrapping="Wrap" />
-                                    <StackPanel Orientation="Horizontal"
-                                                HorizontalAlignment="Right"
-                                                Spacing="8">
-                                      <Button Classes="instanceConfirmAction"
-                                              Click="OnCloseDeleteInstanceFlyoutClicked">
-                                        <TextBlock Text="{Binding CancelLabel}" />
-                                      </Button>
-                                      <Button Classes="instanceConfirmAction danger"
-                                              Command="{Binding DeleteManagedInstanceCommand}"
-                                              Click="OnCloseDeleteInstanceFlyoutClicked">
-                                        <TextBlock Text="{Binding ManagedInstanceDeleteLabel}" />
-                                      </Button>
-                                    </StackPanel>
-                                  </StackPanel>
-                                </Border>
-                              </Flyout>
-                            </Button.Flyout>
+                                  IsEnabled="{Binding CanDeleteManagedInstance}"
+                                  Command="{Binding RequestManagedInstanceDeletionCommand}"
+                                  Click="OnCloseCompactInstanceMenuClicked">
                             <StackPanel Orientation="Horizontal" Spacing="10">
                               <Path Classes="managerCompactMenuIcon"
                                     Data="{StaticResource DeleteIcon}" />
@@ -169,20 +162,36 @@ SPDX-License-Identifier: GPL-3.0-only
                           HorizontalAlignment="Stretch"
                           Spacing="22">
                 <StackPanel Classes="instanceSummary" Spacing="22">
-                  <Image Classes="instanceGameIcon"
-                         Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
-                         Stretch="Uniform" />
+                  <Border Classes="instanceIconClip hero">
+                    <Grid Classes="instanceGameIcon">
+                      <Image Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
+                             IsVisible="{Binding !HasManagedInstanceIcon}" Stretch="Uniform" />
+                      <Image Source="{Binding ManagedInstanceIcon}"
+                             IsVisible="{Binding HasManagedInstanceIcon}" Stretch="UniformToFill" />
+                    </Grid>
+                  </Border>
+
+                  <StackPanel Classes="instanceHeroIdentity" Spacing="4">
+                    <TextBlock Text="{Binding ManagedInstanceName}"
+                               HorizontalAlignment="Center"
+                               MaxWidth="640"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
 
                   <Border Classes="managerWideSplitAction"
                           HorizontalAlignment="Center">
                     <StackPanel x:Name="WideInstanceActions"
                                 Classes="managerWideActions"
                                 Classes.actionActive="{Binding IsManagedInstanceActionActive}"
+                                Classes.editCollapsed="{Binding IsManagedInstanceEditActionCollapsed}"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Center"
                                 Spacing="0">
                   <Button Classes="managerAction primary first"
                           Classes.active="{Binding IsManagedInstanceActionActive}"
+                          Classes.editCollapsed="{Binding IsManagedInstanceEditActionCollapsed}"
                           Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
                           IsEnabled="{Binding CanRunManagedInstanceAction}"
                           PointerExited="OnManagedInstanceActionPointerExited"
@@ -203,38 +212,23 @@ SPDX-License-Identifier: GPL-3.0-only
                     </StackPanel>
                   </Button>
 
+                  <Border Classes="managerWideActionDivider editDivider" />
+
+                  <Button Classes="managerAction secondary middle editAction"
+                          IsEnabled="{Binding CanEditManagedInstance}"
+                          Command="{Binding BeginEditManagedInstanceCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Path Classes="managerActionIcon" Data="{StaticResource EditRoundedIcon}" />
+                      <TextBlock Text="{Binding EditInstanceLabel}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+
                   <Border Classes="managerWideActionDivider deleteDivider" />
 
-                  <Button x:Name="DeleteInstanceButton"
+                  <Button
                           Classes="managerAction secondary danger last deleteAction"
-                          IsEnabled="{Binding CanDeleteManagedInstance}">
-                    <Button.Flyout>
-                      <Flyout Placement="BottomEdgeAlignedRight">
-                        <Border Classes="instanceDeleteConfirmation">
-                          <StackPanel Width="300" Spacing="12">
-                            <TextBlock Text="{Binding ManagedInstanceDeleteTitle}"
-                                       FontSize="17"
-                                       FontWeight="SemiBold" />
-                            <TextBlock Text="{Binding ManagedInstanceDeleteHint}"
-                                       Classes="muted"
-                                       TextWrapping="Wrap" />
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Right"
-                                        Spacing="8">
-                              <Button Classes="instanceConfirmAction"
-                                      Click="OnCloseDeleteInstanceFlyoutClicked">
-                                <TextBlock Text="{Binding CancelLabel}" />
-                              </Button>
-                              <Button Classes="instanceConfirmAction danger"
-                                      Command="{Binding DeleteManagedInstanceCommand}"
-                                      Click="OnCloseDeleteInstanceFlyoutClicked">
-                                <TextBlock Text="{Binding ManagedInstanceDeleteLabel}" />
-                              </Button>
-                            </StackPanel>
-                          </StackPanel>
-                        </Border>
-                      </Flyout>
-                    </Button.Flyout>
+                          IsEnabled="{Binding CanDeleteManagedInstance}"
+                          Command="{Binding RequestManagedInstanceDeletionCommand}">
                     <StackPanel Classes="managerDeleteActionContent"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Center"

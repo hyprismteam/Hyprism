@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Скін та аватар</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Видалити профіль?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Підтвердження</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Це видалить усі дані профілю, включаючи:</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>Редагувати екземпляр</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Змінити назву або іконку цього екземпляра</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Введіть назву від 1 до 64 символів і опис до 2000 символів.</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Іконка екземпляра</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Виберіть коректне зображення PNG або JPEG.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти зміни екземпляра.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Не вдалося експортувати екземпляр</value>
@@ -1438,7 +1453,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Нікнейм</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 символів</value>
+    <value>3-16 символів</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Створити новий профіль</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Не вдалося видалити профіль.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Видалити профіль</value>
@@ -1505,9 +1523,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Зберегти UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Профіль збережено!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Збережені профілі</value>
@@ -2441,9 +2456,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>Видалити "{0}" та всі його дані? Цю дію не можна скасувати.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Видалити екземпляр?</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Встановити</value>

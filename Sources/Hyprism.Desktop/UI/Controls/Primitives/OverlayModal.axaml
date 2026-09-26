@@ -25,11 +25,6 @@ SPDX-License-Identifier: GPL-3.0-only
       </Border.Transitions>
     </Border>
 
-    <Border Height="1"
-            Background="{DynamicResource MainCardStrokeBrush}"
-            VerticalAlignment="Bottom"
-            IsHitTestVisible="False" />
-
     <Grid x:Name="OverlayModalSheet"
           ZIndex="1"
           MaxWidth="{Binding SheetMaxWidth, ElementName=OverlayRoot}"

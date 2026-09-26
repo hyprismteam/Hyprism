@@ -34,7 +34,8 @@ HYPRISM_DATA="$hyprism_data" dotnet run \
 | `Profiles/Profiles.json` | Profile list and identity metadata |
 | `Profiles/<profile-id>/` | Profile data, sessions, skins, avatars |
 | `Instances/Instances.json` | Registry and display order under the instance root |
-| `Instances/<instance-id>/Meta.json` | Branch, version, installation and play-time metadata |
+| `Instances/<instance-id>/Meta.json` | Name, note, branch, version, installation and play-time metadata |
+| `Instances/<instance-id>/logo.png` | Optional custom icon saved by the instance editor at no more than 512 × 512 pixels. Existing `icon.png` and `Icon.png` files are also recognized. |
 | `Instances/<instance-id>/UserData/` | Worlds, mods, and game-owned data |
 | `Mirrors/*.mirror.json` | User mirror definitions |
 | `LocalNode/Accounts.json` | Autonomous profiles, skins, and presence preferences |
@@ -42,6 +43,8 @@ HYPRISM_DATA="$hyprism_data" dotnet run \
 | `Runtime/GameProcesses.json` | Process identities used across launcher restarts |
 
 The instance locations above use the default root. When Desktop changes the location, it creates `HyprismLibrary` inside the selected directory and stores that path in `InstanceDirectory`. The registry and installation directories move together. Desktop only deletes the old default root or a custom `HyprismLibrary` root with its `.hyprism-library` marker after the copy and configuration update succeed. Older arbitrary custom roots remain in place after recognized instance data is copied.
+
+Deleting an instance resolves its ID in the current and recognized legacy roots, removes that instance directory, and rebuilds `Instances.json`. A registry entry whose directory is already missing is removed during the same resync.
 
 Back up profiles, worlds, configuration, and local account data before migration testing. Session files and certificate private keys must not appear in fixtures or bug reports
 

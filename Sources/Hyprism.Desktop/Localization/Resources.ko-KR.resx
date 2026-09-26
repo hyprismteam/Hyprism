@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>스킨 및 아바타</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>프로필을 삭제하시겠습니까?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>확인</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>다음을 포함한 모든 프로필 데이터가 영구적으로 삭제됩니다:</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>인스턴스 편집</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>이 인스턴스의 이름 또는 아이콘을 변경합니다</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>편집</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>이름은 1~64자, 설명은 최대 2000자로 입력하세요.</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>인스턴스 아이콘</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>올바른 PNG 또는 JPEG 이미지를 선택하세요.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>인스턴스 변경 사항을 저장할 수 없습니다.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>인스턴스 내보내기 실패</value>
@@ -1438,7 +1453,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>사용자명</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16자여야 합니다</value>
+    <value>3-16자여야 합니다</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>새 프로필 생성</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>프로필을 삭제하지 못했습니다.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>프로필 삭제</value>
@@ -1505,9 +1523,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>UUID 저장</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>프로필 저장됨!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>저장된 프로필</value>
@@ -2441,9 +2456,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>"{0}" 및 모든 데이터를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>인스턴스를 삭제하시겠습니까?</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>설치</value>

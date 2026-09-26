@@ -246,8 +246,8 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin e avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Eliminare il profilo?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Conferma</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Questo eliminerà permanentemente tutti i dati del profilo, inclusi:</value>
@@ -336,8 +336,23 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Modifica istanza</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Cambia il nome o l'icona di questa istanza</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>Modifica</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Inserisci un nome da 1 a 64 caratteri e una descrizione di massimo 2000 caratteri.</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Icona dell'istanza</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Scegli un’immagine PNG o JPEG valida.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Impossibile salvare le modifiche all’istanza.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Errore durante l'esportazione dell'istanza</value>
@@ -1438,7 +1453,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Nome utente</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>Deve essere lungo 1-16 caratteri</value>
+    <value>Deve essere lungo 3-16 caratteri</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Crea nuovo profilo</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Impossibile eliminare il profilo.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Elimina profilo</value>
@@ -1505,9 +1523,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Salva UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Profilo salvato!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Profili salvati</value>
@@ -2444,9 +2459,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>Eliminare "{0}" e tutti i suoi dati? Questa azione non può essere annullata.</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Eliminare l'istanza?</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Installa</value>

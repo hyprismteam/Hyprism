@@ -169,6 +169,7 @@ public sealed partial class OverlayModal : UserControl
     private async Task ShowAsync()
     {
         var cancellationToken = ReplaceAnimationCancellation();
+        _restoreFocusElement = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         ActivateBackdrop();
         OverlayModalBackdrop.Opacity = 0;
         ((TranslateTransform)OverlayModalSheet.RenderTransform!).Y = HiddenOffset;

@@ -27,6 +27,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 {
     private const int ModCatalogPreviewFilesSkeletonMinMilliseconds = 220;
     private const int ModCatalogPreviewFilesFadeMilliseconds = 180;
+    private const int MaxSavedInstanceIconDimension = 512;
     private static readonly TimeSpan InstanceVersionCacheMaxAge = TimeSpan.FromMinutes(15);
 
     private readonly IInstanceRepository _instances;
@@ -155,16 +156,67 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private string _managedInstancePlayTime = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasManagedInstanceNotes))]
+    private string _managedInstanceNotes = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasManagedInstanceIcon))]
+    private Bitmap? _managedInstanceIcon;
+
+    [ObservableProperty]
+    private bool _isEditingInstance;
+
+    [ObservableProperty]
+    private bool _isInstanceEditMounted;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingManagedInstanceDeletion))]
+    [NotifyPropertyChangedFor(nameof(PendingManagedInstanceName))]
+    [NotifyPropertyChangedFor(nameof(ManagedInstanceDeleteHint))]
+    private InstanceInfo? _pendingManagedInstanceDeletion;
+
+    [ObservableProperty]
+    private bool _isManagedInstanceDeletionOpen;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasInstanceDeletionError))]
+    private string _instanceDeletionError = string.Empty;
+
+    [ObservableProperty]
+    private bool _isChoosingInstanceIcon;
+
+    [ObservableProperty]
+    private string _editInstanceName = string.Empty;
+
+    [ObservableProperty]
+    private string _editInstanceNotes = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasEditInstanceIcon))]
+    private Bitmap? _editInstanceIcon;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasInstanceEditorError))]
+    private string _instanceEditorError = string.Empty;
+
+    private string? _editingInstanceId;
+    private long _instanceIconPickerGeneration;
+    private bool _removeInstanceIcon;
+    private bool _replaceInstanceIcon;
+
+    [ObservableProperty]
     private bool _canCancelActivity;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRunManagedInstanceAction))]
     [NotifyPropertyChangedFor(nameof(CanDeleteManagedInstance))]
+    [NotifyPropertyChangedFor(nameof(CanEditManagedInstance))]
     private bool _isBusy;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRunManagedInstanceAction))]
     [NotifyPropertyChangedFor(nameof(CanDeleteManagedInstance))]
+    [NotifyPropertyChangedFor(nameof(CanEditManagedInstance))]
     private bool _isGameRunning;
 
     [ObservableProperty]
@@ -586,10 +638,30 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public string ManagedInstancePlayLabel => _localizer["instances.actions.play"];
     public string ManagedInstanceInstallLabel => _localizer["instances.actions.install"];
     public string ManagedInstanceOpenFolderLabel => _localizer["instances.actions.openFolder"];
+    public string EditInstanceLabel => _localizer["editor.action"];
+    public string EditInstanceTitle => _localizer["instances.editInstance"];
+    public string EditInstanceNameLabel => _localizer["instances.instanceName"];
+    public string EditInstanceNamePlaceholder => _localizer["instances.instanceNamePlaceholder"];
+    public string EditInstanceNotesLabel => _localizer["instances.editor.description"];
+    public string EditInstanceIconTitle => _localizer["instances.editor.icon"];
+    public string EditInstanceIconLabel => _localizer["instances.selectIcon"];
+    public string ResetInstanceIconLabel => _localizer["common.reset"];
+    public string SaveInstanceLabel => _localizer["common.save"];
+    public string CancelInstanceEditLabel => _localizer["common.cancel"];
+    public bool CanChooseInstanceIcon => _filePicker is not null;
+    public bool HasManagedInstanceIcon => ManagedInstanceIcon is not null;
+    public bool HasManagedInstanceNotes => !string.IsNullOrWhiteSpace(ManagedInstanceNotes);
+    public bool HasEditInstanceIcon => EditInstanceIcon is not null;
+    public bool HasInstanceEditorError => !string.IsNullOrEmpty(InstanceEditorError);
+    public bool HasPendingManagedInstanceDeletion => PendingManagedInstanceDeletion is not null;
+    public bool HasInstanceDeletionError => !string.IsNullOrEmpty(InstanceDeletionError);
+    public string PendingManagedInstanceName => PendingManagedInstanceDeletion is { } instance
+        ? FormatInstanceName(instance.Name, instance.Version, instance.VersionName)
+        : string.Empty;
     public string ManagedInstanceDeleteLabel => _localizer["instances.actions.delete"];
-    public string ManagedInstanceDeleteTitle => _localizer["instances.actions.deleteTitle"];
+    public string ManagedInstanceDeleteTitle => _localizer["confirmation.title"];
     public string ManagedInstanceDeleteHint =>
-        _localizer.Format("instances.actions.deleteHint", ManagedInstanceName);
+        _localizer.Format("instances.actions.deleteHint", PendingManagedInstanceName);
     public string ManagedInstanceActionLabel =>
         IsManagedInstanceInstalled ? ManagedInstancePlayLabel : ManagedInstanceInstallLabel;
     public string ManagedInstanceActionCancelLabel => _localizer["instances.actions.cancel"];
@@ -646,6 +718,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool CanOpenManagedInstanceFolder => _managedInstance is not null;
     public bool CanDeleteManagedInstance =>
         _managedInstance is not null && !IsInstanceBusy(_managedInstance.Id) && !IsManagedInstanceRunning;
+    public bool CanEditManagedInstance => _managedInstance is not null &&
+        (!IsInstanceBusy(_managedInstance.Id) || IsManagedInstanceRunning);
+    public bool IsManagedInstanceEditActionCollapsed =>
+        IsManagedInstanceActionActive && !IsManagedInstanceRunning;
     public bool IsInstanceOverviewSection => string.IsNullOrEmpty(InstanceSection);
     public bool IsInstanceModsSection => InstanceSection == "mods";
     public bool IsInstanceBrowseSection => InstanceSection == "browse";
@@ -2667,21 +2743,279 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void DeleteManagedInstance()
+    private void BeginEditManagedInstance()
+    {
+        if (_managedInstance is not { } instance || !CanEditManagedInstance)
+            return;
+
+        var path = _instances.GetInstancePathById(instance.Id);
+        var meta = path is null ? null : _instances.GetInstanceMeta(path);
+        if (meta is null)
+        {
+            ShowError(_localizer["instances.editor.saveFailed"]);
+            return;
+        }
+
+        _editingInstanceId = instance.Id;
+        _instanceIconPickerGeneration++;
+        IsChoosingInstanceIcon = false;
+        EditInstanceName = meta.Name;
+        EditInstanceNotes = meta.Notes ?? string.Empty;
+        _replaceInstanceIcon = false;
+        _removeInstanceIcon = false;
+        InstanceEditorError = string.Empty;
+        ReplaceEditInstanceIcon(LoadInstanceIcon(path!));
+        IsInstanceEditMounted = true;
+        IsEditingInstance = true;
+    }
+
+    [RelayCommand]
+    private void CancelEditManagedInstance()
+    {
+        IsEditingInstance = false;
+        _instanceIconPickerGeneration++;
+        IsChoosingInstanceIcon = false;
+        _editingInstanceId = null;
+        _replaceInstanceIcon = false;
+        _removeInstanceIcon = false;
+        InstanceEditorError = string.Empty;
+    }
+
+    public void CompleteInstanceEditClose()
+    {
+        ReplaceEditInstanceIcon(null);
+        IsInstanceEditMounted = false;
+    }
+
+    [RelayCommand]
+    private async Task ChooseInstanceIconAsync()
+    {
+        if (!IsEditingInstance || _filePicker is null || IsChoosingInstanceIcon)
+            return;
+
+        var editingId = _editingInstanceId;
+        var generation = ++_instanceIconPickerGeneration;
+        IsChoosingInstanceIcon = true;
+
+        try
+        {
+            var chosenPath = await _filePicker.BrowseImageAsync(EditInstanceIconLabel);
+            if (string.IsNullOrWhiteSpace(chosenPath) || !IsEditingInstance ||
+                _editingInstanceId != editingId || generation != _instanceIconPickerGeneration)
+                return;
+
+            using var stream = File.OpenRead(chosenPath);
+            var icon = DecodeInstanceIcon(stream);
+            ReplaceEditInstanceIcon(icon);
+            _replaceInstanceIcon = true;
+            _removeInstanceIcon = false;
+            InstanceEditorError = string.Empty;
+        }
+        catch (Exception)
+        {
+            if (IsEditingInstance && generation == _instanceIconPickerGeneration)
+                InstanceEditorError = _localizer["instances.editor.invalidIcon"];
+        }
+        finally
+        {
+            if (generation == _instanceIconPickerGeneration)
+                IsChoosingInstanceIcon = false;
+        }
+    }
+
+    [RelayCommand]
+    private void ResetInstanceIcon()
+    {
+        if (!IsEditingInstance || !HasEditInstanceIcon || IsChoosingInstanceIcon)
+            return;
+
+        ReplaceEditInstanceIcon(null);
+        _removeInstanceIcon = true;
+        _replaceInstanceIcon = false;
+    }
+
+    [RelayCommand]
+    private void SaveManagedInstanceEdit()
+    {
+        if (!IsEditingInstance || _editingInstanceId is not { } instanceId ||
+            _managedInstance?.Id != instanceId || !CanEditManagedInstance)
+            return;
+
+        var name = EditInstanceName?.Trim() ?? string.Empty;
+        if (name.Length is < 1 or > 64 || (EditInstanceNotes?.Length ?? 0) > 2000)
+        {
+            InstanceEditorError = _localizer["instances.editor.invalidName"];
+            return;
+        }
+
+        var path = _instances.GetInstancePathById(instanceId);
+        var meta = path is null ? null : _instances.GetInstanceMeta(path);
+        if (meta is null)
+        {
+            InstanceEditorError = _localizer["instances.editor.saveFailed"];
+            return;
+        }
+
+        try
+        {
+            meta.Name = name;
+            meta.Notes = string.IsNullOrWhiteSpace(EditInstanceNotes) ? null : EditInstanceNotes.Trim();
+            _instances.SaveInstanceMeta(path!, meta);
+            var saved = _instances.GetInstanceMeta(path!);
+            if (saved?.Name != meta.Name || saved.Notes != meta.Notes)
+                throw new IOException("Instance metadata was not saved.");
+
+            var iconPath = Path.Combine(path!, "logo.png");
+            if (_replaceInstanceIcon && EditInstanceIcon is { } icon)
+            {
+                var temporaryPath = Path.Combine(path!, $"logo-{Guid.NewGuid():N}.png");
+                try
+                {
+                    icon.Save(temporaryPath, PngBitmapEncoderOptions.Default);
+                    File.Move(temporaryPath, iconPath, true);
+                    DeleteLegacyInstanceIcons(path!);
+                }
+                finally
+                {
+                    if (File.Exists(temporaryPath))
+                        File.Delete(temporaryPath);
+                }
+            }
+            else if (_removeInstanceIcon)
+            {
+                if (File.Exists(iconPath))
+                    File.Delete(iconPath);
+                DeleteLegacyInstanceIcons(path!);
+            }
+
+            _instances.SyncInstancesWithConfig();
+            RebuildInstancesFromCache();
+            CancelEditManagedInstance();
+        }
+        catch (Exception)
+        {
+            InstanceEditorError = _localizer["instances.editor.saveFailed"];
+        }
+    }
+
+    private static Bitmap? LoadInstanceIcon(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return null;
+
+        var iconPath = new[] { "Icon.png", "logo.png", "icon.png" }
+            .Select(name => Path.Combine(path, name))
+            .FirstOrDefault(File.Exists);
+        if (iconPath is null)
+            return null;
+
+        try
+        {
+            using var stream = File.OpenRead(iconPath);
+            return DecodeInstanceIcon(stream);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    private static Bitmap DecodeInstanceIcon(Stream stream)
+    {
+        var icon = new Bitmap(stream);
+        var size = icon.PixelSize;
+        if (Math.Max(size.Width, size.Height) <= MaxSavedInstanceIconDimension)
+            return icon;
+
+        icon.Dispose();
+        stream.Position = 0;
+        return size.Width >= size.Height
+            ? Bitmap.DecodeToWidth(stream, MaxSavedInstanceIconDimension, BitmapInterpolationMode.HighQuality)
+            : Bitmap.DecodeToHeight(stream, MaxSavedInstanceIconDimension, BitmapInterpolationMode.HighQuality);
+    }
+
+    private static void DeleteLegacyInstanceIcons(string path)
+    {
+        foreach (var name in new[] { "Icon.png", "icon.png" })
+        {
+            var iconPath = Path.Combine(path, name);
+            if (File.Exists(iconPath))
+                File.Delete(iconPath);
+        }
+    }
+
+    private void ReplaceEditInstanceIcon(Bitmap? icon)
+    {
+        var previous = EditInstanceIcon;
+        EditInstanceIcon = icon;
+        previous?.Dispose();
+    }
+
+    [RelayCommand]
+    private void RequestManagedInstanceDeletion()
     {
         if (_managedInstance is not { } instance || !CanDeleteManagedInstance)
             return;
 
-        if (!_instances.DeleteGameById(instance.Id))
+        InstanceDeletionError = string.Empty;
+        PendingManagedInstanceDeletion = instance;
+        IsManagedInstanceDeletionOpen = true;
+    }
+
+    [RelayCommand]
+    private void CancelManagedInstanceDeletion()
+    {
+        IsManagedInstanceDeletionOpen = false;
+    }
+
+    public void CompleteManagedInstanceDeletionClose()
+    {
+        PendingManagedInstanceDeletion = null;
+        InstanceDeletionError = string.Empty;
+    }
+
+    [RelayCommand]
+    private void ConfirmManagedInstanceDeletion()
+    {
+        var instance = PendingManagedInstanceDeletion;
+        if (instance is null)
+            return;
+
+        if (!CanDeleteManagedInstance ||
+            !string.Equals(_managedInstance?.Id, instance.Id, StringComparison.OrdinalIgnoreCase))
         {
-            ShowError(_localizer["instances.deleteFailed"]);
+            InstanceDeletionError = _localizer["instances.deleteFailed"];
             return;
         }
 
+        bool deleted;
+        var wasSuppressingInstancesChanged = _suppressInstancesChanged;
+        _suppressInstancesChanged = true;
+        try
+        {
+            deleted = _instances.DeleteGameById(instance.Id);
+        }
+        catch
+        {
+            deleted = false;
+        }
+        finally
+        {
+            _suppressInstancesChanged = wasSuppressingInstancesChanged;
+        }
+
+        if (!deleted)
+        {
+            InstanceDeletionError = _localizer["instances.deleteFailed"];
+            return;
+        }
+
+        IsManagedInstanceDeletionOpen = false;
         _managedInstance = null;
         Volatile.Write(ref _logsInstanceId, null);
         InvalidateLogsRebuild();
         InstanceSection = string.Empty;
+        RebuildInstancesFromCache();
         RefreshManagedInstanceContent();
     }
 
@@ -2771,7 +3105,13 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void RebuildInstancesFromCache()
     {
+        var oldIcons = _allInstances.Select(item => item.Icon).ToArray();
         var items = _instances.GetCachedInstances();
+        if (PendingManagedInstanceDeletion is { } pendingDeletion &&
+            !items.Any(instance => string.Equals(
+                instance.Id, pendingDeletion.Id, StringComparison.OrdinalIgnoreCase)))
+            CancelManagedInstanceDeletion();
+
         var selectedInstanceId = _instances.GetSelectedInstance()?.Id;
         var requestedManagedInstanceId = _managedInstance?.Id;
         var managedInstance = items.FirstOrDefault(instance =>
@@ -2790,11 +3130,14 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
                     FormatVersion(instance.Version, instance.VersionName),
                     FormatBranch(instance.Branch),
                     instance.IsInstalled,
-                    string.Equals(instance.Id, managedInstanceId, StringComparison.Ordinal));
+                    string.Equals(instance.Id, managedInstanceId, StringComparison.Ordinal),
+                    LoadInstanceIcon(_instances.GetInstancePathById(instance.Id) ?? string.Empty));
             })
             .ToList();
 
         _allInstances.ReplaceRange(presentedInstances);
+        foreach (var icon in oldIcons)
+            icon?.Dispose();
 
         _selectedInstance = items.FirstOrDefault(instance =>
             string.Equals(instance.Id, selectedInstanceId, StringComparison.Ordinal));
@@ -3371,10 +3714,12 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void UpdateManagedInstancePresentation()
     {
+        ManagedInstanceIcon = _allInstances.FirstOrDefault(item => item.Id == _managedInstance?.Id)?.Icon;
         OnPropertyChanged(nameof(IsManagedInstanceInstalled));
         OnPropertyChanged(nameof(CanRunManagedInstanceAction));
         OnPropertyChanged(nameof(CanOpenManagedInstanceFolder));
         OnPropertyChanged(nameof(CanDeleteManagedInstance));
+        OnPropertyChanged(nameof(CanEditManagedInstance));
         OnPropertyChanged(nameof(ManagedInstanceActionLabel));
         NotifyManagedInstanceActionStateChanged();
         OnPropertyChanged(nameof(ManagedInstanceDeleteHint));
@@ -3390,6 +3735,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             ManagedInstanceBranch = string.Empty;
             ManagedInstanceVersion = string.Empty;
             ManagedInstancePlayTime = FormatPlayTime(0);
+            ManagedInstanceNotes = string.Empty;
             return;
         }
 
@@ -3400,6 +3746,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         ManagedInstanceBranch = FormatBranch(_managedInstance.Branch);
         ManagedInstanceVersion = FormatVersion(_managedInstance.Version, _managedInstance.VersionName);
         ManagedInstancePlayTime = FormatPlayTime(GetManagedInstancePlayTimeSeconds());
+        var instancePath = _instances.GetInstancePathById(_managedInstance.Id);
+        ManagedInstanceNotes = instancePath is null
+            ? string.Empty
+            : _instances.GetInstanceMeta(instancePath)?.Notes ?? string.Empty;
         ManagedInstanceState = _managedInstance.IsInstalled
             ? _localizer["instances.status.ready"]
             : _localizer["instances.status.notInstalled"];
@@ -3481,6 +3831,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsManagedInstanceCancellationArmed));
         OnPropertyChanged(nameof(CanRunManagedInstanceAction));
         OnPropertyChanged(nameof(CanDeleteManagedInstance));
+        OnPropertyChanged(nameof(CanEditManagedInstance));
+        OnPropertyChanged(nameof(IsManagedInstanceEditActionCollapsed));
         OnPropertyChanged(nameof(ManagedInstanceActionStatusText));
         OnPropertyChanged(nameof(ManagedInstanceActionMetricText));
     }
@@ -3657,6 +4009,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         => FilterInstalledMods();
     public void Dispose()
     {
+        ReplaceEditInstanceIcon(null);
+        foreach (var item in _allInstances)
+            item.Icon?.Dispose();
         Interlocked.Exchange(ref _isDisposed, 1);
         Volatile.Write(ref _logsInstanceId, null);
         InvalidateLogsRebuild();

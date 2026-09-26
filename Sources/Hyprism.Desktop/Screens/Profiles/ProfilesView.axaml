@@ -122,6 +122,17 @@ SPDX-License-Identifier: GPL-3.0-only
                       <Border Classes="uiPopupSurface managerCompactActionFlyout">
                         <StackPanel Spacing="2">
                           <Button Classes="managerCompactMenuAction"
+                                  IsVisible="{Binding !IsOfficial}"
+                                  Command="{Binding DataContext.EditProfileCommand, ElementName=ProfilesRoot}"
+                                  CommandParameter="{Binding}"
+                                  Click="OnCloseProfileMenuClicked">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                              <Path Classes="managerCompactMenuIcon" Data="{StaticResource EditRoundedIcon}" />
+                              <TextBlock Text="{Binding DataContext.EditLabel, ElementName=ProfilesRoot}"
+                                         VerticalAlignment="Center" />
+                            </StackPanel>
+                          </Button>
+                          <Button Classes="managerCompactMenuAction"
                                   Command="{Binding DataContext.DuplicateProfileCommand, ElementName=ProfilesRoot}"
                                   CommandParameter="{Binding}"
                                   Click="OnCloseProfileMenuClicked">
@@ -297,6 +308,18 @@ SPDX-License-Identifier: GPL-3.0-only
                           </StackPanel>
                         </Button>
 
+                        <Button Classes="managerCompactMenuAction"
+                                IsVisible="{Binding !SelectedProfile.IsOfficial}"
+                                Command="{Binding BeginEditingCommand}"
+                                Click="OnCloseCompactProfileMenuClicked">
+                          <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="managerCompactMenuIcon"
+                                  Data="{StaticResource EditRoundedIcon}" />
+                            <TextBlock Text="{Binding EditLabel}"
+                                       VerticalAlignment="Center" />
+                          </StackPanel>
+                        </Button>
+
                         <Button Classes="managerCompactMenuAction danger"
                                 IsEnabled="{Binding !SelectedProfile.IsActive}"
                                 Command="{Binding RequestProfileDeletionCommand}"
@@ -373,6 +396,18 @@ SPDX-License-Identifier: GPL-3.0-only
                       </StackPanel>
                     </Button>
 
+                    <Border Classes="managerWideActionDivider editDivider"
+                            IsVisible="{Binding !SelectedProfile.IsOfficial}" />
+
+                    <Button Classes="managerAction secondary middle editAction"
+                            IsVisible="{Binding !SelectedProfile.IsOfficial}"
+                            Command="{Binding BeginEditingCommand}">
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Path Classes="managerActionIcon" Data="{StaticResource EditRoundedIcon}" />
+                        <TextBlock Text="{Binding EditLabel}" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Button>
+
                     <Border Classes="managerWideActionDivider deleteDivider" />
 
                     <Button Classes="managerAction secondary danger last deleteAction"
@@ -391,7 +426,7 @@ SPDX-License-Identifier: GPL-3.0-only
                   </StackPanel>
                 </Border>
 
-                <Border Classes="managerInfoGroup" IsVisible="{Binding !IsEditing}">
+                <Border Classes="managerInfoGroup">
                   <Grid ColumnDefinitions="*,2,*" RowDefinitions="Auto,2,Auto">
                     <Border Classes="managerInfoCell">
                       <StackPanel Spacing="3">
@@ -454,66 +489,11 @@ SPDX-License-Identifier: GPL-3.0-only
                   </Border>
                 </Border>
 
-                <StackPanel IsVisible="{Binding IsEditing}" Spacing="14">
-                  <Border Classes="formGroup">
-                    <StackPanel>
-                      <Border Classes="formRow">
-                        <StackPanel Spacing="8">
-                          <TextBlock Text="{Binding ProfileNameLabel}" Classes="formLabel" />
-                          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                            <TextBox Classes="profileInput"
-                                     Text="{Binding EditName, Mode=TwoWay}"
-                                     MaxLength="16"
-                                     PlaceholderText="{Binding NamePlaceholder}" />
-                            <Button Grid.Column="1"
-                                    Classes="profileIconButton"
-                                    ToolTip.Tip="{Binding RandomizeNameLabel}"
-                                    Command="{Binding RandomizeEditNameCommand}">
-                              <Path Width="16" Height="16" Stretch="Uniform" Data="{StaticResource DirectionsRunIcon}" />
-                            </Button>
-                          </Grid>
-                          <TextBlock Text="{Binding ProfileNameHint}" Classes="formHint" />
-                        </StackPanel>
-                      </Border>
-                      <Border Classes="formRow last">
-                        <StackPanel Spacing="8">
-                          <TextBlock Text="{Binding UuidLabel}" Classes="formLabel" />
-                          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                            <TextBox Classes="profileInput"
-                                     Text="{Binding EditUuid, Mode=TwoWay}"
-                                     FontFamily="{DynamicResource JetBrainsMonoFont}"
-                                     FontSize="13" />
-                            <Button Grid.Column="1"
-                                    Classes="profileIconButton"
-                                    ToolTip.Tip="{Binding RandomizeUuidLabel}"
-                                    Command="{Binding RandomizeEditUuidCommand}">
-                              <Path Width="16" Height="16" Stretch="Uniform" Data="{StaticResource DirectionsRunIcon}" />
-                            </Button>
-                          </Grid>
-                          <TextBlock Text="{Binding UuidHint}" Classes="formHint" />
-                        </StackPanel>
-                      </Border>
-                    </StackPanel>
-                  </Border>
-
-                  <StackPanel Orientation="Horizontal"
-                              HorizontalAlignment="Center"
-                              Spacing="10">
-                    <Button Classes="wizardAction" Command="{Binding CancelEditingCommand}">
-                      <TextBlock Text="{Binding CancelLabel}" />
-                    </Button>
-                    <Button Classes="wizardAction create" Command="{Binding SaveProfileCommand}">
-                      <TextBlock Text="{Binding SaveLabel}" />
-                    </Button>
-                  </StackPanel>
-                </StackPanel>
-
-                <Border IsVisible="{Binding HasStatusMessage}" Classes="profileStatus">
-                  <TextBlock Classes="profileStatusText"
-                             Classes.error="{Binding IsStatusError}"
-                             Text="{Binding StatusMessage}"
-                             TextAlignment="Center" />
-                </Border>
+                <TextBlock IsVisible="{Binding IsStatusError}"
+                           Text="{Binding StatusMessage}"
+                           Foreground="{DynamicResource DangerSoftBrush}"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap" />
               </StackPanel>
             </StackPanel>
           </controls:SmoothScrollViewer>
@@ -670,7 +650,7 @@ SPDX-License-Identifier: GPL-3.0-only
                               Classes="profileIconButton"
                               ToolTip.Tip="{Binding RandomizeNameLabel}"
                               Command="{Binding GenerateOfflineProfileNameCommand}">
-                        <Path Width="16" Height="16" Stretch="Uniform" Data="{StaticResource DirectionsRunIcon}" />
+                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource CasinoRoundedIcon}" />
                       </Button>
                     </Grid>
                     <TextBlock Text="{Binding OfflineNameRuleLabel}" Classes="formHint" />
@@ -678,12 +658,11 @@ SPDX-License-Identifier: GPL-3.0-only
                 </Border>
               </Border>
 
-              <Border IsVisible="{Binding HasStatusMessage}" Classes="profileStatus">
-                <TextBlock Classes="profileStatusText"
-                           Classes.error="{Binding IsStatusError}"
-                           Text="{Binding StatusMessage}"
-                           TextAlignment="Center" />
-              </Border>
+              <TextBlock IsVisible="{Binding IsStatusError}"
+                         Text="{Binding StatusMessage}"
+                         Foreground="{DynamicResource DangerSoftBrush}"
+                         TextAlignment="Center"
+                         TextWrapping="Wrap" />
 
               <StackPanel Orientation="Horizontal"
                           HorizontalAlignment="Center"
@@ -730,12 +709,11 @@ SPDX-License-Identifier: GPL-3.0-only
                 </Border>
               </Border>
 
-              <Border IsVisible="{Binding HasStatusMessage}" Classes="profileStatus">
-                <TextBlock Classes="profileStatusText"
-                           Classes.error="{Binding IsStatusError}"
-                           Text="{Binding StatusMessage}"
-                           TextAlignment="Center" />
-              </Border>
+              <TextBlock IsVisible="{Binding IsStatusError}"
+                         Text="{Binding StatusMessage}"
+                         Foreground="{DynamicResource DangerSoftBrush}"
+                         TextAlignment="Center"
+                         TextWrapping="Wrap" />
 
               <Grid x:Name="OfficialProfileSignInActions"
                     Width="272"
@@ -805,32 +783,140 @@ SPDX-License-Identifier: GPL-3.0-only
       </Grid>
     </Border>
 
-    <Grid Grid.ColumnSpan="2"
-          IsVisible="{Binding HasPendingProfileDeletion}"
-          Background="{DynamicResource SurfaceElevatedBrush}"
-          ZIndex="110">
-      <Border Classes="profileDeleteConfirmation"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center">
-        <StackPanel Spacing="12">
-          <TextBlock Text="{Binding DeleteTitle}" FontSize="18" FontWeight="SemiBold" />
-          <TextBlock Text="{Binding DeleteHint}" Classes="muted" FontSize="13" TextWrapping="Wrap" />
-          <TextBlock Text="{Binding PendingProfileDeletion.Name}"
-                     FontSize="16"
-                     FontWeight="SemiBold"
-                     TextTrimming="CharacterEllipsis" />
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button Classes="wizardAction" Command="{Binding CancelProfileDeletionCommand}">
-              <TextBlock Text="{Binding CancelLabel}" />
-            </Button>
-            <Button Classes="wizardAction create"
-                    Background="{DynamicResource DangerBrush}"
-                    Command="{Binding ConfirmProfileDeletionCommand}">
-              <TextBlock Text="{Binding DeleteLabel}" />
-            </Button>
-          </StackPanel>
-        </StackPanel>
-      </Border>
-    </Grid>
+    <controls:OverlayModal x:Name="ProfileDeleteModal"
+                           Grid.ColumnSpan="2"
+                           IsOpen="{Binding IsProfileDeletionOpen}"
+                           DismissCommand="{Binding CancelProfileDeletionCommand}"
+                           Closed="OnProfileDeleteModalClosed"
+                           SheetMaxWidth="480"
+                           SheetMaxHeight="420"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="522"
+                           ShoulderMargin="12,0,12,0"
+                           HiddenOffset="500"
+                           ZIndex="220">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding DeleteTitle}" FontSize="22" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1" Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelProfileDeletionCommand}"
+                        ToolTip.Tip="{Binding CancelLabel}"
+                        AutomationProperties.Name="{Binding CancelLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <TextBlock Text="{Binding DeleteHint}" Classes="muted" TextWrapping="Wrap" />
+              <Border Background="{DynamicResource ControlSurfaceBrush}"
+                      CornerRadius="11" Padding="14,12">
+                <TextBlock Text="{Binding PendingProfileDeletion.Name}"
+                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              </Border>
+              <TextBlock IsVisible="{Binding IsStatusError}"
+                         Text="{Binding StatusMessage}"
+                         Foreground="{DynamicResource DangerBrush}"
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelProfileDeletionCommand}">
+                  <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+                <Button Classes="wizardAction danger" Command="{Binding ConfirmProfileDeletionCommand}">
+                  <TextBlock Text="{Binding DeleteLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
+    <controls:OverlayModal x:Name="ProfileEditModal"
+                           Grid.ColumnSpan="2"
+                           IsOpen="{Binding IsEditing}"
+                           DismissCommand="{Binding CancelEditingCommand}"
+                           Closed="OnProfileEditModalClosed"
+                           SheetMaxWidth="560"
+                           SheetMaxHeight="600"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="608"
+                           ShoulderMargin="12,0,12,0"
+                           HiddenOffset="650"
+                           ZIndex="200">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding ProfileEditorTitle}"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelEditingCommand}"
+                        ToolTip.Tip="{Binding CancelLabel}"
+                        AutomationProperties.Name="{Binding CancelLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <StackPanel Spacing="8">
+                <TextBlock Text="{Binding ProfileNameLabel}" Classes="formLabel" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <controls:ModalTextField IsError="{Binding IsEditNameInvalid}"
+                                           ErrorMessage="{Binding ProfileNameHint}">
+                    <TextBox Text="{Binding EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="16"
+                             PlaceholderText="{Binding NamePlaceholder}" />
+                  </controls:ModalTextField>
+                  <Button Grid.Column="1"
+                          Classes="profileIconButton editorRandomizeButton"
+                          ToolTip.Tip="{Binding RandomizeNameLabel}"
+                          AutomationProperties.Name="{Binding RandomizeNameLabel}"
+                          Command="{Binding RandomizeEditNameCommand}">
+                    <Path Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource CasinoRoundedIcon}" />
+                  </Button>
+                </Grid>
+                <TextBlock Text="{Binding ProfileNameHint}" Classes="formHint" />
+              </StackPanel>
+              <StackPanel Spacing="8">
+                <TextBlock Text="{Binding UuidLabel}" Classes="formLabel" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <controls:ModalTextField IsError="{Binding IsEditUuidInvalid}"
+                                           ErrorMessage="{Binding UuidHint}">
+                    <TextBox Text="{Binding EditUuid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{DynamicResource JetBrainsMonoFont}"
+                             FontSize="13" />
+                  </controls:ModalTextField>
+                  <Button Grid.Column="1"
+                          Classes="profileIconButton editorRandomizeButton"
+                          ToolTip.Tip="{Binding RandomizeUuidLabel}"
+                          AutomationProperties.Name="{Binding RandomizeUuidLabel}"
+                          Command="{Binding RandomizeEditUuidCommand}">
+                    <Path Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource CasinoRoundedIcon}" />
+                  </Button>
+                </Grid>
+                <TextBlock Text="{Binding UuidHint}" Classes="formHint" />
+              </StackPanel>
+              <TextBlock IsVisible="{Binding IsStatusError}"
+                         Text="{Binding StatusMessage}"
+                         Foreground="{DynamicResource DangerBrush}"
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelEditingCommand}">
+                  <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+                <Button Classes="wizardAction create" Command="{Binding SaveProfileCommand}" IsEnabled="{Binding CanSaveProfile}">
+                  <TextBlock Text="{Binding SaveLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
   </Grid>
 </UserControl>

@@ -31,6 +31,11 @@ public sealed class FilePicker(Func<TopLevel?> topLevelProvider) : IFilePicker
         Patterns = ["*.zip", "*.pwr"]
     };
 
+    private static readonly FilePickerFileType ImageFileType = new("Image")
+    {
+        Patterns = ["*.png", "*.jpg", "*.jpeg"]
+    };
+
     /// <inheritdoc/>
     public Task<string?> BrowseFolderAsync(string? initialPath = null)
         => RunOnUiThreadAsync(async storageProvider =>
@@ -102,6 +107,10 @@ public sealed class FilePicker(Func<TopLevel?> topLevelProvider) : IFilePicker
     /// <inheritdoc/>
     public Task<string?> BrowseInstanceArchiveAsync()
         => PickSingleFileAsync("Select instance archive", [InstanceArchiveFileType]);
+
+    /// <inheritdoc/>
+    public Task<string?> BrowseImageAsync(string title)
+        => PickSingleFileAsync(title, [ImageFileType]);
 
     private Task<string?> PickSingleFileAsync(string title, IReadOnlyList<FilePickerFileType> fileTypes)
         => RunOnUiThreadAsync(async storageProvider =>

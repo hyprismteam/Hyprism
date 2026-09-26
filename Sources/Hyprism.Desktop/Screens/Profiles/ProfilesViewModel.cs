@@ -39,6 +39,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(IsProfileEditorVisible))]
     [NotifyPropertyChangedFor(nameof(CanActivateSelectedProfile))]
     [NotifyPropertyChangedFor(nameof(ActivationLabel))]
+    [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private ProfileItemViewModel? _selectedProfile;
 
     private ProfileCreationStep _creationStep;
@@ -55,9 +56,13 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     private string _offlineProfileName = GenerateDefaultOfflineName();
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsEditNameInvalid))]
+    [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private string _editName = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsEditUuidInvalid))]
+    [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private string _editUuid = string.Empty;
 
     [ObservableProperty]
@@ -68,11 +73,20 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     private bool _isStatusError;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsEditNameInvalid))]
+    [NotifyPropertyChangedFor(nameof(IsEditUuidInvalid))]
+    [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private bool _isEditing;
+
+    [ObservableProperty]
+    private bool _isProfileEditMounted;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingProfileDeletion))]
     private ProfileItemViewModel? _pendingProfileDeletion;
+
+    [ObservableProperty]
+    private bool _isProfileDeletionOpen;
 
     public ProfilesViewModel(
         IProfileManager profileManager,
@@ -106,6 +120,10 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public bool IsEmptyStateVisible => HasNoProfiles;
     public bool IsProfileEditorVisible => SelectedProfile is not null;
     public bool CanCreateOfflineProfile => OfflineNamePattern.IsMatch(OfflineProfileName.Trim());
+    public bool IsEditNameInvalid => IsEditing && !OfflineNamePattern.IsMatch(EditName?.Trim() ?? string.Empty);
+    public bool IsEditUuidInvalid => IsEditing && !Guid.TryParse(EditUuid, out _);
+    public bool CanSaveProfile => IsEditing && SelectedProfile is { IsOfficial: false }
+        && !IsEditNameInvalid && !IsEditUuidInvalid;
     public bool HasStatusMessage => !string.IsNullOrWhiteSpace(StatusMessage);
     public bool HasPendingProfileDeletion => PendingProfileDeletion is not null;
     public bool CanActivateSelectedProfile => SelectedProfile is { IsActive: false };
@@ -141,7 +159,8 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string CancelLabel => _localizer["common.cancel"];
     public string BackLabel => _localizer["common.back"];
     public string SaveLabel => _localizer["common.save"];
-    public string EditLabel => _localizer["common.edit"];
+    public string EditLabel => _localizer["editor.action"];
+    public string ProfileEditorTitle => _localizer["profileEditor.title"];
     public string CopyLabel => _localizer["profiles.copyUuid"];
     public string FolderLabel => _localizer["profiles.openFolder"];
     public string DeleteActionLabel => _localizer["common.delete"];
@@ -153,7 +172,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string RandomizeUuidLabel => _localizer["profiles.randomUuid"];
     public string OfficialLockedLabel => _localizer["profiles.officialLocked"];
     public string NoProfilesLabel => _localizer["profiles.noProfiles"];
-    public string DeleteTitle => _localizer["deleteProfile.title"];
+    public string DeleteTitle => _localizer["confirmation.title"];
     public string DeleteHint => _localizer["deleteProfile.cannotUndo"];
     public string OfflineNameRuleLabel => _localizer["profiles.wizard.nickRules"];
 
@@ -242,7 +261,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                      nameof(CreateOfflineTitle), nameof(CreateOfflineHint), nameof(AuthenticationTitle),
                      nameof(AuthenticationHint), nameof(BrowserHint), nameof(SignInLabel),
                      nameof(CreateLabel), nameof(AddLabel),
-                     nameof(CancelLabel), nameof(BackLabel), nameof(SaveLabel), nameof(EditLabel),
+                     nameof(CancelLabel), nameof(BackLabel), nameof(SaveLabel), nameof(EditLabel), nameof(ProfileEditorTitle),
                      nameof(CopyLabel), nameof(FolderLabel), nameof(DeleteActionLabel), nameof(ActivationLabel), nameof(ActiveLabel), nameof(DeleteLabel), nameof(DuplicateLabel),
                      nameof(RandomizeNameLabel), nameof(RandomizeUuidLabel), nameof(OfficialLockedLabel),
                      nameof(NoProfilesLabel), nameof(DeleteTitle), nameof(DeleteHint), nameof(OfflineNameRuleLabel)
@@ -290,6 +309,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         }
 
         _authenticator?.ReloadSessionForCurrentProfile();
+        ClearStatus();
         ActiveProfileChanged?.Invoke(
             this,
             new ActiveProfileChangedEventArgs(profile.Name, profile.IsOfficial));
@@ -366,6 +386,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         }
 
         IsCreationVisible = false;
+        ClearStatus();
         // Event-driven refreshes skip reselection while the wizard is open, so
         // reselect the created profile explicitly once it closes
         RefreshProfiles(profile.Id);
@@ -483,7 +504,18 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         ClearStatus();
         EditName = SelectedProfile.Name;
         EditUuid = SelectedProfile.Uuid;
+        IsProfileEditMounted = true;
         IsEditing = true;
+    }
+
+    [RelayCommand]
+    private void EditProfile(ProfileItemViewModel? profile)
+    {
+        if (profile is null || profile.IsOfficial)
+            return;
+
+        SelectProfile(profile);
+        BeginEditing();
     }
 
     [RelayCommand]
@@ -497,6 +529,9 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         IsEditing = false;
         ClearStatus();
     }
+
+    public void CompleteProfileEditClose()
+        => IsProfileEditMounted = false;
 
     [RelayCommand]
     private void RandomizeEditName()
@@ -512,9 +547,9 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         if (SelectedProfile is null || SelectedProfile.IsOfficial)
             return;
 
-        var name = EditName.Trim();
-        var uuid = EditUuid.Trim();
-        if (name.Length is < 1 or > 16 || !Guid.TryParse(uuid, out _))
+        var name = EditName?.Trim() ?? string.Empty;
+        var uuid = EditUuid?.Trim() ?? string.Empty;
+        if (!OfflineNamePattern.IsMatch(name) || !Guid.TryParse(uuid, out _))
         {
             SetStatus(_localizer["profiles.wizard.nickInvalid"], isError: true);
             return;
@@ -531,7 +566,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         ActiveProfileChanged?.Invoke(
             this,
             new ActiveProfileChangedEventArgs(name, editedProfile.IsOfficial));
-        SetStatus(_localizer["profiles.saved"], isError: false);
+        ClearStatus();
     }
 
     [RelayCommand]
@@ -573,7 +608,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
             return;
         }
 
-        SetStatus(_localizer["profiles.saved"], isError: false);
+        ClearStatus();
     }
 
     [RelayCommand]
@@ -582,28 +617,43 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         if (profile is null || profile.IsActive)
             return;
 
+        ClearStatus();
         PendingProfileDeletion = profile;
+        IsProfileDeletionOpen = true;
     }
 
     [RelayCommand]
     private void CancelProfileDeletion()
-        => PendingProfileDeletion = null;
+    {
+        IsProfileDeletionOpen = false;
+    }
+
+    public void CompleteProfileDeletionClose()
+    {
+        PendingProfileDeletion = null;
+        ClearStatus();
+    }
 
     [RelayCommand]
     private void ConfirmProfileDeletion()
     {
         var profile = PendingProfileDeletion;
-        PendingProfileDeletion = null;
         if (profile is null)
             return;
 
-        if (!_profileRepository.DeleteProfile(profile.Id))
+        if (string.Equals(profile.Id, _profileRepository.GetSelectedProfileId(), StringComparison.Ordinal))
         {
-            SetStatus(_localizer["profiles.wizard.createError"], isError: true);
+            SetStatus(_localizer["profiles.deleteFailed"], isError: true);
             return;
         }
 
-        SetStatus(_localizer["profiles.saved"], isError: false);
+        if (!_profileRepository.DeleteProfile(profile.Id))
+        {
+            SetStatus(_localizer["profiles.deleteFailed"], isError: true);
+            return;
+        }
+
+        IsProfileDeletionOpen = false;
     }
 
     private void SetCreationStep(ProfileCreationStep step)

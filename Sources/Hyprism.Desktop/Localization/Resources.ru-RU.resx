@@ -252,8 +252,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Скин и аватар</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Удалить профиль?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Подтверждение</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Это удалит все данные профиля:</value>
@@ -372,9 +372,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>Удалить «{0}» и все данные этого экземпляра? Это действие нельзя отменить.</value>
   </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Удалить экземпляр?</value>
-  </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Установить</value>
   </data>
@@ -417,8 +414,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>Редактировать экземпляр</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Изменить имя, иконку, версию или ветку</value>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Укажите название от 1 до 64 символов и описание длиной не более 2000 символов.</value>
+  </data>
+  <data name="editor.action" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Иконка экземпляра</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Выберите корректное изображение PNG или JPEG.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Не удалось сохранить изменения экземпляра.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Не удалось экспортировать экземпляр</value>
@@ -1558,7 +1570,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Никнейм</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1-16 символов</value>
+    <value>3-16 символов</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1571,6 +1583,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Добавить</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Не удалось удалить профиль.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Удалить профиль</value>
@@ -1631,9 +1646,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Сохранить UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Профиль сохранён!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Сохранённые профили</value>

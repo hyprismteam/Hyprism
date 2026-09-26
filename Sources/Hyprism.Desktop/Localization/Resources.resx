@@ -255,8 +255,8 @@ You may need to reinstall the game if switching drives.</value>
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>Skin and avatar</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>Delete Profile?</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>Confirmation</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>This will permanently delete all profile data, including:</value>
@@ -375,9 +375,6 @@ You may need to reinstall the game if switching drives.</value>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>Delete "{0}" and all of its data? This action cannot be undone.</value>
   </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>Delete Instance?</value>
-  </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Install</value>
   </data>
@@ -420,8 +417,23 @@ You may need to reinstall the game if switching drives.</value>
   <data name="instances.editInstance" xml:space="preserve">
     <value>Edit Instance</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>Change name, icon, version, or branch</value>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>Enter a name of 1 to 64 characters and a description of up to 2000 characters.</value>
+  </data>
+  <data name="editor.action" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>Instance icon</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>Choose a valid PNG or JPEG image.</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>Could not save the instance changes.</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Failed to export instance</value>
@@ -1561,7 +1573,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Username</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>Must be 1-16 characters</value>
+    <value>Must be 3-16 characters</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1574,6 +1586,9 @@ You may need to reinstall the game if switching drives.</value>
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>Add</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>Could not delete the profile.</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Delete Profile</value>
@@ -1634,9 +1649,6 @@ You may need to reinstall the game if switching drives.</value>
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>Save UUID</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>Profile saved!</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>Saved Profiles</value>

@@ -534,11 +534,15 @@ public partial class InstanceRepository : IInstanceRepository
                 return false;
             }
 
-            var info = FindInstanceById(instanceId);
+            if (FindInstanceById(instanceId) is null)
+                return false;
+
             var versionPath = GetInstancePathById(instanceId);
             if (string.IsNullOrWhiteSpace(versionPath) || !Directory.Exists(versionPath))
             {
-                return false;
+                SyncInstancesWithConfig();
+                return LoadInstanceCache().All(instance =>
+                    !string.Equals(instance.Id, instanceId, StringComparison.OrdinalIgnoreCase));
             }
 
             Directory.Delete(versionPath, true);
@@ -1282,30 +1286,29 @@ public partial class InstanceRepository : IInstanceRepository
         if (string.IsNullOrEmpty(instanceId))
             return null;
 
-        var root = GetInstanceRoot();
-        if (!Directory.Exists(root))
-            return null;
-
-        var flatPath = Path.Combine(root, instanceId);
-        if (Directory.Exists(flatPath))
-            return flatPath;
-
-        foreach (var branchDir in Directory.GetDirectories(root))
+        foreach (var root in GetInstanceRootsIncludingLegacy())
         {
-            var branchName = Path.GetFileName(branchDir);
-            if (!branchName.Equals("release", StringComparison.OrdinalIgnoreCase) &&
-                !branchName.Equals("pre-release", StringComparison.OrdinalIgnoreCase))
-                continue;
+            var flatPath = Path.Combine(root, instanceId);
+            if (Directory.Exists(flatPath))
+                return flatPath;
 
-            foreach (var instanceDir in Directory.GetDirectories(branchDir))
+            foreach (var branchDir in Directory.GetDirectories(root))
             {
-                var folderName = Path.GetFileName(instanceDir);
-                if (folderName == instanceId)
-                    return instanceDir;
+                var branchName = Path.GetFileName(branchDir);
+                if (!branchName.Equals("release", StringComparison.OrdinalIgnoreCase) &&
+                    !branchName.Equals("pre-release", StringComparison.OrdinalIgnoreCase))
+                    continue;
 
-                var meta = GetInstanceMeta(instanceDir);
-                if (meta?.Id == instanceId)
-                    return instanceDir;
+                foreach (var instanceDir in Directory.GetDirectories(branchDir))
+                {
+                    var folderName = Path.GetFileName(instanceDir);
+                    if (string.Equals(folderName, instanceId, StringComparison.OrdinalIgnoreCase))
+                        return instanceDir;
+
+                    var meta = GetInstanceMeta(instanceDir);
+                    if (string.Equals(meta?.Id, instanceId, StringComparison.OrdinalIgnoreCase))
+                        return instanceDir;
+                }
             }
         }
 

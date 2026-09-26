@@ -7,8 +7,6 @@ description: Create, authenticate, select, copy, and remove player profiles
 
 A profile is the player identity Hyprism uses when starting an instance. The active profile appears at the bottom of the navigation rail
 
-[![Profile list and details for the selected profile](../../../static/img/user/en/profiles.png)](../../../static/img/user/en/profiles.png)
-
 ## Create an offline profile
 
 1. Open **Profiles** and select **Add**
@@ -28,16 +26,29 @@ Offline profiles can use a connected custom authentication service or the on-dev
 
 Hyprism saves the profiles returned by the account and refreshes the session when required. Official game downloads and launches require an entitled account
 
+## Edit an offline profile
+
+1. Open **Profiles** and select an offline profile.
+2. Select **Edit** in the action row, compact menu, or profile card menu. You can also edit the active profile while a game is running; the running client keeps the identity passed to it at launch.
+3. Change the **Username** and **UUID**. The name must contain 3 to 16 English letters, digits, dashes, or underscores. The UUID must be valid. Use the dice buttons if you want new values.
+4. Select **Save** to apply the changes or **Cancel** to discard them. Invalid fields turn red and **Save** becomes unavailable until both values are valid.
+
+The updated values appear on the profile card. If saving fails, read the error below the fields and try again.
+
+Official profiles use account-provided identity values and cannot be edited here.
+
 ## Select and manage profiles
 
 - Select a card to view its type, play time, favorite instance, and UUID
 - Select **Select** to use that profile for future launches
 - Use **Copy UUID** when another tool needs the identity value
 - Use **Open Folder** to inspect profile-specific files
-- Open the three-dot menu to duplicate or delete a profile; editing is available for offline profiles only
+- Open the three-dot menu to edit an offline profile, duplicate it, or delete an inactive profile.
 - Drag the handle to save a different profile order
 
 The active profile cannot be deleted. Select another profile first
+
+To delete an inactive profile, choose **Delete** in its action row, compact menu, or card menu. Review the name in the **Confirmation** overlay and choose **Delete** again. This also removes the profile's local files and cannot be undone. If deletion fails, the overlay stays open and shows an error.
 
 :::warning
 Do not share session files or authentication tokens from a profile directory. A bug report normally needs launcher logs, not account credentials

@@ -246,8 +246,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.skinAndAvatar" xml:space="preserve">
     <value>スキンとアバター</value>
   </data>
-  <data name="deleteProfile.title" xml:space="preserve">
-    <value>プロファイルを削除しますか？</value>
+  <data name="confirmation.title" xml:space="preserve">
+    <value>確認</value>
   </data>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>以下のすべてのプロファイルデータが完全に削除されます：</value>
@@ -336,8 +336,23 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.editInstance" xml:space="preserve">
     <value>インスタンスを編集</value>
   </data>
-  <data name="instances.editInstanceHint" xml:space="preserve">
-    <value>このインスタンスの名前またはアイコンを変更します</value>
+  <data name="editor.action" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="instances.editor.invalidName" xml:space="preserve">
+    <value>名前は1～64文字、説明は2000文字以内で入力してください。</value>
+  </data>
+  <data name="instances.editor.description" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="instances.editor.icon" xml:space="preserve">
+    <value>インスタンスのアイコン</value>
+  </data>
+  <data name="instances.editor.invalidIcon" xml:space="preserve">
+    <value>有効なPNGまたはJPEG画像を選択してください。</value>
+  </data>
+  <data name="instances.editor.saveFailed" xml:space="preserve">
+    <value>インスタンスの変更を保存できませんでした。</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>インスタンスのエクスポートに失敗しました</value>
@@ -1438,7 +1453,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>ユーザー名</value>
   </data>
   <data name="profileEditor.usernameHint" xml:space="preserve">
-    <value>1〜16文字</value>
+    <value>3〜16文字</value>
   </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
@@ -1451,6 +1466,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.createNew" xml:space="preserve">
     <value>新しいプロファイルを作成</value>
+  </data>
+  <data name="profiles.deleteFailed" xml:space="preserve">
+    <value>プロファイルを削除できませんでした。</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>プロファイルを削除</value>
@@ -1505,9 +1523,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="profiles.saveUuid" xml:space="preserve">
     <value>UUIDを保存</value>
-  </data>
-  <data name="profiles.saved" xml:space="preserve">
-    <value>プロファイルを保存しました！</value>
   </data>
   <data name="profiles.savedProfiles" xml:space="preserve">
     <value>保存済みプロファイル</value>
@@ -2441,9 +2456,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
     <value>"{0}" とそのすべてのデータを削除しますか？この操作は元に戻せません。</value>
-  </data>
-  <data name="instances.actions.deleteTitle" xml:space="preserve">
-    <value>インスタンスを削除しますか？</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>インストール</value>

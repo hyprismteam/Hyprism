@@ -31,13 +31,6 @@ public sealed partial class InstanceOverviewView : UserControl
             viewModel.ArmManagedInstanceCancellation();
     }
 
-    private void OnCloseDeleteInstanceFlyoutClicked(object? sender, RoutedEventArgs args)
-    {
-        DeleteInstanceButton.Flyout?.Hide();
-        CompactDeleteInstanceButton.Flyout?.Hide();
-        CompactInstanceMenuPopup.IsRequestedOpen = false;
-    }
-
     private void OnCloseCompactInstanceMenuClicked(object? sender, RoutedEventArgs args)
         => CompactInstanceMenuPopup.IsRequestedOpen = false;
 

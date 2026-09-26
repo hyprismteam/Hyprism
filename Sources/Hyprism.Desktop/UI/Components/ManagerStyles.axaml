@@ -650,14 +650,19 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector=":is(UserControl) Button.managerAction.primary.active">
     <Setter Property="Width" Value="265" />
   </Style>
-  <Style Selector=":is(UserControl) StackPanel.managerWideActions.actionActive Button.managerAction.deleteAction">
+  <Style Selector=":is(UserControl) StackPanel.managerWideActions.editCollapsed Button.managerAction.editAction,
+                  :is(UserControl) StackPanel.managerWideActions.actionActive Button.managerAction.deleteAction">
     <Setter Property="Width" Value="0" />
     <Setter Property="Opacity" Value="0" />
     <Setter Property="Padding" Value="0" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsHitTestVisible" Value="False" />
   </Style>
-  <Style Selector=":is(UserControl) Button.managerAction.deleteAction">
+  <Style Selector=":is(UserControl) Button.managerAction.editAction,
+                  :is(UserControl) Button.managerAction.deleteAction">
     <Setter Property="Padding" Value="0" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="ClipToBounds" Value="True" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.danger">
     <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
@@ -670,8 +675,8 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Opacity" Value="0.45" />
   </Style>
   <Style Selector=":is(UserControl) Path.managerActionIcon">
-    <Setter Property="Width" Value="16" />
-    <Setter Property="Height" Value="16" />
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -699,7 +704,8 @@ SPDX-License-Identifier: GPL-3.0-only
       </Transitions>
     </Setter>
   </Style>
-  <Style Selector=":is(UserControl) StackPanel.managerWideActions.actionActive Border.managerWideActionDivider.deleteDivider">
+  <Style Selector=":is(UserControl) StackPanel.managerWideActions.editCollapsed Border.managerWideActionDivider.editDivider,
+                  :is(UserControl) StackPanel.managerWideActions.actionActive Border.managerWideActionDivider.deleteDivider">
     <Setter Property="Width" Value="0" />
     <Setter Property="Opacity" Value="0" />
   </Style>
