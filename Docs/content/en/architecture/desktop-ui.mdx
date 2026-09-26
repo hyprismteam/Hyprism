@@ -38,6 +38,10 @@ The screen view owns the behavior. A reusable control owns the visual contract t
 
 Keep this order stable. A theme template must exist before a selector customizes it, and a token dictionary must exist before a dynamic resource references it.
 
+`Semantic.axaml` defines Dark and Light theme dictionaries with the same resource keys. `DesktopTheme` applies the persisted `Theme` preference (`dark`, `light`, or `system`) through `Application.RequestedThemeVariant`; the system option uses Avalonia's default variant. On a user initiated switch, `DesktopTheme` animates the semantic solid-color brushes from their current colors to the selected palette. The initial theme application during startup is immediate. Shared and screen styles use `DynamicResource` so existing views update when the variant changes. News article inline content rebuilds after theme and accent transitions because its runs and inline code controls are created in C#.
+
+The `AccentColor` preference selects one of the preset colors for primary actions and news article links and code highlights. `DesktopTheme` updates the accent, hover, pressed, soft, and article brushes in both theme dictionaries. Article colors are adjusted separately for the dark and light palettes to keep text readable. Primary actions use white foreground content, and the selection persists across a theme change. Destructive actions keep separate danger brushes.
+
 At the same priority, a later matching style wins. Class and pseudo-class selectors outrank plain type selectors, while a local XAML value outranks a style setter. Keep base rules before state rules and explain intentional local overrides of shared roles. See [Avalonia property value precedence](https://docs.avaloniaui.net/docs/properties/value-precedence).
 
 ## Component catalog
@@ -103,6 +107,7 @@ Keep `FormRow`'s error line hidden while `Error` is empty. This keeps ordinary r
 | Primary | `UI/Foundation/GlobalStyles.axaml`, `Button.primary` | Main confirmation or create action. |
 | Secondary and danger | `UI/Components/ManagerStyles.axaml`, `Button.managerAction` | Detail actions that need shared hierarchy, destructive state, and disabled state. |
 | Icon, back, and menu | `UI/Components/ManagerStyles.axaml`, `detailBack`, `articleAction`, and `managerCompactMenuAction` | Shared navigation and compact action menus. Keep a screen-specific action local when its behavior differs. |
+| Quiet text action | `UI/Components/Components.axaml`, `Button.quietAction` | Full-width manager add rows and the News load-more button, with muted text that brightens on hover. |
 | Wizard | `UI/Components/Components.axaml`, `Button.wizardAction` | Wizard footer actions, including the create variant. |
 | Progress and cancel | `UI/Components/ManagerStyles.axaml`, `managerAction.primary.active` | Long-running manager actions that show progress and expose cancellation. |
 

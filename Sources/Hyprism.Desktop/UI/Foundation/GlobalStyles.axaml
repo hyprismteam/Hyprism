@@ -144,7 +144,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="{DynamicResource Size.PrimaryAction}" />
     <Setter Property="Padding" Value="{DynamicResource Inset.Primary}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Radius.Action}" />
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="FontWeight" Value="Bold" />
@@ -167,12 +167,12 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.primary:pointerover">
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
   <Style Selector="Button.primary:pressed">
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource PrimaryPressedBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
@@ -251,7 +251,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.skeleton">
-    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
     <Setter Property="CornerRadius" Value="7" />
     <Setter Property="Opacity" Value="0.38" />
     <Style.Animations>

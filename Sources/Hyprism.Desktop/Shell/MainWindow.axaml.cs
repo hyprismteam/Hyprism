@@ -124,7 +124,7 @@ public sealed partial class MainWindow : Window
                 return;
 
             StartupLoadingContent.Opacity = 1;
-            StartupBrand.Opacity = 0.68;
+            StartupBrand.Opacity = 1;
             StartupContentScale.ScaleX = 1;
             StartupContentScale.ScaleY = 1;
         }, DispatcherPriority.Render);

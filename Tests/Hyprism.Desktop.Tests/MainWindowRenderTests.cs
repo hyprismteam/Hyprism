@@ -1481,7 +1481,7 @@ public sealed class MainWindowRenderTests
 
         Assert.Equal("Documentation: ", plainText.Text);
         Assert.Equal("https://hytalemodding.dev/", link.Text);
-        Assert.Equal(Color.Parse("#C9BCFF"), linkForeground.Color);
+        Assert.Equal(Color.Parse("#8AB8EF"), linkForeground.Color);
         Assert.Equal(0, underline.Opacity);
         Assert.DoesNotContain(control.Inlines, inline => inline is InlineUIContainer);
         Assert.Null(openedUrl);
@@ -3482,7 +3482,7 @@ public sealed class MainWindowRenderTests
         var articleLinkForeground = Assert.IsType<SolidColorBrush>(articleLink.Foreground);
         var articleLinkUnderline = Assert.IsType<SolidColorBrush>(
             Assert.Single(articleLink.TextDecorations!).Stroke);
-        Assert.Equal(Color.Parse("#C9BCFF"), articleLinkForeground.Color);
+        Assert.Equal(Color.Parse("#8AB8EF"), articleLinkForeground.Color);
         Assert.Equal(0, articleLinkUnderline.Opacity);
 
         var linkedListText = activeArticleHost.GetVisualDescendants()
@@ -3539,12 +3539,12 @@ public sealed class MainWindowRenderTests
         window.MouseMove(linkPoint!.Value);
         await WaitForConditionAsync(
             () => articleLinkUnderline.Opacity >= 0.99 &&
-                  articleLinkForeground.Color == Color.Parse("#E0D8FF"),
+                  articleLinkForeground.Color == Color.Parse("#B2D0F5"),
             "article link hover style");
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(new Cursor(StandardCursorType.Hand).ToString(), articleText.Cursor?.ToString());
         Assert.InRange(articleLinkUnderline.Opacity, 0.99, 1);
-        Assert.Equal(Color.Parse("#E0D8FF"), articleLinkForeground.Color);
+        Assert.Equal(Color.Parse("#B2D0F5"), articleLinkForeground.Color);
 
         window.MouseDown(linkPoint.Value, MouseButton.Left);
         window.MouseUp(linkPoint.Value, MouseButton.Left);
@@ -4083,7 +4083,7 @@ public sealed class MainWindowRenderTests
         window.UpdateLayout();
         var javaModalSheet = javaArgumentModal.FindControl<Grid>("OverlayModalSheet");
         var javaModalShoulders = javaArgumentModal.FindControl<Grid>("OverlayModalShoulders");
-        var javaModalShoulderMask = javaArgumentModal.FindControl<Border>("OverlayModalShoulderMask");
+        var javaModalShoulderMask = javaArgumentModal.FindControl<Grid>("OverlayModalShoulderMask");
         Assert.NotNull(javaModalSheet);
         Assert.NotNull(javaModalShoulders);
         Assert.NotNull(javaModalShoulderMask);
@@ -4163,17 +4163,21 @@ public sealed class MainWindowRenderTests
         var visualCategory = viewModel.Settings.Categories.Single(category => category.Id == "visual");
         viewModel.Settings.SelectCategoryCommand.Execute(visualCategory);
         Dispatcher.UIThread.RunJobs();
-        Assert.Equal(
-            1,
-            settingsView.GetVisualDescendants().OfType<Border>().Count(
-                border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup")));
+        Assert.DoesNotContain(
+            settingsView.GetVisualDescendants().OfType<Border>(),
+            border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup"));
         var visualCategoryHeadings = settingsView.GetVisualDescendants()
             .OfType<TextBlock>()
             .Where(text => text.IsEffectivelyVisible && text.Classes.Contains("settingsCategoryHeading"))
             .Select(text => text.Text)
             .ToArray();
-        Assert.Single(visualCategoryHeadings);
-        Assert.Equal(viewModel.Settings.VisualTitle, visualCategoryHeadings[0]);
+        Assert.Contains(viewModel.Settings.ThemeLabel, visualCategoryHeadings);
+        Assert.Contains(viewModel.Settings.AccentColorLabel, visualCategoryHeadings);
+        Assert.Equal(2, visualCategoryHeadings.Length);
+        Assert.Equal(3, settingsView.GetVisualDescendants().OfType<RadioButton>().Count(
+            radio => radio.IsEffectivelyVisible && radio.Classes.Contains("themeChoice")));
+        Assert.Equal(9, settingsView.GetVisualDescendants().OfType<RadioButton>().Count(
+            radio => radio.IsEffectivelyVisible && radio.Classes.Contains("accentColorChoice")));
 
         var generalCategory = viewModel.Settings.Categories.Single(category => category.Id == "general");
         viewModel.Settings.SelectCategoryCommand.Execute(generalCategory);
@@ -4324,6 +4328,8 @@ public sealed class MainWindowRenderTests
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(category.Id, viewModel.Settings.SelectedCategory);
             Assert.Same(category, Assert.Single(viewModel.Settings.Categories, item => item.IsSelected));
+            if (category.Id == "visual")
+                continue;
             Assert.Contains(
                 settingsView.GetVisualDescendants().OfType<Border>(),
                 border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup"));
@@ -4371,6 +4377,17 @@ public sealed class MainWindowRenderTests
             settingsView.GetVisualDescendants().OfType<Button>().Count(
                 button => button.IsEffectivelyVisible && button.Classes.Contains("aboutContributor")));
         var aboutView = Assert.Single(settingsView.GetVisualDescendants().OfType<SettingsAboutView>());
+        if (viewModel.Settings.HasMoreAboutContributors)
+        {
+            var overflowAvatar = Assert.Single(aboutView.GetVisualDescendants().OfType<Border>(),
+                border => border.IsEffectivelyVisible &&
+                          border.Classes.Contains("aboutContributorAvatar") &&
+                          border.Classes.Contains("overflow"));
+            Assert.True(aboutView.TryFindResource("SegmentedTrackBrush", aboutView.ActualThemeVariant,
+                out var neutralSurface));
+            Assert.Equal(Assert.IsAssignableFrom<ISolidColorBrush>(neutralSurface).Color,
+                Assert.IsAssignableFrom<ISolidColorBrush>(overflowAvatar.Background).Color);
+        }
         var contributorsContainer = aboutView.FindControl<Border>("AboutContributorsContainer");
         var contributorsRow = aboutView.FindControl<StackPanel>("AboutContributorsRow");
         Assert.NotNull(contributorsContainer);

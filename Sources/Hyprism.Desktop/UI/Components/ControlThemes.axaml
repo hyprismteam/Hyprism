@@ -16,7 +16,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </ControlTheme>
 
   <ControlTheme x:Key="ThinScrollThumb" TargetType="Thumb">
-    <Setter Property="Background" Value="#686868" />
+    <Setter Property="Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
     <Setter Property="CornerRadius" Value="4" />
     <Setter Property="Template">
       <ControlTemplate>
@@ -25,10 +25,10 @@ SPDX-License-Identifier: GPL-3.0-only
       </ControlTemplate>
     </Setter>
     <Style Selector="^:pointerover /template/ Border">
-      <Setter Property="Background" Value="#969696" />
+      <Setter Property="Background" Value="{DynamicResource ScrollBarThumbFillPointerOver}" />
     </Style>
     <Style Selector="^:pressed /template/ Border">
-      <Setter Property="Background" Value="#B0B0B0" />
+      <Setter Property="Background" Value="{DynamicResource ScrollBarThumbFillPressed}" />
     </Style>
   </ControlTheme>
 </ResourceDictionary>

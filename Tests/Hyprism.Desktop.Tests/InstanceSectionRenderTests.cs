@@ -575,7 +575,7 @@ public sealed class InstanceSectionRenderTests
         var shoulderScale = Assert.IsType<ScaleTransform>(
             modal?.FindControl<Grid>("OverlayModalShoulders")?.RenderTransform);
         Assert.NotEmpty(Assert.IsAssignableFrom<IEnumerable<ITransition>>(shoulderScale.Transitions));
-        var shoulderMask = modal!.FindControl<Border>("OverlayModalShoulderMask");
+        var shoulderMask = modal!.FindControl<Grid>("OverlayModalShoulderMask");
         Assert.NotNull(shoulderMask);
         Assert.Equal(3, shoulderMask.Height);
 

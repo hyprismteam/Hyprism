@@ -2280,12 +2280,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Mevcut</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Haberleri Gizle</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Haber panelini tamamen gizle</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Görseller</value>
   </data>
@@ -2300,6 +2294,48 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Veya sabit bir arka plan seçin:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Vurgu rengi</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Mavi</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Camgöbeği</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Yeşil</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Sarı</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Turuncu</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Kırmızı</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Pembe</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Mor</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Arduvaz grisi</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>Sistem</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Açık</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Koyu</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Görsel Ayarlar</value>

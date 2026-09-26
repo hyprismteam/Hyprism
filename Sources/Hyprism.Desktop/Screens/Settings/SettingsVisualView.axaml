@@ -6,25 +6,112 @@ SPDX-License-Identifier: GPL-3.0-only
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
-             xmlns:controls="using:Hyprism.Desktop.Controls"
              x:Class="Hyprism.Desktop.Screens.Settings.SettingsVisualView"
              x:Name="SettingsVisualRoot"
              x:DataType="vm:SettingsViewModel">
   <StackPanel Spacing="22" IsVisible="{Binding IsVisual}">
               <StackPanel Spacing="10">
-                <TextBlock Text="{Binding VisualTitle}" Classes="settingsCategoryHeading" />
-                <Border Classes="formGroup">
-                  <Border Classes="formRow last">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
-                      <StackPanel Spacing="3">
-                        <TextBlock Text="{Binding HideNewsLabel}" Classes="formLabel" />
-                        <TextBlock Text="{Binding HideNewsHint}" Classes="formHint" />
-                      </StackPanel>
-                      <ToggleSwitch Grid.Column="1" Classes="uiToggle" IsChecked="{Binding DisableNews}" />
-                    </Grid>
-                  </Border>
+                <TextBlock Text="{Binding ThemeLabel}" Classes="settingsCategoryHeading" />
+                <Border Classes="themeChoicePicker">
+                  <ItemsControl ItemsSource="{Binding Themes}"
+                                HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:SettingChoiceViewModel">
+                        <RadioButton Classes="themeChoice"
+                                     GroupName="LauncherTheme"
+                                     IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                     Click="OnThemeClicked"
+                                     AutomationProperties.Name="{Binding Display}">
+                          <StackPanel Spacing="8">
+                            <Border Classes="themeChoicePreviewFrame">
+                              <Border CornerRadius="7" ClipToBounds="True">
+                                <Border.Background>
+                                  <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                    <GradientStop Color="#203B59" Offset="0" />
+                                    <GradientStop Color="#5E4A3D" Offset="1" />
+                                  </LinearGradientBrush>
+                                </Border.Background>
+                                <Grid Classes="themeChoicePreview"
+                                      Classes.system="{Binding IsSystemTheme}"
+                                      Classes.light="{Binding IsLightTheme}"
+                                      Classes.dark="{Binding IsDarkTheme}"
+                                      ClipToBounds="True">
+                                  <Border Classes="themePreviewBackWindow"
+                                          Width="76" Height="64"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Top"
+                                          Margin="0,12,12,0">
+                                    <Border Classes="themePreviewBackTitle"
+                                            Height="12"
+                                            VerticalAlignment="Top" />
+                                  </Border>
+                                  <Border Classes="themePreviewFrontWindow"
+                                          Width="88" Height="72"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Bottom"
+                                          Margin="12,0,0,10">
+                                    <Grid RowDefinitions="12,*">
+                                      <Border Classes="themePreviewFrontTitle" />
+                                      <Grid Grid.Row="1" ColumnDefinitions="20,*">
+                                        <Border Classes="themePreviewFrontRail" />
+                                        <StackPanel Grid.Column="1" Margin="8,9,7,0" Spacing="6">
+                                          <Border Classes="themePreviewLine" Height="4" />
+                                          <Border Classes="themePreviewLine" Height="4" Width="34" HorizontalAlignment="Left" />
+                                          <Border Classes="themePreviewLine" Height="4" />
+                                        </StackPanel>
+                                      </Grid>
+                                    </Grid>
+                                  </Border>
+                                </Grid>
+                              </Border>
+                            </Border>
+                            <TextBlock Text="{Binding Display}"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       FontSize="14"
+                                       FontWeight="Regular" />
+                          </StackPanel>
+                        </RadioButton>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
                 </Border>
               </StackPanel>
-
+              <StackPanel Spacing="10">
+                <TextBlock Text="{Binding AccentColorLabel}" Classes="settingsCategoryHeading" />
+                <Border Classes="accentColorPicker">
+                  <ItemsControl ItemsSource="{Binding AccentColors}"
+                                HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:AccentColorChoiceViewModel">
+                        <RadioButton Classes="accentColorChoice"
+                                     GroupName="AccentColor"
+                                     IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                     Click="OnAccentColorClicked"
+                                     ToolTip.Tip="{Binding Label}"
+                                     AutomationProperties.Name="{Binding Label}">
+                          <Grid Width="40" Height="40">
+                            <Border Classes="accentColorChoiceRing"
+                                    BorderBrush="{Binding Brush}"
+                                    Opacity="{Binding SelectionOpacity}" />
+                            <Ellipse Classes="accentColorSwatch"
+                                     Fill="{Binding Brush}" />
+                          </Grid>
+                        </RadioButton>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Border>
+              </StackPanel>
             </StackPanel>
 </UserControl>

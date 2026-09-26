@@ -160,14 +160,26 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="BorderThickness" Value="1.5" />
     <Setter Property="CornerRadius" Value="{DynamicResource Radius.Pill}" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
 
   <Style Selector="RadioButton:checked Border.radioSelectionIndicator">
-    <Setter Property="BorderBrush" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+  </Style>
+
+  <Style Selector="RadioButton:checked:pointerover Border.radioSelectionIndicator">
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
   </Style>
 
   <Style Selector="Ellipse.radioSelectionDot">
-    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Fill" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="RadioButton:focus-visible Border.radioSelectionIndicator">
@@ -206,8 +218,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="Button.dataEditAction">
     <Setter Property="Height" Value="36" />
     <Setter Property="Padding" Value="16,0" />
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="Foreground" Value="#111214" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="FontWeight" Value="SemiBold" />
@@ -220,7 +232,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.dataEditAction:pointerover">
-    <Setter Property="Background" Value="#E1E2E5" />
+    <Setter Property="Background" Value="{DynamicResource AccentMutedHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
@@ -735,6 +747,7 @@ SPDX-License-Identifier: GPL-3.0-only
                               Margin="0,9,0,0"
                               Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
                               HorizontalContentAlignment="Stretch" />
           </StackPanel>
         </Border>
@@ -750,10 +763,12 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="controls|NoteCard.note">
     <Setter Property="Background" Value="{DynamicResource NoteSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource NoteBrush}" />
   </Style>
 
   <Style Selector="controls|NoteCard.important">
     <Setter Property="Background" Value="{DynamicResource ImportantSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource ImportantBrush}" />
   </Style>
 
   <Style Selector="controls|NoteCard.note /template/ PathIcon#PART_KindIcon">
@@ -777,7 +792,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="Border.wizardChoiceIcon">
     <Setter Property="Width" Value="44" />
     <Setter Property="Height" Value="44" />
-    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    <Setter Property="Background" Value="{DynamicResource SegmentedTrackBrush}" />
     <Setter Property="CornerRadius" Value="999" />
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
@@ -841,6 +856,36 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="Button.formNavigationRow:disabled">
     <Setter Property="Opacity" Value="0.42" />
+  </Style>
+
+  <Style Selector="Button.quietAction">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}"
+                Padding="{TemplateBinding Padding}">
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button.quietAction:pointerover, Button.quietAction:pressed">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
   <Style Selector="TextBlock.formLabel">
@@ -954,12 +999,12 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="Button.wizardAction.create">
     <Setter Property="MinWidth" Value="150" />
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 
   <Style Selector="Button.wizardAction.create:pointerover">
-    <Setter Property="Background" Value="White" />
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
 

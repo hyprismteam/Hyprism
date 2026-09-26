@@ -11,6 +11,12 @@ public interface IDesktopSettingsStore
     /// <summary>Gets or sets the interface language code</summary>
     string Language { get; set; }
 
+    /// <summary>Gets or sets the desktop appearance: dark, light, or system</summary>
+    string Theme { get; set; }
+
+    /// <summary>Gets or sets the accent color for primary actions</summary>
+    string AccentColor { get; set; }
+
     /// <summary>Gets or sets whether background music is enabled</summary>
     bool MusicEnabled { get; set; }
 
@@ -21,8 +27,6 @@ public interface IDesktopSettingsStore
     bool ShowDiscordAnnouncements { get; set; }
 
     /// <summary>Gets or sets whether the news page is disabled</summary>
-    bool DisableNews { get; set; }
-
     /// <summary>Gets or sets whether authenticated game mode is enabled</summary>
     bool OnlineMode { get; set; }
 

@@ -54,8 +54,7 @@ SPDX-License-Identifier: GPL-3.0-only
                   Width="{TemplateBinding Width}"
                   Height="{TemplateBinding Height}"
                   Background="{TemplateBinding Background}"
-                  CornerRadius="999"
-                  BoxShadow="0 2 6 0 #99000000">
+                  CornerRadius="999">
             <Border.Transitions>
               <Transitions>
                 <BrushTransition Property="Background" Duration="0:0:0.16" />
@@ -68,8 +67,8 @@ SPDX-License-Identifier: GPL-3.0-only
 
     <ControlTheme x:Key="JavaMemorySliderTheme" TargetType="Slider">
       <Setter Property="Height" Value="28" />
-      <Setter Property="Background" Value="#24FFFFFF" />
-      <Setter Property="Foreground" Value="#E8E8EA" />
+      <Setter Property="Background" Value="{DynamicResource SliderFillBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="FocusAdorner" Value="{x:Null}" />
       <Setter Property="Template">
@@ -98,8 +97,8 @@ SPDX-License-Identifier: GPL-3.0-only
         </ControlTemplate>
       </Setter>
       <Style Selector="^:pointerover">
-        <Setter Property="Background" Value="#32FFFFFF" />
-        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource SliderFillHoverBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
       </Style>
     </ControlTheme>
   </UserControl.Resources>

@@ -182,7 +182,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
   <Style Selector="Border.versionBadge">
     <Setter Property="Padding" Value="10,5" />
-    <Setter Property="Background" Value="#12FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource SkeletonCardBrush}" />
     <Setter Property="CornerRadius" Value="999" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
@@ -199,9 +199,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Opacity" Value="0.5" />
     <Setter Property="Background">
       <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-        <GradientStop Color="#16FFFFFF" Offset="0" />
-        <GradientStop Color="#32FFFFFF" Offset="0.5" />
-        <GradientStop Color="#16FFFFFF" Offset="1" />
+        <GradientStop Color="{DynamicResource SkeletonEdgeColor}" Offset="0" />
+        <GradientStop Color="{DynamicResource SkeletonCenterColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource SkeletonEdgeColor}" Offset="1" />
       </LinearGradientBrush>
     </Setter>
     <Style.Animations>
@@ -249,8 +249,8 @@ SPDX-License-Identifier: GPL-3.0-only
     </Style.Animations>
   </Style>
   <Style Selector="Border.contentSkeletonCard">
-    <Setter Property="Background" Value="#12FFFFFF" />
-    <Setter Property="BorderBrush" Value="#18FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource SkeletonCardBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource SkeletonBorderBrush}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="13" />
   </Style>
@@ -416,11 +416,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
-  <Style Selector=":is(UserControl) Button.managerAddRow">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-  </Style>
   <Style Selector=":is(UserControl) Button.managerAddRow Path">
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
   </Style>
@@ -494,16 +489,16 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlKnobHoverBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main.active">
     <Setter Property="Width" Value="216" />
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main.active:pointerover">
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.menu">
@@ -627,7 +622,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.primary">
     <Setter Property="Width" Value="150" />
-    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
   </Style>
@@ -644,7 +639,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="0,14,14,0" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.primary:pointerover">
-    <Setter Property="Background" Value="White" />
+    <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.primary.active">

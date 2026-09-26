@@ -133,7 +133,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Path.instancesVersionSpinner">
     <Setter Property="Fill" Value="Transparent" />
-    <Setter Property="Stroke" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="Stroke" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="StrokeThickness" Value="2" />
     <Setter Property="StrokeLineCap" Value="Round" />
     <Setter Property="RenderTransformOrigin" Value="50%,50%" />
@@ -293,7 +293,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Button.instanceConfirmAction.danger">
     <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
   </Style>
 
 
@@ -718,7 +718,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceBadge.update">
-    <Setter Property="Background" Value="#1735A85B" />
+    <Setter Property="Background" Value="{DynamicResource SuccessSurfaceBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceBadge.update TextBlock">
@@ -772,7 +772,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceBulkAction.danger:pointerover">
-    <Setter Property="Background" Value="#1AD83B45" />
+    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck">
@@ -830,7 +830,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView Border.instanceCatalogAuthorAvatar">
     <Setter Property="Width" Value="22" />
     <Setter Property="Height" Value="22" />
-    <Setter Property="Background" Value="#294F8A55" />
+    <Setter Property="Background" Value="{DynamicResource SuccessAvatarBrush}" />
     <Setter Property="CornerRadius" Value="11" />
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
@@ -838,7 +838,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView Border.instanceCatalogAuthorAvatar TextBlock">
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="Foreground" Value="#B8E7C6" />
+    <Setter Property="Foreground" Value="{DynamicResource SuccessAvatarForegroundBrush}" />
     <Setter Property="FontSize" Value="10" />
     <Setter Property="FontWeight" Value="Bold" />
   </Style>
@@ -939,7 +939,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceRowIconButton:pointerover">
-    <Setter Property="Background" Value="#14D83B45" />
+    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceRowIconButton Path.instanceRowIcon">
@@ -987,7 +987,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="SheetMaxHeight" Value="680" />
     <Setter Property="SheetMargin" Value="20,20,20,0" />
     <Setter Property="ShoulderMaxWidth" Value="780" />
-    <Setter Property="ShoulderMargin" Value="20,0,20,0" />
   </Style>
 
   <Style Selector="instances|InstancesView.compact controls|OverlayModal.modCatalogModal">
@@ -995,7 +994,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="SheetMaxHeight" Value="520" />
     <Setter Property="SheetMargin" Value="12,36,12,0" />
     <Setter Property="ShoulderMaxWidth" Value="608" />
-    <Setter Property="ShoulderMargin" Value="12,0,12,0" />
   </Style>
 
   <Style Selector="instances|InstancesView controls|OverlayModal.modCatalogInstallModal">
@@ -1003,7 +1001,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="SheetMaxHeight" Value="560" />
     <Setter Property="SheetMargin" Value="20,20,20,0" />
     <Setter Property="ShoulderMaxWidth" Value="674" />
-    <Setter Property="ShoulderMargin" Value="20,0,20,0" />
   </Style>
 
   <Style Selector="instances|InstancesView.compact controls|OverlayModal.modCatalogInstallModal">
@@ -1011,7 +1008,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="SheetMaxHeight" Value="520" />
     <Setter Property="SheetMargin" Value="12,36,12,0" />
     <Setter Property="ShoulderMaxWidth" Value="608" />
-    <Setter Property="ShoulderMargin" Value="12,0,12,0" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceModPreviewContent">
@@ -1187,9 +1183,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="IsHitTestVisible" Value="False" />
     <Setter Property="Background">
       <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-        <GradientStop Color="#14FFFFFF" Offset="0" />
-        <GradientStop Color="#2AFFFFFF" Offset="0.5" />
-        <GradientStop Color="#14FFFFFF" Offset="1" />
+        <GradientStop Color="{DynamicResource SkeletonEdgeColor}" Offset="0" />
+        <GradientStop Color="{DynamicResource PreviewSkeletonCenterColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource SkeletonEdgeColor}" Offset="1" />
       </LinearGradientBrush>
     </Setter>
     <Style.Animations>
@@ -1429,7 +1425,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="Padding" Value="8,4" />
-    <Setter Property="Background" Value="#24FFC54D" />
+    <Setter Property="Background" Value="{DynamicResource WarningBadgeBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="7" />
   </Style>
@@ -1442,7 +1438,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Border.modPreviewReleaseBadge.release">
-    <Setter Property="Background" Value="#2435A85B" />
+    <Setter Property="Background" Value="{DynamicResource SuccessBadgeBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.modPreviewReleaseBadge.release TextBlock">
@@ -1450,11 +1446,11 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Border.modPreviewReleaseBadge.beta">
-    <Setter Property="Background" Value="#266F56D9" />
+    <Setter Property="Background" Value="{DynamicResource BetaSurfaceBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.modPreviewReleaseBadge.beta TextBlock">
-    <Setter Property="Foreground" Value="#C4B5FD" />
+    <Setter Property="Foreground" Value="{DynamicResource BetaForegroundBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceInstall.preview">
@@ -1499,11 +1495,11 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceInstall.preview.splitMain:pointerover">
-    <Setter Property="Background" Value="#E7E7E9" />
+    <Setter Property="Background" Value="{DynamicResource PrimaryHoverBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceInstall.preview.splitMain:pressed">
-    <Setter Property="Background" Value="#DEDEE1" />
+    <Setter Property="Background" Value="{DynamicResource PrimaryPressedBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.modPreviewSplitDivider">

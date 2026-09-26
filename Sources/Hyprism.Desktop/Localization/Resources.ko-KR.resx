@@ -2280,12 +2280,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>현재</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>뉴스 숨기기</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>뉴스 패널 완전히 숨기기</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>이미지</value>
   </data>
@@ -2300,6 +2294,48 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>또는 정적 배경 선택:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>강조 색상</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>파랑</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>청록</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>초록</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>노랑</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>주황</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>빨강</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>분홍</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>보라</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>청회색</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>테마</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>시스템</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>라이트</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>다크</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>시각 설정</value>

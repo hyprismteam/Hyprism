@@ -17,8 +17,6 @@ namespace Hyprism.Desktop.Screens.News;
 /// <summary>Renders the safe inline subset produced by <see cref="NewsContentNode"/>.</summary>
 public sealed class NewsRichTextBlock : TextBlock
 {
-    private static readonly Color LinkColor = Color.Parse("#C9BCFF");
-    private static readonly Color LinkHoverColor = Color.Parse("#E0D8FF");
     private static readonly Cursor LinkCursor = new(StandardCursorType.Hand);
     private static readonly FontFamily CodeFontFamily =
         new("avares://Hyprism.Desktop/Assets/Fonts#JetBrains Mono");
@@ -29,6 +27,13 @@ public sealed class NewsRichTextBlock : TextBlock
     private int _textPosition;
     private bool _rebuildScheduled;
     private int _rebuildGeneration;
+    private Color LinkColor => ThemeColor("ArticleLinkBrush", Color.Parse("#8AB8EF"));
+    private Color LinkHoverColor => ThemeColor("ArticleLinkHoverBrush", Color.Parse("#B2D0F5"));
+
+    public NewsRichTextBlock()
+    {
+        ActualThemeVariantChanged += (_, _) => ScheduleRebuild();
+    }
 
     public static readonly StyledProperty<IReadOnlyList<NewsContentNode>?> NodesProperty =
         AvaloniaProperty.Register<NewsRichTextBlock, IReadOnlyList<NewsContentNode>?>(nameof(Nodes));
@@ -82,6 +87,8 @@ public sealed class NewsRichTextBlock : TextBlock
         }, DispatcherPriority.Background);
     }
 
+    internal void RefreshThemeColors() => ScheduleRebuild();
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         _rebuildGeneration++;
@@ -134,7 +141,7 @@ public sealed class NewsRichTextBlock : TextBlock
                 target.Add(new Run(text)
                 {
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#F2F2F4"))
+                    Foreground = new SolidColorBrush(ThemeColor("TextPrimaryBrush", Color.Parse("#F2F2F4")))
                 });
                 _textPosition += text.Length;
                 return;
@@ -145,7 +152,7 @@ public sealed class NewsRichTextBlock : TextBlock
                 target.Add(new Run(text)
                 {
                     FontStyle = FontStyle.Italic,
-                    Foreground = new SolidColorBrush(Color.Parse("#E1E2E5"))
+                    Foreground = new SolidColorBrush(ThemeColor("ArticleBodyBrush", Color.Parse("#E1E2E5")))
                 });
                 _textPosition += text.Length;
                 return;
@@ -159,14 +166,14 @@ public sealed class NewsRichTextBlock : TextBlock
                     FontFamily = CodeFontFamily,
                     FontSize = 13,
                     LineHeight = 18,
-                    Foreground = new SolidColorBrush(Color.Parse("#DDD8F2")),
+                    Foreground = new SolidColorBrush(ThemeColor("ArticleCodeForegroundBrush", Color.Parse("#BCD6F6"))),
                     TextWrapping = TextWrapping.NoWrap,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
                 };
                 var codeChip = new Border
                 {
-                    Background = new SolidColorBrush(Color.Parse("#321D1B29")),
-                    BorderBrush = new SolidColorBrush(Color.Parse("#526F63A3")),
+                    Background = new SolidColorBrush(ThemeColor("ArticleInlineCodeBrush", Color.Parse("#2E3584E4"))),
+                    BorderBrush = new SolidColorBrush(ThemeColor("ArticleInlineCodeBorderBrush", Color.Parse("#803584E4"))),
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(6),
                     Padding = new Thickness(4, 0),
@@ -377,6 +384,12 @@ public sealed class NewsRichTextBlock : TextBlock
             link.Underline.Opacity = 1;
         }
     }
+
+    private Color ThemeColor(string key, Color fallback)
+        => this.TryFindResource(key, ActualThemeVariant, out var resource) &&
+           resource is SolidColorBrush brush
+            ? brush.Color
+            : fallback;
 
     private static string ExtractText(NewsContentNode node)
     {

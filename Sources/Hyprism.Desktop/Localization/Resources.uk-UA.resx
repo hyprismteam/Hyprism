@@ -2280,12 +2280,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Поточний</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Приховати новини</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Повністю приховати панель новин</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Зображення</value>
   </data>
@@ -2300,6 +2294,48 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Або виберіть статичний фон:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Акцентний колір</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Синій</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Бірюзовий</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Зелений</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Жовтий</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Помаранчевий</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Червоний</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Рожевий</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Фіолетовий</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Сіро-блакитний</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>Системна</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Світла</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Темна</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Налаштування вигляду</value>

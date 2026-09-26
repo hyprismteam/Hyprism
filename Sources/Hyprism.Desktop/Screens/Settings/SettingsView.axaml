@@ -544,7 +544,6 @@ SPDX-License-Identifier: GPL-3.0-only
                          SheetMaxHeight="420"
                          SheetMargin="12,20,12,0"
                          ShoulderMaxWidth="522"
-                         ShoulderMargin="12,0,12,0"
                          HiddenOffset="500"
                          ZIndex="220">
     <controls:OverlayModal.ModalContent>
@@ -595,7 +594,6 @@ SPDX-License-Identifier: GPL-3.0-only
                          SheetMaxHeight="360"
                          SheetMargin="12,20,12,0"
                          ShoulderMaxWidth="608"
-                         ShoulderMargin="12,0,12,0"
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>
@@ -640,7 +638,6 @@ SPDX-License-Identifier: GPL-3.0-only
                          SheetMaxHeight="360"
                          SheetMargin="12,20,12,0"
                          ShoulderMaxWidth="608"
-                         ShoulderMargin="12,0,12,0"
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>
@@ -685,7 +682,6 @@ SPDX-License-Identifier: GPL-3.0-only
                          SheetMaxHeight="360"
                          SheetMargin="12,20,12,0"
                          ShoulderMaxWidth="608"
-                         ShoulderMargin="12,0,12,0"
                          HiddenOffset="420"
                          ZIndex="200">
     <controls:OverlayModal.ModalContent>

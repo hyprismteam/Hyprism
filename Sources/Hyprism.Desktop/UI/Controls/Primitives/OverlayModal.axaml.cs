@@ -44,7 +44,7 @@ public sealed partial class OverlayModal : UserControl
         AvaloniaProperty.Register<OverlayModal, double>(nameof(ShoulderMaxWidth), 780);
 
     public static readonly StyledProperty<Thickness> ShoulderMarginProperty =
-        AvaloniaProperty.Register<OverlayModal, Thickness>(nameof(ShoulderMargin), new Thickness(20, 0, 20, 0));
+        AvaloniaProperty.Register<OverlayModal, Thickness>(nameof(ShoulderMargin), new Thickness(0));
 
     public static readonly StyledProperty<double> HiddenOffsetProperty =
         AvaloniaProperty.Register<OverlayModal, double>(nameof(HiddenOffset), 720);

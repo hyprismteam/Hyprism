@@ -77,7 +77,7 @@ SPDX-License-Identifier: GPL-3.0-only
           <Path Width="42"
                 Height="42"
                 HorizontalAlignment="Center"
-                Fill="#24FFFFFF"
+                Fill="{DynamicResource NewsEmptyIconBrush}"
                 Stretch="Uniform"
                 Data="{StaticResource NewsFilledIcon}" />
           <TextBlock Text="{Binding SelectArticleLabel}"
@@ -136,7 +136,7 @@ SPDX-License-Identifier: GPL-3.0-only
                       HorizontalAlignment="Stretch">
             <Border Height="260" Classes="newsArticleHeader">
               <Grid>
-                <Border Background="#191A1D" />
+                <Border Background="{DynamicResource ArticleHeroFallbackBrush}" />
                 <Image IsVisible="{Binding SelectedNewsItem.HasImage}"
                        Source="{Binding SelectedNewsItem.Image}"
                        Stretch="UniformToFill" />
@@ -146,7 +146,7 @@ SPDX-License-Identifier: GPL-3.0-only
                       Margin="28"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Top"
-                      Fill="#14FFFFFF"
+                      Fill="{DynamicResource NewsFadedIconBrush}"
                       Stretch="Uniform"
                       Data="{StaticResource NewsFilledIcon}" />
                 <Border Classes="articleHeaderMask">
@@ -162,6 +162,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 <StackPanel Margin="24" VerticalAlignment="Bottom" Spacing="8">
                   <Button IsVisible="{Binding IsWideNewsLayout}"
                           Classes="articleAction"
+                          Foreground="White"
                           HorizontalAlignment="Left"
                           Command="{Binding SelectedNewsItem.OpenExternalCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="9">
@@ -170,12 +171,13 @@ SPDX-License-Identifier: GPL-3.0-only
                     </StackPanel>
                   </Button>
                   <TextBlock Text="{Binding NewsArticleDisplayTitle}"
+                             Foreground="White"
                              FontSize="32"
                              FontWeight="Bold"
                              MaxLines="3"
                              TextTrimming="CharacterEllipsis" />
                   <TextBlock Text="{Binding NewsArticleDisplayMetadata}"
-                             Foreground="#D1D2D6"
+                             Foreground="{DynamicResource NewsHeroMetadataBrush}"
                              FontSize="12"
                              FontWeight="SemiBold"
                              TextWrapping="Wrap" />
