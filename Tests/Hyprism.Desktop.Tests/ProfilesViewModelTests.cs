@@ -402,7 +402,7 @@ public sealed class ProfilesViewModelTests
         viewModel.ConfirmProfileDeletionCommand.Execute(null);
         Assert.True(viewModel.HasPendingProfileDeletion);
         Assert.True(viewModel.IsStatusError);
-        Assert.Equal("Could not delete the profile.", viewModel.StatusMessage);
+        Assert.Equal("Could not delete the profile", viewModel.StatusMessage);
 
         viewModel.ConfirmProfileDeletionCommand.Execute(null);
         Assert.False(viewModel.IsProfileDeletionOpen);
