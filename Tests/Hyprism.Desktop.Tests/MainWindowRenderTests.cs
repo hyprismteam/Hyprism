@@ -2389,31 +2389,6 @@ public sealed class MainWindowRenderTests
         Assert.False(mainSceneFrame!.ClipToBounds);
         Assert.Equal(new CornerRadius(24), mainSceneFrame.CornerRadius);
         Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.SelectedModCatalogPreview = new ModCatalogItemViewModel(
-            "frame-preview", "Frame Preview", "Hyprism", "", "1");
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.SelectedModCatalogPreview = null;
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddJavaArgumentCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddJavaArgumentCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddEnvironmentVariableCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddEnvironmentVariableCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
-        viewModel.Settings.ShowAddAuthServerCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
-        viewModel.Settings.CancelAddAuthServerCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Equal(new Thickness(1), mainSceneFrame.BorderThickness);
         Assert.NotNull(mainSceneSurface);
         Assert.True(mainSceneSurface!.ClipToBounds);
         Assert.Equal(new CornerRadius(23), mainSceneSurface.CornerRadius);
@@ -3762,6 +3737,28 @@ public sealed class MainWindowRenderTests
 
         viewModel.NavigateCommand.Execute("settings");
         Dispatcher.UIThread.RunJobs();
+
+        viewModel.Settings.ShowAddJavaArgumentCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddJavaArgumentCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after Java argument modal closes");
+        viewModel.Settings.ShowAddEnvironmentVariableCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddEnvironmentVariableCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after environment variable modal closes");
+        viewModel.Settings.ShowAddAuthServerCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Thickness(1, 1, 1, 0), mainSceneFrame.BorderThickness);
+        viewModel.Settings.CancelAddAuthServerCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(
+            () => mainSceneFrame.BorderThickness == new Thickness(1),
+            "frame border after auth server modal closes");
 
         var settingsView = window.GetVisualDescendants().OfType<SettingsView>().Single();
         var settingsScroll = settingsView.FindControl<ScrollViewer>("SettingsContent");

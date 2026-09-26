@@ -364,7 +364,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(CanShowPreviousModCatalogScreenshot))]
     [NotifyPropertyChangedFor(nameof(CanShowNextModCatalogScreenshot))]
     [NotifyPropertyChangedFor(nameof(IsModCatalogPreviewMounted))]
-    [NotifyPropertyChangedFor(nameof(IsBottomSheetMounted))]
     private ModCatalogItemViewModel? _selectedModCatalogPreview;
 
     [ObservableProperty]
@@ -407,7 +406,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasModCatalogInstallConfirmation))]
-    [NotifyPropertyChangedFor(nameof(IsBottomSheetMounted))]
     private bool _isModCatalogInstallConfirmationOpen;
 
     [ObservableProperty]
@@ -599,7 +597,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool CanSearchModCatalog => ShouldShowModCatalogSearchAction && !IsModCatalogLoading;
     public bool HasModCatalogPreview => IsModCatalogPreviewOpen;
     public bool IsModCatalogPreviewMounted => SelectedModCatalogPreview is not null;
-    public bool IsBottomSheetMounted => IsModCatalogPreviewMounted || HasModCatalogInstallConfirmation;
     public bool HasModCatalogInstallConfirmation => IsModCatalogInstallConfirmationOpen;
     public bool HasModCatalogPreviewImage => ModCatalogPreviewImage is not null;
     public bool HasModCatalogPreviewFiles => ModCatalogPreviewFiles.Count > 0;

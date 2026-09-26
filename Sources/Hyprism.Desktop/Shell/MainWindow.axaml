@@ -180,7 +180,6 @@ SPDX-License-Identifier: GPL-3.0-only
       <Border x:Name="MainSceneFrame"
               Grid.Column="1"
               Classes="mainSceneFrame"
-              Classes.bottomSheetOpen="{Binding IsBottomSheetMounted}"
               Background="{DynamicResource SurfaceBrush}"
               CornerRadius="24"
               ClipToBounds="False">

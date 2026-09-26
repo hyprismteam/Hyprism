@@ -194,6 +194,8 @@ Keep screen strings and commands in the view model. Keep component properties sm
 
 Use `FormRow.Error` for a validation message that belongs to one row. `ModalForm` provides the shared form layout inside `OverlayModal`; the profile and instance editors compose their own sheets. `BackdropTarget` optionally blurs and blocks the underlying view. Settings modals omit it and use only the overlay dimming. `InitialFocusTarget` names the first input. Closing the modal restores the previous focus and any backdrop effect.
 
+`OverlayModal` draws the bottom edge of an open sheet and updates the ancestor `mainSceneFrame` border while any sheet remains visible. The frame regains its bottom border after the final closing animation. New modals do not need a shell view model registration for this state.
+
 ```xml
 <controls:OverlayModal IsOpen="{Binding IsEditorOpen}"
                        DismissCommand="{Binding CloseEditorCommand}"

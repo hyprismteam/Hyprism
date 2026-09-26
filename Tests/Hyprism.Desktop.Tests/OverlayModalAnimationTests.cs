@@ -69,19 +69,7 @@ public sealed class OverlayModalAnimationTests
             IsHitTestVisible = false
         });
         modal.ModalContent = sheet;
-        window.Content = new Grid
-        {
-            Children =
-            {
-                new Border
-                {
-                    Height = 1,
-                    Background = new SolidColorBrush(Color.Parse("#101114")),
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom
-                },
-                modal
-            }
-        };
+        window.Content = modal;
         return window;
     }
 
@@ -154,6 +142,36 @@ public sealed class OverlayModalAnimationTests
     }
 
     [AvaloniaFact]
+    public async Task FrameBorderStaysOpenUntilLastModalCloses()
+    {
+        var first = new OverlayModal();
+        var second = new OverlayModal();
+        var frame = new Border
+        {
+            Classes = { "mainSceneFrame" },
+            Child = new Grid { Children = { first, second } }
+        };
+        var window = new Window { Width = WindowWidth, Height = WindowHeight, Content = frame };
+        window.Show();
+
+        Assert.Equal(new Thickness(1), frame.BorderThickness);
+        first.IsOpen = true;
+        Assert.Equal(new Thickness(1, 1, 1, 0), frame.BorderThickness);
+        second.IsOpen = true;
+        first.IsOpen = false;
+        await AvaloniaTestWait.UntilAsync(
+            () => !first.IsVisible,
+            "first modal close");
+        Assert.Equal(new Thickness(1, 1, 1, 0), frame.BorderThickness);
+
+        second.IsOpen = false;
+        await AvaloniaTestWait.UntilAsync(
+            () => frame.BorderThickness == new Thickness(1),
+            "frame border after last modal closes");
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void ShouldersStaySyncedWithSheetMotion()
     {
         var modal = new OverlayModal
@@ -181,7 +199,7 @@ public sealed class OverlayModalAnimationTests
         Assert.Equal(stroke.Color, PixelColor(window, ShoulderRight - 9, LineRow));
 
         Freeze(window, modal, backdropOpacity: 1, sheetOffset: 8, shoulderScale: 0.9);
-        Assert.NotEqual(stroke.Color, PixelColor(window, 100, LineRow));
+        Assert.Equal(stroke.Color, PixelColor(window, 100, LineRow));
         Assert.Equal(background.Color, PixelColor(window, 167, 558));
         Assert.Equal(background.Color, PixelColor(window, 400, LineRow));
 
@@ -192,7 +210,7 @@ public sealed class OverlayModalAnimationTests
         Assert.Equal(background.Color, PixelColor(window, 400, LineRow));
 
         Freeze(window, modal, backdropOpacity: 1, sheetOffset: 0, shoulderScale: 1);
-        Assert.NotEqual(stroke.Color, PixelColor(window, 100, LineRow));
+        Assert.Equal(stroke.Color, PixelColor(window, 100, LineRow));
         Assert.Equal(background.Color, PixelColor(window, 400, LineRow));
         Assert.Equal(background.Color, PixelColor(window, ShoulderLeft + 9, LineRow));
         Assert.Equal(background.Color, PixelColor(window, ShoulderRight - 9, LineRow));
