@@ -169,13 +169,14 @@ public sealed class WizardAnimationTests
             () => pane.Bounds.Width <= 0.5,
             "navigation pane to finish hiding before wizard close");
 
-        profilesViewModel.CancelCreationCommand.Execute(null);
-        profileRepository.Raise(repository => repository.ProfilesChanged += null);
-        await AvaloniaTestWait.PropertyAsync(
+        var paneReopening = AvaloniaTestWait.PropertyAsync(
             pane,
             Visual.OpacityProperty,
             () => pane.IsAnimating(Visual.OpacityProperty),
             "navigation pane to start reopening");
+        profilesViewModel.CancelCreationCommand.Execute(null);
+        profileRepository.Raise(repository => repository.ProfilesChanged += null);
+        await paneReopening;
         Assert.False(pane.IsAnimating(Layoutable.WidthProperty));
         Assert.Equal(276, pane.Bounds.Width);
 

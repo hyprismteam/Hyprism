@@ -148,9 +148,7 @@ SPDX-License-Identifier: GPL-3.0-only
                   Height="44"
                   CornerRadius="22"
                   ClipToBounds="True"
-                  Background="{DynamicResource AvatarSurfaceBrush}"
-                  BorderBrush="{DynamicResource StrokeStrongBrush}"
-                  BorderThickness="1">
+                  Background="{DynamicResource SegmentedTrackBrush}">
             <Grid>
               <Image x:Name="SidebarProfileAvatar"
                      IsVisible="{Binding HasActiveProfileAvatar}"
@@ -159,7 +157,7 @@ SPDX-License-Identifier: GPL-3.0-only
               <TextBlock IsVisible="{Binding !HasActiveProfileAvatar}"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
-                         Foreground="{DynamicResource AvatarForegroundBrush}"
+                         Foreground="{DynamicResource TextPrimaryBrush}"
                          FontWeight="Bold"
                          Text="{Binding UserInitial}" />
             </Grid>

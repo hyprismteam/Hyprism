@@ -20,13 +20,13 @@ SPDX-License-Identifier: GPL-3.0-only
     </Style>
 
     <Style Selector="Border.profileAvatar">
-      <Setter Property="Background" Value="{DynamicResource AvatarSurfaceBrush}" />
+      <Setter Property="Background" Value="{DynamicResource SegmentedTrackBrush}" />
       <Setter Property="CornerRadius" Value="999" />
       <Setter Property="ClipToBounds" Value="True" />
     </Style>
 
     <Style Selector="Border.profileAvatar TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource AvatarForegroundBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
 
     <Style Selector="Border.profileListAvatar">

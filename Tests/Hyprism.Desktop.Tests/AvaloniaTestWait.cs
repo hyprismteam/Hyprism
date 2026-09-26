@@ -65,7 +65,7 @@ internal static class AvaloniaTestWait
             }
 
             Pump();
-            Assert.True(condition(), $"Timed out waiting for {description}");
+            Assert.True(completion.Task.IsCompleted || condition(), $"Timed out waiting for {description}");
         }
         finally
         {

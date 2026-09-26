@@ -724,7 +724,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.aboutContributorAvatar.overflow">
-    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    <Setter Property="Background" Value="{DynamicResource SegmentedTrackBrush}" />
     <Setter Property="Transitions">
       <Transitions>
         <BrushTransition Property="Background" Duration="0:0:0.18" />
@@ -737,7 +737,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.aboutContributor.overflow:pointerover Border.aboutContributorAvatar">
-    <Setter Property="Background" Value="{DynamicResource StrongSubtleHoverBrush}" />
+    <Setter Property="Background" Value="{DynamicResource ControlTrackHoverBrush}" />
   </Style>
 
 

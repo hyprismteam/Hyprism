@@ -4377,6 +4377,17 @@ public sealed class MainWindowRenderTests
             settingsView.GetVisualDescendants().OfType<Button>().Count(
                 button => button.IsEffectivelyVisible && button.Classes.Contains("aboutContributor")));
         var aboutView = Assert.Single(settingsView.GetVisualDescendants().OfType<SettingsAboutView>());
+        if (viewModel.Settings.HasMoreAboutContributors)
+        {
+            var overflowAvatar = Assert.Single(aboutView.GetVisualDescendants().OfType<Border>(),
+                border => border.IsEffectivelyVisible &&
+                          border.Classes.Contains("aboutContributorAvatar") &&
+                          border.Classes.Contains("overflow"));
+            Assert.True(aboutView.TryFindResource("SegmentedTrackBrush", aboutView.ActualThemeVariant,
+                out var neutralSurface));
+            Assert.Equal(Assert.IsAssignableFrom<ISolidColorBrush>(neutralSurface).Color,
+                Assert.IsAssignableFrom<ISolidColorBrush>(overflowAvatar.Background).Color);
+        }
         var contributorsContainer = aboutView.FindControl<Border>("AboutContributorsContainer");
         var contributorsRow = aboutView.FindControl<StackPanel>("AboutContributorsRow");
         Assert.NotNull(contributorsContainer);
