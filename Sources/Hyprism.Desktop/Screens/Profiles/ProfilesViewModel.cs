@@ -210,6 +210,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string RandomizeNameLabel => _localizer["profiles.generateName"];
     public string RandomizeUuidLabel => _localizer["profiles.randomUuid"];
     public string OfficialLockedLabel => _localizer["profiles.officialLocked"];
+    public string NoteTitle => _localizer["common.note"];
     public string NoProfilesLabel => _localizer["profiles.noProfiles"];
     public string DeleteTitle => _localizer["confirmation.title"];
     public string DeleteHint => _localizer["deleteProfile.cannotUndo"];
@@ -303,7 +304,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                      nameof(CreateLabel), nameof(AddLabel),
                      nameof(CancelLabel), nameof(BackLabel), nameof(SaveLabel), nameof(EditLabel), nameof(ProfileEditorTitle),
                      nameof(CopyLabel), nameof(FolderLabel), nameof(DeleteActionLabel), nameof(ActivationLabel), nameof(ActiveLabel), nameof(DeleteLabel), nameof(DuplicateLabel),
-                     nameof(RandomizeNameLabel), nameof(RandomizeUuidLabel), nameof(OfficialLockedLabel),
+                     nameof(RandomizeNameLabel), nameof(RandomizeUuidLabel), nameof(OfficialLockedLabel), nameof(NoteTitle),
                      nameof(NoProfilesLabel), nameof(DeleteTitle), nameof(DeleteHint)
                  })
         {

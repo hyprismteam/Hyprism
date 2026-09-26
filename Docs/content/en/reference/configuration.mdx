@@ -12,6 +12,8 @@ Close the launcher before editing the file manually and preserve unrelated field
 ```json
 {
   "Language": "en-US",
+  "Theme": "dark",
+  "AccentColor": "blue",
   "CloseAfterLaunch": false,
   "UseCustomJava": false,
   "JavaArguments": "-Xms2G -Xmx4G",
@@ -52,10 +54,11 @@ GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` wh
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `Language` | `en-US` | UI culture |
+| `Theme` | `dark` | Desktop appearance: `dark`, `light`, or `system`; `system` follows the operating system |
+| `AccentColor` | `blue` | Primary action color: `blue`, `cyan`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, or `slate` |
 | `MusicEnabled` | `true` | Persisted background music preference |
 | `ShowDiscordAnnouncements` | `true` | Persisted announcement preference |
 | `DismissedAnnouncementIds` | `[]` | Previously dismissed announcement IDs |
-| `DisableNews` | `false` | News disabled preference |
 | `InstanceDirectory` | empty | Default instance root, or the `HyprismLibrary` path created inside the directory selected in Desktop |
 | `ShowAlphaMods` | `false` | Include alpha mod releases |
 | `LastExportPath` | empty | Remembered mod export destination |

@@ -61,13 +61,17 @@ SPDX-License-Identifier: GPL-3.0-only
                           <Border Classes="formRow mirrorSourceRow"
                                   Classes.last="{Binding IsLast}">
                             <Grid ColumnDefinitions="2.4*,1.05*,84,34" ColumnSpacing="16">
-                            <RadioButton Classes="uiSelectionRadio authServerRadio"
+                              <RadioButton Classes="uiSelectionRadio authServerRadio"
                                            AutomationProperties.Name="{Binding Value}"
                                            GroupName="AuthServers"
                                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                           IsHitTestVisible="{Binding DataContext.HasMultipleAuthServers, ElementName=SettingsNetworkRoot}"
+                                           IsTabStop="{Binding DataContext.HasMultipleAuthServers, ElementName=SettingsNetworkRoot}"
                                            VerticalAlignment="Center">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                  <Border Classes="radioSelectionIndicator">
+                                <Grid ColumnDefinitions="Auto,*">
+                                  <Border Classes="radioSelectionIndicator"
+                                          Margin="0,0,10,0"
+                                          IsVisible="{Binding DataContext.HasMultipleAuthServers, ElementName=SettingsNetworkRoot}">
                                     <Ellipse Classes="radioSelectionDot"
                                              IsVisible="{Binding IsSelected}" />
                                   </Border>

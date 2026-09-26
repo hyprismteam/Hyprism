@@ -13,7 +13,7 @@ SPDX-License-Identifier: GPL-3.0-only
              IsHitTestVisible="False">
   <Grid>
     <Border x:Name="OverlayModalBackdrop"
-            Background="#B8000000"
+            Background="{DynamicResource OverlayScrimBrush}"
             Opacity="0"
             PointerPressed="OnBackdropPressed">
       <Border.Transitions>
@@ -84,13 +84,18 @@ SPDX-License-Identifier: GPL-3.0-only
             Stroke="{DynamicResource MainCardStrokeBrush}"
             StrokeThickness="1"
             StrokeJoin="Round" />
-      <Border x:Name="OverlayModalShoulderMask"
-              Height="3"
-              Background="{DynamicResource AppBackgroundBrush}"
-              ZIndex="1"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Bottom"
-              IsHitTestVisible="False" />
+      <Grid x:Name="OverlayModalShoulderMask"
+            Height="3"
+            ZIndex="1"
+            ClipToBounds="True"
+            VerticalAlignment="Bottom"
+            IsHitTestVisible="False">
+        <Path Data="{Binding Data, ElementName=OverlayModalShoulderFill}"
+              Height="42"
+              Stretch="Fill"
+              Fill="{DynamicResource AppBackgroundBrush}"
+              VerticalAlignment="Bottom" />
+      </Grid>
     </Grid>
   </Grid>
 </UserControl>

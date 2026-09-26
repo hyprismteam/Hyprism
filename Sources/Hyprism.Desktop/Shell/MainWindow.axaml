@@ -148,7 +148,7 @@ SPDX-License-Identifier: GPL-3.0-only
                   Height="44"
                   CornerRadius="22"
                   ClipToBounds="True"
-                  Background="{DynamicResource AccentSoftBrush}"
+                  Background="{DynamicResource AvatarSurfaceBrush}"
                   BorderBrush="{DynamicResource StrokeStrongBrush}"
                   BorderThickness="1">
             <Grid>
@@ -159,7 +159,7 @@ SPDX-License-Identifier: GPL-3.0-only
               <TextBlock IsVisible="{Binding !HasActiveProfileAvatar}"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
-                         Foreground="{DynamicResource TextPrimaryBrush}"
+                         Foreground="{DynamicResource AvatarForegroundBrush}"
                          FontWeight="Bold"
                          Text="{Binding UserInitial}" />
             </Grid>
@@ -244,7 +244,7 @@ SPDX-License-Identifier: GPL-3.0-only
           IsVisible="False"
           IsHitTestVisible="False"
           Opacity="0"
-          Background="#FF0B0C0E"
+          Background="{DynamicResource StartupBackgroundBrush}"
           ZIndex="1000">
     <Border.Transitions>
       <Transitions>
@@ -313,7 +313,7 @@ SPDX-License-Identifier: GPL-3.0-only
                          Height="96"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
-                         Path="/Assets/Lotties/figures.json"
+                         Path="{DynamicResource StartupAnimationPath}"
                          AutoPlay="True"
                          RepeatCount="-1"
                          OpacityMask="{DynamicResource AccentBrush}"
@@ -323,7 +323,7 @@ SPDX-License-Identifier: GPL-3.0-only
         <TextBlock Grid.Row="1"
                    Text="{Binding StartupLoadingTitle}"
                    HorizontalAlignment="Center"
-                   Foreground="#FFD5D8DA"
+                   Foreground="{DynamicResource StartupTitleBrush}"
                    FontSize="26"
                    FontWeight="Bold"
                    TextAlignment="Center" />
@@ -331,7 +331,7 @@ SPDX-License-Identifier: GPL-3.0-only
         <TextBlock Grid.Row="2"
                    Text="{Binding StartupLoadingStatus}"
                    HorizontalAlignment="Center"
-                   Foreground="#FF777E84"
+                   Foreground="{DynamicResource StartupStatusBrush}"
                    FontSize="15" />
       </Grid>
 
@@ -352,7 +352,7 @@ SPDX-License-Identifier: GPL-3.0-only
                    FontFamily="{DynamicResource GoogleSansFont}"
                    FontSize="21"
                    FontWeight="SemiBold"
-                   Foreground="White"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
                    VerticalAlignment="Center" />
         <StackPanel.Transitions>
           <Transitions>

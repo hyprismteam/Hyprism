@@ -90,7 +90,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
 
-              <Button Classes="formNavigationRow managerAddRow last"
+              <Button Classes="formNavigationRow managerAddRow quietAction last"
                       Click="OnOpenCreatorClicked">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"

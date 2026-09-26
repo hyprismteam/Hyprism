@@ -12,6 +12,8 @@ description: Поля Config.json, стандартные значения и п
 ```json
 {
   "Language": "ru-RU",
+  "Theme": "dark",
+  "AccentColor": "blue",
   "CloseAfterLaunch": false,
   "UseCustomJava": false,
   "JavaArguments": "-Xms2G -Xmx4G",
@@ -52,10 +54,11 @@ GPU принимает `auto`, старые типы `dedicated` и `integrated`
 | Ключ | По умолчанию | Назначение |
 | --- | --- | --- |
 | `Language` | `en-US` | Культура интерфейса |
+| `Theme` | `dark` | Оформление Desktop: `dark`, `light` или `system`; `system` следует теме операционной системы |
+| `AccentColor` | `blue` | Цвет основных кнопок: `blue`, `cyan`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` или `slate` |
 | `MusicEnabled` | `true` | Сохраненное предпочтение фоновой музыки |
 | `ShowDiscordAnnouncements` | `true` | Сохраненное предпочтение объявлений |
 | `DismissedAnnouncementIds` | `[]` | ID скрытых объявлений |
-| `DisableNews` | `false` | Предпочтение отключения новостей |
 | `InstanceDirectory` | пусто | Стандартный корень экземпляров или путь к `HyprismLibrary` внутри каталога, выбранного в Desktop |
 | `ShowAlphaMods` | `false` | Показ alpha-релизов модов |
 | `LastExportPath` | пусто | Последний каталог экспорта модов |

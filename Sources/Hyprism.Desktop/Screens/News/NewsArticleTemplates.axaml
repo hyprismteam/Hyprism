@@ -333,7 +333,7 @@ SPDX-License-Identifier: GPL-3.0-only
                              FontFamily="{DynamicResource JetBrainsMonoFont}"
                              FontSize="13"
                              LineHeight="21"
-                             Foreground="#DDD8F2"
+                             Foreground="{DynamicResource ArticleCodeForegroundBrush}"
                              TextWrapping="Wrap" />
                 </Border>
               </DataTemplate>
@@ -380,7 +380,7 @@ SPDX-License-Identifier: GPL-3.0-only
                     Height="34"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Fill="#1AFFFFFF"
+                    Fill="{DynamicResource AccentSoftBrush}"
                     Stretch="Uniform"
                     Data="{StaticResource NewsFilledIcon}" />
             </Grid>
@@ -399,7 +399,7 @@ SPDX-License-Identifier: GPL-3.0-only
                          TextTrimming="CharacterEllipsis" />
               <TextBlock IsVisible="{Binding HasExcerpt}"
                          Text="{Binding Excerpt}"
-                         Foreground="#9FA1A8"
+                         Foreground="{DynamicResource ArticleCaptionBrush}"
                          FontSize="11"
                          LineHeight="14"
                          MaxLines="2"
@@ -487,10 +487,11 @@ SPDX-License-Identifier: GPL-3.0-only
               </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <Button Classes="newsLoadMore"
+            <Button Classes="quietAction"
                     IsVisible="{Binding CanShowLoadMore}"
                     IsEnabled="{Binding HasMoreNews}"
                     HorizontalAlignment="Center"
+                    Padding="12,8"
                     Margin="0,12,0,8"
                     Command="{Binding LoadMoreNewsCommand}">
               <TextBlock Text="{Binding LoadMoreLabel}" FontWeight="SemiBold" />

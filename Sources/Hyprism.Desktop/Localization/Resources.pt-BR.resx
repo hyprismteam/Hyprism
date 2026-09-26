@@ -2280,12 +2280,6 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Atual</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Ocultar Notícias</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Ocultar completamente o painel de notícias</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Imagens</value>
   </data>
@@ -2300,6 +2294,48 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Ou escolha um fundo estático:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Cor de destaque</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Azul</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Ciano</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Verde</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Amarelo</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Laranja</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Vermelho</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Roxo</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Cinza-azulado</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Escuro</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Configurações Visuais</value>

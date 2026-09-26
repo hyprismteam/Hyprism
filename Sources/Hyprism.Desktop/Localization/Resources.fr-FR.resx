@@ -2280,12 +2280,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Actuel</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Masquer les Actualités</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Masquer complètement le panneau d'actualités</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Images</value>
   </data>
@@ -2300,6 +2294,48 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Ou choisis un arrière-plan statique :</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Couleur d’accentuation</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Bleu</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Cyan</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Vert</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Jaune</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Rouge</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Rose</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Violet</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Gris bleuté</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>Système</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Sombre</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Paramètres Visuels</value>

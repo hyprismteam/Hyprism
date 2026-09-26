@@ -5,82 +5,270 @@ SPDX-License-Identifier: GPL-3.0-only
 
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <SolidColorBrush x:Key="AppBackgroundBrush" Color="#08090A" />
-  <SolidColorBrush x:Key="SurfaceBrush" Color="#0D0E10" />
-  <SolidColorBrush x:Key="NavigationPaneBrush" Color="#18191B" />
-  <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#D9141517" />
-  <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#1A1B1E" />
-  <SolidColorBrush x:Key="StrokeBrush" Color="#16FFFFFF" />
-  <SolidColorBrush x:Key="StrokeStrongBrush" Color="#24FFFFFF" />
-  <SolidColorBrush x:Key="MainCardStrokeBrush" Color="#101114" />
-  <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F7F7F8" />
-  <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A8A9AE" />
-  <SolidColorBrush x:Key="TextMutedBrush" Color="#73757D" />
-  <SolidColorBrush x:Key="FocusRingBrush" Color="#79B0F4" />
-  <SolidColorBrush x:Key="AccentBrush" Color="#F5F5F6" />
-  <SolidColorBrush x:Key="AccentForegroundBrush" Color="#111111" />
-  <SolidColorBrush x:Key="AccentSoftBrush" Color="#18FFFFFF" />
-  <SolidColorBrush x:Key="NoteBrush" Color="#79B0F4" />
-  <SolidColorBrush x:Key="NoteSurfaceBrush" Color="#1A79B0F4" />
-  <SolidColorBrush x:Key="ImportantBrush" Color="#B79DF8" />
-  <SolidColorBrush x:Key="ImportantSurfaceBrush" Color="#1AB79DF8" />
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AppBackgroundBrush" Color="#08090A" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="#0D0E10" />
+      <SolidColorBrush x:Key="NavigationPaneBrush" Color="#18191B" />
+      <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#D9141517" />
+      <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#1A1B1E" />
+      <SolidColorBrush x:Key="StrokeBrush" Color="#16FFFFFF" />
+      <SolidColorBrush x:Key="StrokeStrongBrush" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="MainCardStrokeBrush" Color="#101114" />
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F7F7F8" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A8A9AE" />
+      <SolidColorBrush x:Key="TextMutedBrush" Color="#73757D" />
+      <SolidColorBrush x:Key="FocusRingBrush" Color="#79B0F4" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#3584E4" />
+      <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="AccentSoftBrush" Color="#203584E4" />
+      <SolidColorBrush x:Key="NoteBrush" Color="#79B0F4" />
+      <SolidColorBrush x:Key="NoteSurfaceBrush" Color="#1A79B0F4" />
+      <SolidColorBrush x:Key="ImportantBrush" Color="#B79DF8" />
+      <SolidColorBrush x:Key="ImportantSurfaceBrush" Color="#1AB79DF8" />
 
-  <!-- Interactive control surfaces -->
-  <SolidColorBrush x:Key="ControlSurfaceBrush" Color="#141517" />
-  <SolidColorBrush x:Key="ControlSurfaceHoverBrush" Color="#1A1B1E" />
-  <SolidColorBrush x:Key="ControlSurfaceActiveBrush" Color="#1D1E21" />
-  <SolidColorBrush x:Key="ControlGroupBrush" Color="#151618" />
-  <SolidColorBrush x:Key="ControlTrackBrush" Color="#303237" />
-  <SolidColorBrush x:Key="ControlTrackHoverBrush" Color="#3B3E43" />
-  <SolidColorBrush x:Key="SegmentedTrackBrush" Color="#292A2D" />
-  <SolidColorBrush x:Key="ControlSelectionBrush" Color="#55565A" />
-  <SolidColorBrush x:Key="ControlKnobBrush" Color="#F4F5F6" />
-  <SolidColorBrush x:Key="ControlKnobHoverBrush" Color="#FFFFFF" />
-  <SolidColorBrush x:Key="CheckIndicatorBrush" Color="#34343A" />
-  <SolidColorBrush x:Key="CheckIndicatorHoverBrush" Color="#484850" />
-  <SolidColorBrush x:Key="CheckSelectedBrush" Color="#F1F1F3" />
-  <SolidColorBrush x:Key="CheckSelectedHoverBrush" Color="#DCDCE0" />
-  <SolidColorBrush x:Key="CheckGlyphBrush" Color="#151515" />
-  <SolidColorBrush x:Key="RadioIndicatorBrush" Color="#0F1012" />
-  <SolidColorBrush x:Key="RadioIndicatorBorderBrush" Color="#78FFFFFF" />
+      <!-- Interactive control surfaces -->
+      <SolidColorBrush x:Key="ControlSurfaceBrush" Color="#141517" />
+      <SolidColorBrush x:Key="ControlSurfaceHoverBrush" Color="#1A1B1E" />
+      <SolidColorBrush x:Key="ControlSurfaceActiveBrush" Color="#1D1E21" />
+      <SolidColorBrush x:Key="ControlGroupBrush" Color="#151618" />
+      <SolidColorBrush x:Key="ControlTrackBrush" Color="#303237" />
+      <SolidColorBrush x:Key="ControlTrackHoverBrush" Color="#3B3E43" />
+      <SolidColorBrush x:Key="SegmentedTrackBrush" Color="#292A2D" />
+      <SolidColorBrush x:Key="ControlSelectionBrush" Color="#55565A" />
+      <SolidColorBrush x:Key="ControlKnobBrush" Color="#F4F5F6" />
+      <SolidColorBrush x:Key="ControlKnobHoverBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="CheckIndicatorBrush" Color="#34343A" />
+      <SolidColorBrush x:Key="CheckIndicatorHoverBrush" Color="#484850" />
+      <SolidColorBrush x:Key="CheckGlyphBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="RadioIndicatorBrush" Color="#0F1012" />
+      <SolidColorBrush x:Key="RadioIndicatorBorderBrush" Color="#78FFFFFF" />
 
-  <!-- Semantic states -->
-  <SolidColorBrush x:Key="SuccessBrush" Color="#68CD8E" />
-  <SolidColorBrush x:Key="SuccessSoftBrush" Color="#A9E8BE" />
-  <SolidColorBrush x:Key="DangerBrush" Color="#E78383" />
-  <SolidColorBrush x:Key="DangerSoftBrush" Color="#FF9696" />
-  <SolidColorBrush x:Key="DangerSurfaceBrush" Color="#322525" />
-  <SolidColorBrush x:Key="DangerSurfaceHoverBrush" Color="#412C2C" />
-  <SolidColorBrush x:Key="DangerActionBrush" Color="#D83B45" />
-  <SolidColorBrush x:Key="DangerActionHoverBrush" Color="#C22F39" />
-  <SolidColorBrush x:Key="WarningBrush" Color="#FFC54D" />
-  <SolidColorBrush x:Key="ToggleOnBrush" Color="#35A85B" />
-  <SolidColorBrush x:Key="ToggleOnHoverBrush" Color="#43BC6B" />
+      <!-- Semantic states -->
+      <SolidColorBrush x:Key="SuccessBrush" Color="#68CD8E" />
+      <SolidColorBrush x:Key="SuccessSoftBrush" Color="#A9E8BE" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#E78383" />
+      <SolidColorBrush x:Key="DangerForegroundBrush" Color="#111318" />
+      <SolidColorBrush x:Key="DangerSoftBrush" Color="#FF9696" />
+      <SolidColorBrush x:Key="DangerSurfaceBrush" Color="#322525" />
+      <SolidColorBrush x:Key="DangerSurfaceHoverBrush" Color="#412C2C" />
+      <SolidColorBrush x:Key="DangerActionBrush" Color="#D83B45" />
+      <SolidColorBrush x:Key="DangerActionHoverBrush" Color="#C22F39" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#FFC54D" />
+      <SolidColorBrush x:Key="ToggleOnBrush" Color="#35A85B" />
+      <SolidColorBrush x:Key="ToggleOnHoverBrush" Color="#43BC6B" />
 
-  <!-- Overlays and component states -->
-  <SolidColorBrush x:Key="ItemHoverBrush" Color="#10FFFFFF" />
-  <SolidColorBrush x:Key="ItemSelectedBrush" Color="#1DFFFFFF" />
-  <SolidColorBrush x:Key="ItemSelectedHoverBrush" Color="#27FFFFFF" />
-  <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="#08FFFFFF" />
-  <SolidColorBrush x:Key="NavigationItemSelectedBrush" Color="#12FFFFFF" />
-  <!-- Opaque result of NavigationItemSelectedBrush over NavigationPaneBrush for popup surfaces. -->
-  <SolidColorBrush x:Key="NavigationItemSelectedSurfaceBrush" Color="#28292B" />
-  <SolidColorBrush x:Key="NavigationItemSelectedHoverBrush" Color="#18FFFFFF" />
-  <BoxShadows x:Key="PopupShadow">0 12 36 0 #80000000</BoxShadows>
+      <!-- Overlays and component states -->
+      <SolidColorBrush x:Key="ItemHoverBrush" Color="#10FFFFFF" />
+      <SolidColorBrush x:Key="ItemSelectedBrush" Color="#1DFFFFFF" />
+      <SolidColorBrush x:Key="ItemSelectedHoverBrush" Color="#27FFFFFF" />
+      <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="#08FFFFFF" />
+      <SolidColorBrush x:Key="NavigationItemSelectedBrush" Color="#12FFFFFF" />
+      <!-- Opaque result of NavigationItemSelectedBrush over NavigationPaneBrush for popup surfaces. -->
+      <SolidColorBrush x:Key="NavigationItemSelectedSurfaceBrush" Color="#28292B" />
+      <SolidColorBrush x:Key="NavigationItemSelectedHoverBrush" Color="#18FFFFFF" />
+      <BoxShadows x:Key="PopupShadow">0 12 36 0 #80000000</BoxShadows>
 
-  <SolidColorBrush x:Key="ScrollBarBackgroundPointerOver" Color="Transparent" />
-  <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
-  <SolidColorBrush x:Key="ScrollBarTrackStroke" Color="Transparent" />
-  <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="Transparent" />
-  <SolidColorBrush x:Key="ScrollBarTrackStrokePointerOver" Color="Transparent" />
-  <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="#686868" />
-  <SolidColorBrush x:Key="ScrollBarThumbBackgroundColor" Color="#747474" />
-  <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#969696" />
-  <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#B0B0B0" />
+      <SolidColorBrush x:Key="ScrollBarBackgroundPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStroke" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStrokePointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="#686868" />
+      <SolidColorBrush x:Key="ScrollBarThumbBackgroundColor" Color="#747474" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#969696" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#B0B0B0" />
 
-  <!-- Theme-local control values referenced by HyprismTheme.axaml -->
-  <SolidColorBrush x:Key="SelectionBrush" Color="#3A66B0" />
-  <SolidColorBrush x:Key="ProgressTrackBrush" Color="#2A2C30" />
-  <SolidColorBrush x:Key="TooltipBrush" Color="#1B1C1F" />
-  <SolidColorBrush x:Key="PopupBrush" Color="#151619" />
+      <!-- Theme-local control values referenced by HyprismTheme.axaml -->
+      <SolidColorBrush x:Key="SelectionBrush" Color="#3A66B0" />
+      <SolidColorBrush x:Key="ProgressTrackBrush" Color="#2A2C30" />
+      <SolidColorBrush x:Key="TooltipBrush" Color="#1B1C1F" />
+      <SolidColorBrush x:Key="PopupBrush" Color="#151619" />
+
+      <!-- Screen-specific semantic colors -->
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="AccentMutedHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="SuccessSurfaceBrush" Color="#1735A85B" />
+      <SolidColorBrush x:Key="SuccessAvatarBrush" Color="#294F8A55" />
+      <SolidColorBrush x:Key="SuccessAvatarForegroundBrush" Color="#B8E7C6" />
+      <SolidColorBrush x:Key="DangerSoftSurfaceBrush" Color="#1AD83B45" />
+      <SolidColorBrush x:Key="WarningSurfaceBrush" Color="#18FFC54D" />
+      <SolidColorBrush x:Key="WarningStrokeBrush" Color="#36FFC54D" />
+      <SolidColorBrush x:Key="WarningTextBrush" Color="#F2D391" />
+      <SolidColorBrush x:Key="AvatarSurfaceBrush" Color="#24B59CFF" />
+      <SolidColorBrush x:Key="AvatarForegroundBrush" Color="#E7E0FF" />
+      <SolidColorBrush x:Key="BetaSurfaceBrush" Color="#266F56D9" />
+      <SolidColorBrush x:Key="BetaForegroundBrush" Color="#C4B5FD" />
+      <SolidColorBrush x:Key="ArticleBodyBrush" Color="#E1E2E5" />
+      <SolidColorBrush x:Key="ArticleThumbnailBrush" Color="#1B1C20" />
+      <SolidColorBrush x:Key="ArticleHeaderBrush" Color="#17181B" />
+      <SolidColorBrush x:Key="ArticleHeroFallbackBrush" Color="#191A1D" />
+      <SolidColorBrush x:Key="ArticleQuoteBorderBrush" Color="#66FFFFFF" />
+      <SolidColorBrush x:Key="ArticleDetailsBrush" Color="#101A2230" />
+      <SolidColorBrush x:Key="ArticleCodeBrush" Color="#E6151618" />
+      <SolidColorBrush x:Key="ArticleCodeBorderBrush" Color="#663584E4" />
+      <SolidColorBrush x:Key="ArticleCodeForegroundBrush" Color="#BCD6F6" />
+      <SolidColorBrush x:Key="ArticleInlineCodeBrush" Color="#2E3584E4" />
+      <SolidColorBrush x:Key="ArticleInlineCodeBorderBrush" Color="#803584E4" />
+      <SolidColorBrush x:Key="ArticleLinkBrush" Color="#8AB8EF" />
+      <SolidColorBrush x:Key="ArticleLinkHoverBrush" Color="#B2D0F5" />
+      <SolidColorBrush x:Key="ArticleCaptionBrush" Color="#9FA1A8" />
+      <SolidColorBrush x:Key="NewsHeroMetadataBrush" Color="#D1D2D6" />
+      <SolidColorBrush x:Key="NewsEmptyIconBrush" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="NewsFadedIconBrush" Color="#14FFFFFF" />
+      <SolidColorBrush x:Key="SliderFillBrush" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="SliderFillHoverBrush" Color="#32FFFFFF" />
+      <SolidColorBrush x:Key="SkeletonCardBrush" Color="#12FFFFFF" />
+      <SolidColorBrush x:Key="SkeletonBorderBrush" Color="#18FFFFFF" />
+      <SolidColorBrush x:Key="StartupBackgroundBrush" Color="#FF0B0C0E" />
+      <SolidColorBrush x:Key="StartupTitleBrush" Color="#FFD5D8DA" />
+      <SolidColorBrush x:Key="StartupStatusBrush" Color="#FF777E84" />
+      <Color x:Key="SkeletonEdgeColor">#16FFFFFF</Color>
+      <Color x:Key="SkeletonCenterColor">#32FFFFFF</Color>
+      <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#327DD9" />
+      <SolidColorBrush x:Key="DotNetWordmarkBrush" Color="#191A1D" />
+      <SolidColorBrush x:Key="WarningBadgeBrush" Color="#24FFC54D" />
+      <SolidColorBrush x:Key="SuccessBadgeBrush" Color="#2435A85B" />
+      <SolidColorBrush x:Key="SubtleHoverBrush" Color="#0AFFFFFF" />
+      <SolidColorBrush x:Key="StrongSubtleHoverBrush" Color="#28FFFFFF" />
+      <Color x:Key="PreviewSkeletonCenterColor">#2AFFFFFF</Color>
+      <SolidColorBrush x:Key="OverlayScrimBrush" Color="#B8000000" />
+      <x:String x:Key="StartupAnimationPath">/Assets/Lotties/figures.json</x:String>
+      <SolidColorBrush x:Key="PopupTransparentBrush" Color="#0028292B" />
+      <SolidColorBrush x:Key="DangerPopupTransparentBrush" Color="#00412C2C" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F5F6F8" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="NavigationPaneBrush" Color="#EDEFF2" />
+      <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#F9FFFFFF" />
+      <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#F0F2F5" />
+      <SolidColorBrush x:Key="StrokeBrush" Color="#1A17202C" />
+      <SolidColorBrush x:Key="StrokeStrongBrush" Color="#3017202C" />
+      <SolidColorBrush x:Key="MainCardStrokeBrush" Color="#E0E3E8" />
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1A1D23" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#5D6470" />
+      <SolidColorBrush x:Key="TextMutedBrush" Color="#777F8B" />
+      <SolidColorBrush x:Key="FocusRingBrush" Color="#3978C2" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#3584E4" />
+      <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="AccentSoftBrush" Color="#203584E4" />
+      <SolidColorBrush x:Key="NoteBrush" Color="#245EA8" />
+      <SolidColorBrush x:Key="NoteSurfaceBrush" Color="#E8F1FE" />
+      <SolidColorBrush x:Key="ImportantBrush" Color="#6442B4" />
+      <SolidColorBrush x:Key="ImportantSurfaceBrush" Color="#F0EBFC" />
+
+      <!-- Interactive control surfaces -->
+      <SolidColorBrush x:Key="ControlSurfaceBrush" Color="#F3F4F6" />
+      <SolidColorBrush x:Key="ControlSurfaceHoverBrush" Color="#E9EBEF" />
+      <SolidColorBrush x:Key="ControlSurfaceActiveBrush" Color="#E2E5EA" />
+      <SolidColorBrush x:Key="ControlGroupBrush" Color="#F0F1F4" />
+      <SolidColorBrush x:Key="ControlTrackBrush" Color="#CBCFD6" />
+      <SolidColorBrush x:Key="ControlTrackHoverBrush" Color="#B8BEC7" />
+      <SolidColorBrush x:Key="SegmentedTrackBrush" Color="#E4E6EB" />
+      <SolidColorBrush x:Key="ControlSelectionBrush" Color="#C9CED6" />
+      <SolidColorBrush x:Key="ControlKnobBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ControlKnobHoverBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="CheckIndicatorBrush" Color="#D5D9DF" />
+      <SolidColorBrush x:Key="CheckIndicatorHoverBrush" Color="#C5CBD3" />
+      <SolidColorBrush x:Key="CheckGlyphBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="RadioIndicatorBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="RadioIndicatorBorderBrush" Color="#70000000" />
+
+      <!-- Semantic states -->
+      <SolidColorBrush x:Key="SuccessBrush" Color="#16844A" />
+      <SolidColorBrush x:Key="SuccessSoftBrush" Color="#0C7138" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#B53143" />
+      <SolidColorBrush x:Key="DangerForegroundBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="DangerSoftBrush" Color="#A82436" />
+      <SolidColorBrush x:Key="DangerSurfaceBrush" Color="#FBEAEC" />
+      <SolidColorBrush x:Key="DangerSurfaceHoverBrush" Color="#F5D7DC" />
+      <SolidColorBrush x:Key="DangerActionBrush" Color="#D83B45" />
+      <SolidColorBrush x:Key="DangerActionHoverBrush" Color="#C22F39" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#976000" />
+      <SolidColorBrush x:Key="ToggleOnBrush" Color="#16823E" />
+      <SolidColorBrush x:Key="ToggleOnHoverBrush" Color="#116E33" />
+
+      <!-- Overlays and component states -->
+      <SolidColorBrush x:Key="ItemHoverBrush" Color="#08000000" />
+      <SolidColorBrush x:Key="ItemSelectedBrush" Color="#10000000" />
+      <SolidColorBrush x:Key="ItemSelectedHoverBrush" Color="#18000000" />
+      <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="#08000000" />
+      <SolidColorBrush x:Key="NavigationItemSelectedBrush" Color="#10000000" />
+      <!-- Opaque result of NavigationItemSelectedBrush over NavigationPaneBrush for popup surfaces. -->
+      <SolidColorBrush x:Key="NavigationItemSelectedSurfaceBrush" Color="#DDE1E7" />
+      <SolidColorBrush x:Key="NavigationItemSelectedHoverBrush" Color="#18000000" />
+      <BoxShadows x:Key="PopupShadow">0 12 36 0 #30000000</BoxShadows>
+
+      <SolidColorBrush x:Key="ScrollBarBackgroundPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStroke" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStrokePointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="#A8ADB6" />
+      <SolidColorBrush x:Key="ScrollBarThumbBackgroundColor" Color="#9399A3" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#7F8691" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#6E7580" />
+
+      <!-- Theme-local control values referenced by HyprismTheme.axaml -->
+      <SolidColorBrush x:Key="SelectionBrush" Color="#B5D1F4" />
+      <SolidColorBrush x:Key="ProgressTrackBrush" Color="#DFE2E7" />
+      <SolidColorBrush x:Key="TooltipBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="PopupBrush" Color="#FFFFFF" />
+
+      <!-- Screen-specific semantic colors -->
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="AccentMutedHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="SuccessSurfaceBrush" Color="#DCF3E4" />
+      <SolidColorBrush x:Key="SuccessAvatarBrush" Color="#D7EEDD" />
+      <SolidColorBrush x:Key="SuccessAvatarForegroundBrush" Color="#1D6D3A" />
+      <SolidColorBrush x:Key="DangerSoftSurfaceBrush" Color="#FBE7EB" />
+      <SolidColorBrush x:Key="WarningSurfaceBrush" Color="#FFF3D5" />
+      <SolidColorBrush x:Key="WarningStrokeBrush" Color="#E7C474" />
+      <SolidColorBrush x:Key="WarningTextBrush" Color="#775500" />
+      <SolidColorBrush x:Key="AvatarSurfaceBrush" Color="#E9E4F7" />
+      <SolidColorBrush x:Key="AvatarForegroundBrush" Color="#574081" />
+      <SolidColorBrush x:Key="BetaSurfaceBrush" Color="#E9E2F8" />
+      <SolidColorBrush x:Key="BetaForegroundBrush" Color="#6146A0" />
+      <SolidColorBrush x:Key="ArticleBodyBrush" Color="#30343B" />
+      <SolidColorBrush x:Key="ArticleThumbnailBrush" Color="#E8EBF0" />
+      <SolidColorBrush x:Key="ArticleHeaderBrush" Color="#30343A" />
+      <SolidColorBrush x:Key="ArticleHeroFallbackBrush" Color="#30343A" />
+      <SolidColorBrush x:Key="ArticleQuoteBorderBrush" Color="#60717B8B" />
+      <SolidColorBrush x:Key="ArticleDetailsBrush" Color="#F0F3F8" />
+      <SolidColorBrush x:Key="ArticleCodeBrush" Color="#F1F6FD" />
+      <SolidColorBrush x:Key="ArticleCodeBorderBrush" Color="#BED8F6" />
+      <SolidColorBrush x:Key="ArticleCodeForegroundBrush" Color="#21528D" />
+      <SolidColorBrush x:Key="ArticleInlineCodeBrush" Color="#EBF3FC" />
+      <SolidColorBrush x:Key="ArticleInlineCodeBorderBrush" Color="#AECEF4" />
+      <SolidColorBrush x:Key="ArticleLinkBrush" Color="#2863AB" />
+      <SolidColorBrush x:Key="ArticleLinkHoverBrush" Color="#204F89" />
+      <SolidColorBrush x:Key="ArticleCaptionBrush" Color="#69717D" />
+      <SolidColorBrush x:Key="NewsHeroMetadataBrush" Color="#D1D2D6" />
+      <SolidColorBrush x:Key="NewsEmptyIconBrush" Color="#26000000" />
+      <SolidColorBrush x:Key="NewsFadedIconBrush" Color="#18000000" />
+      <SolidColorBrush x:Key="SliderFillBrush" Color="#22000000" />
+      <SolidColorBrush x:Key="SliderFillHoverBrush" Color="#34000000" />
+      <SolidColorBrush x:Key="SkeletonCardBrush" Color="#10000000" />
+      <SolidColorBrush x:Key="SkeletonBorderBrush" Color="#16000000" />
+      <SolidColorBrush x:Key="StartupBackgroundBrush" Color="#F5F6F8" />
+      <SolidColorBrush x:Key="StartupTitleBrush" Color="#1A1D23" />
+      <SolidColorBrush x:Key="StartupStatusBrush" Color="#68717C" />
+      <Color x:Key="SkeletonEdgeColor">#16000000</Color>
+      <Color x:Key="SkeletonCenterColor">#30000000</Color>
+      <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#5195E7" />
+      <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#327DD9" />
+      <SolidColorBrush x:Key="DotNetWordmarkBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="WarningBadgeBrush" Color="#FFF3D5" />
+      <SolidColorBrush x:Key="SuccessBadgeBrush" Color="#DCF3E4" />
+      <SolidColorBrush x:Key="SubtleHoverBrush" Color="#0A000000" />
+      <SolidColorBrush x:Key="StrongSubtleHoverBrush" Color="#18000000" />
+      <Color x:Key="PreviewSkeletonCenterColor">#28000000</Color>
+      <SolidColorBrush x:Key="OverlayScrimBrush" Color="#66000000" />
+      <x:String x:Key="StartupAnimationPath">/Assets/Lotties/figures.light.json</x:String>
+      <SolidColorBrush x:Key="PopupTransparentBrush" Color="#00DDE1E7" />
+      <SolidColorBrush x:Key="DangerPopupTransparentBrush" Color="#00F5D7DC" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

@@ -41,6 +41,20 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
     }
 
     /// <inheritdoc/>
+    public string Theme
+    {
+        get => DesktopTheme.Normalize(_configStore.Configuration.Theme);
+        set => Save(config => config.Theme = DesktopTheme.Normalize(value));
+    }
+
+    /// <inheritdoc/>
+    public string AccentColor
+    {
+        get => DesktopTheme.NormalizeAccent(_configStore.Configuration.AccentColor);
+        set => Save(config => config.AccentColor = DesktopTheme.NormalizeAccent(value));
+    }
+
+    /// <inheritdoc/>
     public bool MusicEnabled
     {
         get => _configStore.Configuration.MusicEnabled;
@@ -59,13 +73,6 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
     {
         get => _configStore.Configuration.ShowDiscordAnnouncements;
         set => Save(config => config.ShowDiscordAnnouncements = value);
-    }
-
-    /// <inheritdoc/>
-    public bool DisableNews
-    {
-        get => _configStore.Configuration.DisableNews;
-        set => Save(config => config.DisableNews = value);
     }
 
     /// <inheritdoc/>

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -98,12 +99,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     private string _selectedCategory = "general";
 
     [ObservableProperty] private SettingChoiceViewModel _selectedLanguage;
+    [ObservableProperty] private SettingChoiceViewModel _selectedTheme;
     [ObservableProperty] private SettingChoiceViewModel _selectedGpuPreference;
     private readonly IReadOnlyList<GpuAdapterInfo> _detectedGpuAdapters = [];
     [ObservableProperty] private bool _closeAfterLaunch;
     [ObservableProperty] private bool _showAlphaMods;
     [ObservableProperty] private bool _musicEnabled;
-    [ObservableProperty] private bool _disableNews;
     [ObservableProperty] private bool _showDiscordAnnouncements;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAuthServerVisible))]
@@ -256,6 +257,20 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         Languages = new ObservableCollection<SettingChoiceViewModel>(
             localizer.AvailableLanguages.Select(language =>
                 new SettingChoiceViewModel(language.Key, language.Value, GetFlagCountryCode(language.Key))));
+        Themes = new ObservableCollection<SettingChoiceViewModel>(
+        [
+            new("system", localizer["settings.visualSettings.themeSystem"]),
+            new("light", localizer["settings.visualSettings.themeLight"]),
+            new("dark", localizer["settings.visualSettings.themeDark"])
+        ]);
+        AccentColors = new ObservableCollection<AccentColorChoiceViewModel>(
+            DesktopTheme.AccentColors.Select(color => new AccentColorChoiceViewModel(
+                color.Id,
+                color.Color,
+                localizer[$"settings.visualSettings.accent.{color.Id}"])));
+        var selectedAccent = DesktopTheme.NormalizeAccent(settings.AccentColor);
+        foreach (var color in AccentColors)
+            color.IsSelected = color.Id == selectedAccent;
         _detectedGpuAdapters = gpuProvider?.GetAdapters() ?? [];
         GpuPreferences = CreateGpuPreferences(localizer, _detectedGpuAdapters);
         AboutTeamMembers = new ObservableCollection<AboutTeamMemberViewModel>(
@@ -269,11 +284,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         ]);
 
         _selectedLanguage = FindChoice(Languages, settings.Language);
+        _selectedTheme = FindChoice(Themes, DesktopTheme.Normalize(settings.Theme));
+        _selectedTheme.IsSelected = true;
         _selectedGpuPreference = ResolveGpuChoice(settings.GpuPreference);
         _closeAfterLaunch = settings.CloseAfterLaunch;
         _showAlphaMods = settings.ShowAlphaMods;
         _musicEnabled = settings.MusicEnabled;
-        _disableNews = settings.DisableNews;
         _showDiscordAnnouncements = settings.ShowDiscordAnnouncements;
         _onlineMode = settings.OnlineMode;
         _useCustomJava = settings.UseCustomJava;
@@ -311,6 +327,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<SettingCategoryViewModel> Categories { get; }
     public ObservableCollection<SettingChoiceViewModel> Languages { get; }
+    public ObservableCollection<SettingChoiceViewModel> Themes { get; }
+    public ObservableCollection<AccentColorChoiceViewModel> AccentColors { get; }
     public ObservableCollection<SettingChoiceViewModel> GpuPreferences { get; }
     public ObservableCollection<AboutTeamMemberViewModel> AboutTeamMembers { get; }
     public ObservableCollection<AboutContributorViewModel> AboutContributors { get; } = [];
@@ -369,6 +387,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public bool IsAuthServerVisible => OnlineMode && !IsOfficialProfile;
     public bool IsOfficialProfile { get; private set; }
     public bool HasAuthServers => AuthServerItems.Count > 0;
+    public bool HasMultipleAuthServers => AuthServerItems.Count > 1;
     public bool HasAuthServerAddStatus => !string.IsNullOrWhiteSpace(AuthServerAddStatus);
     public bool IsAuthServerCancellationArmed => IsCheckingAuthServer && _isAuthServerCancellationArmed;
     public bool CanChangeInstanceFolder => !IsGameRunning && !IsChangingInstanceFolder;
@@ -389,6 +408,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public string DownloadsTitle { get; private set; } = string.Empty;
     public string JavaTitle { get; private set; } = string.Empty;
     public string VisualTitle { get; private set; } = string.Empty;
+    public string ThemeLabel { get; private set; } = string.Empty;
+    public string AccentColorLabel { get; private set; } = string.Empty;
     public string NetworkTitle { get; private set; } = string.Empty;
     public string DataTitle { get; private set; } = string.Empty;
     public string AboutTitle { get; private set; } = string.Empty;
@@ -433,8 +454,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public string DeleteSourceHint { get; private set; } = string.Empty;
     public string MusicLabel { get; private set; } = string.Empty;
     public string MusicHint { get; private set; } = string.Empty;
-    public string HideNewsLabel { get; private set; } = string.Empty;
-    public string HideNewsHint { get; private set; } = string.Empty;
     public string DiscordAnnouncementsLabel { get; private set; } = string.Empty;
     public string DiscordAnnouncementsHint { get; private set; } = string.Empty;
     public string OnlineModeLabel { get; private set; } = string.Empty;
@@ -543,6 +562,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         DownloadsTitle = _localizer["settings.downloads.title"];
         JavaTitle = _localizer["settings.java"];
         VisualTitle = _localizer["settings.visualSettings.title"];
+        ThemeLabel = _localizer["settings.visualSettings.theme"];
+        AccentColorLabel = _localizer["settings.visualSettings.accentColor"];
         NetworkTitle = _localizer["settings.network"];
         DataTitle = _localizer["settings.dataSettings.title"];
         AboutTitle = _localizer["settings.aboutSettings.title"];
@@ -581,8 +602,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         DeleteSourceHint = _localizer["settings.downloads.deleteSourceHint"];
         MusicLabel = _localizer["desktopSettings.music"];
         MusicHint = _localizer["desktopSettings.musicHint"];
-        HideNewsLabel = _localizer["settings.visualSettings.hideNews"];
-        HideNewsHint = _localizer["settings.visualSettings.hideNewsHint"];
         DiscordAnnouncementsLabel = _localizer["discord.showAnnouncements"];
         DiscordAnnouncementsHint = _localizer["desktopSettings.discordAnnouncementsHint"];
         OnlineModeLabel = _localizer["settings.networkSettings.onlineMode"];
@@ -694,6 +713,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         UpdateCategoryDescription("data", _localizer["settings.categoryDescriptions.data"]);
         UpdateCategoryDescription("about", _localizer["settings.categoryDescriptions.about"]);
         UpdateChoiceDisplay(GpuPreferences, "auto", _localizer["settings.graphicsSettings.gpu_auto"]);
+        UpdateChoiceDisplay(Themes, "system", _localizer["settings.visualSettings.themeSystem"]);
+        UpdateChoiceDisplay(Themes, "light", _localizer["settings.visualSettings.themeLight"]);
+        UpdateChoiceDisplay(Themes, "dark", _localizer["settings.visualSettings.themeDark"]);
+        foreach (var color in AccentColors)
+            color.Label = _localizer[$"settings.visualSettings.accent.{color.Id}"];
         foreach (var mirror in MirrorSources)
         {
             mirror.UpdateSourceType(GetMirrorSourceType(mirror.Definition));
@@ -727,10 +751,36 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             _settings.Language = _localizer.CurrentLanguage;
     }
     partial void OnSelectedGpuPreferenceChanged(SettingChoiceViewModel value) => _settings.GpuPreference = value.Value;
+    partial void OnSelectedThemeChanged(SettingChoiceViewModel value)
+    {
+        if (value is null)
+            return;
+
+        foreach (var theme in Themes)
+            theme.IsSelected = ReferenceEquals(theme, value);
+        _settings.Theme = value.Value;
+        DesktopTheme.Apply(value.Value);
+    }
+
+    public void SelectTheme(SettingChoiceViewModel theme)
+    {
+        if (Themes.Contains(theme))
+            SelectedTheme = theme;
+    }
+
+    public void SelectAccentColor(AccentColorChoiceViewModel color)
+    {
+        if (color.IsSelected)
+            return;
+
+        foreach (var option in AccentColors)
+            option.IsSelected = ReferenceEquals(option, color);
+        _settings.AccentColor = color.Id;
+        DesktopTheme.ApplyAccent(color.Id);
+    }
     partial void OnCloseAfterLaunchChanged(bool value) => _settings.CloseAfterLaunch = value;
     partial void OnShowAlphaModsChanged(bool value) => _settings.ShowAlphaMods = value;
     partial void OnMusicEnabledChanged(bool value) => _settings.MusicEnabled = value;
-    partial void OnDisableNewsChanged(bool value) => _settings.DisableNews = value;
     partial void OnShowDiscordAnnouncementsChanged(bool value) => _settings.ShowDiscordAnnouncements = value;
     partial void OnOnlineModeChanged(bool value)
     {
@@ -1309,6 +1359,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             AuthServerItems[index].IsLast = index == AuthServerItems.Count - 1;
 
         OnPropertyChanged(nameof(HasAuthServers));
+        OnPropertyChanged(nameof(HasMultipleAuthServers));
     }
 
     private void PersistAuthServers()
@@ -2836,5 +2887,27 @@ public sealed partial class SettingChoiceViewModel : ObservableObject
     public string Value { get; }
     public Bitmap? Icon { get; }
     public bool HasIcon => Icon is not null;
+    public bool IsSystemTheme => Value == "system";
+    public bool IsLightTheme => Value == "light";
+    public bool IsDarkTheme => Value == "dark";
+    [ObservableProperty] private bool _isSelected;
     [ObservableProperty] private string _display;
+}
+
+public sealed partial class AccentColorChoiceViewModel : ObservableObject
+{
+    public AccentColorChoiceViewModel(string id, Color color, string label)
+    {
+        Id = id;
+        Brush = new ImmutableSolidColorBrush(color);
+        _label = label;
+    }
+
+    public string Id { get; }
+    public IImmutableSolidColorBrush Brush { get; }
+    public double SelectionOpacity => IsSelected ? 1 : 0;
+    [ObservableProperty] private string _label;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectionOpacity))]
+    private bool _isSelected;
 }

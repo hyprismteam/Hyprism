@@ -2280,12 +2280,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Aktuell</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Neuigkeiten ausblenden</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Neuigkeiten vollständig ausblenden</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Bilder</value>
   </data>
@@ -2300,6 +2294,48 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Oder wähle einen festen Hintergrund:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Akzentfarbe</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Blau</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Türkis</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Grün</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Gelb</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Rot</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Violett</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Schiefergrau</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Hell</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Dunkel</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Visuelle Einstellungen</value>

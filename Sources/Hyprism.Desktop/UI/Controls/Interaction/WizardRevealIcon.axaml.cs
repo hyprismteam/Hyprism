@@ -4,6 +4,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Labs.Lottie;
+using Avalonia.Styling;
 
 namespace Hyprism.Desktop.Controls;
 
@@ -17,6 +18,7 @@ public sealed partial class WizardRevealIcon : Border
     public WizardRevealIcon()
     {
         InitializeComponent();
+        ActualThemeVariantChanged += (_, _) => UpdateAnimationPath();
     }
 
     public string? AnimationPath
@@ -35,6 +37,14 @@ public sealed partial class WizardRevealIcon : Border
     public Border MotionTarget => AnimationMotionTarget;
     public Lottie Animation => AnimationPlayer;
     internal bool LastSelectionWasAnimated { get; private set; }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == AnimationPathProperty && AnimationPlayer is not null)
+            UpdateAnimationPath();
+    }
 
     public void Play(string animationPath)
     {
@@ -87,5 +97,15 @@ public sealed partial class WizardRevealIcon : Border
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(animationPath);
         SetCurrentValue(AnimationPathProperty, animationPath);
+    }
+
+    private void UpdateAnimationPath()
+    {
+        if (string.IsNullOrEmpty(AnimationPath))
+            return;
+
+        AnimationPlayer.Path = ActualThemeVariant == ThemeVariant.Light && AnimationPath.EndsWith(".json", StringComparison.Ordinal)
+            ? $"{AnimationPath[..^5]}.light.json"
+            : AnimationPath;
     }
 }

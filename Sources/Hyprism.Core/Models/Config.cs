@@ -16,7 +16,7 @@ public class Config
     /// <summary>
     /// Values owned by removed hosts or unavailable features are retained when the
     /// configuration is rewritten. A dedicated migration may later give one of them
-    /// a supported destination without silently losing the user's preference.
+    /// a supported destination without silently losing the user's preference
     /// </summary>
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? UnknownProperties { get; set; }
@@ -25,113 +25,115 @@ public class Config
     public string Version { get; set; } = "2.0.0";
     /// <summary>
     /// ID of the currently selected instance to launch.
-    /// Empty string means no instance selected (will prompt to create one).
+    /// Empty string means no instance selected (will prompt to create one)
     /// </summary>
     public string SelectedInstanceId { get; set; } = "";
 
     /// <summary>
     /// ID of the currently active profile.
-    /// Empty string means no profile selected.
+    /// Empty string means no profile selected
     /// </summary>
     public string SelectedProfileId { get; set; } = "";
 
     /// <summary>
     /// [DEPRECATED] Instance cache moved to Instances/instances.json.
-    /// Kept for reading old configs during migration only.
+    /// Kept for reading old configs during migration only
     /// </summary>
     [Obsolete("Instance cache is now stored in Instances/Instances.json")]
     public List<InstanceInfo>? Instances { get; set; }
 
     /// <summary>
     /// [DEPRECATED] Use SelectedInstanceId instead.
-    /// Game branch type. Kept for backwards compatibility during migration.
+    /// Game branch type. Kept for backwards compatibility during migration
     /// </summary>
     [Obsolete("Use SelectedInstanceId and Instances instead")]
     public string VersionType { get; set; } = "release";
 
     /// <summary>
     /// [DEPRECATED] Use SelectedInstanceId instead.
-    /// Selected version number. Kept for backwards compatibility during migration.
+    /// Selected version number. Kept for backwards compatibility during migration
     /// </summary>
     [Obsolete("Use SelectedInstanceId and Instances instead")]
     public int SelectedVersion { get; set; } = 0;
 
-    /// <summary>Custom root directory for game instances. Empty string means the default OS-specific path is used.</summary>
+    /// <summary>Custom root directory for game instances. Empty string means the default OS-specific path is used</summary>
     public string InstanceDirectory { get; set; } = "";
+
     /// <summary>Whether the launcher background music is enabled.</summary>
     public bool MusicEnabled { get; set; } = true;
 
     /// <summary>
-    /// If true, the launcher will close after successfully launching the game.
+    /// If true, the launcher will close after successfully launching the game
     /// </summary>
     public bool CloseAfterLaunch { get; set; } = false;
 
     /// <summary>
-    /// If true, Discord announcements will be shown in the launcher.
+    /// If true, Discord announcements will be shown in the launcher
     /// </summary>
     public bool ShowDiscordAnnouncements { get; set; } = true;
 
     /// <summary>
-    /// List of Discord announcement IDs that have been dismissed by the user.
+    /// List of Discord announcement IDs that have been dismissed by the user
     /// </summary>
     public List<string> DismissedAnnouncementIds { get; set; } = [];
-
-    /// <summary>
-    /// If true, news will not be fetched or displayed.
-    /// </summary>
-    public bool DisableNews { get; set; } = false;
 
     /// <summary>
     /// Current interface language code (e.g., "en-US", "ru-RU", "de-DE")
     /// </summary>
     public string Language { get; set; } = "en-US";
 
+    /// <summary>Desktop appearance: "dark", "light", or "system"</summary>
+    public string Theme { get; set; } = "dark";
+
+    /// <summary>Accent color used by primary Desktop actions</summary>
+    public string AccentColor { get; set; } = "blue";
+
     /// <summary>
     /// If true, local profiles request a session from the configured authentication service.
     /// If false, local profiles use an ephemeral on-device OmniAuth session.
-    /// Official profiles always use official Hytale authentication.
+    /// Official profiles always use official Hytale authentication
     /// </summary>
     public bool OnlineMode { get; set; } = true;
 
     /// <summary>
-    /// Authentication service domain used by connected local profiles (e.g., "sessions.sanasol.ws").
+    /// Authentication service domain used by connected local profiles (e.g., "sessions.sanasol.ws")
     /// </summary>
     public string AuthDomain { get; set; } = "sessions.sanasol.ws";
 
     /// <summary>
     /// User-added authentication service domains shown in the desktop network settings.
-    /// The active value remains stored in <see cref="AuthDomain"/>.
+    /// The active value remains stored in <see cref="AuthDomain"/>
     /// </summary>
     public List<string> AuthServers { get; set; } = [];
 
     /// <summary>
     /// Custom JVM arguments passed through JAVA_TOOL_OPTIONS for Java processes started by the game client.
-    /// Example: "-Xmx4G -Dfile.encoding=UTF-8".
+    /// Example: "-Xmx4G -Dfile.encoding=UTF-8"
     /// </summary>
     public string JavaArguments { get; set; } = "";
 
     /// <summary>
-    /// If true, launcher uses CustomJavaPath instead of bundled JRE.
+    /// If true, launcher uses CustomJavaPath instead of bundled JRE
     /// </summary>
     public bool UseCustomJava { get; set; } = false;
 
     /// <summary>
-    /// Absolute path to custom Java executable (java/java.exe).
+    /// Absolute path to custom Java executable (java/java.exe)
     /// </summary>
     public string CustomJavaPath { get; set; } = "";
 
     /// <summary>
-    /// Last directory used for mod export. Defaults to Desktop.
+    /// Last directory used for mod export. Defaults to Desktop
     /// </summary>
     public string LastExportPath { get; set; } = "";
 
     /// <summary>
-    /// If true, show alpha/beta mods in mod search results.
+    /// If true, show alpha/beta mods in mod search results
     /// </summary>
     public bool ShowAlphaMods { get; set; } = false;
 
     /// <summary>
-    /// Whether the user has completed the initial onboarding flow.
+    /// Whether the user has completed the initial onboarding flow
     /// </summary>
     public bool HasCompletedOnboarding { get; set; } = false;
 
@@ -151,13 +153,13 @@ public class Config
 
     /// <summary>
     /// CurseForge API key for mod manager functionality.
-    /// Automatically fetched on first launch if not set.
+    /// Automatically fetched on first launch if not set
     /// </summary>
     public string CurseForgeKey { get; set; } = "";
 
     /// <summary>
     /// [DEPRECATED] Mirror selection is now automatic at runtime and this value is ignored.
-    /// Kept for reading old configs without JSON parse errors.
+    /// Kept for reading old configs without JSON parse errors
     /// </summary>
     [Obsolete("Mirror selection is automatic; this field is not read at runtime")]
     public string PreferredMirror { get; set; } = "";

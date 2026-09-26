@@ -157,8 +157,8 @@ SPDX-License-Identifier: GPL-3.0-only
                                    Classes="note"
                                    Title="{Binding DownloadsNoteTitle}">
                   <TextBlock Text="{Binding DownloadsInfo}"
-                             Classes="formHint"
-                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                             FontSize="12"
+                             LineHeight="17" />
                 </controls:NoteCard>
 
                 <TextBlock Text="{Binding MirrorOperationError}"

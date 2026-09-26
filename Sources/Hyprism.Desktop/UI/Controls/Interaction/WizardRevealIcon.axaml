@@ -23,12 +23,11 @@ SPDX-License-Identifier: GPL-3.0-only
     <lottie:Lottie x:Name="AnimationPlayer"
                    Width="64"
                    Height="64"
-                   Path="{Binding AnimationPath, ElementName=RevealRoot}"
                    PlayBackRate="{Binding PlaybackRate, ElementName=RevealRoot}"
                    AutoPlay="True"
                    RepeatCount="1"
                    ClipToBounds="False"
-                   OpacityMask="{DynamicResource AccentBrush}"
+                   OpacityMask="{DynamicResource TextPrimaryBrush}"
                    Stretch="Uniform" />
   </Border>
 </Border>

@@ -160,7 +160,7 @@ SPDX-License-Identifier: GPL-3.0-only
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
-          <Button Classes="formNavigationRow managerAddRow last"
+          <Button Classes="formNavigationRow managerAddRow quietAction last"
                   Click="OnCreateProfileClicked">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="9">
               <Path Width="14" Height="14" Stretch="Uniform" Data="{StaticResource AddIcon}" />
@@ -471,23 +471,13 @@ SPDX-License-Identifier: GPL-3.0-only
                   </Grid>
                 </Border>
 
-                <Border IsVisible="{Binding SelectedProfile.IsOfficial}"
-                        Classes="formGroup">
-                  <Border Classes="formRow last">
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                      <Path Width="18"
-                            Height="18"
-                            VerticalAlignment="Center"
-                            Stretch="Uniform"
-                            Fill="{DynamicResource TextSecondaryBrush}"
-                            Data="{StaticResource SettingsIcon}" />
-                      <TextBlock Grid.Column="1"
-                                 Text="{Binding OfficialLockedLabel}"
-                                 Classes="formHint"
-                                 VerticalAlignment="Center" />
-                    </Grid>
-                  </Border>
-                </Border>
+                <controls:NoteCard IsVisible="{Binding SelectedProfile.IsOfficial}"
+                                   Classes="note"
+                                   Title="{Binding NoteTitle}">
+                  <TextBlock Text="{Binding OfficialLockedLabel}"
+                             FontSize="12"
+                             LineHeight="17" />
+                </controls:NoteCard>
 
                 <TextBlock IsVisible="{Binding IsStatusError}"
                            Text="{Binding StatusMessage}"
@@ -774,7 +764,6 @@ SPDX-License-Identifier: GPL-3.0-only
                            SheetMaxHeight="420"
                            SheetMargin="12,20,12,0"
                            ShoulderMaxWidth="522"
-                           ShoulderMargin="12,0,12,0"
                            HiddenOffset="500"
                            ZIndex="220">
       <controls:OverlayModal.ModalContent>
@@ -824,7 +813,6 @@ SPDX-License-Identifier: GPL-3.0-only
                            SheetMaxHeight="600"
                            SheetMargin="12,20,12,0"
                            ShoulderMaxWidth="608"
-                           ShoulderMargin="12,0,12,0"
                            HiddenOffset="650"
                            ZIndex="200">
       <controls:OverlayModal.ModalContent>

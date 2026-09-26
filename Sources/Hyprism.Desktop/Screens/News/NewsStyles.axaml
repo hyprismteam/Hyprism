@@ -44,8 +44,8 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.newsListItem:pointerover">
-    <Setter Property="Background" Value="#08FFFFFF" />
-    <Setter Property="Foreground" Value="#FFFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource NavigationItemHoverBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
@@ -54,48 +54,12 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.newsListItem.selected">
-    <Setter Property="Background" Value="#12FFFFFF" />
-    <Setter Property="Foreground" Value="#FFFFFFFF" />
-  </Style>
-
-  <Style Selector="Button.newsLoadMore">
-    <Setter Property="Padding" Value="12,8" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
-      </Transitions>
-    </Setter>
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border Background="Transparent"
-                Padding="{TemplateBinding Padding}">
-          <ContentPresenter Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center" />
-        </Border>
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="Button.newsLoadMore:pointerover">
-    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="Button.newsLoadMore:pressed">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
   <Style Selector="Border.newsThumbnail">
-    <Setter Property="Background" Value="#1B1C20" />
+    <Setter Property="Background" Value="{DynamicResource ArticleThumbnailBrush}" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
@@ -109,7 +73,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.newsArticleHeader">
-    <Setter Property="Background" Value="#17181B" />
+    <Setter Property="Background" Value="{DynamicResource ArticleHeaderBrush}" />
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="18" />
@@ -173,7 +137,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 
   <Style Selector="news|NewsRichTextBlock.articleParagraph">
-    <Setter Property="Foreground" Value="#E1E2E5" />
+    <Setter Property="Foreground" Value="{DynamicResource ArticleBodyBrush}" />
     <Setter Property="FontSize" Value="16" />
     <Setter Property="LineHeight" Value="28" />
   </Style>
@@ -190,16 +154,16 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.articleQuote">
-    <Setter Property="Background" Value="#0FFFFFFF" />
-    <Setter Property="BorderBrush" Value="#66FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ArticleQuoteBorderBrush}" />
     <Setter Property="BorderThickness" Value="3,0,0,0" />
     <Setter Property="Padding" Value="20,16" />
     <Setter Property="CornerRadius" Value="3,12,12,3" />
   </Style>
 
   <Style Selector="Border.articleDetails">
-    <Setter Property="Background" Value="#101A2230" />
-    <Setter Property="BorderBrush" Value="#26FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ArticleDetailsBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StrokeStrongBrush}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="ClipToBounds" Value="True" />
@@ -228,12 +192,12 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Button.articleDetailsHeader:pointerover">
-    <Setter Property="Background" Value="#08FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource NavigationItemHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
   <Style Selector="Button.articleDetailsHeader:pressed">
-    <Setter Property="Background" Value="#0CFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
 
@@ -244,7 +208,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.articleDetailsBody">
-    <Setter Property="BorderBrush" Value="#20FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StrokeStrongBrush}" />
     <Setter Property="BorderThickness" Value="0,1,0,0" />
     <Setter Property="Padding" Value="16,10,16,0" />
   </Style>
@@ -331,8 +295,8 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="Border.articleCode">
-    <Setter Property="Background" Value="#E615151B" />
-    <Setter Property="BorderBrush" Value="#456F63A3" />
+    <Setter Property="Background" Value="{DynamicResource ArticleCodeBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ArticleCodeBorderBrush}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="Padding" Value="18,14" />

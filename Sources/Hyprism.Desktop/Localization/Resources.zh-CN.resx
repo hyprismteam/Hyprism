@@ -2280,12 +2280,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>当前</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>隐藏新闻</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>完全隐藏新闻面板</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>图片</value>
   </data>
@@ -2300,6 +2294,48 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>或选择静态背景：</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>强调色</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>蓝色</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>青色</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>绿色</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>黄色</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>橙色</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>红色</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>粉色</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>紫色</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>石板灰</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>深色</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>外观设置</value>

@@ -2619,12 +2619,6 @@ You may need to reinstall the game if switching drives</value>
   <data name="settings.visualSettings.current" xml:space="preserve">
     <value>Current</value>
   </data>
-  <data name="settings.visualSettings.hideNews" xml:space="preserve">
-    <value>Hide News</value>
-  </data>
-  <data name="settings.visualSettings.hideNewsHint" xml:space="preserve">
-    <value>Completely hide the news panel</value>
-  </data>
   <data name="settings.visualSettings.images" xml:space="preserve">
     <value>Images</value>
   </data>
@@ -2639,6 +2633,48 @@ You may need to reinstall the game if switching drives</value>
   </data>
   <data name="settings.visualSettings.staticBackground" xml:space="preserve">
     <value>Or choose a static background:</value>
+  </data>
+  <data name="settings.visualSettings.accentColor" xml:space="preserve">
+    <value>Accent color</value>
+  </data>
+  <data name="settings.visualSettings.accent.blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="settings.visualSettings.accent.cyan" xml:space="preserve">
+    <value>Cyan</value>
+  </data>
+  <data name="settings.visualSettings.accent.green" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="settings.visualSettings.accent.yellow" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="settings.visualSettings.accent.orange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="settings.visualSettings.accent.red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="settings.visualSettings.accent.pink" xml:space="preserve">
+    <value>Pink</value>
+  </data>
+  <data name="settings.visualSettings.accent.purple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="settings.visualSettings.accent.slate" xml:space="preserve">
+    <value>Slate gray</value>
+  </data>
+  <data name="settings.visualSettings.theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="settings.visualSettings.themeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="settings.visualSettings.themeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="settings.visualSettings.themeDark" xml:space="preserve">
+    <value>Dark</value>
   </data>
   <data name="settings.visualSettings.title" xml:space="preserve">
     <value>Personalization</value>

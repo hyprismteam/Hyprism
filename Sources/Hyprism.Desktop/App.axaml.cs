@@ -41,6 +41,8 @@ public sealed partial class App : Application
         {
             var services = DesktopRuntime.Services;
             var settings = services.GetRequiredService<IDesktopSettingsStore>();
+            DesktopTheme.Apply(settings.Theme);
+            DesktopTheme.ApplyAccent(settings.AccentColor);
 
             var localizer = new StringLocalizer(settings.Language);
             if (!string.Equals(settings.Language, localizer.CurrentLanguage, StringComparison.OrdinalIgnoreCase))

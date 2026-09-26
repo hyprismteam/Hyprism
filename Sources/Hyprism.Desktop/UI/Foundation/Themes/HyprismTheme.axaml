@@ -503,10 +503,10 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="Background" Value="{DynamicResource CheckIndicatorHoverBrush}" />
     </Style>
     <Style Selector="^:checked /template/ Border#SelectionIndicator">
-      <Setter Property="Background" Value="{DynamicResource CheckSelectedBrush}" />
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     </Style>
     <Style Selector="^:checked:pointerover /template/ Border#SelectionIndicator">
-      <Setter Property="Background" Value="{DynamicResource CheckSelectedHoverBrush}" />
+      <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
     </Style>
     <Style Selector="^:checked /template/ PathIcon#CheckGlyph">
       <Setter Property="Opacity" Value="1" />
