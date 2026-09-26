@@ -33,7 +33,7 @@ public sealed class GameLogParserTests
     [Fact]
     public async Task WritesNormalizedRecordsWithoutDuplicatingClientHeader()
     {
-        var directory = Path.Combine(Path.GetTempPath(), "HyPrismGameLogTests_" + Guid.NewGuid());
+        var directory = Path.Combine(Path.GetTempPath(), "HyprismGameLogTests_" + Guid.NewGuid());
         try
         {
             var parser = new GameLogParser();

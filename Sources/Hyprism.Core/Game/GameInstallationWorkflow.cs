@@ -417,9 +417,11 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
         string arch = LauncherUtilities.GetArch();
         string apiVersionType = LauncherUtilities.NormalizeVersionType(branch);
 
-        if (officialDown && _versions.IsDiffBasedBranch(apiVersionType))
+        if (_versions.IsDiffBasedBranch(apiVersionType) &&
+            (officialDown || string.IsNullOrWhiteSpace(_versions.GetVersionEntry(apiVersionType, targetVersion)?.PwrUrl)) &&
+            await _versions.GetMirrorDownloadUrlAsync(osName, arch, apiVersionType, targetVersion, ct) is null)
         {
-            Logger.Info("Download", $"Mirror pre-release: installing via diff chain v0 -> v{targetVersion}");
+            Logger.Info("Download", $"No full mirror build for {apiVersionType} v{targetVersion}; installing via diff chain from v0");
             _progress.ReportDownloadProgress("download", 5, "launch.detail.downloading_mirror", null, 0, 0);
 
             try
@@ -473,7 +475,7 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
             }
             catch (MirrorDiffRequiredException)
             {
-                Logger.Info("Download", $"Switching to mirror diff chain for pre-release v{targetVersion}");
+                Logger.Info("Download", $"Switching to mirror diff chain for {apiVersionType} v{targetVersion}");
                 _progress.ReportDownloadProgress("download", 5, "launch.detail.downloading_mirror", null, 0, 0);
 
                 try
@@ -791,9 +793,10 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
                 {
                     try
                     {
+                        var mirrorHeaders = await _versions.GetMirrorRequestHeadersAsync(mirrorUrl, ct);
                         try
                         {
-                            var mirrorSize = await _downloader.GetFileSizeAsync(mirrorUrl, ct);
+                            var mirrorSize = await _downloader.GetFileSizeAsync(mirrorUrl, mirrorHeaders, ct);
                             if (mirrorSize >= 0 && mirrorSize < MinValidPwrBytes)
                             {
                                 throw new MirrorBootstrapRequiredException(version, $"Mirror returned tiny full build ({mirrorSize} bytes) for v{version}");
@@ -809,7 +812,7 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
                         {
                             int mappedProgress = 5 + (int)(progress * 0.60);
                             _progress.ReportDownloadProgress("download", mappedProgress, "launch.detail.downloading_mirror", [progress], dl, total);
-                        }, ct);
+                        }, mirrorHeaders, ct);
 
                         long downloadedSize = File.Exists(partPath) ? new FileInfo(partPath).Length : 0;
                         if (downloadedSize < MinValidPwrBytes)
@@ -833,15 +836,16 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
                         }
                     }
                 }
-                else if (_versions.IsDiffBasedBranch(branch))
-                {
-                    Logger.Info("Download", "Pre-release branch detected - falling back to diff-based mirror download");
-                    throw new MirrorDiffRequiredException(version);
-                }
             }
 
             if (!downloaded)
             {
+                if (_versions.IsDiffBasedBranch(branch))
+                {
+                    Logger.Info("Download", $"No full mirror build available for {branch} v{version}; falling back to differential patches");
+                    throw new MirrorDiffRequiredException(version);
+                }
+
                 throw new Exception("Download failed from both official server and mirror. Please try again later.");
             }
 
@@ -917,12 +921,12 @@ public class GameInstallationWorkflow : IGameInstallationWorkflow
 }
 
 /// <summary>
-/// Thrown when a pre-release download fails from official and the mirror requires diff-based download
+/// Thrown when a full download is unavailable and the mirror supports differential patches.
 /// </summary>
 internal class MirrorDiffRequiredException : Exception
 {
     public int TargetVersion { get; }
-    public MirrorDiffRequiredException(int targetVersion) : base("Mirror requires diff-based download for pre-release")
+    public MirrorDiffRequiredException(int targetVersion) : base("Mirror requires a differential download")
     {
         TargetVersion = targetVersion;
     }

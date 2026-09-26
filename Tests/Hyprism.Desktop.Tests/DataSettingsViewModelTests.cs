@@ -29,12 +29,12 @@ public sealed class DataSettingsViewModelTests
     [AvaloniaFact]
     public async Task BrowseInstanceFolder_MovesDataAndUpdatesTheDisplayedPath()
     {
-        var configuredDirectory = "C:\\HyPrism\\Instances";
-        var selectedDirectory = "D:\\Games\\HyPrism";
+        var configuredDirectory = "C:\\Hyprism\\Instances";
+        var selectedDirectory = "D:\\Games\\Hyprism";
         var settings = CreateSettingsStore(
             () => configuredDirectory,
-            "C:\\HyPrism\\Instances",
-            "C:\\HyPrism");
+            "C:\\Hyprism\\Instances",
+            "C:\\Hyprism");
         settings
             .Setup(service => service.SetInstanceDirectoryAsync(
                 selectedDirectory,
@@ -74,7 +74,7 @@ public sealed class DataSettingsViewModelTests
     [AvaloniaFact]
     public async Task BrowseInstanceFolder_ExpandsWhileTheFolderPickerIsOpenAndCollapsesWhenClosed()
     {
-        const string configuredDirectory = "/home/user/Games/HyPrism";
+        const string configuredDirectory = "/home/user/Games/Hyprism";
         var pickerOpened = new TaskCompletionSource(
             TaskCreationOptions.RunContinuationsAsynchronously);
         var pickerResult = new TaskCompletionSource<string?>(
@@ -91,7 +91,7 @@ public sealed class DataSettingsViewModelTests
             CreateSettingsStore(
                 () => configuredDirectory,
                 configuredDirectory,
-                "/home/user/.local/share/HyPrism").Object,
+                "/home/user/.local/share/Hyprism").Object,
             new Mock<IExternalUriLauncher>().Object,
             new StringLocalizer("en-US"),
             picker.Object);
@@ -142,8 +142,8 @@ public sealed class DataSettingsViewModelTests
     [AvaloniaFact]
     public async Task BrowseInstanceFolder_RequiresPointerExitBeforeItCancelsTheMove()
     {
-        const string configuredDirectory = "/home/user/Games/HyPrism";
-        const string selectedDirectory = "/mnt/games/HyPrism";
+        const string configuredDirectory = "/home/user/Games/Hyprism";
+        const string selectedDirectory = "/mnt/games/Hyprism";
         var moveStarted = new TaskCompletionSource<(
             CancellationToken CancellationToken,
             IProgress<InstanceDirectoryMoveProgress>? Progress)>(
@@ -151,7 +151,7 @@ public sealed class DataSettingsViewModelTests
         var settings = CreateSettingsStore(
             () => configuredDirectory,
             configuredDirectory,
-            "/home/user/.local/share/HyPrism");
+            "/home/user/.local/share/Hyprism");
         settings
             .Setup(service => service.SetInstanceDirectoryAsync(
                 selectedDirectory,
@@ -208,12 +208,12 @@ public sealed class DataSettingsViewModelTests
     [AvaloniaFact]
     public async Task ResetInstanceFolder_KeepsTheActionExpandedLongEnoughToCompleteItsTransition()
     {
-        var configuredDirectory = "/mnt/games/HyPrism";
-        const string defaultDirectory = "/home/user/Games/HyPrism";
+        var configuredDirectory = "/mnt/games/Hyprism";
+        const string defaultDirectory = "/home/user/Games/Hyprism";
         var settings = CreateSettingsStore(
             () => configuredDirectory,
             defaultDirectory,
-            "/home/user/.local/share/HyPrism");
+            "/home/user/.local/share/Hyprism");
         settings
             .Setup(service => service.SetInstanceDirectoryAsync(
                 string.Empty,
@@ -242,8 +242,8 @@ public sealed class DataSettingsViewModelTests
     [AvaloniaFact]
     public async Task DataFolderActions_OpenBothEffectiveLocations()
     {
-        const string instanceDirectory = "/home/user/Games/HyPrism";
-        const string launcherDirectory = "/home/user/.local/share/HyPrism";
+        const string instanceDirectory = "/home/user/Games/Hyprism";
+        const string launcherDirectory = "/home/user/.local/share/Hyprism";
         var launcher = new Mock<IExternalUriLauncher>();
         launcher
             .Setup(service => service.LaunchDirectoryAsync(
@@ -253,7 +253,7 @@ public sealed class DataSettingsViewModelTests
         using var viewModel = new SettingsViewModel(
             CreateSettingsStore(
                 () => instanceDirectory,
-                "/home/user/.local/share/HyPrism/Instances",
+                "/home/user/.local/share/Hyprism/Instances",
                 launcherDirectory).Object,
             launcher.Object,
             new StringLocalizer("en-US"));
@@ -285,9 +285,9 @@ public sealed class DataSettingsViewModelTests
         instances.Setup(service => service.GetCachedInstances()).Returns(cachedInstances);
         using var viewModel = new SettingsViewModel(
             CreateSettingsStore(
-                () => "/home/user/Games/HyPrism",
-                "/home/user/.local/share/HyPrism/Instances",
-                "/home/user/.local/share/HyPrism").Object,
+                () => "/home/user/Games/Hyprism",
+                "/home/user/.local/share/Hyprism/Instances",
+                "/home/user/.local/share/Hyprism").Object,
             new Mock<IExternalUriLauncher>().Object,
             new StringLocalizer("en-US"),
             gameProcess: gameProcess.Object,
@@ -389,10 +389,10 @@ public sealed class DataSettingsViewModelTests
         Dispatcher.UIThread.RunJobs();
         Assert.Equal("4", viewModel.StorageUsageItems[0].Count);
         Assert.Equal(
-            "/home/user/Games/HyPrism",
+            "/home/user/Games/Hyprism",
             dataView.FindControl<TextBlock>("InstanceFolderPath")?.Text);
         Assert.Equal(
-            "/home/user/.local/share/HyPrism",
+            "/home/user/.local/share/Hyprism",
             dataView.FindControl<TextBlock>("LauncherDataPath")?.Text);
 
         running = false;

@@ -11,11 +11,13 @@ Hyprism separates persistent player data from replaceable downloads and presenta
 
 | Platform | Default directory |
 | --- | --- |
-| Windows | `%LOCALAPPDATA%/HyPrism` |
-| macOS | `~/Library/Application Support/HyPrism` |
-| Linux | `$XDG_DATA_HOME/HyPrism`, or `~/.local/share/HyPrism` when unset |
+| Windows | `%LOCALAPPDATA%/Hyprism` |
+| macOS | `~/Library/Application Support/Hyprism` |
+| Linux | `$XDG_DATA_HOME/Hyprism`, or `~/.local/share/Hyprism` when unset |
 
 `HYPRISM_DATA` overrides the complete application directory only if that directory already exists. `InstanceDirectory` changes only the instance root
+
+At startup, the default `HyPrism` directory is renamed to `Hyprism` before Core opens data or runs file migrations. If both directories exist, the launcher merges them into `Hyprism`. Profiles and instance registries include entries from both directories. Settings from `HyPrism` take precedence when both have a configuration file. Other files already present in `Hyprism` take precedence; conflicting old files are preserved under `Hyprism/.HyPrism-merge-conflicts/`. Core migrations run again after a merge. This automatic rename does not apply when `HYPRISM_DATA` selects a custom directory.
 
 Use an isolated directory for development:
 

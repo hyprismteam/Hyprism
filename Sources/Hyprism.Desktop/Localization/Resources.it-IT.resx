@@ -1248,7 +1248,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="onboarding.about" xml:space="preserve">
     <value>Informazioni</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Informazioni su Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2682,9 +2682,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Questa fonte di download è già configurata</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Verifica della compatibilità della sorgente</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism non ha rilevato un mirror compatibile a questo indirizzo</value>
   </data>
@@ -2696,18 +2693,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>La fonte di download non può essere rimossa</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Fonte di download aggiunta</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Fonte di download rimossa</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Fonte di download abilitata</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Fonte di download disabilitata</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>Indice JSON</value>

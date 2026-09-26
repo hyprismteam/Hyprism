@@ -11,7 +11,7 @@ public sealed class ModCompatibilityEvaluatorTests : IDisposable
 {
     private readonly string _instancePath = Path.Combine(
         Path.GetTempPath(),
-        $"HyPrismModCompatibilityTests_{Guid.NewGuid():N}");
+        $"HyprismModCompatibilityTests_{Guid.NewGuid():N}");
 
     [Fact]
     public void DetectInstanceGameVersion_ReadsServerManifest()

@@ -210,45 +210,70 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="settings|SettingsView Border.sourceMoreTarget">
-    <Setter Property="Width" Value="34" />
+    <Setter Property="Width" Value="40" />
     <Setter Property="Height" Value="40" />
-    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Background" Value="#0028292B" />
+    <Setter Property="CornerRadius" Value="8" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
 
-  <Style Selector="settings|SettingsView Path.sourceMoreIcon">
+  <Style Selector="settings|SettingsView Border.sourceMoreTarget.open">
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedSurfaceBrush}" />
+  </Style>
+
+  <Style Selector="settings|SettingsView PathIcon.sourceMoreIcon">
     <Setter Property="Width" Value="14" />
     <Setter Property="Height" Value="14" />
-    <Setter Property="Stretch" Value="Uniform" />
-    <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="settings|SettingsView Border.sourceMoreTarget:pointerover PathIcon.sourceMoreIcon,
+                   settings|SettingsView Border.sourceMoreTarget.open PathIcon.sourceMoreIcon">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 
   <Style Selector="settings|SettingsView Border.sourceActionFlyout">
     <Setter Property="Width" Value="220" />
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedSurfaceBrush}" />
   </Style>
 
   <Style Selector="settings|SettingsView Button.sourceMenuAction">
     <Setter Property="Height" Value="42" />
     <Setter Property="Padding" Value="12,0" />
-    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Background" Value="#00412C2C" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="HorizontalContentAlignment" Value="Left" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="settings|SettingsView Button.sourceMenuAction:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
 
   <Style Selector="settings|SettingsView Button.sourceMenuAction.danger">
     <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Button.sourceMenuAction.danger:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
   </Style>
 
   <Style Selector="settings|SettingsView Path.sourceMenuIcon">
@@ -358,25 +383,19 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
-
-
-
-
-  <Style Selector="ProgressBar.sourceProgress">
-    <Setter Property="Height" Value="2" />
-    <Setter Property="Margin" Value="18,0" />
-    <Setter Property="Foreground" Value="#7DCCA0" />
-    <Setter Property="Background" Value="Transparent" />
+  <Style Selector="Button.mirrorRemove.modalFormClose:pointerover,
+                   Button.mirrorRemove.editorModalClose:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
 
-  <Style Selector="TextBlock.sourceOperationStatus, TextBlock.sourceOperationError">
+
+
+
+
+  <Style Selector="TextBlock.sourceOperationError">
     <Setter Property="Margin" Value="4,2,4,0" />
     <Setter Property="FontSize" Value="12" />
     <Setter Property="TextWrapping" Value="Wrap" />
-  </Style>
-
-  <Style Selector="TextBlock.sourceOperationStatus">
-    <Setter Property="Foreground" Value="#86D2A0" />
   </Style>
 
   <Style Selector="TextBlock.sourceOperationError">
@@ -820,6 +839,33 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Width" Value="272" />
   </Style>
 
+  <Style Selector="settings|SettingsView Button.mirrorAddAction">
+    <Setter Property="Width" Value="150" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Button.mirrorAddAction ContentControl">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Button.mirrorAddAction.active, settings|SettingsView Button.mirrorAddAction.active:pointerover">
+    <Setter Property="Width" Value="272" />
+    <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Button.mirrorAddAction.active.cancelArmed:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Button.mirrorAddAction.active Grid.managedActionContent">
+    <Setter Property="Width" Value="232" />
+    <Setter Property="MinWidth" Value="232" />
+    <Setter Property="MaxWidth" Value="232" />
+  </Style>
+
   <!-- The custom Java action mirrors the instance folder button and fades plus
        slides in and out with the runtime selection instead of popping -->
   <!-- The button floats over the row instead of sharing its layout, so the
@@ -925,12 +971,5 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="260" />
     <Setter Property="FontFamily" Value="monospace" />
     <Setter Property="FontSize" Value="13" />
-  </Style>
-  <Style Selector="settings|SettingsView Border.sourceDeleteConfirmation">
-    <Setter Property="Width" Value="320" />
-    <Setter Property="Padding" Value="18" />
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-    <Setter Property="CornerRadius" Value="14" />
-    <Setter Property="BoxShadow" Value="{DynamicResource PopupShadow}" />
   </Style>
 </Styles>

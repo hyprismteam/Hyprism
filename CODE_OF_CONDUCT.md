@@ -7,7 +7,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 ## Our Commitment
 
-We want HyPrism to be an open, welcoming, and respectful community for everyone
+We want Hyprism to be an open, welcoming, and respectful community for everyone
 All contributors and participants are expected to treat each other with kindness and professionalism
 
 ## Expected Behavior

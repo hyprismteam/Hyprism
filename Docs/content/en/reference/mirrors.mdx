@@ -44,11 +44,17 @@ This complete example uses a reserved example domain and a static version list. 
 | `DiffPatchUrl` | Optional differential template |
 | `VersionDiscovery` | Version-list strategy |
 | `OsMapping`, `ArchMapping`, `BranchMapping` | Override platform or branch strings |
-| `DiffBasedBranches` | Branches using differential patching |
+| `DiffBasedBranches` | Branches that can use differential patches when a full build is unavailable |
 
 URL templates support `{base}`, `{os}`, `{arch}`, `{branch}`, `{version}`, `{from}`, and `{to}`. Internal platform strings include `windows`, `linux`, `darwin`, `amd64`, and `arm64`
 
-Discovery supports `static-list`, `json-api` with `Url` and `JsonPath`, `manifest` with a manifest `Url`, or `html-autoindex` with `Url` and an optional `HtmlPattern`. Custom regular expressions are time-limited and invalid expressions are ignored
+For a fresh installation, Hyprism first requests a published full build, even if the branch appears in `DiffBasedBranches`. If the target has no full build, it follows published patch transitions from another full build. A manifest mirror can list both `0_to_<version>.pwr` full builds and `<from>_to_<to>.pwr` patches for the same branch.
+
+Discovery supports `static-list`, `json-api` with `Url` and `JsonPath`, `manifest` with a manifest `Url`, `html-autoindex` with `Url` and an optional `HtmlPattern`, and `head-probe` for mirrors without an index. Custom regular expressions are time-limited and invalid expressions are ignored.
+
+`head-probe` checks full PWR files through `FullBuildUrl` with HTTP `HEAD`, beginning at build 1. It locates the highest consecutive build within `MaxProbeVersion` and checks each lower build before listing it. The default limit is 256. Set `MinFileSizeBytes` to reject redirect pages and incomplete archives. If the mirror has gaps followed by newer builds, discovery cannot find builds beyond the first gap without an index.
+
+The root `Headers` object applies to discovery, availability checks, and file downloads. `{hytaleAgent}` expands to `hytale-launcher/<version>` and `{hytaleVersion}` expands to the current official launcher version. Automatic detection of protected PWR files adds `User-Agent`, `x-hytale-launcher-version`, and `x-hytale-launcher-branch` to the saved mirror definition.
 
 ### Version names and builds
 
@@ -67,11 +73,11 @@ For JSON API entries, `JsonPath` points to the version name or numeric build. Wh
 }
 ```
 
-Manifest discovery also reads names from `versions[branch][build].version` and from `gameVersion` in matching file entries. This supports manifests where the file path contains only the numeric build, such as `0_to_27.pwr`. When a manifest contains a `files` index, only files matching the requested OS, architecture, and branch count as available. The global `versions` section supplies metadata for those files and does not make an unsupported platform available
+Manifest discovery also reads names from `versions[branch][build].version` and from `gameVersion` in matching file entries. This supports manifests where the file path contains only the numeric build, such as `0_to_27.pwr`. The `files` index supplies the actual patch transitions for the requested OS, architecture, and branch. The instance creator lists a build only when a route from a full archive exists. The global `versions` section supplies names but cannot make a build installable.
 
 The official source reads the authenticated `game-assets/version/{branch}.json` manifest and follows its signed JSON URL when necessary. The returned name is paired with the latest numeric build from the patches API
 
-The official source applies the same separation to metadata returned with patch steps. Older version cache snapshots are refreshed once after this format change, while existing instance files without a version name continue to use the numeric build as a fallback
+The official source applies the same separation to metadata returned with patch steps. The version cache stores the numeric build and display name separately, and the patch cache stores the published transitions per mirror. Older version cache snapshots refresh once after this format change. Existing instance files without a version name continue to use the numeric build as a fallback.
 
 ## JSON index source
 

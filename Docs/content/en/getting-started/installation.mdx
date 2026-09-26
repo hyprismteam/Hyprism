@@ -9,7 +9,7 @@ Use a packaged release unless you are developing Hyprism
 
 ## Download a release
 
-Open [Hyprism Releases on GitHub](https://github.com/hyprismteam/HyPrism/releases) and choose the package for your system
+Open [Hyprism Releases on GitHub](https://github.com/hyprismteam/Hyprism/releases) and choose the package for your system
 
 | Platform | Target | Packages |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ The one-line installers support Linux x64, Windows x64, and macOS Apple Silicon.
 ### Linux x64
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-linux.sh | sh
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-linux.sh | sh
 ```
 
 The installer stores versioned files under `~/.local/share/hyprism`, creates `~/.local/bin/hyprism`, and adds a desktop entry. Add `~/.local/bin` to `PATH` if it is not already present
@@ -35,15 +35,15 @@ The installer stores versioned files under `~/.local/share/hyprism`, creates `~/
 ### Windows x64
 
 ```powershell
-irm https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-win.ps1 | iex
+irm https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-win.ps1 | iex
 ```
 
-The installer stores Hyprism Launcher under `%LOCALAPPDATA%\HyPrism`, creates Desktop and Start Menu shortcuts, and adds the install directory to the user `PATH`
+The installer stores Hyprism Launcher under `%LOCALAPPDATA%\Hyprism`, creates Desktop and Start Menu shortcuts, and adds the install directory to the user `PATH`
 
 ### macOS Apple Silicon
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hyprismteam/HyPrism/main/Scripts/install-macos.sh | sh
+curl -fsSL https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Scripts/install-macos.sh | sh
 ```
 
 The installer verifies the DMG, mounts it, and places Hyprism Launcher in `~/Applications` without requiring `sudo`. Current releases use ad hoc signing, so macOS may require approval in Privacy & Security on first launch
@@ -53,7 +53,7 @@ The installer verifies the DMG, mounts it, and places Hyprism Launcher in `~/App
 Nix users can run the flake directly with flakes enabled
 
 ```bash
-nix run 'github:hyprismteam/HyPrism?dir=Packaging/linux/flake#hyprism'
+nix run 'github:hyprismteam/Hyprism?dir=Packaging/linux/flake#hyprism'
 ```
 
 The flake currently targets `x86_64-linux`. Use the DMG workflow below on macOS
@@ -90,8 +90,8 @@ Autonomous mode may ask once for permission to trust Hyprism's local certificate
 Contributors need the .NET 10 SDK and Git
 
 ```bash
-git clone https://github.com/hyprismteam/HyPrism.git
-cd HyPrism
+git clone https://github.com/hyprismteam/Hyprism.git
+cd Hyprism
 dotnet restore Hyprism.slnx
 dotnet run --project Sources/Hyprism.Desktop/Hyprism.Desktop.csproj
 ```

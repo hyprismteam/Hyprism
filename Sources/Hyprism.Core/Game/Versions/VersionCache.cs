@@ -17,7 +17,7 @@ public class VersionCache
     /// <summary>
     /// Current on-disk cache format version
     /// </summary>
-    public const int CurrentSchemaVersion = 2;
+    public const int CurrentSchemaVersion = 3;
 
     private readonly string _appDir;
 

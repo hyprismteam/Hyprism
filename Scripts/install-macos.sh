@@ -5,7 +5,7 @@
 
 set -eu
 
-GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/HyPrism/releases/latest/download"
+GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/Hyprism/releases/latest/download"
 APP_EXECUTABLE="Hyprism Launcher"
 APP_BUNDLE_NAME="Hyprism Launcher.app"
 LOCAL_NODE_EXECUTABLE="Hyprism.LocalNode"

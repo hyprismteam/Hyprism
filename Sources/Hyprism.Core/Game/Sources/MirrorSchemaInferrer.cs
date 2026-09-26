@@ -54,6 +54,52 @@ internal static class MirrorSchemaInferrer
 
     #region MirrorMeta Builders
 
+    /// <summary>Builds a source that discovers protected full PWR files with HEAD requests.</summary>
+    /// <param name="baseUri">Mirror address entered by the user.</param>
+    /// <param name="pathPrefix">Path before the platform and branch directories.</param>
+    /// <returns>The discovered mirror definition.</returns>
+    public static MirrorMeta CreateHeadProbePatternMirror(Uri baseUri, string pathPrefix)
+    {
+        var baseUrl = baseUri.GetLeftPart(UriPartial.Authority);
+        var filePattern = $"{{base}}{pathPrefix}/{{os}}/{{arch}}/{{branch}}/0/{{version}}.pwr";
+
+        return new MirrorMeta
+        {
+            Id = GenerateMirrorId(baseUri),
+            Name = ExtractMirrorName(baseUri),
+            Description = $"Auto-discovered mirror from {baseUri.Host}",
+            SourceType = "pattern",
+            Headers = new Dictionary<string, string>
+            {
+                ["User-Agent"] = "{hytaleAgent}",
+                ["x-hytale-launcher-version"] = "{hytaleVersion}",
+                ["x-hytale-launcher-branch"] = "release"
+            },
+            Pattern = new MirrorPatternConfig
+            {
+                BaseUrl = baseUrl,
+                FullBuildUrl = filePattern,
+                SignatureUrl = filePattern + ".sig",
+                VersionDiscovery = new VersionDiscoveryConfig
+                {
+                    Method = "head-probe",
+                    MaxProbeVersion = 256,
+                    MinFileSizeBytes = 1_048_576
+                }
+            },
+            SpeedTest = new MirrorSpeedTestConfig
+            {
+                PingUrl = $"{baseUrl}{pathPrefix}/linux/amd64/release/0/1.pwr",
+                PingTimeoutSeconds = 5
+            },
+            Cache = new MirrorCacheConfig
+            {
+                IndexTtlMinutes = 30,
+                SpeedTestTtlMinutes = 60
+            }
+        };
+    }
+
     /// <summary>
     /// Builds a <see cref="MirrorMeta"/> for mirrors that expose version info via
     /// <c>/infos</c> and host patch archives under <c>/dl/{os}/{arch}/{version}.pwr</c>.

@@ -86,7 +86,7 @@ export default function LocalizedDocPage({ en, ru, pageKey }: LocalizedDocPagePr
   const title = Content.metadata.title || Content.frontMatter.title || Content.contentTitle || 'Hyprism'
   const description = Content.metadata.description || Content.frontMatter.description
   const sourcePath = pageKey ? `${pageKey}.mdx` : 'index.mdx'
-  const editUrl = `https://github.com/hyprismteam/HyPrism/edit/main/Docs/content/${locale}/${sourcePath}`
+  const editUrl = `https://github.com/hyprismteam/Hyprism/edit/main/Docs/content/${locale}/${sourcePath}`
 
   const canonicalPath = routeToUrl(pageKey)
 

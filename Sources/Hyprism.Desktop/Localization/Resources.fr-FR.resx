@@ -1248,7 +1248,7 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="onboarding.about" xml:space="preserve">
     <value>À propos</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>À propos de Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Cette source de téléchargement est déjà configurée</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Vérification de la compatibilité de la source</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism n'a pas pu détecter de miroir compatible à cette adresse</value>
   </data>
@@ -2693,18 +2690,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>La source de téléchargement n'a pas pu être supprimée</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Source de téléchargement ajoutée</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Source de téléchargement supprimée</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Source de téléchargement activée</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Source de téléchargement désactivée</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>Index JSON</value>

@@ -1248,7 +1248,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.about" xml:space="preserve">
     <value>关于</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>关于 Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>此下载源已配置</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>正在检查源兼容性</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism 无法在此地址检测到兼容的镜像</value>
   </data>
@@ -2693,18 +2690,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>无法移除下载源</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>已添加下载源</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>下载源已移除</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>下载源已启用</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>下载源已禁用</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON 索引</value>

@@ -723,7 +723,7 @@ public static class LocalNodeApplication
 
     private static bool IsControlAuthorized(HttpRequest request, string expectedSecret)
     {
-        var suppliedSecret = request.Headers["X-HyPrism-Control"].ToString();
+        var suppliedSecret = request.Headers["X-Hyprism-Control"].ToString();
         if (suppliedSecret.Length != expectedSecret.Length)
             return false;
 

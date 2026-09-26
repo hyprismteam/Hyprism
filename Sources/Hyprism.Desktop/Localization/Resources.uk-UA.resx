@@ -1248,7 +1248,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.about" xml:space="preserve">
     <value>Про програму</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Про Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Це джерело завантажень вже налаштоване</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Перевірка сумісності джерела</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism не зміг виявити сумісне дзеркало за цією адресою</value>
   </data>
@@ -2693,18 +2690,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>Джерело завантажень не вдалося видалити</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Джерело завантажень додано</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Джерело завантажень видалено</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Джерело завантажень увімкнено</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Джерело завантажень вимкнено</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON індекс</value>

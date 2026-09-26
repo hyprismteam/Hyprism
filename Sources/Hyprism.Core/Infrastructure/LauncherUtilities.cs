@@ -180,21 +180,21 @@ public static class LauncherUtilities
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HyPrism");
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Hyprism");
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Application Support", "HyPrism");
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Application Support", "Hyprism");
         }
         else
         {
             var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             if (!string.IsNullOrWhiteSpace(xdgDataHome))
             {
-                return Path.Combine(xdgDataHome, "HyPrism");
+                return Path.Combine(xdgDataHome, "Hyprism");
             }
 
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "HyPrism");
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "Hyprism");
         }
     }
 
@@ -326,7 +326,7 @@ public static class LauncherUtilities
     /// </summary>
     public static void CleanupCorruptedInstall(string versionPath)
     {
-        string backupRoot = Path.Combine(Path.GetTempPath(), "HyPrismBackup", Guid.NewGuid().ToString());
+        string backupRoot = Path.Combine(Path.GetTempPath(), "HyprismBackup", Guid.NewGuid().ToString());
         // Preserve UserData and Client/Assets to avoid re-downloading game
         string[] preserve = ["UserData", "Client"];
 

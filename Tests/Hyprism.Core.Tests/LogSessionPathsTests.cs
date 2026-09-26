@@ -10,7 +10,7 @@ public sealed class LogSessionPathsTests
     [Fact]
     public void SessionPaths_GroupLauncherInstancesAndNodesByLauncherStartTime()
     {
-        var appDirectory = Path.Combine(Path.GetTempPath(), "HyPrismLogSessionTests_" + Guid.NewGuid());
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismLogSessionTests_" + Guid.NewGuid());
         try
         {
             var startedAt = new DateTimeOffset(2026, 8, 15, 20, 31, 42, 137, TimeSpan.FromHours(3));
@@ -41,7 +41,7 @@ public sealed class LogSessionPathsTests
     [Fact]
     public async Task SessionLogWriter_AppendsTimestampedSourceRecords()
     {
-        var directory = Path.Combine(Path.GetTempPath(), "HyPrismSessionLogWriterTests_" + Guid.NewGuid());
+        var directory = Path.Combine(Path.GetTempPath(), "HyprismSessionLogWriterTests_" + Guid.NewGuid());
         try
         {
             var path = Path.Combine(directory, "instance-test.log");
@@ -64,7 +64,7 @@ public sealed class LogSessionPathsTests
     [Fact]
     public async Task LauncherLogger_WritesToCurrentSessionFile()
     {
-        var directory = Path.Combine(Path.GetTempPath(), "HyPrismLauncherLogTests_" + Guid.NewGuid());
+        var directory = Path.Combine(Path.GetTempPath(), "HyprismLauncherLogTests_" + Guid.NewGuid());
         var path = Path.Combine(directory, "launcher.log");
         try
         {

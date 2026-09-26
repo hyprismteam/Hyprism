@@ -108,7 +108,7 @@ public interface IVersionSource
 
     /// <summary>
     /// Whether this source uses diff-based patches for a specific branch.
-    /// Pre-release typically uses diffs (v{from}~{to}), release uses full copies
+    /// Full builds remain available for fresh installs when a branch also has diffs.
     /// </summary>
     /// <param name="branch">The branch name</param>
     /// <remarks>For the official Hytale source, the latest full build is returned directly and patch chains update existing installations</remarks>

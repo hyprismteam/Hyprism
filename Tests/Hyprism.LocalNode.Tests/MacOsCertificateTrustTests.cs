@@ -149,7 +149,7 @@ public sealed class MacOsCertificateTrustTests
 
         public static CertificateFixture Create()
         {
-            var directory = Path.Combine(Path.GetTempPath(), "HyPrismMacTrustTests_" + Guid.NewGuid());
+            var directory = Path.Combine(Path.GetTempPath(), "HyprismMacTrustTests_" + Guid.NewGuid());
             var options = new LocalNodeOptions(directory, "127.0.0.1", 8443);
             var certificate = LocalNodeCertificateStore.LoadOrCreate(options);
             var rootCertificate = LocalNodeCertificateStore.LoadRootCertificate(options);

@@ -19,7 +19,6 @@ public partial class MirrorDiscovery : IMirrorDiscovery
     private const int TimeoutSeconds = 10;
 
     private Dictionary<string, string>? _customHeaders;
-    private string? _hytaleAgent;
 
     /// <summary>
     /// Creates a mirror discovery service
@@ -33,30 +32,17 @@ public partial class MirrorDiscovery : IMirrorDiscovery
 
     /// <summary>
     /// Sends a GET request with custom headers applied.
-    /// Expands {hytaleAgent} variable to the official Hytale launcher User-Agent
+    /// Expands the official launcher header placeholders.
     /// </summary>
     private async Task<HttpResponseMessage> GetWithHeadersAsync(string url, CancellationToken ct)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-        if (_customHeaders != null && _customHeaders.Count > 0)
+        var headers = await MirrorHeaderResolver.ResolveAsync(_customHeaders, _httpClient, ct);
+        if (headers is not null)
         {
-            foreach (var (headerName, headerValue) in _customHeaders)
-            {
-                var expandedValue = headerValue;
-
-                if (expandedValue.Contains("{hytaleAgent}", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (_hytaleAgent == null)
-                    {
-                        var launcherVersion = await HytaleLauncherHeaders.GetLauncherVersionAsync(_httpClient, ct);
-                        _hytaleAgent = $"hytale-launcher/{launcherVersion}";
-                    }
-                    expandedValue = expandedValue.Replace("{hytaleAgent}", _hytaleAgent, StringComparison.OrdinalIgnoreCase);
-                }
-
-                request.Headers.TryAddWithoutValidation(headerName, expandedValue);
-            }
+            foreach (var (name, value) in headers)
+                request.Headers.TryAddWithoutValidation(name, value);
         }
 
         return await _httpClient.SendAsync(request, ct);
@@ -67,13 +53,12 @@ public partial class MirrorDiscovery : IMirrorDiscovery
     /// Tries multiple detection strategies with extensive endpoint probing
     /// </summary>
     /// <param name="url">The mirror URL to discover</param>
-    /// <param name="headers">Optional custom headers to use for discovery requests (supports {hytaleAgent} variable)</param>
+    /// <param name="headers">Optional custom headers to use for discovery requests</param>
     /// <param name="ct">Cancellation token</param>
     /// <returns>A task that completes with the discovered mirror definition</returns>
     public async Task<DiscoveryResult> DiscoverMirrorAsync(string url, Dictionary<string, string>? headers = null, CancellationToken ct = default)
     {
         _customHeaders = headers;
-        _hytaleAgent = null;
 
         if (string.IsNullOrWhiteSpace(url))
         {
@@ -103,6 +88,13 @@ public partial class MirrorDiscovery : IMirrorDiscovery
             var result = await TryAllStrategiesAsync(new Uri(baseUrl), ct);
             if (result.Success && result.Mirror != null)
             {
+                if (headers is not null)
+                {
+                    result.Mirror.Headers ??= [];
+                    foreach (var (name, value) in headers)
+                        result.Mirror.Headers[name] = value;
+                }
+
                 Logger.Success("MirrorDiscovery", $"Discovery succeeded: {result.Mirror.Name} ({result.DetectedType})");
                 return result;
             }
@@ -149,6 +141,7 @@ public partial class MirrorDiscovery : IMirrorDiscovery
         // Probe actual PWR files before JSON endpoints, whose error pages can look valid
         var strategies = new (string Name, Func<Uri, CancellationToken, Task<DiscoveryResult>> Strategy)[]
         {
+            ("Protected PWR files", TryProtectedPatchPatternAsync),
             ("Pattern: Infos API", TryInfosApiPatternAsync),
             ("Pattern: Manifest JSON", TryManifestDiscoveryAsync),
             ("HTML Autoindex", TryHtmlAutoindexDiscoveryAsync),
@@ -176,6 +169,45 @@ public partial class MirrorDiscovery : IMirrorDiscovery
             {
                 Logger.Debug("MirrorDiscovery", $"Strategy '{name}' failed: {ex.Message}");
             }
+        }
+
+        return new DiscoveryResult { Success = false };
+    }
+
+    private async Task<DiscoveryResult> TryProtectedPatchPatternAsync(Uri baseUri, CancellationToken ct)
+    {
+        var os = LauncherUtilities.GetOS();
+        var arch = LauncherUtilities.GetArch();
+        var prefixes = new[] { "/patches", "/hytale/patches" };
+
+        foreach (var prefix in prefixes)
+        {
+            try
+            {
+                var probeUrl = new Uri(baseUri, $"{prefix}/{os}/{arch}/release/0/1.pwr");
+                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                timeout.CancelAfter(TimeSpan.FromSeconds(TimeoutSeconds));
+
+                using var request = new HttpRequestMessage(HttpMethod.Head, probeUrl);
+                await HytaleLauncherHeaders.ApplyOfficialHeadersAsync(request, _httpClient, "release", timeout.Token);
+                using var response = await _httpClient.SendAsync(
+                    request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+
+                if (!response.IsSuccessStatusCode ||
+                    response.Content.Headers.ContentLength is not >= 1_048_576 ||
+                    response.Content.Headers.ContentType?.MediaType?.Contains("html", StringComparison.OrdinalIgnoreCase) == true)
+                    continue;
+
+                var mirror = MirrorSchemaInferrer.CreateHeadProbePatternMirror(baseUri, prefix);
+                return new DiscoveryResult
+                {
+                    Success = true,
+                    Mirror = mirror,
+                    DetectedType = "Pattern: protected PWR files"
+                };
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested) { }
+            catch (HttpRequestException) { }
         }
 
         return new DiscoveryResult { Success = false };
@@ -344,6 +376,7 @@ public partial class MirrorDiscovery : IMirrorDiscovery
                 var patchPattern = ManifestPatchPathRegex();
                 var detectedPlatforms = new HashSet<string>();
                 var detectedBranches = new HashSet<string>();
+                var diffBasedBranches = new HashSet<string>();
                 var maxVersions = new Dictionary<string, int>();
 
                 foreach (var file in filesNode.EnumerateObject())
@@ -354,10 +387,13 @@ public partial class MirrorDiscovery : IMirrorDiscovery
                         var os = match.Groups[1].Value;
                         var arch = match.Groups[2].Value;
                         var branch = match.Groups[3].Value;
+                        var fromVersion = int.Parse(match.Groups[4].Value);
                         var toVersion = int.Parse(match.Groups[5].Value);
 
                         detectedPlatforms.Add($"{os}/{arch}");
                         detectedBranches.Add(branch);
+                        if (fromVersion > 0)
+                            diffBasedBranches.Add(branch);
 
                         var key = $"{os}/{arch}/{branch}";
                         if (!maxVersions.TryGetValue(key, out var current) || toVersion > current)
@@ -378,7 +414,7 @@ public partial class MirrorDiscovery : IMirrorDiscovery
                 var baseUrl = manifestUrl[..manifestUrl.LastIndexOf('/')];
 
                 var mirrorId = MirrorSchemaInferrer.GenerateMirrorId(baseUri);
-                var mirror = MirrorSchemaInferrer.CreateManifestPatternMirror(baseUri, mirrorId, baseUrl, manifestUrl, detectedBranches);
+                var mirror = MirrorSchemaInferrer.CreateManifestPatternMirror(baseUri, mirrorId, baseUrl, manifestUrl, diffBasedBranches);
 
                 return new DiscoveryResult
                 {

@@ -118,7 +118,7 @@ internal static class MainWindowViewModelFactory
             new GitHubCommit(
                 "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
                 "feat: refine the native settings experience",
-                "https://github.com/hyprismteam/HyPrism/commit/1a2b3c4"));
+                "https://github.com/hyprismteam/Hyprism/commit/1a2b3c4"));
         gitHub
             .Setup(service => service.LoadAvatarAsync(It.IsAny<string>(), It.IsAny<int>()))
             .ReturnsAsync(TinyPngHandler.ImageBytes);

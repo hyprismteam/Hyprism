@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Hyprism.Core.Models;
 using Hyprism.Core.Infrastructure;
-using Hyprism.Core.Integrations.Hytale;
 
 namespace Hyprism.Core.Game.Sources;
 
@@ -29,6 +28,7 @@ public partial class JsonMirrorSource : IVersionSource
     private readonly SemaphoreSlim _speedTestLock = new(1, 1);
 
     private readonly Dictionary<string, (DateTime CachedAt, List<DiscoveredVersion> Versions)> _versionCache = [];
+    private readonly Dictionary<string, List<CachedPatchStep>> _manifestSteps = [];
 
     private sealed record DiscoveredVersion(int Build, string? Name);
 
@@ -56,7 +56,7 @@ public partial class JsonMirrorSource : IVersionSource
 
     /// <summary>
     /// Creates an HttpRequestMessage with custom headers from the mirror config.
-    /// Expands {hytaleAgent} variable to the official Hytale launcher User-Agent
+    /// Expands the official launcher header placeholders.
     /// </summary>
     private async Task<HttpRequestMessage> CreateRequestWithHeadersAsync(
         HttpMethod method, string url, CancellationToken ct = default)
@@ -68,31 +68,26 @@ public partial class JsonMirrorSource : IVersionSource
 
     /// <summary>
     /// Applies custom headers from the mirror config to an HttpRequestMessage.
-    /// Expands {hytaleAgent} variable to the official Hytale launcher User-Agent
+    /// Expands the official launcher header placeholders.
     /// </summary>
     private async Task ApplyCustomHeadersAsync(HttpRequestMessage request, CancellationToken ct = default)
     {
-        if (_meta.Headers == null || _meta.Headers.Count == 0)
-            return;
+        var headers = await GetResolvedRequestHeadersAsync(ct);
+        if (headers is null) return;
 
-        string? hytaleAgent = null;
+        foreach (var (name, value) in headers)
+            request.Headers.TryAddWithoutValidation(name, value);
+    }
 
-        foreach (var (headerName, headerValue) in _meta.Headers)
-        {
-            var expandedValue = headerValue;
+    internal Task<Dictionary<string, string>?> GetResolvedRequestHeadersAsync(CancellationToken ct)
+        => MirrorHeaderResolver.ResolveAsync(_meta.Headers, _httpClient, ct);
 
-            if (expandedValue.Contains("{hytaleAgent}", StringComparison.OrdinalIgnoreCase))
-            {
-                if (hytaleAgent == null)
-                {
-                    var launcherVersion = await HytaleLauncherHeaders.GetLauncherVersionAsync(_httpClient, ct);
-                    hytaleAgent = $"hytale-launcher/{launcherVersion}";
-                }
-                expandedValue = expandedValue.Replace("{hytaleAgent}", hytaleAgent, StringComparison.OrdinalIgnoreCase);
-            }
-
-            request.Headers.TryAddWithoutValidation(headerName, expandedValue);
-        }
+    internal bool OwnsDownloadUrl(string url)
+    {
+        var baseUrl = _meta.Pattern?.BaseUrl;
+        return Uri.TryCreate(baseUrl?.TrimEnd('/') + "/", UriKind.Absolute, out var root) &&
+               Uri.TryCreate(url, UriKind.Absolute, out var target) &&
+               root.IsBaseOf(target);
     }
 
     /// <summary>
@@ -159,12 +154,16 @@ public partial class JsonMirrorSource : IVersionSource
             return await GetDownloadUrlFromJsonIndexAsync(os, arch, branch, version, ct);
         }
 
-        if (IsDiffBasedBranch(branch))
+        if (_meta.Pattern!.VersionDiscovery.Method == "manifest")
         {
-            return version == 1 && _meta.Pattern?.DiffPatchUrl != null
-                ? BuildPatternUrl(_meta.Pattern.DiffPatchUrl, os, arch, branch, version, 0, 1)
-                : null;
+            await DiscoverVersionsAsync(os, arch, branch, ct);
+            return _manifestSteps.GetValueOrDefault($"{os}:{arch}:{branch}")?
+                .FirstOrDefault(step => step.From == 0 && step.To == version)?.PwrUrl;
         }
+
+        if (_meta.Pattern.VersionDiscovery.Method == "head-probe" &&
+            !(await DiscoverVersionsAsync(os, arch, branch, ct)).Any(entry => entry.Build == version))
+            return null;
 
         return BuildPatternUrl(_meta.Pattern!.FullBuildUrl, os, arch, branch, version, 0, version);
     }
@@ -176,6 +175,13 @@ public partial class JsonMirrorSource : IVersionSource
         if (_meta.SourceType == "json-index")
         {
             return await GetDiffUrlFromJsonIndexAsync(os, arch, branch, fromVersion, toVersion, ct);
+        }
+
+        if (_meta.Pattern!.VersionDiscovery.Method == "manifest")
+        {
+            await DiscoverVersionsAsync(os, arch, branch, ct);
+            return _manifestSteps.GetValueOrDefault($"{os}:{arch}:{branch}")?
+                .FirstOrDefault(step => step.From == fromVersion && step.To == toVersion)?.PwrUrl;
         }
 
         if (_meta.Pattern?.DiffPatchUrl == null) return null;
@@ -201,6 +207,12 @@ public partial class JsonMirrorSource : IVersionSource
     public async Task<List<CachedPatchStep>> GetPatchChainAsync(
         string os, string arch, string branch, CancellationToken ct = default)
     {
+        if (_meta.SourceType == "pattern" && _meta.Pattern?.VersionDiscovery.Method == "manifest")
+        {
+            await DiscoverVersionsAsync(os, arch, branch, ct);
+            return _manifestSteps.GetValueOrDefault($"{os}:{arch}:{branch}") ?? [];
+        }
+
         var steps = new List<CachedPatchStep>();
 
         try
@@ -437,6 +449,10 @@ public partial class JsonMirrorSource : IVersionSource
                 result.IsAvailable = getResponse.IsSuccessStatusCode;
             }
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
             result.IsAvailable = false;
@@ -461,26 +477,15 @@ public partial class JsonMirrorSource : IVersionSource
         var versions = await DiscoverVersionsAsync(os, arch, branch, ct);
         var config = _meta.Pattern!;
 
-        if (IsDiffBasedBranch(branch) && config.DiffPatchUrl != null)
-        {
-            return [.. versions.Select(v => new CachedVersionEntry
-            {
-                Version = v.Build,
-                FromVersion = 0,
-                VersionName = v.Name,
-                PwrUrl = BuildPatternUrl(config.FullBuildUrl, os, arch, branch, v.Build, 0, v.Build),
-                SigUrl = config.SignatureUrl != null
-                    ? BuildPatternUrl(config.SignatureUrl, os, arch, branch, v.Build, 0, v.Build)
-                    : null
-            }).OrderByDescending(e => e.Version)];
-        }
-
         return [.. versions.Select(v => new CachedVersionEntry
         {
             Version = v.Build,
             VersionName = v.Name,
             FromVersion = 0,
-            PwrUrl = BuildPatternUrl(config.FullBuildUrl, os, arch, branch, v.Build, 0, v.Build),
+            PwrUrl = config.VersionDiscovery.Method == "manifest"
+                ? _manifestSteps.GetValueOrDefault($"{os}:{arch}:{branch}")?
+                    .FirstOrDefault(step => step.From == 0 && step.To == v.Build)?.PwrUrl ?? ""
+                : BuildPatternUrl(config.FullBuildUrl, os, arch, branch, v.Build, 0, v.Build),
             SigUrl = config.SignatureUrl != null
                 ? BuildPatternUrl(config.SignatureUrl, os, arch, branch, v.Build, 0, v.Build)
                 : null
@@ -523,6 +528,9 @@ public partial class JsonMirrorSource : IVersionSource
                 case "manifest":
                     versions = await DiscoverVersionsManifestAsync(os, arch, branch, ct);
                     break;
+                case "head-probe":
+                    versions = await DiscoverVersionsHeadProbeAsync(os, arch, branch, ct);
+                    break;
                 case "static-list":
                     versions = discovery.StaticVersions?
                         .Select(v => new DiscoveredVersion(v, null))
@@ -538,10 +546,14 @@ public partial class JsonMirrorSource : IVersionSource
             if (versions.Count > 0)
             {
                 _versionCache[cacheKey] = (DateTime.UtcNow, versions);
-                Logger.Success($"Mirror:{SourceId}", $" Discovered {versions.Count} versions for {branch}");
+                Logger.Success($"Mirror: {SourceId}", $"Discovered {versions.Count} versions for {branch}");
             }
 
             return versions;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
@@ -610,6 +622,69 @@ public partial class JsonMirrorSource : IVersionSource
         return ParseVersionsFromHtml(html, discovery.HtmlPattern, discovery.MinFileSizeBytes);
     }
 
+    private async Task<List<DiscoveredVersion>> DiscoverVersionsHeadProbeAsync(
+        string os, string arch, string branch, CancellationToken ct)
+    {
+        var config = _meta.Pattern!;
+        var maxVersion = Math.Clamp(config.VersionDiscovery.MaxProbeVersion, 1, 4096);
+        if (!await HasFullBuildAsync(os, arch, branch, 1, ct))
+            return [];
+
+        var lastPresent = 1;
+        var firstMissing = 2;
+        while (firstMissing <= maxVersion &&
+               await HasFullBuildAsync(os, arch, branch, firstMissing, ct))
+        {
+            lastPresent = firstMissing;
+            firstMissing = Math.Min(firstMissing * 2, maxVersion + 1);
+        }
+
+        firstMissing = Math.Min(firstMissing, maxVersion + 1);
+        while (lastPresent + 1 < firstMissing)
+        {
+            var middle = lastPresent + (firstMissing - lastPresent) / 2;
+            if (await HasFullBuildAsync(os, arch, branch, middle, ct))
+                lastPresent = middle;
+            else
+                firstMissing = middle;
+        }
+
+        var versions = new List<DiscoveredVersion>(lastPresent);
+        for (var first = 1; first <= lastPresent; first += 8)
+        {
+            var candidates = Enumerable.Range(first, Math.Min(8, lastPresent - first + 1)).ToArray();
+            var found = await Task.WhenAll(candidates.Select(version =>
+                HasFullBuildAsync(os, arch, branch, version, ct)));
+            for (var index = 0; index < candidates.Length; index++)
+            {
+                if (found[index])
+                    versions.Add(new DiscoveredVersion(candidates[index], null));
+            }
+        }
+
+        return [.. versions.OrderByDescending(version => version.Build)];
+    }
+
+    private async Task<bool> HasFullBuildAsync(
+        string os, string arch, string branch, int version, CancellationToken ct)
+    {
+        var config = _meta.Pattern!;
+        var url = BuildPatternUrl(config.FullBuildUrl, os, arch, branch, version, 0, version);
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
+        using var request = await CreateRequestWithHeadersAsync(HttpMethod.Head, url, timeout.Token);
+        using var response = await _httpClient.SendAsync(
+            request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return false;
+        response.EnsureSuccessStatusCode();
+
+        return response.Content.Headers.ContentLength is { } size &&
+               size >= config.VersionDiscovery.MinFileSizeBytes &&
+               response.Content.Headers.ContentType?.MediaType?.Contains("html", StringComparison.OrdinalIgnoreCase) != true;
+    }
+
     /// <summary>
     /// Discovers versions from a manifest.json file.
     /// Expects: { "files": { "{os}/{arch}/{branch}/{from}_to_{to}.pwr": { "size": N }, ... } }
@@ -638,19 +713,21 @@ public partial class JsonMirrorSource : IVersionSource
     }
 
     /// <summary>
-    /// Parses version numbers and names from manifest.json.
+    /// Parses installable versions and actual patch edges from manifest.json.
     /// File paths: {os}/{arch}/{branch}/{from}_to_{to}.pwr
     /// Version metadata may also be published under versions[branch][build].version
     /// or files[...].gameVersion
-    /// Returns list of available 'to' versions (targets) for the given os/arch/branch
+    /// Returns only targets reachable from a full archive for the requested platform.
     /// </summary>
     private List<DiscoveredVersion> ParseVersionsFromManifest(string json, string os, string arch, string branch)
     {
+        var cacheKey = $"{os}:{arch}:{branch}";
+        _manifestSteps[cacheKey] = [];
         try
         {
             using var doc = JsonDocument.Parse(json);
             var versions = new Dictionary<int, string?>();
-            var fileVersions = new Dictionary<int, string?>();
+            var steps = new List<CachedPatchStep>();
             var root = doc.RootElement;
 
             if (root.TryGetProperty("versions", out var versionsNode) &&
@@ -673,6 +750,9 @@ public partial class JsonMirrorSource : IVersionSource
             var hasFileIndex = root.TryGetProperty("files", out var filesNode) &&
                 filesNode.ValueKind == JsonValueKind.Object;
 
+            if (!hasFileIndex)
+                return [];
+
             if (hasFileIndex)
             {
                 var mappedOs = ApplyMapping(_meta.Pattern?.OsMapping, os);
@@ -687,27 +767,59 @@ public partial class JsonMirrorSource : IVersionSource
                         continue;
 
                     var match = patchPattern.Match(file.Name);
-                    if (!match.Success || !int.TryParse(match.Groups[2].Value, out var toVersion))
+                    if (!match.Success || match.Index != prefix.Length ||
+                        !int.TryParse(match.Groups[1].Value, out var fromVersion) ||
+                        !int.TryParse(match.Groups[2].Value, out var toVersion) ||
+                        fromVersion < 0 || toVersion <= fromVersion)
                         continue;
 
                     var fileVersionName = TryGetManifestVersionName(file.Value);
-                    fileVersions[toVersion] = fileVersionName;
                     if (!versions.TryGetValue(toVersion, out var existingName) ||
                         string.IsNullOrWhiteSpace(existingName))
                     {
                         versions[toVersion] = fileVersionName;
                     }
+
+                    var template = fromVersion == 0
+                        ? _meta.Pattern!.FullBuildUrl
+                        : _meta.Pattern!.DiffPatchUrl;
+                    if (string.IsNullOrWhiteSpace(template))
+                        continue;
+
+                    steps.Add(new CachedPatchStep
+                    {
+                        From = fromVersion,
+                        To = toVersion,
+                        PwrUrl = BuildPatternUrl(template, os, arch, branch, toVersion, fromVersion, toVersion)
+                    });
                 }
 
-                // A manifest-level versions list can describe builds for every platform.
-                // Once a file index is present, only files matching the requested platform
-                // prove that a version can actually be downloaded there
-                versions = fileVersions.ToDictionary(
-                    pair => pair.Key,
-                    pair => string.IsNullOrWhiteSpace(pair.Value)
-                        ? versions.GetValueOrDefault(pair.Key)
-                        : pair.Value);
+                var reachable = new HashSet<int> { 0 };
+                var pending = new Queue<int>();
+                pending.Enqueue(0);
+                var outgoing = steps.GroupBy(step => step.From)
+                    .ToDictionary(group => group.Key, group => group.ToList());
+                while (pending.TryDequeue(out var from))
+                {
+                    if (!outgoing.TryGetValue(from, out var nextSteps))
+                        continue;
+
+                    foreach (var step in nextSteps)
+                    {
+                        if (reachable.Add(step.To))
+                            pending.Enqueue(step.To);
+                    }
+                }
+
+                steps = [.. steps.Where(step => reachable.Contains(step.From) && reachable.Contains(step.To))];
+                foreach (var step in steps)
+                    step.VersionName = versions.GetValueOrDefault(step.To);
+
+                versions = versions.Where(pair => reachable.Contains(pair.Key))
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
             }
+
+            _manifestSteps[cacheKey] = steps;
 
             if (versions.Count == 0)
             {
@@ -1162,14 +1274,6 @@ public partial class JsonMirrorSource : IVersionSource
         string os, string arch, string branch, int version, CancellationToken ct)
     {
         var config = _meta.JsonIndex!;
-
-        if (IsDiffBasedBranch(branch))
-        {
-            if (version != 1) return null;
-            var patchFiles = await GetIndexFilesAsync(os, branch, "patch", ct);
-            var key = BuildDiffFileNameFromPattern(0, 1, os, arch);
-            return patchFiles.TryGetValue(key, out var patchUrl) ? patchUrl : null;
-        }
 
         var baseFiles = config.Structure == "grouped"
             ? await GetIndexFilesAsync(os, branch, "base", ct)

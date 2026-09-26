@@ -15,7 +15,7 @@ public sealed class InstanceDirectoryCopyTests
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return;
 
-        var directory = Path.Combine(Path.GetTempPath(), "HyPrismInstanceCopyTests_" + Guid.NewGuid());
+        var directory = Path.Combine(Path.GetTempPath(), "HyprismInstanceCopyTests_" + Guid.NewGuid());
         Directory.CreateDirectory(directory);
         try
         {

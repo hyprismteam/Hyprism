@@ -35,7 +35,7 @@ export default function Footer() {
           </Link>
           <span className="hyprism-footer-meta">{dictionary.footer.license}</span>
           <nav className="hyprism-footer-links" aria-label={dictionary.docsLabel}>
-            <a href="https://github.com/hyprismteam/HyPrism" target="_blank" rel="noreferrer">
+            <a href="https://github.com/hyprismteam/Hyprism" target="_blank" rel="noreferrer">
               {dictionary.footer.repository}
             </a>
             <a href="#main">{dictionary.footer.backToTop} ↑</a>

@@ -63,6 +63,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <SolidColorBrush x:Key="ItemSelectedHoverBrush" Color="#27FFFFFF" />
   <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="#08FFFFFF" />
   <SolidColorBrush x:Key="NavigationItemSelectedBrush" Color="#12FFFFFF" />
+  <!-- Opaque result of NavigationItemSelectedBrush over NavigationPaneBrush for popup surfaces. -->
+  <SolidColorBrush x:Key="NavigationItemSelectedSurfaceBrush" Color="#28292B" />
   <SolidColorBrush x:Key="NavigationItemSelectedHoverBrush" Color="#18FFFFFF" />
   <BoxShadows x:Key="PopupShadow">0 12 36 0 #80000000</BoxShadows>
 

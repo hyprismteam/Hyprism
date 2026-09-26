@@ -17,7 +17,7 @@
       versionMatch = builtins.match ".*<Version>([0-9A-Za-z.+-]+)</Version>.*" versionSource;
       version =
         if versionMatch == null then
-          throw "Unable to read the HyPrism version from Hyprism.Desktop.csproj"
+          throw "Unable to read the Hyprism version from Hyprism.Desktop.csproj"
         else
           builtins.elemAt versionMatch 0;
     in
@@ -66,13 +66,13 @@
 
             postInstall = ''
               install -d "$out/bin"
-              install -Dm644 Packaging/linux/io.github.hyprismteam.HyPrism.desktop \
-                "$out/share/applications/io.github.hyprismteam.HyPrism.desktop"
+              install -Dm644 Packaging/linux/io.github.hyprismteam.Hyprism.desktop \
+                "$out/share/applications/io.github.hyprismteam.Hyprism.desktop"
               install -Dm644 Sources/Hyprism.Desktop/Assets/Images/logo.svg \
-                "$out/share/icons/hicolor/scalable/apps/io.github.hyprismteam.HyPrism.svg"
+                "$out/share/icons/hicolor/scalable/apps/io.github.hyprismteam.Hyprism.svg"
               # Keep the source viewBox and make the packaged icon viewport square
               sed -E -i '0,/<svg[[:space:]]/{s/(<svg[^>]*width=")([^"]+)("[^>]*height=")[^"]+/\1\2\3\2/}' \
-                "$out/share/icons/hicolor/scalable/apps/io.github.hyprismteam.HyPrism.svg"
+                "$out/share/icons/hicolor/scalable/apps/io.github.hyprismteam.Hyprism.svg"
             '';
 
             postFixup = ''
@@ -81,7 +81,7 @@
             '';
 
             meta = {
-              homepage = "https://github.com/hyprismteam/HyPrism";
+              homepage = "https://github.com/hyprismteam/Hyprism";
               description = "Native Avalonia launcher for Hytale";
               license = lib.licenses.gpl3Only;
               mainProgram = "hyprism";

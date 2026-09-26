@@ -16,7 +16,7 @@ public static class LocalNodeCertificateStore
     private const string RootPublicCertificateFileName = "hyprism-local-ca.crt";
     private const string CertificateFileName = "h.localhost.pfx";
     private const string PublicCertificateFileName = "h.localhost.crt";
-    private const string RootSubject = "CN=HyPrism Local Node Root CA";
+    private const string RootSubject = "CN=Hyprism Local Node Root CA";
     private static readonly object CertificateLock = new();
     private const X509KeyStorageFlags EphemeralKeyStorageFlags =
         X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet;

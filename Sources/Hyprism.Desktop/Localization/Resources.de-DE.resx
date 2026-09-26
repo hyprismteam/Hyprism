@@ -1248,7 +1248,7 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="onboarding.about" xml:space="preserve">
     <value>Über</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Über Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Diese Download-Quelle ist bereits konfiguriert</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Überprüfe die Kompatibilität der Quelle</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism konnte an dieser Adresse keinen kompatiblen Spiegel erkennen</value>
   </data>
@@ -2693,18 +2690,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>Die Download-Quelle konnte nicht entfernt werden</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Download-Quelle hinzugefügt</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Download-Quelle entfernt</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Download-Quelle aktiviert</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Download-Quelle deaktiviert</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON-Index</value>

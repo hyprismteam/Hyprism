@@ -15,7 +15,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <key>CFBundleIconFile</key>
   <string>Hyprism.icns</string>
   <key>CFBundleIdentifier</key>
-  <string>io.github.hyprismteam.HyPrism</string>
+  <string>io.github.hyprismteam.Hyprism</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>

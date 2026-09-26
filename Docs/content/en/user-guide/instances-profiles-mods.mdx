@@ -13,7 +13,7 @@ When an available source provides a human-readable version name, Hyprism uses it
 
 1. Open **Instances** and select **New Instance**
 2. Choose a branch
-3. Choose one of the available versions. When the source provides a human-readable name, Hyprism shows that name instead of the numeric build identifier. Versions whose names start with `build` are legacy builds and appear at the bottom
+3. Choose one of the available versions. For manifest mirrors, the list includes only builds reachable from a full archive through published patches. When the source provides a human-readable name, Hyprism shows that name instead of the numeric build identifier. Versions whose names start with `build` appear at the bottom.
 4. Confirm the creation
 
 The new entry appears immediately, but its game files are downloaded only when you launch it
@@ -94,7 +94,7 @@ The **Logs** section shows live game output for the selected instance while Hypr
 
 Each row shows time, level, source, and message. Select text to copy it, or select rows and press Ctrl+C to copy complete records. Scrolling away from the bottom pauses auto-scroll. The live buffer remains available only while Hyprism is open
 
-Launcher logs remain on disk after Hyprism closes. Open **Settings → Data**, open the launcher data folder, and look in `Logs` for the relevant session. If a launch fails, include the relevant launcher and instance logs when [reporting a bug](https://github.com/hyprismteam/HyPrism/issues/new/choose), but review them for personal paths or account data first
+Launcher logs remain on disk after Hyprism closes. Open **Settings → Data**, open the launcher data folder, and look in `Logs` for the relevant session. If a launch fails, include the relevant launcher and instance logs when [reporting a bug](https://github.com/hyprismteam/Hyprism/issues/new/choose), but review them for personal paths or account data first
 
 ## Running games after reopening Hyprism
 

@@ -470,8 +470,8 @@ public partial class InstanceRepository : IInstanceRepository
         {
             Add(Path.Combine(appData, "hyprism"));
             Add(Path.Combine(appData, "Hyprism"));
-            Add(Path.Combine(appData, "HyPrism"));
-            Add(Path.Combine(appData, "HyPrismLauncher"));
+            Add(Path.Combine(appData, "Hyprism"));
+            Add(Path.Combine(appData, "HyprismLauncher"));
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {

@@ -2,7 +2,7 @@ Icons8 Universal Multimedia License
 
 Bitmap icons are provided by Icons8 and remain subject to
 the Icons8 Universal Multimedia License. They are not licensed under the
-HyPrism project's GPL-3.0-only license.
+Hyprism project's GPL-3.0-only license.
 
 License and attribution requirements:
 https://icons8.com/license

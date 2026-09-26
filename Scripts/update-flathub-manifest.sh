@@ -5,23 +5,23 @@
 
 
 # This script fetches the latest Linux x64 tarball from the
-# HyPrism GitHub releases, computes its sha256 checksum and
+# Hyprism GitHub releases, computes its sha256 checksum and
 # updates the Flathub manifest at
-# Properties/linux/flathub/io.github.hyprismteam.HyPrism.module.yml
+# Properties/linux/flathub/io.github.hyprismteam.Hyprism.module.yml
 # with the concrete download URL and corresponding sha256.
 #
 # Dependencies: curl, jq, sha256sum (coreutils), sed
 
 set -euo pipefail
 
-MANIFEST="$(dirname "$0")/../Properties/linux/flathub/io.github.hyprismteam.HyPrism.yml"
+MANIFEST="$(dirname "$0")/../Properties/linux/flathub/io.github.hyprismteam.Hyprism.yml"
 
 # query GitHub API for the latest release
-API="https://api.github.com/repos/hyprismteam/HyPrism/releases/latest"
+API="https://api.github.com/repos/hyprismteam/Hyprism/releases/latest"
 
 # also fetch the SHA of the tip of the main branch
 # we can use the GitHub API which doesn't require a local repo
-MAIN_SHA=$(curl -s "https://api.github.com/repos/hyprismteam/HyPrism/branches/main" \
+MAIN_SHA=$(curl -s "https://api.github.com/repos/hyprismteam/Hyprism/branches/main" \
     | jq -r .commit.sha)
 if [[ -z "$MAIN_SHA" || "$MAIN_SHA" == "null" ]]; then
     echo "error: unable to fetch main branch SHA" >&2
@@ -30,8 +30,8 @@ fi
 
 # build final manifest by combining header and module fragments
 # header comes from flatpak yaml, modules from flathub module file
-# FLATPAK="$(dirname "$MANIFEST")/../flatpak/io.github.hyprismteam.HyPrism.yml"
-# MODULE_FILE="$(dirname "$MANIFEST")/io.github.hyprismteam.HyPrism.module.yml"
+# FLATPAK="$(dirname "$MANIFEST")/../flatpak/io.github.hyprismteam.Hyprism.yml"
+# MODULE_FILE="$(dirname "$MANIFEST")/io.github.hyprismteam.Hyprism.module.yml"
 
 # if [[ ! -f "$FLATPAK" ]]; then
 #     echo "error: flatpak header file not found: $FLATPAK" >&2

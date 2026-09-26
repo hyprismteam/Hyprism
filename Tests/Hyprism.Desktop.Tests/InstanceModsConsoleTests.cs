@@ -225,7 +225,7 @@ public sealed class InstanceModsConsoleTests
             Version = 20,
             IsInstalled = true
         };
-        var directory = Path.Combine(Path.GetTempPath(), "HyPrismLogFolderTests_" + Guid.NewGuid());
+        var directory = Path.Combine(Path.GetTempPath(), "HyprismLogFolderTests_" + Guid.NewGuid());
         try
         {
             var logSession = new LogSessionPaths(directory, DateTimeOffset.Now);

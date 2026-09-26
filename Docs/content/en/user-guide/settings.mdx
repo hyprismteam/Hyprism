@@ -42,7 +42,20 @@ To add a mirror, select **Add** and choose one method
 - **Automatic detection** accepts a public HTTPS endpoint and tries to infer its supported layout
 - **Manual setup** accepts a complete `.mirror.json` definition
 
+**Add** becomes available when the URL or JSON definition is valid. If automatic detection fails, edit the URL before trying again. Move the pointer away from the expanded button and return to it to show **Cancel** while detection runs.
+
+Click outside the input or press **Esc** to leave it. Press **Esc** again to return to the method selection. If a check is running, **Esc** cancels it first. From method selection, **Esc** closes the add source screen.
+
+For the HytaleSP mirror, select **Automatic detection** and enter the [HytaleSP download endpoint](https://licdn.estrogen.cat). Hyprism detects its protected PWR files and adds the launcher headers required to download them.
+
 Hyprism validates the definition and checks whether each source has files for the current platform. It prefers the official source and selects the fastest available enabled mirror when the official source cannot serve the requested version
+
+To remove a user-added mirror:
+
+1. Open its three-dot menu and select **Remove**.
+2. Check the source name in **Confirmation**, then select **Remove**. Select **Cancel** to keep the source.
+
+Removing a mirror deletes its local definition, so Hyprism will no longer use it for downloads.
 
 :::warning
 A mirror supplies executable game content and patches. Add only endpoints you trust and make sure their use complies with the [Hytale EULA](https://hytale.com/eula) and local law

@@ -1,5 +1,5 @@
 Avalonia and the related Avalonia logos are registered trademarks of AvaloniaUI OÜ.
 
-Their inclusion in HyPrism is limited to the factual statement that the application is built with Avalonia UI. The marks remain subject to the Avalonia Trademark Guidelines at https://avaloniaui.net/legal/trademark and do not imply sponsorship or endorsement by AvaloniaUI OÜ.
+Their inclusion in Hyprism is limited to the factual statement that the application is built with Avalonia UI. The marks remain subject to the Avalonia Trademark Guidelines at https://avaloniaui.net/legal/trademark and do not imply sponsorship or endorsement by AvaloniaUI OÜ.
 
 All trademark rights remain with their respective owner.

@@ -20,7 +20,7 @@ public class JsonProfileRepositoryTests : IDisposable
 
     public JsonProfileRepositoryTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "HyPrismPMTests_" + Guid.NewGuid());
+        _tempDir = Path.Combine(Path.GetTempPath(), "HyprismPMTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_tempDir);
         _config = new JsonConfigStore(_tempDir);
         _skinMock = new Mock<ISkinRepository>();

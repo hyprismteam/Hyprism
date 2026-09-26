@@ -2089,7 +2089,7 @@ public sealed class MainWindowRenderTests
             new GitHubCommit(
                 "abcdef1234567890",
                 "feat: refine the native About page",
-                "https://github.com/hyprismteam/HyPrism/commit/abcdef1"));
+                "https://github.com/hyprismteam/Hyprism/commit/abcdef1"));
         github.Setup(service => service.LoadAvatarAsync(It.IsAny<string>(), It.IsAny<int>()))
             .ReturnsAsync(TinyPngHandler.ImageBytes);
         news.Setup(service => service.GetNewsAsync(It.IsAny<int>()))
@@ -4445,19 +4445,19 @@ public sealed class MainWindowRenderTests
         viewModel.Settings.OpenDocumentationCommand.Execute(null);
         uriLauncher.Verify(
             service => service.LaunchAsync(
-                new Uri("https://hyprismteam.github.io/HyPrism/docs/"),
+                new Uri("https://hyprismteam.github.io/Hyprism/docs/"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
         viewModel.Settings.OpenLatestCommitCommand.Execute(null);
         uriLauncher.Verify(
             service => service.LaunchAsync(
-                new Uri("https://github.com/hyprismteam/HyPrism/commit/abcdef1"),
+                new Uri("https://github.com/hyprismteam/Hyprism/commit/abcdef1"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
         viewModel.Settings.OpenAllContributorsCommand.Execute(null);
         uriLauncher.Verify(
             service => service.LaunchAsync(
-                new Uri("https://github.com/hyprismteam/HyPrism/graphs/contributors"),
+                new Uri("https://github.com/hyprismteam/Hyprism/graphs/contributors"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
         viewModel.Settings.OpenHytaleEulaCommand.Execute(null);

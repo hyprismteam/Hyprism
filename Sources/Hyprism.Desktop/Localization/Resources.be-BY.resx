@@ -1248,7 +1248,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.about" xml:space="preserve">
     <value>Пра нас</value>
   </data>
-  <data name="onboarding.aboutHyPrism" xml:space="preserve">
+  <data name="onboarding.aboutHyprism" xml:space="preserve">
     <value>Пра Hyprism</value>
   </data>
   <data name="onboarding.allSet" xml:space="preserve">
@@ -2679,9 +2679,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.downloads.sourceAlreadyExists" xml:space="preserve">
     <value>Гэтая крыніца загрузкі ўжо наладжана</value>
   </data>
-  <data name="settings.downloads.detectingSource" xml:space="preserve">
-    <value>Праверка сумяшчальнасці крыніцы</value>
-  </data>
   <data name="settings.downloads.sourceDetectionFailed" xml:space="preserve">
     <value>Hyprism не змог выявіць сумяшчальнае люстэрка па гэтым адрасе</value>
   </data>
@@ -2693,18 +2690,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.downloads.sourceRemoveFailed" xml:space="preserve">
     <value>Крыніцу загрузкі нельга выдаліць</value>
-  </data>
-  <data name="settings.downloads.sourceAdded" xml:space="preserve">
-    <value>Крыніца загрузкі дададзена</value>
-  </data>
-  <data name="settings.downloads.sourceRemoved" xml:space="preserve">
-    <value>Крыніца загрузкі выдалена</value>
-  </data>
-  <data name="settings.downloads.sourceEnabled" xml:space="preserve">
-    <value>Крыніца загрузкі ўключана</value>
-  </data>
-  <data name="settings.downloads.sourceDisabled" xml:space="preserve">
-    <value>Крыніца загрузкі адключана</value>
   </data>
   <data name="settings.downloads.sourceTypeJsonIndex" xml:space="preserve">
     <value>JSON індэкс</value>

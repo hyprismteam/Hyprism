@@ -86,7 +86,7 @@ public class LauncherUtilitiesTests
     {
         var dir = LauncherUtilities.GetDefaultAppDir();
         Assert.True(System.IO.Path.IsPathRooted(dir), "App dir should be an absolute path");
-        Assert.EndsWith("HyPrism", dir, StringComparison.OrdinalIgnoreCase);
+        Assert.EndsWith("Hyprism", dir, StringComparison.OrdinalIgnoreCase);
     }
 
 
