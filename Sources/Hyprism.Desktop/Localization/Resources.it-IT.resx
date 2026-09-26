@@ -29,10 +29,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Controllo segmentato</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>Scaricata l’ultima versione di Hyprism nella cartella Download.</value>
+    <value>Scaricata l’ultima versione di Hyprism nella cartella Download</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>Abbiamo tentato di aprire il file per consentirti di installarlo. Se non si apre, vai nella cartella Download ed esegui il file manualmente.</value>
+    <value>Abbiamo tentato di aprire il file per consentirti di installarlo. Se non si apre, vai nella cartella Download ed esegui il file manualmente</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Inserisci il percorso completo in cui vuoi salvare le istanze di Hyprism:</value>
@@ -61,7 +61,7 @@ Nota: i seguenti elementi rimangono in AppData:
 • Impostazioni del launcher
 • WebView2 (cartella EBWebView)
 
-Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
+Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>Nickname non valido</value>
@@ -70,7 +70,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Il nickname deve essere compreso tra 1 e 16 caratteri</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>Il percorso non può essere utilizzato. Verifica che esista e che tu abbia i permessi di scrittura.</value>
+    <value>Il percorso non può essere utilizzato. Verifica che esista e che tu abbia i permessi di scrittura</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -202,7 +202,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Installazione del gioco</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>I tuoi dati utente e i preset delle skin saranno preservati.</value>
+    <value>I tuoi dati utente e i preset delle skin saranno preservati</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>Eliminare il gioco?</value>
@@ -217,7 +217,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Annulla</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>Questa azione non può essere annullata.</value>
+    <value>Questa azione non può essere annullata</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>Elimina profilo</value>
@@ -340,7 +340,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Modifica</value>
   </data>
   <data name="instances.editor.invalidName" xml:space="preserve">
-    <value>Inserisci un nome da 1 a 64 caratteri e una descrizione di massimo 2000 caratteri.</value>
+    <value>Inserisci un nome da 1 a 64 caratteri e una descrizione di massimo 2000 caratteri</value>
   </data>
   <data name="instances.editor.description" xml:space="preserve">
     <value>Descrizione</value>
@@ -349,10 +349,10 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Icona dell'istanza</value>
   </data>
   <data name="instances.editor.invalidIcon" xml:space="preserve">
-    <value>Scegli un’immagine PNG o JPEG valida.</value>
+    <value>Scegli un’immagine PNG o JPEG valida</value>
   </data>
   <data name="instances.editor.saveFailed" xml:space="preserve">
-    <value>Impossibile salvare le modifiche all’istanza.</value>
+    <value>Impossibile salvare le modifiche all’istanza</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Errore durante l'esportazione dell'istanza</value>
@@ -454,7 +454,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Il cambio di versione rimuoverà i file di gioco</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>Il client di gioco verrà eliminato e dovrai scaricare nuovamente questa versione. I dati utente, come salvataggi e mod, saranno conservati.</value>
+    <value>Il client di gioco verrà eliminato e dovrai scaricare nuovamente questa versione. I dati utente, come salvataggi e mod, saranno conservati</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>Cambia lingua</value>
@@ -700,7 +700,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Solo a scopo educativo. Ti piace?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>Solo educativo.</value>
+    <value>Solo educativo</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>ESCI</value>
@@ -781,7 +781,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Autore</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>Il backend ha rifiutato l'installazione di questa mod. Per favore riprova.</value>
+    <value>Il backend ha rifiutato l'installazione di questa mod. Per favore riprova</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>Sfoglia Mod</value>
@@ -847,7 +847,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Chiudi</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare {{count}} mod? Questa operazione non può essere annullata.</value>
+    <value>Sei sicuro di voler eliminare {{count}} mod? Questa operazione non può essere annullata</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>Sei sicuro di voler scaricare {{count}} mod?</value>
@@ -958,7 +958,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Importazione lista mod...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>Installazione mod fallita. Per favore riprova.</value>
+    <value>Installazione mod fallita. Per favore riprova</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>Installa selezionate</value>
@@ -1021,7 +1021,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Nessuna descrizione</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>Non sono stati trovati file scaricabili per le mod selezionate.</value>
+    <value>Non sono stati trovati file scaricabili per le mod selezionate</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>Nessun file disponibile</value>
@@ -1258,22 +1258,22 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Autenticazione in corso...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Impossibile creare il profilo dall'account Hytale.</value>
+    <value>Impossibile creare il profilo dall'account Hytale</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Accedi con il tuo account Hytale. Se non hai ancora acquistato il gioco, clicca su Salta.</value>
+    <value>Accedi con il tuo account Hytale. Se non hai ancora acquistato il gioco, clicca su Salta</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>Si è verificato un errore durante l'autenticazione.</value>
+    <value>Si è verificato un errore durante l'autenticazione</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>Autenticazione fallita. Per favore riprova.</value>
+    <value>Autenticazione fallita. Per favore riprova</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Accedi con Hytale</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>Il tuo account non ha ancora accesso a Hytale. Puoi acquistare il gioco sul sito ufficiale.</value>
+    <value>Il tuo account non ha ancora accesso a Hytale. Puoi acquistare il gioco sul sito ufficiale</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>Salta</value>
@@ -1306,7 +1306,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Personalizza l'aspetto</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism è un launcher non ufficiale per Hytale. Questo progetto non è affiliato con Hypixel Studios.</value>
+    <value>Hyprism è un launcher non ufficiale per Hytale. Questo progetto non è affiliato con Hypixel Studios</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>Entra nel launcher</value>
@@ -1366,7 +1366,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Posizione</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>Seleziona dove memorizzare le tue istanze di gioco. Puoi lasciare questa impostazione come predefinita o scegliere una posizione personalizzata.</value>
+    <value>Seleziona dove memorizzare le tue istanze di gioco. Puoi lasciare questa impostazione come predefinita o scegliere una posizione personalizzata</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>Maintainer e Sviluppatore</value>
@@ -1455,11 +1455,29 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
   <data name="profileEditor.usernameHint" xml:space="preserve">
     <value>Deve essere lungo 3-16 caratteri</value>
   </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>Inserisci un nome utente</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>Il nome utente deve contenere almeno 3 caratteri</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>Il nome utente non può superare i 16 caratteri</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>Usa solo lettere latine, cifre, trattini e trattini bassi</value>
+  </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
   </data>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>Identificatore univoco del tuo profilo</value>
+  </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>Inserisci un UUID</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>Inserisci un UUID valido, ad esempio 12345678-1234-1234-1234-123456789abc</value>
   </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>Copia UUID</value>
@@ -1468,7 +1486,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Crea nuovo profilo</value>
   </data>
   <data name="profiles.deleteFailed" xml:space="preserve">
-    <value>Impossibile eliminare il profilo.</value>
+    <value>Impossibile eliminare il profilo</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Elimina profilo</value>
@@ -1531,19 +1549,19 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Profili</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>Verrai reindirizzato alla pagina di accesso di Hytale nel tuo browser. Dopo aver effettuato l'accesso, il tuo profilo verrà creato automaticamente.</value>
+    <value>Verrai reindirizzato alla pagina di accesso di Hytale nel tuo browser. Dopo aver effettuato l'accesso, il tuo profilo verrà creato automaticamente</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>Si è verificato un errore durante l'accesso. Riprova.</value>
+    <value>Si è verificato un errore durante l'accesso. Riprova</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>L'accesso non è stato completato. Riprova.</value>
+    <value>L'accesso non è stato completato. Riprova</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Accedi con Hytale</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>Completa l'accesso nel tuo browser. Questa finestra si aggiornerà automaticamente.</value>
+    <value>Completa l'accesso nel tuo browser. Questa finestra si aggiornerà automaticamente</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>caratteri</value>
@@ -1555,10 +1573,10 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Crea profilo</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>Si è verificato un errore durante la creazione del profilo.</value>
+    <value>Si è verificato un errore durante la creazione del profilo</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>Impossibile creare il profilo. Riprova.</value>
+    <value>Impossibile creare il profilo. Riprova</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>Accedi</value>
@@ -1573,13 +1591,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Scegli un nickname</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>Il nickname deve essere di 3-16 caratteri: lettere inglesi, numeri, trattino o underscore.</value>
+    <value>Il nickname deve essere di 3-16 caratteri: lettere inglesi, numeri, trattino o underscore</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>Solo A-Z, 0-9, - e _</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Il tuo account Hytale non ha ancora profili di gioco. Un profilo di gioco verrà creato al primo accesso al gioco.</value>
+    <value>Il tuo account Hytale non ha ancora profili di gioco. Un profilo di gioco verrà creato al primo accesso al gioco</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>Account ufficiale Hytale</value>
@@ -1639,7 +1657,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Launcher e gestore di mod tutto in uno per Hytale</value>
   </data>
   <data name="settings.aboutSettings.disclaimer" xml:space="preserve">
-    <value>Hyprism è un launcher non ufficiale per Hytale. Questo progetto non è affiliato con Hypixel Studios.</value>
+    <value>Hyprism è un launcher non ufficiale per Hytale. Questo progetto non è affiliato con Hypixel Studios</value>
   </data>
   <data name="settings.aboutSettings.builtWith" xml:space="preserve">
     <value>Creato con</value>
@@ -1711,10 +1729,10 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Cartella del gioco</value>
   </data>
   <data name="settings.dataSettings.gameDirectoryHint" xml:space="preserve">
-    <value>Posizione in cui sono memorizzate le istanze di gioco installate.</value>
+    <value>Posizione in cui sono memorizzate le istanze di gioco installate</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>Alcune opzioni non sono disponibili mentre il gioco è in esecuzione. Chiudi il gioco per modificare queste impostazioni.</value>
+    <value>Alcune opzioni non sono disponibili mentre il gioco è in esecuzione. Chiudi il gioco per modificare queste impostazioni</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>Cartella delle istanze</value>
@@ -1726,7 +1744,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Cartella dei dati del launcher</value>
   </data>
   <data name="settings.dataSettings.launcherDataHint" xml:space="preserve">
-    <value>Posizione in cui sono memorizzati la configurazione e le risorse del launcher.</value>
+    <value>Posizione in cui sono memorizzati la configurazione e le risorse del launcher</value>
   </data>
   <data name="settings.dataSettings.launcherFiles" xml:space="preserve"><value>File del launcher</value></data>
   <data name="settings.dataSettings.storageUsed" xml:space="preserve"><value>Spazio utilizzato</value></data>
@@ -1750,13 +1768,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Gestione dei dati</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>Questo eliminerà tutti i dati del launcher, comprese le impostazioni, la cache e i file scaricati. Questa azione non può essere annullata.</value>
+    <value>Questo eliminerà tutti i dati del launcher, comprese le impostazioni, la cache e i file scaricati. Questa azione non può essere annullata</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>Eliminare tutti i dati?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>Questo eliminerà l'istanza {{branch}} {{version}} e tutti i suoi dati. Questa azione non può essere annullata.</value>
+    <value>Questo eliminerà l'istanza {{branch}} {{version}} e tutti i suoi dati. Questa azione non può essere annullata</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>Eliminare l'istanza?</value>
@@ -1783,7 +1801,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Abilita</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>Formato: header=valore o header="valore con spazi". Usa {hytaleAgent} per il User-Agent ufficiale.</value>
+    <value>Formato: header=valore o header="valore con spazi". Usa {hytaleAgent} per il User-Agent ufficiale</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>Header personalizzati (opzionale): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1792,10 +1810,10 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Come funzionano i download</value>
   </data>
   <data name="settings.downloads.howDownloadsWorkDescription" xml:space="preserve">
-    <value>Hyprism seleziona automaticamente la fonte più veloce disponibile per scaricare i file di gioco. Premi "Test Velocità" per verificare la tua connessione.</value>
+    <value>Hyprism seleziona automaticamente la fonte più veloce disponibile per scaricare i file di gioco. Premi "Test Velocità" per verificare la tua connessione</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Inserisci l'URL base di un mirror Hytale. Il launcher tenterà di rilevare automaticamente la configurazione.</value>
+    <value>Inserisci l'URL base di un mirror Hytale. Il launcher tenterà di rilevare automaticamente la configurazione</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>Mirror della Community</value>
@@ -1864,7 +1882,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>File dati del launcher</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>Posizione in cui vengono archiviati i dati del launcher e i file di gioco.</value>
+    <value>Posizione in cui vengono archiviati i dati del launcher e i file di gioco</value>
   </data>
   <data name="settings.generalSettings.showAlphaMods" xml:space="preserve">
     <value>Mostra mod in Alpha</value>
@@ -1924,7 +1942,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Scarica e installa le mod di ottimizzazione per migliorare le prestazioni del gioco</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>Rilevata una sola GPU — la selezione è bloccata in modalità automatica.</value>
+    <value>Rilevata una sola GPU — la selezione è bloccata in modalità automatica</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>Impostazioni grafiche</value>
@@ -1951,7 +1969,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Cancella istanza</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>Gestisci le versioni di gioco installate.</value>
+    <value>Gestisci le versioni di gioco installate</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>Trascina un file ZIP o PWR per importare un'istanza</value>
@@ -2017,13 +2035,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Nessun eseguibile selezionato</value>
   </data>
 <data name="settings.javaSettings.customJavaPathNotFound" xml:space="preserve">
-    <value>L'eseguibile Java selezionato non è stato trovato.</value>
+    <value>L'eseguibile Java selezionato non è stato trovato</value>
   </data>
   <data name="settings.javaSettings.customJavaPathPlaceholder" xml:space="preserve">
     <value>/percorso/a/java o C:\Java\bin\java.exe</value>
   </data>
   <data name="settings.javaSettings.customJavaPathRequired" xml:space="preserve">
-    <value>Per favore specifica un percorso eseguibile Java.</value>
+    <value>Per favore specifica un percorso eseguibile Java</value>
   </data>
   <data name="settings.javaSettings.detectedMemory" xml:space="preserve">
     <value>Memoria rilevata: {{value}}</value>
@@ -2032,19 +2050,19 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Garbage collector</value>
   </data>
   <data name="settings.javaSettings.gcModeHint" xml:space="preserve">
-    <value>Scegli un profilo GC semplice invece di scrivere flag manualmente.</value>
+    <value>Scegli un profilo GC semplice invece di scrivere flag manualmente</value>
   </data>
   <data name="settings.javaSettings.gc_auto" xml:space="preserve">
     <value>Automatico (default)</value>
   </data>
   <data name="settings.javaSettings.gc_autoHint" xml:space="preserve">
-    <value>Non forzare un collector specifico.</value>
+    <value>Non forzare un collector specifico</value>
   </data>
   <data name="settings.javaSettings.gc_g1" xml:space="preserve">
     <value>G1GC</value>
   </data>
   <data name="settings.javaSettings.gc_g1Hint" xml:space="preserve">
-    <value>Aggiunge -XX:+UseG1GC per un frame pacing più fluido.</value>
+    <value>Aggiunge -XX:+UseG1GC per un frame pacing più fluido</value>
   </data>
   <data name="settings.javaSettings.initialRam" xml:space="preserve">
     <value>RAM iniziale (-Xms)</value>
@@ -2053,19 +2071,19 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Java runtime</value>
   </data>
   <data name="settings.javaSettings.javaRuntimeHint" xml:space="preserve">
-    <value>Scegli quale eseguibile Java deve essere utilizzato per il server singleplayer.</value>
+    <value>Scegli quale eseguibile Java deve essere utilizzato per il server singleplayer</value>
   </data>
   <data name="settings.javaSettings.jvmArguments" xml:space="preserve">
     <value>Argomenti JVM avanzati</value>
   </data>
   <data name="settings.javaSettings.jvmArgumentsBlocked" xml:space="preserve">
-    <value>Alcuni flag JVM non sicuri o gestiti sono stati rimossi prima del salvataggio.</value>
+    <value>Alcuni flag JVM non sicuri o gestiti sono stati rimossi prima del salvataggio</value>
   </data>
     <data name="settings.javaSettings.jvmArgumentsEmpty" xml:space="preserve">
     <value>Ancora nessun argomento aggiuntivo, i flag facoltativi vengono salvati in JAVA_TOOL_OPTIONS</value>
   </data>
 <data name="settings.javaSettings.jvmArgumentsHint" xml:space="preserve">
-    <value>Flag opzionali aggiuntivi per il server singleplayer. Salvati in JAVA_TOOL_OPTIONS.</value>
+    <value>Flag opzionali aggiuntivi per il server singleplayer. Salvati in JAVA_TOOL_OPTIONS</value>
   </data>
   <data name="settings.javaSettings.jvmArgumentsPlaceholder" xml:space="preserve">
     <value>-Dfile.encoding=UTF-8 -XX:+UnlockExperimentalVMOptions</value>
@@ -2080,19 +2098,19 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Allocazione RAM (server)</value>
   </data>
   <data name="settings.javaSettings.ramAllocationHint" xml:space="preserve">
-    <value>Imposta la heap massima di Java (-Xmx) per il server singleplayer utilizzando un semplice slider.</value>
+    <value>Imposta la heap massima di Java (-Xmx) per il server singleplayer utilizzando un semplice slider</value>
   </data>
   <data name="settings.javaSettings.useBundledJava" xml:space="preserve">
     <value>Usa Java incluso</value>
   </data>
   <data name="settings.javaSettings.useBundledJavaHint" xml:space="preserve">
-    <value>Consigliato: utilizza Java fornito con Hyprism.</value>
+    <value>Consigliato: utilizza Java fornito con Hyprism</value>
   </data>
   <data name="settings.javaSettings.useCustomJava" xml:space="preserve">
     <value>Usa Java personalizzato</value>
   </data>
   <data name="settings.javaSettings.useCustomJavaHint" xml:space="preserve">
-    <value>Specifica il tuo eseguibile Java (java/java.exe).</value>
+    <value>Specifica il tuo eseguibile Java (java/java.exe)</value>
   </data>
   <data name="settings.language" xml:space="preserve">
     <value>Lingua</value>
@@ -2119,7 +2137,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Scegli la lingua desiderata per l'interfaccia del launcher</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>Nota: Alcuni testi potrebbero rimanere in inglese fino al completamento della localizzazione. Gli sviluppatori stanno lavorando attivamente per localizzare il launcher in modo che tutti possano utilizzarlo.</value>
+    <value>Nota: Alcuni testi potrebbero rimanere in inglese fino al completamento della localizzazione. Gli sviluppatori stanno lavorando attivamente per localizzare il launcher in modo che tutti possano utilizzarlo</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>Seleziona lingua</value>
@@ -2152,7 +2170,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Server di autenticazione</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>Inserisci l'indirizzo del server usato per autenticare il gioco online.</value>
+    <value>Inserisci l'indirizzo del server usato per autenticare il gioco online</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>Ad esempio, sessions.example.com</value>
@@ -2179,7 +2197,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Nome visualizzato</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>Questo nome sarà mostrato in gioco (1-16 caratteri).</value>
+    <value>Questo nome sarà mostrato in gioco (1-16 caratteri)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>Hytale ha uno schema specifico per i nickname. Usa solo caratteri inglesi e numeri (0-9), evitando simboli speciali e spazi (eccezioni: '-', '_')</value>
@@ -2299,7 +2317,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>Il gioco si avvierà automaticamente una volta pronto.</value>
+    <value>Il gioco si avvierà automaticamente una volta pronto</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>Scaricamento...</value>
@@ -2311,7 +2329,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Avvio...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>Attendere mentre scarichiamo e installiamo i file di gioco.</value>
+    <value>Attendere mentre scarichiamo e installiamo i file di gioco</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>Vuoi copiare i tuoi dati nella nuova versione?</value>
@@ -2320,7 +2338,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Versione corrente</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>È disponibile una nuova versione del gioco. La tua versione attuale ha dati salvati (impostazioni, mod, ecc.).</value>
+    <value>È disponibile una nuova versione del gioco. La tua versione attuale ha dati salvati (impostazioni, mod, ecc.)</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>Nuova versione</value>
@@ -2341,7 +2359,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Aggiorna senza copiare</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>Il launcher si riavvierà automaticamente al termine dell'aggiornamento.</value>
+    <value>Il launcher si riavvierà automaticamente al termine dell'aggiornamento</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>Aggiornamento fallito</value>
@@ -2350,7 +2368,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Installazione</value>
   </data>
   <data name="updateOverlay.message" xml:space="preserve">
-    <value>Attendere mentre scarichiamo e installiamo l'ultima versione di Hyprism.</value>
+    <value>Attendere mentre scarichiamo e installiamo l'ultima versione di Hyprism</value>
   </data>
   <data name="updateOverlay.title" xml:space="preserve">
     <value>AGGIORNAMENTO DEL LAUNCHER</value>
@@ -2458,7 +2476,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Elimina</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>Eliminare "{0}" e tutti i suoi dati? Questa azione non può essere annullata.</value>
+    <value>Eliminare "{0}" e tutti i suoi dati? Questa azione non può essere annullata</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Installa</value>
@@ -2488,7 +2506,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Clicca per vedere la release su GitHub</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>L'articolo non può essere caricato. Puoi comunque aprirlo su hytale.com.</value>
+    <value>L'articolo non può essere caricato. Puoi comunque aprirlo su hytale.com</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>Caricamento articolo...</value>
@@ -2503,7 +2521,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Carica di più</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>Seleziona una notizia per leggerla qui.</value>
+    <value>Seleziona una notizia per leggerla qui</value>
   </data>
   <data name="onboarding.warning.back" xml:space="preserve">
     <value>Torna al login</value>
@@ -2512,13 +2530,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Continua</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Senza un account Hytale, non puoi scaricare i file del gioco dai server ufficiali.</value>
+    <value>Senza un account Hytale, non puoi scaricare i file del gioco dai server ufficiali</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>Nessuna risorsa web disponibile per il download</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>Per scaricare il gioco, dovrai aggiungere un mirror in Impostazioni → Download, o accedere più tardi con il tuo account Hytale.</value>
+    <value>Per scaricare il gioco, dovrai aggiungere un mirror in Impostazioni → Download, o accedere più tardi con il tuo account Hytale</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>Nessuna sorgente di download</value>
@@ -2698,7 +2716,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Modello URL</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>Lo specchio della community viene utilizzato come fonte alternativa per i file di gioco quando i server ufficiali non sono disponibili.</value>
+    <value>Lo specchio della community viene utilizzato come fonte alternativa per i file di gioco quando i server ufficiali non sono disponibili</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>Impostazioni specchio</value>
@@ -2722,13 +2740,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Controllo in corso...</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>I server ufficiali sono sempre considerati disponibili.</value>
+    <value>I server ufficiali sono sempre considerati disponibili</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>Offline</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>Il server di autenticazione non è raggiungibile. La modalità online è temporaneamente disabilitata.</value>
+    <value>Il server di autenticazione non è raggiungibile. La modalità online è temporaneamente disabilitata</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>Online</value>
@@ -2740,13 +2758,13 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive.</value>
     <value>Stato del server di autenticazione</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>Verifica se il server di autenticazione è raggiungibile.</value>
+    <value>Verifica se il server di autenticazione è raggiungibile</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>Gli account ufficiali possono utilizzare solo l'autenticazione ufficiale di Hytale.</value>
+    <value>Gli account ufficiali possono utilizzare solo l'autenticazione ufficiale di Hytale</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>Gli account non ufficiali non possono utilizzare l'autenticazione ufficiale di Hytale.</value>
+    <value>Gli account non ufficiali non possono utilizzare l'autenticazione ufficiale di Hytale</value>
   </data>
   <data name="desktopSettings.categories.language" xml:space="preserve">
     <value>Lingua</value>

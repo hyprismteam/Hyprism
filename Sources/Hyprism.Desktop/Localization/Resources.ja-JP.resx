@@ -1455,11 +1455,29 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profileEditor.usernameHint" xml:space="preserve">
     <value>3〜16文字</value>
   </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>ユーザー名を入力してください。</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>ユーザー名は3文字以上にしてください。</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>ユーザー名は16文字以下にしてください。</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>半角英字、数字、ハイフン、アンダースコアのみ使用できます。</value>
+  </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
   </data>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>プロファイルの一意の識別子</value>
+  </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>UUIDを入力してください。</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>有効なUUIDを入力してください（例: 12345678-1234-1234-1234-123456789abc）。</value>
   </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>UUIDをコピー</value>

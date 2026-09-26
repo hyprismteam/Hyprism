@@ -32,10 +32,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Segmented control</value>
   </data>
   <data name="app.downloadedUpdate" xml:space="preserve">
-    <value>Downloaded the latest Hyprism to your Downloads folder.</value>
+    <value>Downloaded the latest Hyprism to your Downloads folder</value>
   </data>
   <data name="app.downloadedUpdateHint" xml:space="preserve">
-    <value>We attempted to open the file so you can install it. If it did not open, go to Downloads and run the file manually.</value>
+    <value>We attempted to open the file so you can install it. If it did not open, go to Downloads and run the file manually</value>
   </data>
   <data name="app.enterInstancePath" xml:space="preserve">
     <value>Enter the full path where you want Hyprism instances stored:</value>
@@ -64,7 +64,7 @@ Note: The following remain in AppData:
 • Launcher settings
 • WebView2 (EBWebView folder)
 
-You may need to reinstall the game if switching drives.</value>
+You may need to reinstall the game if switching drives</value>
   </data>
   <data name="app.invalidNickname" xml:space="preserve">
     <value>Invalid Nickname</value>
@@ -73,7 +73,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Nickname must be between 1 and 16 characters</value>
   </data>
   <data name="app.pathError" xml:space="preserve">
-    <value>The path could not be used. Please check it exists and you have write permissions.</value>
+    <value>The path could not be used. Please check it exists and you have write permissions</value>
   </data>
   <data name="app.title" xml:space="preserve">
     <value>Hyprism</value>
@@ -211,7 +211,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Game installation</value>
   </data>
   <data name="deleteGame.preserveNote" xml:space="preserve">
-    <value>Your user data and skin presets will be preserved.</value>
+    <value>Your user data and skin presets will be preserved</value>
   </data>
   <data name="deleteGame.title" xml:space="preserve">
     <value>Delete Game?</value>
@@ -226,7 +226,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Cancel</value>
   </data>
   <data name="deleteProfile.cannotUndo" xml:space="preserve">
-    <value>This action cannot be undone.</value>
+    <value>This action cannot be undone</value>
   </data>
   <data name="deleteProfile.delete" xml:space="preserve">
     <value>Delete Profile</value>
@@ -373,7 +373,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Delete</value>
   </data>
   <data name="instances.actions.deleteHint" xml:space="preserve">
-    <value>Delete "{0}" and all of its data? This action cannot be undone.</value>
+    <value>Delete "{0}" and all of its data? This action cannot be undone</value>
   </data>
   <data name="instances.actions.install" xml:space="preserve">
     <value>Install</value>
@@ -418,7 +418,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Edit Instance</value>
   </data>
   <data name="instances.editor.invalidName" xml:space="preserve">
-    <value>Enter a name of 1 to 64 characters and a description of up to 2000 characters.</value>
+    <value>Enter a name of 1 to 64 characters and a description of up to 2000 characters</value>
   </data>
   <data name="editor.action" xml:space="preserve">
     <value>Edit</value>
@@ -430,10 +430,10 @@ You may need to reinstall the game if switching drives.</value>
     <value>Instance icon</value>
   </data>
   <data name="instances.editor.invalidIcon" xml:space="preserve">
-    <value>Choose a valid PNG or JPEG image.</value>
+    <value>Choose a valid PNG or JPEG image</value>
   </data>
   <data name="instances.editor.saveFailed" xml:space="preserve">
-    <value>Could not save the instance changes.</value>
+    <value>Could not save the instance changes</value>
   </data>
   <data name="instances.exportFailed" xml:space="preserve">
     <value>Failed to export instance</value>
@@ -535,7 +535,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Changing version will remove game files</value>
   </data>
   <data name="instances.versionChangeWarningHint" xml:space="preserve">
-    <value>The game client will be deleted and you will need to re-download this version. User data (saves, mods) will be kept.</value>
+    <value>The game client will be deleted and you will need to re-download this version. User data (saves, mods) will be kept</value>
   </data>
   <data name="languageSelector.changeLanguage" xml:space="preserve">
     <value>Change Language</value>
@@ -784,7 +784,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>For educational purposes only. Like it?</value>
   </data>
   <data name="main.educationalOnly" xml:space="preserve">
-    <value>Educational only.</value>
+    <value>Educational only</value>
   </data>
   <data name="main.exit" xml:space="preserve">
     <value>EXIT</value>
@@ -865,7 +865,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Author</value>
   </data>
   <data name="modManager.backendRefused" xml:space="preserve">
-    <value>Backend refused to install this mod. Please try again.</value>
+    <value>Backend refused to install this mod. Please try again</value>
   </data>
   <data name="modManager.browse" xml:space="preserve">
     <value>Browse Mods</value>
@@ -931,7 +931,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Close</value>
   </data>
   <data name="modManager.confirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete {{count}} mod(s)? This cannot be undone.</value>
+    <value>Are you sure you want to delete {{count}} mod(s)? This cannot be undone</value>
   </data>
   <data name="modManager.confirmDownload" xml:space="preserve">
     <value>Are you sure you want to download {{count}} mod(s)?</value>
@@ -1042,7 +1042,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Importing mod list...</value>
   </data>
   <data name="modManager.installFailed" xml:space="preserve">
-    <value>Failed to install mods. Please try again.</value>
+    <value>Failed to install mods. Please try again</value>
   </data>
   <data name="modManager.installSelected" xml:space="preserve">
     <value>Install Selected</value>
@@ -1105,7 +1105,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>No description</value>
   </data>
   <data name="modManager.noDownloadableFiles" xml:space="preserve">
-    <value>No downloadable files found for the selected mods.</value>
+    <value>No downloadable files found for the selected mods</value>
   </data>
   <data name="modManager.noFilesAvailable" xml:space="preserve">
     <value>No files available</value>
@@ -1297,7 +1297,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>All</value>
   </data>
   <data name="news.articleLoadFailed" xml:space="preserve">
-    <value>The article could not be loaded. You can still open it on hytale.com.</value>
+    <value>The article could not be loaded. You can still open it on hytale.com</value>
   </data>
   <data name="news.articleLoading" xml:space="preserve">
     <value>Loading article...</value>
@@ -1339,7 +1339,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Link</value>
   </data>
   <data name="news.selectArticle" xml:space="preserve">
-    <value>Select a news item to read it here.</value>
+    <value>Select a news item to read it here</value>
   </data>
   <data name="news.title" xml:space="preserve">
     <value>News</value>
@@ -1360,22 +1360,22 @@ You may need to reinstall the game if switching drives.</value>
     <value>Authenticating...</value>
   </data>
   <data name="onboarding.auth.createFailed" xml:space="preserve">
-    <value>Failed to create profile from Hytale account.</value>
+    <value>Failed to create profile from Hytale account</value>
   </data>
   <data name="onboarding.auth.description" xml:space="preserve">
-    <value>Log in with your Hytale account. If you haven't purchased the game yet, click Skip.</value>
+    <value>Log in with your Hytale account. If you haven't purchased the game yet, click Skip</value>
   </data>
   <data name="onboarding.auth.error" xml:space="preserve">
-    <value>An error occurred during authentication.</value>
+    <value>An error occurred during authentication</value>
   </data>
   <data name="onboarding.auth.failed" xml:space="preserve">
-    <value>Authentication failed. Please try again.</value>
+    <value>Authentication failed. Please try again</value>
   </data>
   <data name="onboarding.auth.login" xml:space="preserve">
     <value>Log in with Hytale</value>
   </data>
   <data name="onboarding.auth.noHytaleProfile" xml:space="preserve">
-    <value>Your account doesn't have access to Hytale yet. You can purchase the game on the official website.</value>
+    <value>Your account doesn't have access to Hytale yet. You can purchase the game on the official website</value>
   </data>
   <data name="onboarding.auth.skip" xml:space="preserve">
     <value>Skip</value>
@@ -1408,7 +1408,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Customize appearance</value>
   </data>
   <data name="onboarding.disclaimer" xml:space="preserve">
-    <value>Hyprism is an unofficial launcher for Hytale. This project is not affiliated with Hypixel Studios.</value>
+    <value>Hyprism is an unofficial launcher for Hytale. This project is not affiliated with Hypixel Studios</value>
   </data>
   <data name="onboarding.enterLauncher" xml:space="preserve">
     <value>Enter Launcher</value>
@@ -1468,7 +1468,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Location</value>
   </data>
   <data name="onboarding.locationHint" xml:space="preserve">
-    <value>Select where to store your game instances. You can leave this as the default or choose a custom location.</value>
+    <value>Select where to store your game instances. You can leave this as the default or choose a custom location</value>
   </data>
   <data name="onboarding.maintainerRole" xml:space="preserve">
     <value>Maintainer &amp; Developer</value>
@@ -1513,13 +1513,13 @@ You may need to reinstall the game if switching drives.</value>
     <value>Continue</value>
   </data>
   <data name="onboarding.warning.description" xml:space="preserve">
-    <value>Without a Hytale account, you cannot download game files from official servers.</value>
+    <value>Without a Hytale account, you cannot download game files from official servers</value>
   </data>
   <data name="onboarding.warning.noSources" xml:space="preserve">
     <value>No web resources available for download</value>
   </data>
   <data name="onboarding.warning.noSourcesHint" xml:space="preserve">
-    <value>To download the game, you will need to add a mirror in Settings → Downloads, or log in with your Hytale account later.</value>
+    <value>To download the game, you will need to add a mirror in Settings → Downloads, or log in with your Hytale account later</value>
   </data>
   <data name="onboarding.warning.title" xml:space="preserve">
     <value>No Download Sources</value>
@@ -1575,11 +1575,29 @@ You may need to reinstall the game if switching drives.</value>
   <data name="profileEditor.usernameHint" xml:space="preserve">
     <value>Must be 3-16 characters</value>
   </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>Enter a username</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>Username must contain at least 3 characters</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>Username cannot exceed 16 characters</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>Use only English letters, digits, hyphens, and underscores</value>
+  </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
   </data>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>Unique identifier for your profile</value>
+  </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>Enter a UUID</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>Enter a valid UUID, such as 12345678-1234-1234-1234-123456789abc</value>
   </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>Copy UUID</value>
@@ -1588,7 +1606,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Add</value>
   </data>
   <data name="profiles.deleteFailed" xml:space="preserve">
-    <value>Could not delete the profile.</value>
+    <value>Could not delete the profile</value>
   </data>
   <data name="profiles.deleteProfile" xml:space="preserve">
     <value>Delete Profile</value>
@@ -1657,19 +1675,19 @@ You may need to reinstall the game if switching drives.</value>
     <value>Profiles</value>
   </data>
   <data name="profiles.wizard.authDesc" xml:space="preserve">
-    <value>You'll be redirected to the Hytale login page in your browser. After signing in, your profile will be created automatically.</value>
+    <value>You'll be redirected to the Hytale login page in your browser. After signing in, your profile will be created automatically</value>
   </data>
   <data name="profiles.wizard.authError" xml:space="preserve">
-    <value>An error occurred during sign-in. Please try again.</value>
+    <value>An error occurred during sign-in. Please try again</value>
   </data>
   <data name="profiles.wizard.authFailed" xml:space="preserve">
-    <value>Sign-in was not completed. Please try again.</value>
+    <value>Sign-in was not completed. Please try again</value>
   </data>
   <data name="profiles.wizard.authTitle" xml:space="preserve">
     <value>Sign in with Hytale</value>
   </data>
   <data name="profiles.wizard.browserHint" xml:space="preserve">
-    <value>Complete the sign-in in your browser. This window will update automatically.</value>
+    <value>Complete the sign-in in your browser. This window will update automatically</value>
   </data>
   <data name="profiles.wizard.characters" xml:space="preserve">
     <value>characters</value>
@@ -1681,10 +1699,10 @@ You may need to reinstall the game if switching drives.</value>
     <value>Create Profile</value>
   </data>
   <data name="profiles.wizard.createError" xml:space="preserve">
-    <value>An error occurred while creating the profile.</value>
+    <value>An error occurred while creating the profile</value>
   </data>
   <data name="profiles.wizard.createFailed" xml:space="preserve">
-    <value>Failed to create profile. Please try again.</value>
+    <value>Failed to create profile. Please try again</value>
   </data>
   <data name="profiles.wizard.loginHytale" xml:space="preserve">
     <value>Sign in</value>
@@ -1699,13 +1717,13 @@ You may need to reinstall the game if switching drives.</value>
     <value>Choose a Nickname</value>
   </data>
   <data name="profiles.wizard.nickInvalid" xml:space="preserve">
-    <value>Nickname must be 3-16 characters: English letters, digits, dash or underscore.</value>
+    <value>Nickname must be 3-16 characters: English letters, digits, dash or underscore</value>
   </data>
   <data name="profiles.wizard.nickRules" xml:space="preserve">
     <value>A-Z, 0-9, - and _ only</value>
   </data>
   <data name="profiles.wizard.noHytaleProfile" xml:space="preserve">
-    <value>Your Hytale account has no game profiles yet. A game profile will be created when you first access the game.</value>
+    <value>Your Hytale account has no game profiles yet. A game profile will be created when you first access the game</value>
   </data>
   <data name="profiles.wizard.official" xml:space="preserve">
     <value>Official Hytale Account</value>
@@ -1765,7 +1783,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>All in one launcher and mod manager for Hytale</value>
   </data>
   <data name="settings.aboutSettings.disclaimer" xml:space="preserve">
-    <value>Hyprism is an unofficial launcher for Hytale. This project is not affiliated with Hypixel Studios.</value>
+    <value>Hyprism is an unofficial launcher for Hytale. This project is not affiliated with Hypixel Studios</value>
   </data>
   <data name="settings.aboutSettings.builtWith" xml:space="preserve">
     <value>Built with</value>
@@ -1903,10 +1921,10 @@ You may need to reinstall the game if switching drives.</value>
     <value>Game Directory</value>
   </data>
   <data name="settings.dataSettings.gameDirectoryHint" xml:space="preserve">
-    <value>Location where installed game instances are stored.</value>
+    <value>Location where installed game instances are stored</value>
   </data>
   <data name="settings.dataSettings.gameRunningWarning" xml:space="preserve">
-    <value>Some options are unavailable while the game is running. Please close the game to change these settings.</value>
+    <value>Some options are unavailable while the game is running. Please close the game to change these settings</value>
   </data>
   <data name="settings.dataSettings.instanceFolder" xml:space="preserve">
     <value>Instance Folder</value>
@@ -1918,7 +1936,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Launcher Data Folder</value>
   </data>
   <data name="settings.dataSettings.launcherDataHint" xml:space="preserve">
-    <value>Location where launcher configuration and assets are stored.</value>
+    <value>Location where launcher configuration and assets are stored</value>
   </data>
   <data name="settings.dataSettings.launcherFiles" xml:space="preserve">
     <value>Launcher Files</value>
@@ -1948,13 +1966,13 @@ You may need to reinstall the game if switching drives.</value>
     <value>Data Management</value>
   </data>
   <data name="settings.deleteAllData.message" xml:space="preserve">
-    <value>This will delete all launcher data including settings, cache, and downloaded files. This action cannot be undone.</value>
+    <value>This will delete all launcher data including settings, cache, and downloaded files. This action cannot be undone</value>
   </data>
   <data name="settings.deleteAllData.title" xml:space="preserve">
     <value>Delete All Data?</value>
   </data>
   <data name="settings.deleteInstance.message" xml:space="preserve">
-    <value>This will delete the {{branch}} {{version}} instance and all its data. This action cannot be undone.</value>
+    <value>This will delete the {{branch}} {{version}} instance and all its data. This action cannot be undone</value>
   </data>
   <data name="settings.deleteInstance.title" xml:space="preserve">
     <value>Delete Instance?</value>
@@ -1981,7 +1999,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Enable</value>
   </data>
   <data name="settings.downloads.headersHint" xml:space="preserve">
-    <value>Format: header=value or header="value with spaces". Use {hytaleAgent} for official User-Agent.</value>
+    <value>Format: header=value or header="value with spaces". Use {hytaleAgent} for official User-Agent</value>
   </data>
   <data name="settings.downloads.headersPlaceholder" xml:space="preserve">
     <value>Custom headers (optional): Authorization="Bearer token" User-Agent="{hytaleAgent}"</value>
@@ -1993,7 +2011,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Hyprism prioritizes the official download source and automatically selects the fastest added user mirror when the official source is unavailable</value>
   </data>
   <data name="settings.downloads.mirrorUrlHint" xml:space="preserve">
-    <value>Enter the base URL of a Hytale mirror. The launcher will attempt to auto-detect the configuration.</value>
+    <value>Enter the base URL of a Hytale mirror. The launcher will attempt to auto-detect the configuration</value>
   </data>
   <data name="settings.downloads.mirrors" xml:space="preserve">
     <value>Community Mirrors</value>
@@ -2164,10 +2182,10 @@ You may need to reinstall the game if switching drives.</value>
     <value>Launcher Storage</value>
   </data>
   <data name="settings.generalSettings.launcherStorageHint" xml:space="preserve">
-    <value>Location where launcher data and game files are stored.</value>
+    <value>Location where launcher data and game files are stored</value>
   </data>
   <data name="settings.generalSettings.mirrorDescription" xml:space="preserve">
-    <value>Community mirror is used as alternative source for game files when official servers are unavailable.</value>
+    <value>Community mirror is used as alternative source for game files when official servers are unavailable</value>
   </data>
   <data name="settings.generalSettings.mirrorSettings" xml:space="preserve">
     <value>Mirror Settings</value>
@@ -2239,7 +2257,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Download and install optimization mods to improve game performance</value>
   </data>
   <data name="settings.graphicsSettings.singleGpuNotice" xml:space="preserve">
-    <value>Only one GPU detected — selection is locked to Auto mode.</value>
+    <value>Only one GPU detected — selection is locked to Auto mode</value>
   </data>
   <data name="settings.graphicsSettings.title" xml:space="preserve">
     <value>Graphics Settings</value>
@@ -2266,7 +2284,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Delete Instance</value>
   </data>
   <data name="settings.instanceSettings.description" xml:space="preserve">
-    <value>Manage your installed game versions.</value>
+    <value>Manage your installed game versions</value>
   </data>
   <data name="settings.instanceSettings.dropZipImport" xml:space="preserve">
     <value>Drop ZIP or PWR to import instance</value>
@@ -2437,7 +2455,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Choose your preferred language for the launcher interface</value>
   </data>
   <data name="settings.languageSettings.note" xml:space="preserve">
-    <value>Note: Some text may remain in English until full localization is complete. The developers are actively localizing the launcher so that everyone can enjoy using it.</value>
+    <value>Note: Some text may remain in English until full localization is complete. The developers are actively localizing the launcher so that everyone can enjoy using it</value>
   </data>
   <data name="settings.languageSettings.selectLanguage" xml:space="preserve">
     <value>Select Language</value>
@@ -2476,7 +2494,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Checking...</value>
   </data>
   <data name="settings.networkSettings.authServerHint" xml:space="preserve">
-    <value>Add the address of the server used to authenticate online play.</value>
+    <value>Add the address of the server used to authenticate online play</value>
   </data>
   <data name="settings.networkSettings.authServerPlaceholder" xml:space="preserve">
     <value>For example, sessions.example.com</value>
@@ -2485,13 +2503,13 @@ You may need to reinstall the game if switching drives.</value>
     <value>Auth server is unreachable</value>
   </data>
   <data name="settings.networkSettings.authServerOfficialNote" xml:space="preserve">
-    <value>Official servers are always considered available.</value>
+    <value>Official servers are always considered available</value>
   </data>
   <data name="settings.networkSettings.authServerOffline" xml:space="preserve">
     <value>Offline</value>
   </data>
   <data name="settings.networkSettings.authServerOfflineWarning" xml:space="preserve">
-    <value>Auth server is unreachable. Online mode is temporarily disabled.</value>
+    <value>Auth server is unreachable. Online mode is temporarily disabled</value>
   </data>
   <data name="settings.networkSettings.authServerOnline" xml:space="preserve">
     <value>Online</value>
@@ -2503,13 +2521,13 @@ You may need to reinstall the game if switching drives.</value>
     <value>Auth Server Status</value>
   </data>
   <data name="settings.networkSettings.authServerStatusHint" xml:space="preserve">
-    <value>Check if the authentication server is reachable.</value>
+    <value>Check if the authentication server is reachable</value>
   </data>
   <data name="settings.networkSettings.currentServer" xml:space="preserve">
     <value>Current server</value>
   </data>
   <data name="settings.networkSettings.officialProfileNote" xml:space="preserve">
-    <value>Official accounts can only use official Hytale authentication.</value>
+    <value>Official accounts can only use official Hytale authentication</value>
   </data>
   <data name="settings.networkSettings.onlineMode" xml:space="preserve">
     <value>Connected mode</value>
@@ -2518,7 +2536,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Use the authentication service and account data; when disabled, Hyprism creates a local OmniAuth session</value>
   </data>
   <data name="settings.networkSettings.unofficialProfileNote" xml:space="preserve">
-    <value>Unofficial accounts cannot use official Hytale authentication.</value>
+    <value>Unofficial accounts cannot use official Hytale authentication</value>
   </data>
   <data name="settings.profile.avatar" xml:space="preserve">
     <value>Avatar</value>
@@ -2530,7 +2548,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Display Name</value>
   </data>
   <data name="settings.profile.displayNameHint" xml:space="preserve">
-    <value>This name will be shown in game (1-16 characters).</value>
+    <value>This name will be shown in game (1-16 characters)</value>
   </data>
   <data name="settings.profile.nameWarning" xml:space="preserve">
     <value>Hytale has specific nicknames pattern. Use English characters and numbers (0-9) only, avoiding special symbols and spaces (exceptions: '-', '_')</value>
@@ -2650,7 +2668,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>GitHub</value>
   </data>
   <data name="update.autoLaunch" xml:space="preserve">
-    <value>The game will launch automatically when ready.</value>
+    <value>The game will launch automatically when ready</value>
   </data>
   <data name="update.downloading" xml:space="preserve">
     <value>Downloading...</value>
@@ -2662,7 +2680,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Launching...</value>
   </data>
   <data name="update.pleaseWait" xml:space="preserve">
-    <value>Please wait while we download and install the game files.</value>
+    <value>Please wait while we download and install the game files</value>
   </data>
   <data name="updateConfirmation.copyDataQuestion" xml:space="preserve">
     <value>Would you like to copy your saved data to the new version?</value>
@@ -2671,7 +2689,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Current Version</value>
   </data>
   <data name="updateConfirmation.hasDataMessage" xml:space="preserve">
-    <value>A new game version is available. Your current version has saved data (settings, mods, etc.).</value>
+    <value>A new game version is available. Your current version has saved data (settings, mods, etc.)</value>
   </data>
   <data name="updateConfirmation.newVersion" xml:space="preserve">
     <value>New Version</value>
@@ -2692,7 +2710,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Update Without Copying</value>
   </data>
   <data name="updateOverlay.autoRestart" xml:space="preserve">
-    <value>The launcher will restart automatically when the update is complete.</value>
+    <value>The launcher will restart automatically when the update is complete</value>
   </data>
   <data name="updateOverlay.failed" xml:space="preserve">
     <value>Failed updating</value>
@@ -2701,7 +2719,7 @@ You may need to reinstall the game if switching drives.</value>
     <value>Installing</value>
   </data>
   <data name="updateOverlay.message" xml:space="preserve">
-    <value>Please wait while we download and install the latest version of Hyprism.</value>
+    <value>Please wait while we download and install the latest version of Hyprism</value>
   </data>
   <data name="updateOverlay.title" xml:space="preserve">
     <value>UPDATING LAUNCHER</value>

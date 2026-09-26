@@ -1455,11 +1455,29 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="profileEditor.usernameHint" xml:space="preserve">
     <value>必须是 3-16 个字符</value>
   </data>
+  <data name="profileEditor.usernameRequired" xml:space="preserve">
+    <value>请输入用户名。</value>
+  </data>
+  <data name="profileEditor.usernameTooShort" xml:space="preserve">
+    <value>用户名至少需要 3 个字符。</value>
+  </data>
+  <data name="profileEditor.usernameTooLong" xml:space="preserve">
+    <value>用户名不能超过 16 个字符。</value>
+  </data>
+  <data name="profileEditor.usernameInvalidCharacters" xml:space="preserve">
+    <value>只能使用英文字母、数字、连字符和下划线。</value>
+  </data>
   <data name="profileEditor.uuid" xml:space="preserve">
     <value>UUID</value>
   </data>
   <data name="profileEditor.uuidHint" xml:space="preserve">
     <value>配置文件的唯一标识符</value>
+  </data>
+  <data name="profileEditor.uuidRequired" xml:space="preserve">
+    <value>请输入 UUID。</value>
+  </data>
+  <data name="profileEditor.uuidInvalidFormat" xml:space="preserve">
+    <value>请输入有效的 UUID，例如 12345678-1234-1234-1234-123456789abc。</value>
   </data>
   <data name="profiles.copyUuid" xml:space="preserve">
     <value>复制 UUID</value>

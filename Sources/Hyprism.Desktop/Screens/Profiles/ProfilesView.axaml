@@ -866,7 +866,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 <TextBlock Text="{Binding ProfileNameLabel}" Classes="formLabel" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                   <controls:ModalTextField IsError="{Binding IsEditNameInvalid}"
-                                           ErrorMessage="{Binding ProfileNameHint}">
+                                           ErrorMessage="{Binding EditNameErrorMessage}">
                     <TextBox Text="{Binding EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              MaxLength="16"
                              PlaceholderText="{Binding NamePlaceholder}" />
@@ -885,7 +885,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 <TextBlock Text="{Binding UuidLabel}" Classes="formLabel" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                   <controls:ModalTextField IsError="{Binding IsEditUuidInvalid}"
-                                           ErrorMessage="{Binding UuidHint}">
+                                           ErrorMessage="{Binding EditUuidErrorMessage}">
                     <TextBox Text="{Binding EditUuid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{DynamicResource JetBrainsMonoFont}"
                              FontSize="13" />

@@ -57,11 +57,13 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditNameInvalid))]
+    [NotifyPropertyChangedFor(nameof(EditNameErrorMessage))]
     [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private string _editName = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditUuidInvalid))]
+    [NotifyPropertyChangedFor(nameof(EditUuidErrorMessage))]
     [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private string _editUuid = string.Empty;
 
@@ -75,6 +77,8 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditNameInvalid))]
     [NotifyPropertyChangedFor(nameof(IsEditUuidInvalid))]
+    [NotifyPropertyChangedFor(nameof(EditNameErrorMessage))]
+    [NotifyPropertyChangedFor(nameof(EditUuidErrorMessage))]
     [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private bool _isEditing;
 
@@ -120,8 +124,10 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public bool IsEmptyStateVisible => HasNoProfiles;
     public bool IsProfileEditorVisible => SelectedProfile is not null;
     public bool CanCreateOfflineProfile => OfflineNamePattern.IsMatch(OfflineProfileName.Trim());
-    public bool IsEditNameInvalid => IsEditing && !OfflineNamePattern.IsMatch(EditName?.Trim() ?? string.Empty);
-    public bool IsEditUuidInvalid => IsEditing && !Guid.TryParse(EditUuid, out _);
+    public bool IsEditNameInvalid => IsEditing && GetEditNameErrorKey() is not null;
+    public bool IsEditUuidInvalid => IsEditing && GetEditUuidErrorKey() is not null;
+    public string EditNameErrorMessage => GetEditErrorMessage(GetEditNameErrorKey());
+    public string EditUuidErrorMessage => GetEditErrorMessage(GetEditUuidErrorKey());
     public bool CanSaveProfile => IsEditing && SelectedProfile is { IsOfficial: false }
         && !IsEditNameInvalid && !IsEditUuidInvalid;
     public bool HasStatusMessage => !string.IsNullOrWhiteSpace(StatusMessage);
@@ -132,6 +138,29 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public bool IsOfficialCreationVisible => _creationStep is ProfileCreationStep.Official;
     public bool IsAuthenticationCancellationArmed =>
         IsAuthenticating && _isAuthenticationCancellationArmed;
+
+    private string GetEditErrorMessage(string? key)
+        => IsEditing && key is not null ? _localizer[key] : string.Empty;
+
+    private string? GetEditNameErrorKey()
+    {
+        var name = EditName?.Trim() ?? string.Empty;
+        if (name.Length == 0)
+            return "profileEditor.usernameRequired";
+        if (name.Length < 3)
+            return "profileEditor.usernameTooShort";
+        if (name.Length > 16)
+            return "profileEditor.usernameTooLong";
+        return OfflineNamePattern.IsMatch(name) ? null : "profileEditor.usernameInvalidCharacters";
+    }
+
+    private string? GetEditUuidErrorKey()
+    {
+        var uuid = EditUuid?.Trim() ?? string.Empty;
+        if (uuid.Length == 0)
+            return "profileEditor.uuidRequired";
+        return Guid.TryParse(uuid, out _) ? null : "profileEditor.uuidInvalidFormat";
+    }
 
     public string SavedProfilesLabel => _localizer["profiles.savedProfiles"];
     public string EditorLabel => _localizer["profiles.editor"];
@@ -258,6 +287,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                      nameof(CreateProfileHint), nameof(OfflineProfileLabel), nameof(OfflineProfileHint),
                      nameof(OfficialProfileLabel), nameof(OfficialProfileHint), nameof(ProfileNameLabel),
                      nameof(ProfileNameHint), nameof(UuidLabel), nameof(UuidHint), nameof(NamePlaceholder),
+                     nameof(EditNameErrorMessage), nameof(EditUuidErrorMessage),
                      nameof(CreateOfflineTitle), nameof(CreateOfflineHint), nameof(AuthenticationTitle),
                      nameof(AuthenticationHint), nameof(BrowserHint), nameof(SignInLabel),
                      nameof(CreateLabel), nameof(AddLabel),
