@@ -187,10 +187,10 @@ public sealed class OverlayModalAnimationTests
         window.Show();
         Dispatcher.UIThread.RunJobs();
 
-        var stroke = Assert.IsAssignableFrom<ISolidColorBrush>(
-            window.FindResource("MainCardStrokeBrush"));
-        var background = Assert.IsAssignableFrom<ISolidColorBrush>(
-            window.FindResource("AppBackgroundBrush"));
+        Assert.True(window.TryFindResource("MainCardStrokeBrush", window.ActualThemeVariant, out var strokeResource));
+        var stroke = Assert.IsAssignableFrom<ISolidColorBrush>(strokeResource);
+        Assert.True(window.TryFindResource("AppBackgroundBrush", window.ActualThemeVariant, out var backgroundResource));
+        var background = Assert.IsAssignableFrom<ISolidColorBrush>(backgroundResource);
 
         Freeze(window, modal, backdropOpacity: 0, sheetOffset: 420, shoulderScale: 0);
         Assert.Equal(stroke.Color, PixelColor(window, 100, LineRow));

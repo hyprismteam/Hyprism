@@ -21,7 +21,7 @@ namespace Hyprism.Desktop.Tests;
 public sealed class SelectionControlTests
 {
     [AvaloniaFact]
-    public void SelectionControlsKeepKeyboardAndVisibleFocusBehavior()
+    public async Task SelectionControlsKeepKeyboardAndVisibleFocusBehavior()
     {
         const string longCheckLabel = "A long localized option label that wraps within a narrow settings rail.";
         const string firstRadioLabel = "Bundled runtime";
@@ -88,7 +88,9 @@ public sealed class SelectionControlTests
         var radioIndicator = Assert.Single(
             firstRadio.GetVisualDescendants().OfType<Border>(),
             item => item.Classes.Contains("radioSelectionIndicator"));
-        Assert.Equal(Color.Parse("#79B0F4"), Assert.IsAssignableFrom<ISolidColorBrush>(radioIndicator.BorderBrush).Color);
+        await AvaloniaTestWait.UntilAsync(
+            () => Assert.IsAssignableFrom<ISolidColorBrush>(radioIndicator.BorderBrush).Color == Color.Parse("#79B0F4"),
+            "radio focus border transition");
         PressKey(window, Key.Space, PhysicalKey.Space, " ");
         Dispatcher.UIThread.RunJobs();
         Assert.True(firstRadio.IsChecked);
