@@ -16,6 +16,33 @@ namespace Hyprism.Desktop.Tests;
 public sealed class ProfilesViewModelTests
 {
     [AvaloniaFact]
+    public void OfflineCreationNameUpdatesSharedFieldValidation()
+    {
+        var profileManager = new Mock<IProfileManager>();
+        var profileRepository = new Mock<IProfileRepository>();
+        var uriLauncher = new Mock<IExternalUriLauncher>();
+        profileRepository.Setup(repository => repository.GetProfiles()).Returns([]);
+
+        using var viewModel = new ProfilesViewModel(
+            profileManager.Object,
+            profileRepository.Object,
+            uriLauncher.Object,
+            new StringLocalizer("en-US"));
+        viewModel.ShowCreateChoiceCommand.Execute(null);
+        viewModel.BeginOfflineCreationCommand.Execute(null);
+
+        viewModel.OfflineProfileName = "ab";
+        Assert.True(viewModel.IsOfflineNameInvalid);
+        Assert.NotEmpty(viewModel.OfflineNameErrorMessage);
+        Assert.False(viewModel.CanCreateOfflineProfile);
+
+        viewModel.GenerateOfflineProfileNameCommand.Execute(null);
+        Assert.False(viewModel.IsOfflineNameInvalid);
+        Assert.Empty(viewModel.OfflineNameErrorMessage);
+        Assert.True(viewModel.CanCreateOfflineProfile);
+    }
+
+    [AvaloniaFact]
     public void CancelCreationKeepsCurrentStepUntilTheVisualTransitionCompletes()
     {
         var profileManager = new Mock<IProfileManager>();

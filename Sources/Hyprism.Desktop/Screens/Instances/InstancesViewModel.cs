@@ -794,7 +794,13 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private void CloseInstanceCreator()
     {
         IsInstanceCreatorOpen = false;
-        ResetInstanceCreatorState();
+        CancelInstanceVersionLoading();
+    }
+
+    public void CompleteInstanceCreatorClose()
+    {
+        if (!IsInstanceCreatorOpen)
+            ResetInstanceCreatorState();
     }
 
     [RelayCommand]
@@ -839,7 +845,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             _managedInstance = _instances.FindInstanceById(instance.Id);
             UpdateManagedInstancePresentation();
             IsInstanceCreatorOpen = false;
-            ResetInstanceCreatorState();
             Volatile.Write(ref _logsInstanceId, null);
             InvalidateLogsRebuild();
             InstanceSection = string.Empty;

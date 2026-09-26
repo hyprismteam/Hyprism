@@ -77,7 +77,7 @@ Manifest discovery also reads names from `versions[branch][build].version` and f
 
 The official source reads the authenticated `game-assets/version/{branch}.json` manifest and follows its signed JSON URL when necessary. The returned name is paired with the latest numeric build from the patches API
 
-The official source applies the same separation to metadata returned with patch steps. The version cache stores the numeric build and display name separately, and the patch cache stores the published transitions per mirror. Older version cache snapshots refresh once after this format change. Existing instance files without a version name continue to use the numeric build as a fallback.
+The official source applies the same separation to metadata returned with patch steps. The version cache stores the numeric build and display name separately, and the patch cache stores the published transitions per mirror. A canceled fetch does not mark a branch as fresh or save a partial source list, so the next request fetches it again. Older version cache snapshots refresh once after this format change. Existing instance files without a version name continue to use the numeric build as a fallback.
 
 ## JSON index source
 

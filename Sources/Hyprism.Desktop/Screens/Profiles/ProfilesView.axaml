@@ -557,14 +557,8 @@ SPDX-License-Identifier: GPL-3.0-only
                           Classes="formNavigationRow"
                           Click="OnBeginOfficialProfileCreationClicked">
                     <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="profileAvatar" Width="44" Height="44">
-                        <Path Width="21"
-                              Height="21"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              Stretch="Uniform"
-                              Fill="{DynamicResource TextPrimaryBrush}"
-                              Data="{StaticResource WorldsIcon}" />
+                      <Border Classes="wizardChoiceIcon">
+                        <Path Data="{StaticResource WorldsIcon}" />
                       </Border>
                       <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <TextBlock Text="{Binding OfficialProfileLabel}" Classes="formLabel" />
@@ -583,14 +577,8 @@ SPDX-License-Identifier: GPL-3.0-only
                           Classes="formNavigationRow last"
                           Click="OnBeginOfflineProfileCreationClicked">
                     <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="profileAvatar" Width="44" Height="44">
-                        <Path Width="21"
-                              Height="21"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              Stretch="Uniform"
-                              Fill="{DynamicResource TextPrimaryBrush}"
-                              Data="{StaticResource ProfilesIcon}" />
+                      <Border Classes="wizardChoiceIcon">
+                        <Path Data="{StaticResource ProfilesIcon}" />
                       </Border>
                       <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <TextBlock Text="{Binding OfflineProfileLabel}" Classes="formLabel" />
@@ -636,27 +624,21 @@ SPDX-License-Identifier: GPL-3.0-only
                          TextAlignment="Center"
                          TextWrapping="Wrap" />
 
-              <Border Classes="formGroup" Margin="0,16,0,0">
-                <Border Classes="formRow last">
-                  <StackPanel Spacing="8">
-                    <TextBlock Text="{Binding ProfileNameLabel}" Classes="formLabel" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                      <TextBox Classes="profileInput"
-                               Text="{Binding OfflineProfileName, Mode=TwoWay}"
-                               MaxLength="16"
-                               PlaceholderText="{Binding NamePlaceholder}"
-                               FontSize="17" />
-                      <Button Grid.Column="1"
-                              Classes="profileIconButton"
-                              ToolTip.Tip="{Binding RandomizeNameLabel}"
-                              Command="{Binding GenerateOfflineProfileNameCommand}">
-                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource CasinoRoundedIcon}" />
-                      </Button>
-                    </Grid>
-                    <TextBlock Text="{Binding OfflineNameRuleLabel}" Classes="formHint" />
-                  </StackPanel>
-                </Border>
-              </Border>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,16,0,0">
+                <controls:ModalTextField IsError="{Binding IsOfflineNameInvalid}"
+                                         ErrorMessage="{Binding OfflineNameErrorMessage}">
+                  <TextBox Text="{Binding OfflineProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           MaxLength="16"
+                           PlaceholderText="{Binding NamePlaceholder}" />
+                </controls:ModalTextField>
+                <Button Grid.Column="1"
+                        Classes="profileIconButton editorRandomizeButton"
+                        ToolTip.Tip="{Binding RandomizeNameLabel}"
+                        AutomationProperties.Name="{Binding RandomizeNameLabel}"
+                        Command="{Binding GenerateOfflineProfileNameCommand}">
+                  <Path Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource CasinoRoundedIcon}" />
+                </Button>
+              </Grid>
 
               <TextBlock IsVisible="{Binding IsStatusError}"
                          Text="{Binding StatusMessage}"

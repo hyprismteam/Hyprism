@@ -53,6 +53,8 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanCreateOfflineProfile))]
+    [NotifyPropertyChangedFor(nameof(IsOfflineNameInvalid))]
+    [NotifyPropertyChangedFor(nameof(OfflineNameErrorMessage))]
     private string _offlineProfileName = GenerateDefaultOfflineName();
 
     [ObservableProperty]
@@ -123,7 +125,12 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public bool HasNoProfiles => !HasProfiles;
     public bool IsEmptyStateVisible => HasNoProfiles;
     public bool IsProfileEditorVisible => SelectedProfile is not null;
-    public bool CanCreateOfflineProfile => OfflineNamePattern.IsMatch(OfflineProfileName.Trim());
+    public bool CanCreateOfflineProfile => GetNameErrorKey(OfflineProfileName) is null;
+    public bool IsOfflineNameInvalid => IsOfflineCreationVisible && GetNameErrorKey(OfflineProfileName) is not null;
+    public string OfflineNameErrorMessage =>
+        IsOfflineCreationVisible && GetNameErrorKey(OfflineProfileName) is { } key
+            ? _localizer[key]
+            : string.Empty;
     public bool IsEditNameInvalid => IsEditing && GetEditNameErrorKey() is not null;
     public bool IsEditUuidInvalid => IsEditing && GetEditUuidErrorKey() is not null;
     public string EditNameErrorMessage => GetEditErrorMessage(GetEditNameErrorKey());
@@ -143,8 +150,11 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         => IsEditing && key is not null ? _localizer[key] : string.Empty;
 
     private string? GetEditNameErrorKey()
+        => GetNameErrorKey(EditName);
+
+    private static string? GetNameErrorKey(string? value)
     {
-        var name = EditName?.Trim() ?? string.Empty;
+        var name = value?.Trim() ?? string.Empty;
         if (name.Length == 0)
             return "profileEditor.usernameRequired";
         if (name.Length < 3)
@@ -203,7 +213,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string NoProfilesLabel => _localizer["profiles.noProfiles"];
     public string DeleteTitle => _localizer["confirmation.title"];
     public string DeleteHint => _localizer["deleteProfile.cannotUndo"];
-    public string OfflineNameRuleLabel => _localizer["profiles.wizard.nickRules"];
 
     private void OnProfilesChanged()
     {
@@ -288,13 +297,14 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                      nameof(OfficialProfileLabel), nameof(OfficialProfileHint), nameof(ProfileNameLabel),
                      nameof(ProfileNameHint), nameof(UuidLabel), nameof(UuidHint), nameof(NamePlaceholder),
                      nameof(EditNameErrorMessage), nameof(EditUuidErrorMessage),
+                     nameof(OfflineNameErrorMessage),
                      nameof(CreateOfflineTitle), nameof(CreateOfflineHint), nameof(AuthenticationTitle),
                      nameof(AuthenticationHint), nameof(BrowserHint), nameof(SignInLabel),
                      nameof(CreateLabel), nameof(AddLabel),
                      nameof(CancelLabel), nameof(BackLabel), nameof(SaveLabel), nameof(EditLabel), nameof(ProfileEditorTitle),
                      nameof(CopyLabel), nameof(FolderLabel), nameof(DeleteActionLabel), nameof(ActivationLabel), nameof(ActiveLabel), nameof(DeleteLabel), nameof(DuplicateLabel),
                      nameof(RandomizeNameLabel), nameof(RandomizeUuidLabel), nameof(OfficialLockedLabel),
-                     nameof(NoProfilesLabel), nameof(DeleteTitle), nameof(DeleteHint), nameof(OfflineNameRuleLabel)
+                     nameof(NoProfilesLabel), nameof(DeleteTitle), nameof(DeleteHint)
                  })
         {
             OnPropertyChanged(propertyName);
@@ -695,6 +705,8 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsCreateChoiceVisible));
         OnPropertyChanged(nameof(IsOfflineCreationVisible));
         OnPropertyChanged(nameof(IsOfficialCreationVisible));
+        OnPropertyChanged(nameof(IsOfflineNameInvalid));
+        OnPropertyChanged(nameof(OfflineNameErrorMessage));
     }
 
     private void ClearStatus()
@@ -766,9 +778,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         EditUuid = value?.Uuid ?? string.Empty;
         IsEditing = false;
     }
-
-    partial void OnOfflineProfileNameChanged(string value)
-        => OnPropertyChanged(nameof(CanCreateOfflineProfile));
 
     public void Dispose()
     {

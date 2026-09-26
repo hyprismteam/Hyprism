@@ -774,6 +774,23 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource ImportantBrush}" />
   </Style>
 
+  <Style Selector="Border.wizardChoiceIcon">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+
+  <Style Selector="Border.wizardChoiceIcon Path">
+    <Setter Property="Width" Value="21" />
+    <Setter Property="Height" Value="21" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
   <Style Selector="Button.formNavigationRow">
     <Setter Property="MinHeight" Value="66" />
     <Setter Property="Padding" Value="18,14" />

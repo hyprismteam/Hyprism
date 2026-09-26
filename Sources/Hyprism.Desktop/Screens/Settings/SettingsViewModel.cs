@@ -416,7 +416,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public bool OfficialSourceIsUnavailable { get; private set; }
     public bool OfficialSourceIsEnabled { get; private set; }
     public string AddSourceButtonLabel { get; private set; } = string.Empty;
-    public string AddSourceLabel { get; private set; } = string.Empty;
     public string AddSourceTitle { get; private set; } = string.Empty;
     public string AddSourceHint { get; private set; } = string.Empty;
     public string MirrorUrlPlaceholder { get; private set; } = string.Empty;
@@ -427,7 +426,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public string ManualSourceHint { get; private set; } = string.Empty;
     public string ManualSourceTitle { get; private set; } = string.Empty;
     public string ManualSourceDescription { get; private set; } = string.Empty;
-    public string ManualSourceJsonLabel { get; private set; } = string.Empty;
     public string ManualSourceJsonPlaceholder { get; private set; } = string.Empty;
     public string CancelLabel { get; private set; } = string.Empty;
     public string RemoveLabel { get; private set; } = string.Empty;
@@ -566,7 +564,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         OfficialSourceType = _localizer["settings.downloads.sourceTypeOfficial"];
         OfficialSourceAvailability = GetOfficialSourceAvailabilityLabel();
         AddSourceButtonLabel = _localizer["settings.downloads.add"];
-        AddSourceLabel = _localizer["settings.downloads.addSource"];
         AddSourceTitle = _localizer["settings.downloads.addSourceTitle"];
         AddSourceHint = _localizer["settings.downloads.addSourceHint"];
         MirrorUrlPlaceholder = _localizer["settings.downloads.sourceUrlPlaceholder"];
@@ -577,7 +574,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         ManualSourceHint = _localizer["settings.downloads.addSourceManualHint"];
         ManualSourceTitle = _localizer["settings.downloads.manualSourceTitle"];
         ManualSourceDescription = _localizer["settings.downloads.manualSourceHint"];
-        ManualSourceJsonLabel = _localizer["settings.downloads.manualSourceJson"];
         ManualSourceJsonPlaceholder = _localizer["settings.downloads.manualSourceJsonPlaceholder"];
         CancelLabel = _localizer["common.cancel"];
         RemoveLabel = _localizer["common.remove"];

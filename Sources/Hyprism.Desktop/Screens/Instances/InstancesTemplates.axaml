@@ -8,7 +8,16 @@ SPDX-License-Identifier: GPL-3.0-only
                     xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
                     xmlns:controls="using:Hyprism.Desktop.Controls">
     <DataTemplate x:Key="InstanceVersionTemplate" x:DataType="instances:InstanceVersionItemViewModel">
-      <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+      <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Version}" />
+        <TextBlock Grid.Column="1"
+                   Margin="5,0,0,0"
+                   Text="{Binding GameVersionLabel}"
+                   TextWrapping="NoWrap"
+                   TextTrimming="CharacterEllipsis"
+                   IsVisible="{Binding HasGameVersionLabel}"
+                   Foreground="{DynamicResource TextMutedBrush}" />
+      </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="InstanceFilterOptionTemplate" x:DataType="instances:InstanceListOptionViewModel">
@@ -71,4 +80,3 @@ SPDX-License-Identifier: GPL-3.0-only
     </DataTemplate>
 
 </ResourceDictionary>
-
