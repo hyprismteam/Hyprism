@@ -75,6 +75,27 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
 
+    <Style Selector="Button.profileIconButton.uuidCopyButton">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.16" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Button.profileIconButton.uuidCopyButton Path.uuidCopyIcon">
+      <Setter Property="Fill" Value="{DynamicResource TextSecondaryBrush}" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Fill" Duration="0:0:0.16" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Button.profileIconButton.uuidCopyButton:pointerover Path.uuidCopyIcon">
+      <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+
     <Style Selector="Button.profileIconButton Path">
       <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
     </Style>

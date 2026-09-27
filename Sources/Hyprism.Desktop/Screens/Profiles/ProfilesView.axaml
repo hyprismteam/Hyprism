@@ -416,10 +416,14 @@ SPDX-License-Identifier: GPL-3.0-only
                                      FontSize="13" />
                         </StackPanel>
                         <Button Grid.Column="1"
-                                Classes="profileIconButton"
+                                Classes="profileIconButton uuidCopyButton"
                                 ToolTip.Tip="{Binding CopyLabel}"
                                 Click="OnCopyUuidClicked">
-                          <Path Width="16" Height="16" Stretch="Uniform" Data="{StaticResource GestureSelectIcon}" />
+                          <Path Classes="uuidCopyIcon"
+                                Width="16"
+                                Height="16"
+                                Stretch="Uniform"
+                                Data="{StaticResource ContentCopyIcon}" />
                         </Button>
                       </Grid>
                     </Border>
