@@ -186,10 +186,19 @@ public sealed class DocumentationScreenshotTests
         await WaitFramesAsync(4);
         Capture(window, Path.Combine(outputDirectory, "settings-general.png"));
 
+        var settingsView = window.GetVisualDescendants().OfType<SettingsView>().Single();
+        var gpuPicker = settingsView.GetVisualDescendants()
+            .OfType<FadingComboBox>()
+            .Single(comboBox => ReferenceEquals(comboBox.ItemsSource, viewModel.Settings.GpuPreferences));
+        gpuPicker.IsDropDownOpen = true;
+        await WaitFramesAsync(8);
+        Capture(window, Path.Combine(outputDirectory, "settings-gpu-picker.png"));
+        gpuPicker.IsDropDownOpen = false;
+        await WaitFramesAsync(4);
+
         SelectSettingsCategory(viewModel, "java");
         await WaitFramesAsync(4);
         Capture(window, Path.Combine(outputDirectory, "settings-java.png"));
-        var settingsView = window.GetVisualDescendants().OfType<SettingsView>().Single();
         var javaArgumentsModal = settingsView.FindControl<OverlayModal>("JavaArgumentModal");
         Assert.NotNull(javaArgumentsModal);
         viewModel.Settings.ShowAddJavaArgumentCommand.Execute(null);
