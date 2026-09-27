@@ -9,7 +9,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   [![Downloads](https://img.shields.io/github/downloads/hyprismteam/Hyprism/total?style=flat&logo=github&label=Downloads&color=2d3748&logoWidth=20)](https://github.com/hyprismteam/Hyprism/releases)
   [![CI](https://img.shields.io/github/actions/workflow/status/hyprismteam/Hyprism/ci.yml?branch=main&style=flat&label=CI&logo=github&logoWidth=20)](https://github.com/hyprismteam/Hyprism/actions/workflows/ci.yml)
-  [![Website](https://img.shields.io/badge/Website-hyprism-207e5c?style=flat&logo=google-chrome&logoColor=white&logoWidth=20)](https://hyprismteam.github.io/hyprism-site/)
+  [![Docs](https://img.shields.io/badge/Docs-hyprism-207e5c?style=flat&logo=google-chrome&logoColor=white&logoWidth=20)](https://hyprism.org/Hyprism/docs)
   [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat&logo=discord&logoColor=white&logoWidth=20)](https://discord.com/invite/ekZqTtynjp)
 
 > [!IMPORTANT]
@@ -70,11 +70,11 @@ Hyprism uses a .NET 10 Core library and a native Avalonia 12 desktop application
 
 ## Docs
 
-The English and Russian documentation is available on the [Hyprism documentation site](https://hyprismteam.github.io/Hyprism/docs/). Its Docusaurus sources live in [`Docs/content`](Docs/content)
+The English and Russian documentation is available on the [Hyprism documentation site](https://hyprism.org/Hyprism/docs/). Its sources live in [`Docs/content`](Docs/content)
 
 ## Credits & Contributors
 
-Special thanks to **Sanasol** for maintaining and creating the [auth server](https://github.com/sanasol/hytale-auth-server)
+Special thanks to [sanasol](https://github.com/sanasol) for maintaining and creating the [auth server](https://github.com/sanasol/hytale-auth-server)
 
 <a href="https://github.com/hyprismteam/Hyprism/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=hyprismteam/Hyprism" alt="Contributors" />
@@ -84,8 +84,8 @@ Special thanks to **Sanasol** for maintaining and creating the [auth server](htt
 
 We support the launcher **solely with our free time** and **community feedback**. Financial support will help us continue active development in the world of Hytale!
 
-- BuyMeACoffe [(Click)](https://buymeacoffee.com/yyyumeniku)
 - DonationAlerts [(Click)](https://www.donationalerts.com/r/danielfreak)
+- BuyMeACoffe [(Click)](https://buymeacoffee.com/yyyumeniku)
 
 ## Legal Notice & Licenses
 

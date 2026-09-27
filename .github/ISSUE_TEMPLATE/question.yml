@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before asking, please check the [documentation](https://hyprismteam.github.io/Hyprism/docs/)
+        Before asking, please check the [documentation](https://hyprism.org/Hyprism/docs/)
         and existing issues. You can also join our [Discord](https://discord.com/invite/ekZqTtynjp) for faster support
 
   - type: textarea
