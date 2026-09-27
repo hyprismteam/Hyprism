@@ -52,104 +52,77 @@ SPDX-License-Identifier: GPL-3.0-only
                     <TextBlock Text="{Binding BackLabel}" VerticalAlignment="Center" />
                   </StackPanel>
                 </Button>
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            Spacing="9"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                  <Border Classes="instanceIconClip toolbar">
-                    <Grid Classes="compactInstanceGameIcon">
-                      <Image Source="avares://Hyprism.Desktop/Assets/Game/grass.png"
-                             IsVisible="{Binding !HasManagedInstanceIcon}" Stretch="Uniform" />
-                      <Image Source="{Binding ManagedInstanceIcon}"
-                             IsVisible="{Binding HasManagedInstanceIcon}" Stretch="UniformToFill" />
-                    </Grid>
-                  </Border>
-                  <TextBlock Classes="detailToolbarTitle"
-                             Text="{Binding ManagedInstanceName}"
-                             MaxWidth="240"
-                             MaxLines="1"
-                             TextTrimming="CharacterEllipsis"
-                             FontSize="16"
-                             FontWeight="SemiBold"
-                             VerticalAlignment="Center" />
-                </StackPanel>
+                <Button x:Name="CompactInstancePrimaryAction"
+                        Grid.Column="1"
+                        Classes="managerCompactActionPart main standalone"
+                        Classes.active="{Binding IsManagedInstanceActionActive}"
+                        Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
+                        IsEnabled="{Binding CanRunManagedInstanceAction}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        PointerExited="OnManagedInstanceActionPointerExited"
+                        Command="{Binding RunManagedInstanceCommand}">
+                  <ContentControl Content="{Binding}"
+                                  ContentTemplate="{StaticResource ManagedInstanceActionTemplate}" />
+                </Button>
 
-                <Border Grid.Column="2"
-                        Classes="managerCompactSplitAction"
+                <Button x:Name="CompactInstanceMoreButton"
+                        Grid.Column="2"
+                        Classes="managerCompactActionPart menu standalone"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Center">
-                  <Grid ColumnDefinitions="Auto,Auto">
-                    <Button x:Name="CompactInstancePrimaryAction"
-                            Classes="managerCompactActionPart main"
-                            Classes.active="{Binding IsManagedInstanceActionActive}"
-                            Classes.editAvailable="{Binding IsManagedInstanceActionRunning}"
-                            Classes.cancelArmed="{Binding IsManagedInstanceCancellationArmed}"
-                            IsEnabled="{Binding CanRunManagedInstanceAction}"
-                            PointerExited="OnManagedInstanceActionPointerExited"
-                            Command="{Binding RunManagedInstanceCommand}">
-                      <ContentControl Content="{Binding}"
-                                      ContentTemplate="{StaticResource ManagedInstanceActionTemplate}" />
-                    </Button>
+                        VerticalAlignment="Center"
+                        Click="OnToggleCompactInstanceMenuClicked">
+                  <PathIcon Classes="managerCompactActionMenuIcon"
+                            Data="{StaticResource MoreVerticalIcon}" />
+                </Button>
 
-                    <Button x:Name="CompactInstanceMoreButton"
-                            Grid.Column="1"
-                            Classes="managerCompactActionPart menu"
-                            Classes.actionActive="{Binding IsManagedInstanceEditActionCollapsed}"
-                            IsEnabled="{Binding CanOpenManagedInstanceFolder}"
-                            Click="OnToggleCompactInstanceMenuClicked">
-                      <PathIcon Classes="managerCompactActionChevron"
-                                Data="{StaticResource ExpandMoreIcon}" />
-                    </Button>
-
-                    <controls:FadingPopup x:Name="CompactInstanceMenuPopup"
-                                          Grid.Column="1"
-                                          Placement="BottomEdgeAlignedRight"
-                                          PlacementTarget="CompactInstanceMoreButton"
-                                          VerticalOffset="8">
-                      <Border Classes="uiPopupSurface managerCompactActionFlyout">
-                        <StackPanel Spacing="2">
-                          <Button Classes="managerCompactMenuAction"
-                                  IsEnabled="{Binding CanOpenManagedInstanceFolder}"
-                                  Command="{Binding OpenManagedInstanceFolderCommand}"
-                                  Click="OnCloseCompactInstanceMenuClicked">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                              <Path Classes="managerCompactMenuIcon"
-                                    Data="{StaticResource FolderOpenIcon}" />
-                              <TextBlock Text="{Binding ManagedInstanceOpenFolderLabel}"
-                                         VerticalAlignment="Center" />
-                            </StackPanel>
-                          </Button>
-
-                          <Button Classes="managerCompactMenuAction"
-                                  IsEnabled="{Binding CanEditManagedInstance}"
-                                  Command="{Binding BeginEditManagedInstanceCommand}"
-                                  Click="OnCloseCompactInstanceMenuClicked">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                              <Path Classes="managerCompactMenuIcon"
-                                    Data="{StaticResource EditRoundedIcon}" />
-                              <TextBlock Text="{Binding EditInstanceLabel}"
-                                         VerticalAlignment="Center" />
-                            </StackPanel>
-                          </Button>
-
-                          <Button
-                                  Classes="managerCompactMenuAction danger"
-                                  IsEnabled="{Binding CanDeleteManagedInstance}"
-                                  Command="{Binding RequestManagedInstanceDeletionCommand}"
-                                  Click="OnCloseCompactInstanceMenuClicked">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                              <Path Classes="managerCompactMenuIcon"
-                                    Data="{StaticResource DeleteIcon}" />
-                              <TextBlock Text="{Binding ManagedInstanceDeleteLabel}"
-                                         VerticalAlignment="Center" />
-                            </StackPanel>
-                          </Button>
+                <controls:FadingPopup x:Name="CompactInstanceMenuPopup"
+                                  Grid.Column="2"
+                                  Placement="BottomEdgeAlignedRight"
+                                  PlacementTarget="CompactInstanceMoreButton"
+                                  VerticalOffset="8">
+                  <Border Classes="uiPopupSurface managerCompactActionFlyout">
+                    <StackPanel Spacing="2">
+                      <Button Classes="managerCompactMenuAction"
+                              IsEnabled="{Binding CanOpenManagedInstanceFolder}"
+                              Command="{Binding OpenManagedInstanceFolderCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon"
+                                Data="{StaticResource FolderOpenIcon}" />
+                          <TextBlock Text="{Binding ManagedInstanceOpenFolderLabel}"
+                                     VerticalAlignment="Center" />
                         </StackPanel>
-                      </Border>
-                    </controls:FadingPopup>
-                  </Grid>
-                </Border>
+                      </Button>
+
+                      <Button Classes="managerCompactMenuAction"
+                              IsEnabled="{Binding CanEditManagedInstance}"
+                              Command="{Binding BeginEditManagedInstanceCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon"
+                                Data="{StaticResource EditRoundedIcon}" />
+                          <TextBlock Text="{Binding EditInstanceLabel}"
+                                     VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+
+                      <Button x:Name="CompactInstanceDeleteAction"
+                              Classes="managerCompactMenuAction danger"
+                              IsVisible="{Binding !IsManagedInstanceActionRunning}"
+                              IsEnabled="{Binding CanDeleteManagedInstance}"
+                              Command="{Binding RequestManagedInstanceDeletionCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon"
+                                Data="{StaticResource DeleteIcon}" />
+                          <TextBlock Text="{Binding ManagedInstanceDeleteLabel}"
+                                     VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+                    </StackPanel>
+                  </Border>
+                </controls:FadingPopup>
               </Grid>
             </Border>
 
@@ -229,15 +202,9 @@ SPDX-License-Identifier: GPL-3.0-only
                   <Button
                           Classes="managerAction secondary danger last deleteAction"
                           IsEnabled="{Binding CanDeleteManagedInstance}"
+                          ToolTip.Tip="{Binding ManagedInstanceDeleteLabel}"
                           Command="{Binding RequestManagedInstanceDeletionCommand}">
-                    <StackPanel Classes="managerDeleteActionContent"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                Spacing="8">
-                      <Path Classes="managerActionIcon" Data="{StaticResource DeleteIcon}" />
-                      <TextBlock Text="{Binding ManagedInstanceDeleteLabel}"
-                                 VerticalAlignment="Center" />
-                    </StackPanel>
+                    <Path Classes="managerActionIcon" Data="{StaticResource DeleteIcon}" />
                     </Button>
                     </StackPanel>
                   </Border>

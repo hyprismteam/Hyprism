@@ -20,8 +20,6 @@ public class Profile
     public bool IsOfficial { get; set; } = false;
     /// <summary>Total accumulated play time across all instances.</summary>
     public TimeSpan TotalPlaytime { get; set; } = TimeSpan.Zero;
-    /// <summary>Tracked play time in seconds grouped by instance ID.</summary>
-    public Dictionary<string, long> InstancePlayTimeSeconds { get; set; } = [];
     /// <summary>UTC timestamp when the profile was created.</summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

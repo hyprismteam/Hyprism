@@ -36,10 +36,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="8" />
   </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceIconClip.toolbar">
-    <Setter Property="CornerRadius" Value="7" />
-  </Style>
-
   <Style Selector="instances|InstancesView Border.instanceIconClip.hero">
     <Setter Property="CornerRadius" Value="20" />
   </Style>
@@ -125,32 +121,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="HorizontalAlignment" Value="Center" />
   </Style>
 
-  <Style Selector="instances|InstancesView.compact Grid.instanceGameIcon">
-    <Setter Property="IsVisible" Value="False" />
-  </Style>
-
   <Style Selector="instances|InstancesView StackPanel.instanceHeroIdentity">
     <Setter Property="HorizontalAlignment" Value="Center" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact StackPanel.instanceHeroIdentity">
-    <Setter Property="IsVisible" Value="False" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Grid.compactInstanceGameIcon">
-    <Setter Property="Width" Value="30" />
-    <Setter Property="Height" Value="30" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.managerCompactActionPart.main.active.cancelArmed:pointerover">
     <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
     <Setter Property="Foreground" Value="White" />
-  </Style>
-
-
-  <Style Selector="instances|InstancesView Button.managerCompactActionPart.menu.actionActive">
-    <Setter Property="Width" Value="0" />
-    <Setter Property="Opacity" Value="0" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.managerAction.primary.active">
@@ -159,16 +136,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Button.managerAction.primary.active.editCollapsed">
     <Setter Property="Width" Value="438" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.managerCompactActionPart.main.active.editAvailable">
-    <Setter Property="Width" Value="180" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.managerCompactActionPart.main.active.editAvailable Grid.managedActionContent">
-    <Setter Property="Width" Value="154" />
-    <Setter Property="MinWidth" Value="154" />
-    <Setter Property="MaxWidth" Value="154" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.managerAction.primary.active.cancelArmed:pointerover">

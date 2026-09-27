@@ -252,14 +252,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>다음을 포함한 모든 프로필 데이터가 영구적으로 삭제됩니다:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>공지</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>버그 보고</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>공지 표시</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>인스턴스</value>
@@ -1197,18 +1191,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>변경 로그 보기</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>음소거</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>게임 실행 중 음악 음소거</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>음악</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>음소거 해제</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>전체</value>
   </data>
@@ -1512,9 +1494,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="startup.loading.ready" xml:space="preserve">
     <value>준비 완료</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>즐겨찾는 인스턴스</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>프로필 이름 입력...</value>
   </data>
@@ -1714,7 +1693,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Hytale에 전달할 환경 변수</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>배경, 음악, 뉴스 및 공지</value>
+    <value>배경 및 뉴스 표시</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>닫기</value>
@@ -2474,15 +2453,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>런처, 게임 및 시스템 설정</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Discord에서 받은 런처 공지 표시</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>배경 음악</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>탐색 중 런처 음악 재생</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>인스턴스 생성</value>

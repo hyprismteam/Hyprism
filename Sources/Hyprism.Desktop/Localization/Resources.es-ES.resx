@@ -252,14 +252,8 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Esto eliminará permanentemente todos los datos del perfil, incluyendo:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Anuncio</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Informar de un error</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Mostrar anuncios</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Instancias</value>
@@ -1197,18 +1191,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Ver registro de cambios</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Silenciar</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Música silenciada mientras el juego está ejecutándose</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Música</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Activar sonido</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Todo</value>
   </data>
@@ -1512,9 +1494,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Todo listo</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Instancia favorita</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Introduce nombre del perfil...</value>
   </data>
@@ -1714,7 +1693,7 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
     <value>Variables de entorno enviadas a Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Fondo, música, noticias y anuncios</value>
+    <value>Fondo y presentación de noticias</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Cerrar</value>
@@ -2474,15 +2453,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Preferencias del lanzador, del juego y del sistema</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Mostrar anuncios del lanzador recibidos de Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Música de fondo</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Reproducir música del lanzador mientras navegas</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Crear una instancia</value>

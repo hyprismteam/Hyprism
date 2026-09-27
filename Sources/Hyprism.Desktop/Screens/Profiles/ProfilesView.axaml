@@ -10,6 +10,7 @@ SPDX-License-Identifier: GPL-3.0-only
              xmlns:easing="using:Avalonia.Animation.Easings"
              x:Class="Hyprism.Desktop.Screens.Profiles.ProfilesView"
              x:Name="ProfilesRoot"
+             Classes.switchingProfile="{Binding IsProfileSelectionSwitching}"
              x:DataType="profiles:ProfilesViewModel"
              SizeChanged="OnProfilesViewSizeChanged">
   <UserControl.Resources>
@@ -57,13 +58,14 @@ SPDX-License-Identifier: GPL-3.0-only
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="profiles:ProfileItemViewModel">
+                <Grid Classes="managerListItemHost" Classes.menuOpen="{Binding IsMenuOpen}">
                 <Button Classes="managerRailCategory managerListItem"
                         Classes.managed="{Binding IsSelected}"
                         Command="{Binding DataContext.SelectProfileCommand, ElementName=ProfilesRoot}"
                         CommandParameter="{Binding}"
                         Click="OnProfileSelectedClicked">
                   <Grid Classes="managerListItemLayout"
-                        ColumnDefinitions="Auto,*,22"
+                        ColumnDefinitions="Auto,*,40"
                         ColumnSpacing="12">
                     <Border Classes="managerListDragTarget"
                             Cursor="Arrow"
@@ -105,16 +107,19 @@ SPDX-License-Identifier: GPL-3.0-only
                         </StackPanel>
                     </Grid>
 
+                  </Grid>
+                </Button>
+
                     <Border x:Name="ProfileMoreTarget"
-                            Grid.Column="2"
-                            Classes="profileMoreTarget"
+                            Classes="managerListMoreTarget profileMoreTarget"
+                            Classes.open="{Binding IsMenuOpen}"
                             Cursor="Hand"
                             PointerPressed="OnProfileMenuPointerPressed"
                             PointerReleased="OnToggleProfileMenuPointerReleased">
-                      <Path Classes="managerListMore" Data="{StaticResource MoreVerticalIcon}" />
+                      <PathIcon Classes="managerListMoreIcon" Data="{StaticResource MoreVerticalIcon}" />
                     </Border>
 
-                    <controls:FadingPopup Grid.Column="2"
+                    <controls:FadingPopup
                                           Placement="BottomEdgeAlignedRight"
                                           PlacementTarget="ProfileMoreTarget"
                                           VerticalOffset="8"
@@ -132,15 +137,6 @@ SPDX-License-Identifier: GPL-3.0-only
                                          VerticalAlignment="Center" />
                             </StackPanel>
                           </Button>
-                          <Button Classes="managerCompactMenuAction"
-                                  Command="{Binding DataContext.DuplicateProfileCommand, ElementName=ProfilesRoot}"
-                                  CommandParameter="{Binding}"
-                                  Click="OnCloseProfileMenuClicked">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                              <Path Classes="managerCompactMenuIcon" Data="{StaticResource GestureSelectIcon}" />
-                              <TextBlock Text="{Binding DataContext.DuplicateLabel, ElementName=ProfilesRoot}" />
-                            </StackPanel>
-                          </Button>
                           <Button Classes="managerCompactMenuAction danger"
                                   IsVisible="{Binding !IsActive}"
                                   Command="{Binding DataContext.RequestProfileDeletionCommand, ElementName=ProfilesRoot}"
@@ -154,8 +150,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         </StackPanel>
                       </Border>
                     </controls:FadingPopup>
-                  </Grid>
-                </Button>
+                </Grid>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
@@ -242,101 +237,74 @@ SPDX-License-Identifier: GPL-3.0-only
                 </StackPanel>
               </Button>
 
-              <StackPanel Grid.Column="1"
-                          Orientation="Horizontal"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Spacing="9">
-                <Border Classes="profileAvatar" Width="30" Height="30">
-                  <Grid>
-                    <Image IsVisible="{Binding SelectedProfile.HasAvatar}"
-                           Source="{Binding SelectedProfile.Avatar}"
-                           Stretch="UniformToFill" />
-                    <TextBlock IsVisible="{Binding !SelectedProfile.HasAvatar}"
-                               Text="{Binding SelectedProfile.Initial}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontSize="11"
-                               FontWeight="Bold" />
-                  </Grid>
-                </Border>
-                <TextBlock Text="{Binding SelectedProfile.Name}"
-                           MaxWidth="240"
-                           MaxLines="1"
-                           TextTrimming="CharacterEllipsis"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center" />
-              </StackPanel>
+              <Button x:Name="CompactProfilePrimaryAction"
+                      Grid.Column="1"
+                      Classes="managerCompactActionPart main standalone"
+                      Classes.active="{Binding SelectedProfile.IsActive}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      ToolTip.Tip="{Binding ActivationLabel}"
+                      Command="{Binding ActivateSelectedProfileCommand}">
+                <ContentControl Content="{Binding}"
+                                ContentTemplate="{StaticResource ProfileActivationActionTemplate}" />
+              </Button>
 
-              <Border Grid.Column="2"
-                      Classes="managerCompactSplitAction"
+              <Button x:Name="CompactProfileMoreButton"
+                      Grid.Column="2"
+                      Classes="managerCompactActionPart menu standalone"
                       HorizontalAlignment="Right"
-                      VerticalAlignment="Center">
-                <Grid ColumnDefinitions="Auto,Auto">
-                  <Button Classes="managerCompactActionPart main"
-                          Classes.active="{Binding SelectedProfile.IsActive}"
-                          ToolTip.Tip="{Binding ActivationLabel}"
-                          Command="{Binding ActivateSelectedProfileCommand}">
-                    <ContentControl Content="{Binding}"
-                                    ContentTemplate="{StaticResource ProfileActivationActionTemplate}" />
-                  </Button>
+                      VerticalAlignment="Center"
+                      Click="OnToggleCompactProfileMenuClicked">
+                <PathIcon Classes="managerCompactActionMenuIcon"
+                          Data="{StaticResource MoreVerticalIcon}" />
+              </Button>
 
-                  <Button x:Name="CompactProfileMoreButton"
-                          Grid.Column="1"
-                          Classes="managerCompactActionPart menu"
-                          Click="OnToggleCompactProfileMenuClicked">
-                    <PathIcon Classes="managerCompactActionChevron"
-                              Data="{StaticResource ExpandMoreIcon}" />
-                  </Button>
-
-                  <controls:FadingPopup x:Name="CompactProfileMenuPopup"
-                                        Grid.Column="1"
-                                        Placement="BottomEdgeAlignedRight"
-                                        PlacementTarget="CompactProfileMoreButton"
-                                        VerticalOffset="8">
-                    <Border Classes="uiPopupSurface managerCompactActionFlyout">
-                      <StackPanel Spacing="2">
-                        <Button Classes="managerCompactMenuAction"
-                                Command="{Binding OpenProfileFolderCommand}"
-                                Click="OnCloseCompactProfileMenuClicked">
-                          <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="managerCompactMenuIcon"
-                                  Data="{StaticResource FolderOpenIcon}" />
-                            <TextBlock Text="{Binding FolderLabel}"
-                                       VerticalAlignment="Center" />
-                          </StackPanel>
-                        </Button>
-
-                        <Button Classes="managerCompactMenuAction"
-                                IsVisible="{Binding !SelectedProfile.IsOfficial}"
-                                Command="{Binding BeginEditingCommand}"
-                                Click="OnCloseCompactProfileMenuClicked">
-                          <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="managerCompactMenuIcon"
-                                  Data="{StaticResource EditRoundedIcon}" />
-                            <TextBlock Text="{Binding EditLabel}"
-                                       VerticalAlignment="Center" />
-                          </StackPanel>
-                        </Button>
-
-                        <Button Classes="managerCompactMenuAction danger"
-                                IsEnabled="{Binding !SelectedProfile.IsActive}"
-                                Command="{Binding RequestProfileDeletionCommand}"
-                                CommandParameter="{Binding SelectedProfile}"
-                                Click="OnCloseCompactProfileMenuClicked">
-                          <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="managerCompactMenuIcon"
-                                  Data="{StaticResource DeleteIcon}" />
-                            <TextBlock Text="{Binding DeleteActionLabel}"
-                                       VerticalAlignment="Center" />
-                          </StackPanel>
-                        </Button>
+              <controls:FadingPopup x:Name="CompactProfileMenuPopup"
+                                Grid.Column="2"
+                                Placement="BottomEdgeAlignedRight"
+                                PlacementTarget="CompactProfileMoreButton"
+                                VerticalOffset="8">
+                <Border Classes="uiPopupSurface managerCompactActionFlyout">
+                  <StackPanel Spacing="2">
+                    <Button Classes="managerCompactMenuAction"
+                            Command="{Binding OpenProfileFolderCommand}"
+                            Click="OnCloseCompactProfileMenuClicked">
+                      <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="managerCompactMenuIcon"
+                              Data="{StaticResource FolderOpenIcon}" />
+                        <TextBlock Text="{Binding FolderLabel}"
+                                   VerticalAlignment="Center" />
                       </StackPanel>
-                    </Border>
-                  </controls:FadingPopup>
-                </Grid>
-              </Border>
+                    </Button>
+
+                    <Button Classes="managerCompactMenuAction"
+                            IsVisible="{Binding !SelectedProfile.IsOfficial}"
+                            Command="{Binding BeginEditingCommand}"
+                            Click="OnCloseCompactProfileMenuClicked">
+                      <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="managerCompactMenuIcon"
+                              Data="{StaticResource EditRoundedIcon}" />
+                        <TextBlock Text="{Binding EditLabel}"
+                                   VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Button>
+
+                    <Button x:Name="CompactProfileDeleteAction"
+                            Classes="managerCompactMenuAction danger"
+                            IsVisible="{Binding !SelectedProfile.IsActive}"
+                            Command="{Binding RequestProfileDeletionCommand}"
+                            CommandParameter="{Binding SelectedProfile}"
+                            Click="OnCloseCompactProfileMenuClicked">
+                      <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="managerCompactMenuIcon"
+                              Data="{StaticResource DeleteIcon}" />
+                        <TextBlock Text="{Binding DeleteActionLabel}"
+                                   VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Button>
+                  </StackPanel>
+                </Border>
+              </controls:FadingPopup>
             </Grid>
           </Border>
 
@@ -412,16 +380,10 @@ SPDX-License-Identifier: GPL-3.0-only
 
                     <Button Classes="managerAction secondary danger last deleteAction"
                             IsEnabled="{Binding !SelectedProfile.IsActive}"
+                            ToolTip.Tip="{Binding DeleteActionLabel}"
                             Command="{Binding RequestProfileDeletionCommand}"
                             CommandParameter="{Binding SelectedProfile}">
-                      <StackPanel Classes="managerDeleteActionContent"
-                                  Orientation="Horizontal"
-                                  HorizontalAlignment="Center"
-                                  Spacing="8">
-                        <Path Classes="managerActionIcon" Data="{StaticResource DeleteIcon}" />
-                        <TextBlock Text="{Binding DeleteActionLabel}"
-                                   VerticalAlignment="Center" />
-                      </StackPanel>
+                      <Path Classes="managerActionIcon" Data="{StaticResource DeleteIcon}" />
                     </Button>
                   </StackPanel>
                 </Border>
@@ -444,14 +406,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
                     <Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource SurfaceBrush}" />
 
-                    <Border Grid.Row="2" Classes="managerInfoCell">
-                      <StackPanel Spacing="3">
-                        <TextBlock Text="{Binding FavoriteInstanceLabel}" Classes="managerInfoLabel" />
-                        <TextBlock Text="{Binding SelectedProfile.FavoriteInstance}" Classes="managerInfoValue" />
-                      </StackPanel>
-                    </Border>
-                    <Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource SurfaceBrush}" />
-                    <Border Grid.Row="2" Grid.Column="2" Classes="managerInfoCell">
+                    <Border Grid.Row="2" Grid.ColumnSpan="3" Classes="managerInfoCell">
                       <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <StackPanel Spacing="3">
                           <TextBlock Text="{Binding UuidLabel}" Classes="managerInfoLabel" />

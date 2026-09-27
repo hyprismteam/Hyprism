@@ -104,8 +104,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IReadOnlyList<GpuAdapterInfo> _detectedGpuAdapters = [];
     [ObservableProperty] private bool _closeAfterLaunch;
     [ObservableProperty] private bool _showAlphaMods;
-    [ObservableProperty] private bool _musicEnabled;
-    [ObservableProperty] private bool _showDiscordAnnouncements;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAuthServerVisible))]
     private bool _onlineMode;
@@ -289,8 +287,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         _selectedGpuPreference = ResolveGpuChoice(settings.GpuPreference);
         _closeAfterLaunch = settings.CloseAfterLaunch;
         _showAlphaMods = settings.ShowAlphaMods;
-        _musicEnabled = settings.MusicEnabled;
-        _showDiscordAnnouncements = settings.ShowDiscordAnnouncements;
         _onlineMode = settings.OnlineMode;
         _useCustomJava = settings.UseCustomJava;
         _authDomain = ResolveAuthServer(settings.AuthDomain);
@@ -452,10 +448,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public string RemoveLabel { get; private set; } = string.Empty;
     public string DeleteSourceTitle { get; private set; } = string.Empty;
     public string DeleteSourceHint { get; private set; } = string.Empty;
-    public string MusicLabel { get; private set; } = string.Empty;
-    public string MusicHint { get; private set; } = string.Empty;
-    public string DiscordAnnouncementsLabel { get; private set; } = string.Empty;
-    public string DiscordAnnouncementsHint { get; private set; } = string.Empty;
     public string OnlineModeLabel { get; private set; } = string.Empty;
     public string OnlineModeHint { get; private set; } = string.Empty;
     public string AuthServerLabel { get; private set; } = string.Empty;
@@ -600,10 +592,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         RemoveLabel = _localizer["common.remove"];
         DeleteSourceTitle = _localizer["confirmation.title"];
         DeleteSourceHint = _localizer["settings.downloads.deleteSourceHint"];
-        MusicLabel = _localizer["desktopSettings.music"];
-        MusicHint = _localizer["desktopSettings.musicHint"];
-        DiscordAnnouncementsLabel = _localizer["discord.showAnnouncements"];
-        DiscordAnnouncementsHint = _localizer["desktopSettings.discordAnnouncementsHint"];
         OnlineModeLabel = _localizer["settings.networkSettings.onlineMode"];
         OnlineModeHint = _localizer["settings.networkSettings.onlineModeHint"];
         AuthServerLabel = _localizer["settings.networkSettings.authServer"];
@@ -780,8 +768,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     }
     partial void OnCloseAfterLaunchChanged(bool value) => _settings.CloseAfterLaunch = value;
     partial void OnShowAlphaModsChanged(bool value) => _settings.ShowAlphaMods = value;
-    partial void OnMusicEnabledChanged(bool value) => _settings.MusicEnabled = value;
-    partial void OnShowDiscordAnnouncementsChanged(bool value) => _settings.ShowDiscordAnnouncements = value;
     partial void OnOnlineModeChanged(bool value)
     {
         _settings.OnlineMode = value;

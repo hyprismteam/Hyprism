@@ -270,23 +270,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Настройки лаунчера, игры и системы</value>
   </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Показывать в лаунчере объявления из Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Фоновая музыка</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Воспроизводить музыку в интерфейсе лаунчера</value>
-  </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Объявление</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Сообщить об ошибке</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Показать объявления</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Экземпляры</value>
@@ -1278,18 +1263,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Просмотр изменений</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Выкл. звук</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Музыка заглушена во время игры</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Музыка</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Вкл. звук</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Все</value>
   </data>
@@ -1629,9 +1602,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Всё готово</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Любимая сборка</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Введите имя профиля...</value>
   </data>
@@ -1888,7 +1858,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Источники загрузки, проверка соединения и запуск игры</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Язык, музыка, поведение лаунчера, выбор GPU и переменные окружения</value>
+    <value>Язык, поведение лаунчера, выбор GPU и переменные окружения</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Выбор видеокарты для запуска Hytale</value>

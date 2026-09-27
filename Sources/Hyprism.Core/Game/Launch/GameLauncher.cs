@@ -186,7 +186,6 @@ public partial class GameLauncher : IGameLauncher
 
         _profileRepository.RecordPlayTime(
             process.ProfileId,
-            process.InstanceId,
             elapsedSeconds);
     }
 

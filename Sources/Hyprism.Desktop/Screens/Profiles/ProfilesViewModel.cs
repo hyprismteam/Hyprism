@@ -8,7 +8,6 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hyprism.Core.Accounts;
-using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Models;
 using Hyprism.Desktop.Localization;
 using Hyprism.Desktop.Platform;
@@ -26,12 +25,12 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
 
     private readonly IProfileManager _profileManager;
     private readonly IProfileRepository _profileRepository;
-    private readonly IInstanceRepository? _instanceRepository;
     private readonly IHytaleAuthenticator? _authenticator;
     private readonly IExternalUriLauncher _uriLauncher;
     private readonly StringLocalizer _localizer;
     private CancellationTokenSource? _authenticationCancellation;
     private bool _isAuthenticationCancellationArmed;
+    private long _profileSelectionGeneration;
     private bool _disposed;
 
     [ObservableProperty]
@@ -41,6 +40,9 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(ActivationLabel))]
     [NotifyPropertyChangedFor(nameof(CanSaveProfile))]
     private ProfileItemViewModel? _selectedProfile;
+
+    [ObservableProperty]
+    private bool _isProfileSelectionSwitching;
 
     private ProfileCreationStep _creationStep;
 
@@ -99,15 +101,13 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         IProfileRepository profileRepository,
         IExternalUriLauncher uriLauncher,
         StringLocalizer localizer,
-        IHytaleAuthenticator? authenticator = null,
-        IInstanceRepository? instanceRepository = null)
+        IHytaleAuthenticator? authenticator = null)
     {
         _profileManager = profileManager;
         _profileRepository = profileRepository;
         _uriLauncher = uriLauncher;
         _localizer = localizer;
         _authenticator = authenticator;
-        _instanceRepository = instanceRepository;
         _profileRepository.ProfilesChanged += OnProfilesChanged;
         _profileManager.ProfilesChanged += OnProfilesChanged;
 
@@ -175,7 +175,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string SavedProfilesLabel => _localizer["profiles.savedProfiles"];
     public string EditorLabel => _localizer["profiles.editor"];
     public string PlayTimeLabel => _localizer["instances.info.playtime"];
-    public string FavoriteInstanceLabel => _localizer["profiles.favoriteInstance"];
     public string CreateProfileLabel => _localizer["profiles.wizard.title"];
     public string CreateProfileHint => _localizer["profiles.wizard.chooseType"];
     public string OfflineProfileLabel => _localizer["profiles.wizard.unofficial"];
@@ -206,7 +205,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     public string ActivationLabel => _localizer["profiles.setActive"];
     public string ActiveLabel => _localizer["profiles.active"];
     public string DeleteLabel => _localizer["profiles.deleteProfile"];
-    public string DuplicateLabel => _localizer["profiles.duplicateProfile"];
     public string RandomizeNameLabel => _localizer["profiles.generateName"];
     public string RandomizeUuidLabel => _localizer["profiles.randomUuid"];
     public string OfficialLockedLabel => _localizer["profiles.officialLocked"];
@@ -272,7 +270,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                 string.Equals(profile.Id, selectedId, StringComparison.Ordinal),
                 profile.IsOfficial ? OfficialProfileLabel : OfflineProfileLabel,
                 FormatPlayTime(profile.TotalPlaytime),
-                ResolveFavoriteInstance(profile),
                 LoadAvatar(profile.UUID)));
         }
 
@@ -293,7 +290,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         foreach (var propertyName in new[]
                  {
                      nameof(SavedProfilesLabel), nameof(EditorLabel), nameof(CreateProfileLabel),
-                     nameof(PlayTimeLabel), nameof(FavoriteInstanceLabel),
+                     nameof(PlayTimeLabel),
                      nameof(CreateProfileHint), nameof(OfflineProfileLabel), nameof(OfflineProfileHint),
                      nameof(OfficialProfileLabel), nameof(OfficialProfileHint), nameof(ProfileNameLabel),
                      nameof(ProfileNameHint), nameof(UuidLabel), nameof(UuidHint), nameof(NamePlaceholder),
@@ -303,7 +300,7 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
                      nameof(AuthenticationHint), nameof(BrowserHint), nameof(SignInLabel),
                      nameof(CreateLabel), nameof(AddLabel),
                      nameof(CancelLabel), nameof(BackLabel), nameof(SaveLabel), nameof(EditLabel), nameof(ProfileEditorTitle),
-                     nameof(CopyLabel), nameof(FolderLabel), nameof(DeleteActionLabel), nameof(ActivationLabel), nameof(ActiveLabel), nameof(DeleteLabel), nameof(DuplicateLabel),
+                     nameof(CopyLabel), nameof(FolderLabel), nameof(DeleteActionLabel), nameof(ActivationLabel), nameof(ActiveLabel), nameof(DeleteLabel),
                      nameof(RandomizeNameLabel), nameof(RandomizeUuidLabel), nameof(OfficialLockedLabel), nameof(NoteTitle),
                      nameof(NoProfilesLabel), nameof(DeleteTitle), nameof(DeleteHint)
                  })
@@ -326,6 +323,11 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         if (profile is null)
             return;
 
+        var switchesProfile = !ReferenceEquals(SelectedProfile, profile);
+        var selectionGeneration = switchesProfile ? ++_profileSelectionGeneration : 0;
+        if (switchesProfile)
+            IsProfileSelectionSwitching = true;
+
         CloseProfileMenus();
         ClearStatus();
         IsCreationVisible = false;
@@ -333,6 +335,12 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
         IsEditing = false;
 
         SelectedProfile = profile;
+        if (switchesProfile)
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (selectionGeneration == _profileSelectionGeneration)
+                    IsProfileSelectionSwitching = false;
+            }, DispatcherPriority.Loaded);
     }
 
     [RelayCommand]
@@ -638,21 +646,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void DuplicateProfile(ProfileItemViewModel? profile)
-    {
-        if (profile is null)
-            return;
-
-        if (_profileRepository.DuplicateProfileWithoutData(profile.Id) is null)
-        {
-            SetStatus(_localizer["profiles.wizard.createError"], isError: true);
-            return;
-        }
-
-        ClearStatus();
-    }
-
-    [RelayCommand]
     private void RequestProfileDeletion(ProfileItemViewModel? profile)
     {
         if (profile is null || profile.IsActive)
@@ -754,20 +747,6 @@ public sealed partial class ProfilesViewModel : ObservableObject, IDisposable
             "instances.info.playtimeValue",
             (long)duration.TotalHours,
             duration.Minutes);
-    }
-
-    private string ResolveFavoriteInstance(Profile profile)
-    {
-        var favorite = (profile.InstancePlayTimeSeconds ?? [])
-            .Where(entry => entry.Value > 0)
-            .OrderByDescending(entry => entry.Value)
-            .ThenBy(entry => entry.Key, StringComparer.Ordinal)
-            .FirstOrDefault();
-        if (string.IsNullOrWhiteSpace(favorite.Key))
-            return "—";
-
-        var instance = _instanceRepository?.FindInstanceById(favorite.Key);
-        return string.IsNullOrWhiteSpace(instance?.Name) ? "—" : instance.Name;
     }
 
     partial void OnSelectedProfileChanged(ProfileItemViewModel? value)

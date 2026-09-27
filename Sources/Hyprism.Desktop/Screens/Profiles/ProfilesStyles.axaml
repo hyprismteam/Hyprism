@@ -39,14 +39,6 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="ColumnSpacing" Value="0" />
     </Style>
 
-    <Style Selector="Border.profileMoreTarget">
-      <Setter Property="Width" Value="22" />
-      <Setter Property="Height" Value="40" />
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="HorizontalAlignment" Value="Center" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-
     <Style Selector="profiles|ProfilesView.compact Border.profileListAvatar">
       <Setter Property="Width" Value="38" />
       <Setter Property="Height" Value="38" />
@@ -63,16 +55,8 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
-    <Style Selector="profiles|ProfilesView.compact Border.profileHeroAvatar">
-      <Setter Property="IsVisible" Value="False" />
-    </Style>
-
     <Style Selector="StackPanel.profileHeroIdentity">
       <Setter Property="HorizontalAlignment" Value="Center" />
-    </Style>
-
-    <Style Selector="profiles|ProfilesView.compact StackPanel.profileHeroIdentity">
-      <Setter Property="IsVisible" Value="False" />
     </Style>
 
     <Style Selector="Button.profileIconButton">
@@ -149,6 +133,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="profiles|ProfilesView Button.managerCompactActionPart.main.active:pointerover">
     <Setter Property="Background" Value="{DynamicResource ToggleOnHoverBrush}" />
   </Style>
+
   <Style Selector="profiles|ProfilesView Button.managerAction.primary.active, profiles|ProfilesView Button.managerAction.primary.active:pointerover">
     <Setter Property="Background" Value="{DynamicResource ToggleOnBrush}" />
     <Setter Property="Foreground" Value="White" />
@@ -197,5 +182,14 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="profiles|ProfilesView Border.managerWideSplitAction Path.profileActivationIcon">
     <Setter Property="Width" Value="18" />
     <Setter Property="Height" Value="18" />
+  </Style>
+
+  <Style Selector="profiles|ProfilesView.switchingProfile Button.managerRailCategory,
+                  profiles|ProfilesView.switchingProfile Button.managerAction,
+                  profiles|ProfilesView.switchingProfile Button.managerCompactActionPart,
+                  profiles|ProfilesView.switchingProfile Border.managerWideActionDivider,
+                  profiles|ProfilesView.switchingProfile StackPanel.profileActivationIdle,
+                  profiles|ProfilesView.switchingProfile TextBlock.profileActivationActive">
+    <Setter Property="Transitions" Value="{x:Null}" />
   </Style>
 </Styles>

@@ -59,23 +59,10 @@ public class Config
     /// <summary>Custom root directory for game instances. Empty string means the default OS-specific path is used</summary>
     public string InstanceDirectory { get; set; } = "";
 
-    /// <summary>Whether the launcher background music is enabled.</summary>
-    public bool MusicEnabled { get; set; } = true;
-
     /// <summary>
     /// If true, the launcher will close after successfully launching the game
     /// </summary>
     public bool CloseAfterLaunch { get; set; } = false;
-
-    /// <summary>
-    /// If true, Discord announcements will be shown in the launcher
-    /// </summary>
-    public bool ShowDiscordAnnouncements { get; set; } = true;
-
-    /// <summary>
-    /// List of Discord announcement IDs that have been dismissed by the user
-    /// </summary>
-    public List<string> DismissedAnnouncementIds { get; set; } = [];
 
     /// <summary>
     /// Current interface language code (e.g., "en-US", "ru-RU", "de-DE")

@@ -252,14 +252,8 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Questo eliminerà permanentemente tutti i dati del profilo, inclusi:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Annuncio</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Segnala un bug</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Mostra annunci</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Istanze</value>
@@ -1197,18 +1191,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Visualizza note di rilascio</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Disattiva audio</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Musica disattivata mentre il gioco è in esecuzione</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Musica attiva</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Attiva audio</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Tutte</value>
   </data>
@@ -1512,9 +1494,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Tutto pronto</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Istanza preferita</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Inserisci il nome del profilo...</value>
   </data>
@@ -1714,7 +1693,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
     <value>Variabili d’ambiente passate a Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Sfondo, musica, notizie e annunci</value>
+    <value>Sfondo e visualizzazione delle notizie</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Chiudi</value>
@@ -2477,15 +2456,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Preferenze di launcher, gioco e sistema</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Mostra annunci del launcher ricevuti da Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Musica di sottofondo</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Riproduci musica del launcher durante la navigazione</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Crea un'istanza</value>

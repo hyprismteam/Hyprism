@@ -372,13 +372,11 @@ public class JsonProfileRepository : IProfileRepository
     }
 
     /// <inheritdoc/>
-    public bool RecordPlayTime(string profileId, string instanceId, long elapsedSeconds)
+    public bool RecordPlayTime(string profileId, long elapsedSeconds)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(profileId) ||
-                string.IsNullOrWhiteSpace(instanceId) ||
-                elapsedSeconds <= 0)
+            if (string.IsNullOrWhiteSpace(profileId) || elapsedSeconds <= 0)
             {
                 return false;
             }
@@ -390,10 +388,6 @@ public class JsonProfileRepository : IProfileRepository
                 return false;
 
             profile.TotalPlaytime += TimeSpan.FromSeconds(elapsedSeconds);
-            profile.InstancePlayTimeSeconds ??= [];
-            profile.InstancePlayTimeSeconds[instanceId] =
-                Math.Max(0, profile.InstancePlayTimeSeconds.GetValueOrDefault(instanceId)) +
-                elapsedSeconds;
             SaveProfilesToCache(profiles);
             RaiseProfilesChanged();
             return true;

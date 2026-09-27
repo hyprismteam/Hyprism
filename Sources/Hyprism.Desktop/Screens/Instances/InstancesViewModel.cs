@@ -908,8 +908,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         {
             var item = AllInstances[index];
             var isManaged = string.Equals(item.Id, managedInstanceId, StringComparison.Ordinal);
-            if (item.IsManaged != isManaged)
-                AllInstances[index] = item with { IsManaged = isManaged };
+            item.IsManaged = isManaged;
         }
     }
 
@@ -3153,7 +3152,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
                     FormatBranch(instance.Branch),
                     instance.IsInstalled,
                     string.Equals(instance.Id, managedInstanceId, StringComparison.Ordinal),
-                    LoadInstanceIcon(_instances.GetInstancePathById(instance.Id) ?? string.Empty));
+                    LoadInstanceIcon(_instances.GetInstancePathById(instance.Id) ?? string.Empty))
+                {
+                    IsRunning = _gameProcess.IsInstanceRunning(instance.Id)
+                };
             })
             .ToList();
 
@@ -3949,6 +3951,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             _gameStartedAtUtc[process.InstanceId] = process.ProcessStartedAtUtc;
+            foreach (var item in AllInstances.Where(item => item.Id == process.InstanceId))
+                item.IsRunning = true;
             _isManagedInstanceCancellationArmed = false;
             if (string.Equals(_managedInstance?.Id, process.InstanceId, StringComparison.OrdinalIgnoreCase))
                 _isManagedInstanceRunning = true;
@@ -3977,6 +3981,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             EndInstanceActivity(process.InstanceId);
 
             _gameStartedAtUtc.Remove(process.InstanceId);
+            foreach (var item in AllInstances.Where(item => item.Id == process.InstanceId))
+                item.IsRunning = _gameProcess.IsInstanceRunning(process.InstanceId);
             if (string.Equals(_managedInstance?.Id, process.InstanceId, StringComparison.OrdinalIgnoreCase))
                 _isManagedInstanceRunning = _gameProcess.IsInstanceRunning(process.InstanceId);
             IsGameRunning = _gameProcess.IsGameRunning();

@@ -252,14 +252,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>以下のすべてのプロファイルデータが完全に削除されます：</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>お知らせ</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>バグ報告</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>お知らせを表示</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>インスタンス</value>
@@ -1197,18 +1191,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>変更履歴を見る</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>ミュート</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>ゲーム実行中は音楽がミュートされています</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>音楽</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>ミュート解除</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>すべて</value>
   </data>
@@ -1512,9 +1494,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="startup.loading.ready" xml:space="preserve">
     <value>準備完了</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>お気に入りのインスタンス</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>プロファイル名を入力...</value>
   </data>
@@ -1714,7 +1693,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Hytale に渡す環境変数</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>背景、音楽、ニュース、お知らせ</value>
+    <value>背景とニュースの表示</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>閉じる</value>
@@ -2474,15 +2453,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>ランチャー、ゲームおよびシステムの設定</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Discordから受信したランチャーのお知らせを表示</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>バックグラウンド音楽</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>ブラウジング中にランチャー音楽を再生</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>インスタンスを作成</value>
