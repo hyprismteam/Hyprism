@@ -1,0 +1,195 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shell="using:Hyprism.Desktop.Shell"
+             xmlns:settings="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             xmlns:easing="clr-namespace:Avalonia.Animation.Easings;assembly=Avalonia.Base"
+             x:Class="Hyprism.Desktop.Shell.OnboardingView"
+             x:DataType="shell:OnboardingViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://Hyprism.Desktop/Screens/Profiles/ProfilesTemplates.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Hyprism.Desktop/Screens/Settings/SettingsStyles.axaml" />
+    <StyleInclude Source="avares://Hyprism.Desktop/Screens/Profiles/ProfilesStyles.axaml" />
+    <Style Selector="Border.wizardScreen.finishing">
+      <Setter Property="Background" Value="{DynamicResource StartupBackgroundBrush}" />
+    </Style>
+    <Style Selector="StackPanel.onboardingSteps">
+      <Setter Property="Spacing" Value="12" />
+    </Style>
+    <Style Selector="StackPanel.onboardingSteps.finishing">
+      <Setter Property="Spacing" Value="0" />
+    </Style>
+  </UserControl.Styles>
+  <Grid Background="{DynamicResource AppBackgroundBrush}">
+    <Border x:Name="OnboardingOverview" IsVisible="False">
+      <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+    </Border>
+    <Border x:Name="OnboardingWizard" Classes="wizardScreen" Classes.finishing="{Binding IsFinishing}" Focusable="True" IsTabStop="False" FocusAdorner="{x:Null}">
+      <Border.RenderTransform>
+        <TranslateTransform />
+      </Border.RenderTransform>
+      <controls:SmoothScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                   VerticalScrollBarVisibility="Auto">
+        <StackPanel Classes="onboardingSteps" Classes.finishing="{Binding IsFinishing}" MaxWidth="560" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Margin="32">
+          <Border x:Name="OnboardingLogoAnchor" Width="64" Height="64" HorizontalAlignment="Center">
+            <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+            <Image x:Name="OnboardingLogo" Width="64" Height="64"
+                   Source="{StaticResource HyprismBrandLogo}">
+              <Image.RenderTransform><TranslateTransform /></Image.RenderTransform>
+            </Image>
+          </Border>
+
+          <StackPanel x:Name="WelcomeContent" IsVisible="{Binding IsWelcome}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding WelcomeTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding WelcomeDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <Button x:Name="WelcomeNextButton" Classes="wizardAction create" HorizontalAlignment="Center" Margin="0,18,0,0"
+                    Click="OnNextClicked" Content="{Binding ContinueLabel}" />
+          </StackPanel>
+
+          <StackPanel x:Name="LanguageContent" IsVisible="{Binding IsLanguage}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding LanguageTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding LanguageDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <settings:SettingsLanguagePickerView DataContext="{Binding Settings}" ShowHeading="False" Margin="0,16,0,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
+              <Button Classes="wizardAction" Click="OnBackClicked" Content="{Binding BackLabel}" />
+              <Button x:Name="LanguageNextButton" Classes="wizardAction create" Click="OnNextClicked" Content="{Binding ContinueLabel}" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel x:Name="AppearanceContent" IsVisible="{Binding IsAppearance}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding AppearanceTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding AppearanceDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <settings:SettingsAppearancePickerView DataContext="{Binding Settings}" IsWizardLayout="True" Margin="0,16,0,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
+              <Button Classes="wizardAction" Click="OnBackClicked" Content="{Binding BackLabel}" />
+              <Button x:Name="AppearanceNextButton" Classes="wizardAction create" Click="OnNextClicked" Content="{Binding ContinueLabel}" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel x:Name="AccountContent" IsVisible="{Binding IsAccount}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding AccountTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding AccountDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <Border Classes="formGroup" Margin="0,16,0,0">
+              <StackPanel>
+                <Button x:Name="ChooseOfficialButton" Classes="formNavigationRow" Click="OnOfficialClicked">
+                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
+                    <Border Classes="wizardChoiceIcon"><Path Data="{StaticResource WorldsIcon}" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding OfficialLabel}" Classes="formLabel" />
+                      <TextBlock Text="{Binding OfficialHint}" Classes="formHint" />
+                    </StackPanel>
+                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}" Data="{StaticResource NextIcon}" />
+                  </Grid>
+                </Button>
+                <Button x:Name="ChooseOfflineButton" Classes="formNavigationRow last" Click="OnOfflineClicked">
+                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
+                    <Border Classes="wizardChoiceIcon"><Path Data="{StaticResource ProfilesIcon}" /></Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding OfflineLabel}" Classes="formLabel" />
+                      <TextBlock Text="{Binding OfflineHint}" Classes="formHint" />
+                    </StackPanel>
+                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}" Data="{StaticResource NextIcon}" />
+                  </Grid>
+                </Button>
+              </StackPanel>
+            </Border>
+            <Button Classes="wizardAction" HorizontalAlignment="Center" Margin="0,10,0,0"
+                    Click="OnBackClicked" Content="{Binding BackLabel}" />
+          </StackPanel>
+
+          <StackPanel x:Name="WarningContent" IsVisible="{Binding IsDownloadWarning}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding WarningTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding WarningDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <Border Classes="formGroup" Margin="0,16,0,0">
+              <Border Classes="formRow last">
+                <TextBlock Text="{Binding WarningAction}" Classes="formHint" TextWrapping="Wrap" />
+              </Border>
+            </Border>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
+              <Button x:Name="WarningBackButton" Classes="wizardAction" Click="OnBackClicked" Content="{Binding BackLabel}" />
+              <Button x:Name="WarningContinueButton" Classes="wizardAction create" Click="OnContinueOfflineClicked" Content="{Binding ContinueLabel}" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel x:Name="OfficialContent" IsVisible="{Binding IsOfficial}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding OfficialTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding OfficialDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <Border Classes="formGroup" Margin="0,16,0,0">
+              <Border Classes="formRow last">
+                <StackPanel Spacing="5">
+                  <TextBlock Text="{Binding OfficialLabel}" Classes="formLabel" />
+                  <TextBlock Text="{Binding Profiles.BrowserHint}" Classes="formHint" />
+                </StackPanel>
+              </Border>
+            </Border>
+            <TextBlock Text="{Binding Profiles.StatusMessage}" IsVisible="{Binding Profiles.IsStatusError}"
+                       Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center" TextWrapping="Wrap" />
+            <Grid Width="272" Height="50" ColumnDefinitions="112,10,150"
+                  HorizontalAlignment="Center" Margin="0,10,0,0">
+              <Button Classes="wizardAction" Click="OnBackClicked" Content="{Binding BackLabel}" />
+              <Button Grid.Column="2" ZIndex="1" HorizontalAlignment="Right"
+                      Classes="wizardAction create officialSignInAction"
+                      Classes.active="{Binding Profiles.IsAuthenticating}"
+                      Classes.cancelArmed="{Binding Profiles.IsAuthenticationCancellationArmed}"
+                      PointerExited="OnAuthenticationActionPointerExited"
+                      Command="{Binding SignInCommand}">
+                <ContentControl Content="{Binding Profiles}"
+                                ContentTemplate="{StaticResource OfficialSignInActionTemplate}" />
+              </Button>
+            </Grid>
+          </StackPanel>
+
+          <StackPanel x:Name="OfflineNameContent" IsVisible="{Binding IsOfflineName}" Spacing="12">
+            <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+            <TextBlock Text="{Binding NameTitle}" HorizontalAlignment="Center" FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+            <TextBlock Text="{Binding NameDescription}" Classes="muted" MaxWidth="460" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,16,0,0">
+              <controls:ModalTextField IsError="{Binding Profiles.IsOfflineNameInvalid}"
+                                       ErrorMessage="{Binding Profiles.OfflineNameErrorMessage}">
+                <TextBox Text="{Binding Profiles.OfflineProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="16" PlaceholderText="{Binding Profiles.NamePlaceholder}" />
+              </controls:ModalTextField>
+              <Button Grid.Column="1" Classes="profileIconButton editorRandomizeButton"
+                      ToolTip.Tip="{Binding Profiles.RandomizeNameLabel}"
+                      AutomationProperties.Name="{Binding Profiles.RandomizeNameLabel}"
+                      Command="{Binding Profiles.GenerateOfflineProfileNameCommand}">
+                <Path Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Data="{StaticResource CasinoRoundedIcon}" />
+              </Button>
+            </Grid>
+            <TextBlock Text="{Binding Profiles.StatusMessage}" IsVisible="{Binding Profiles.IsStatusError}"
+                       Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
+              <Button x:Name="OfflineNameBackButton" Classes="wizardAction" Click="OnBackClicked" Content="{Binding BackLabel}" />
+              <Button Classes="wizardAction create" IsEnabled="{Binding Profiles.CanCreateOfflineProfile}"
+                      Command="{Binding CreateOfflineCommand}" Content="{Binding CreateLabel}" />
+            </StackPanel>
+          </StackPanel>
+          <Border x:Name="FinishContent" IsVisible="{Binding IsFinishing}" Height="1" Opacity="0">
+            <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+          </Border>
+        </StackPanel>
+      </controls:SmoothScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

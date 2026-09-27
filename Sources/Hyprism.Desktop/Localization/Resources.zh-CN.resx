@@ -1266,6 +1266,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>认证服务器创建者</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>选择启动器的主题和强调色。</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>背景</value>
   </data>
@@ -1388,6 +1391,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>欢迎使用 Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>账号或个人资料</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>欢迎回来，{{name}}！</value>
@@ -1675,10 +1681,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>启动器文件、游戏版本和缓存</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>下载源、连接检测和游戏启动</value>
+    <value>下载源及其可用状态</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>语言、更新、启动器行为、GPU 首选项和环境变量</value>
+    <value>语言、GPU 和启动器行为</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>启动 Hytale 时使用的 GPU</value>
@@ -1693,7 +1699,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>传递给 Hytale 的环境变量</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>背景和新闻展示</value>
+    <value>主题和强调色</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>关闭</value>
@@ -2471,6 +2477,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>为你的新实例选择分支和游戏版本</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>要下载游戏，请在设置 → 下载中添加镜像源，或登录已购买游戏的 Hytale 账号</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>稳定版或预发布版</value>

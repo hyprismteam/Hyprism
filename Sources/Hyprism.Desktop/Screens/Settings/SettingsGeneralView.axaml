@@ -13,39 +13,16 @@ SPDX-License-Identifier: GPL-3.0-only
   <UserControl.Resources>
     <DataTemplate x:Key="SettingChoiceTemplate" x:DataType="vm:SettingChoiceViewModel">
       <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-        <Border Width="24"
-                Height="16"
-                CornerRadius="3"
-                ClipToBounds="True"
-                VerticalAlignment="Center"
-                IsVisible="{Binding HasIcon}">
-          <Image Source="{Binding Icon}"
-                 Stretch="UniformToFill"
-                 IsHitTestVisible="False" />
+        <Border Width="24" Height="16" CornerRadius="3" ClipToBounds="True"
+                VerticalAlignment="Center" IsVisible="{Binding HasIcon}">
+          <Image Source="{Binding Icon}" Stretch="UniformToFill" IsHitTestVisible="False" />
         </Border>
-        <TextBlock Grid.Column="1"
-                   Text="{Binding Display}"
-                   TextWrapping="NoWrap"
-                   VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1" Text="{Binding Display}" TextWrapping="NoWrap" VerticalAlignment="Center" />
       </Grid>
     </DataTemplate>
   </UserControl.Resources>
-
   <StackPanel Spacing="22" IsVisible="{Binding IsGeneral}">
-              <StackPanel Spacing="10">
-                <TextBlock Text="{Binding LanguageCategoryTitle}" Classes="settingsCategoryHeading" />
-                <Border Classes="formGroup">
-                  <controls:FormRow Label="{Binding LanguageLabel}"
-                                        Hint="{Binding LanguageHint}">
-                    <controls:FadingComboBox Width="220"
-                                             Classes="uiComboBox"
-                                             ItemsSource="{Binding Languages}"
-                                             ItemTemplate="{StaticResource SettingChoiceTemplate}"
-                                             ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
-                                             SelectedItem="{Binding SelectedLanguage}" />
-                  </controls:FormRow>
-                </Border>
-              </StackPanel>
+              <vm:SettingsLanguagePickerView />
 
               <StackPanel Spacing="10">
                 <TextBlock Text="{Binding GeneralTitle}" Classes="settingsCategoryHeading" />

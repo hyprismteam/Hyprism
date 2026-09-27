@@ -59,9 +59,9 @@ GPU values include `auto`, legacy `dedicated` and `integrated`, or `pci:<id>` wh
 | `InstanceDirectory` | empty | Default instance root, or the `HyprismLibrary` path created inside the directory selected in Desktop |
 | `ShowAlphaMods` | `false` | Include alpha mod releases |
 | `LastExportPath` | empty | Remembered mod export destination |
-| `HasCompletedOnboarding` | `false` | Compatibility state for onboarding |
+| `HasCompletedOnboarding` | `false` | Whether first-run setup finished after a profile was created or official sign-in succeeded |
 
-A persisted property does not imply a completed Desktop workflow. The current onboarding flow remains unfinished
+Desktop shows the wizard when this flag is false and there are no existing profiles or instances. It checks for an enabled mirror when the player chooses an offline profile; a mirror skips the download-source warning.
 
 When loading an older configuration, Desktop removes the unused music and Discord announcement preferences and dismissed announcement IDs. Other unknown properties remain available for future migrations.
 

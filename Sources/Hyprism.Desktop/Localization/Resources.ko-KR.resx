@@ -1266,6 +1266,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>인증 서버 제작자</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>런처의 테마와 강조 색상을 선택하세요</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>배경</value>
   </data>
@@ -1388,6 +1391,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Hyprism에 오신 것을 환영합니다</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>계정 또는 프로필</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>다시 오신 것을 환영합니다, {{name}}님!</value>
@@ -1675,10 +1681,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>런처 파일, 게임 버전 및 캐시</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>다운로드 소스, 연결 확인 및 게임 실행</value>
+    <value>다운로드 소스 및 사용 가능 여부</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>언어, 업데이트, 런처 동작, GPU 설정 및 환경 변수</value>
+    <value>언어, GPU 및 런처 동작</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Hytale 실행에 사용할 GPU</value>
@@ -1693,7 +1699,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Hytale에 전달할 환경 변수</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>배경 및 뉴스 표시</value>
+    <value>테마 및 강조 색상</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>닫기</value>
@@ -2471,6 +2477,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>새 인스턴스에 대한 브랜치와 게임 버전을 선택하세요</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>게임을 다운로드하려면 설정 → 다운로드에서 미러를 추가하거나 게임을 구매한 Hytale 계정으로 로그인하세요</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>안정화 또는 사전 출시 빌드</value>

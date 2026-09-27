@@ -2374,7 +2374,7 @@ public sealed class MainWindowRenderTests
         Assert.Equal("Офлайн-аккаунт", viewModel.AccountType);
         Assert.Equal("Загрузить ещё", viewModel.LoadMoreLabel);
         Assert.Equal(
-            "Фон и отображение новостей",
+            "Тема и акцентный цвет",
             viewModel.Settings.Categories.Single(category => category.Id == "visual").Description);
         Assert.Equal(
             "Среда выполнения, путь к Java и аргументы JVM",

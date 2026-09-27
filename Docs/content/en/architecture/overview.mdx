@@ -42,7 +42,8 @@ There is no Electron host, web frontend, IPC bridge, or generated TypeScript API
 2. `Bootstrapper.Initialize` creates Core services and applies host registrations
 3. `App` creates the window, localizer, native file picker, URI launcher, and view models
 4. Asynchronous initialization prepares optional remote data while the loading screen is visible
-5. Window shutdown cancels bootstrap work, disposes view models and services, and closes the launcher log
+5. On a new installation without profiles or instances, Desktop reveals the setup wizard after loading. The wizard uses the settings and profile services and records completion after a profile is ready.
+6. Window shutdown cancels bootstrap work, disposes view models and services, and closes the launcher log.
 
 A Local Node already attached to a game has a separate lifetime and continues until that game exits
 

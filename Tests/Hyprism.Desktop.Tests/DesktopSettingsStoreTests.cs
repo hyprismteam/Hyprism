@@ -32,6 +32,19 @@ public sealed class DesktopSettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void OnboardingCompletion_PersistsAcrossStoreInstances()
+    {
+        Assert.False(_settings.HasCompletedOnboarding);
+
+        _settings.HasCompletedOnboarding = true;
+
+        var reloaded = new DesktopSettingsStore(
+            new JsonConfigStore(_directory),
+            new AppPathConfiguration(_directory));
+        Assert.True(reloaded.HasCompletedOnboarding);
+    }
+
+    [Fact]
     public void GpuPreference_KeepsAdapterKeysAndDefaultsWhenEmpty()
     {
         _settings.GpuPreference = "pci:0000:01:00.0";

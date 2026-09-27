@@ -1,48 +1,53 @@
 ---
 title: First run
-description: Create a profile and instance, then start Hytale
+description: Complete initial setup, create a profile, and launch Hytale
 ---
 
 # First run
 
-You need one player profile and one game instance before Hyprism can start Hytale
+On a new installation, Hyprism opens the setup wizard after the loading screen. You need a player profile and a game instance before you can launch Hytale. Existing profiles or instances keep the launcher from reopening the wizard after an update.
 
-If you used an older release that stored data in a `HyPrism` folder, the launcher moves it to `Hyprism` automatically when it starts. When both folders exist, check [Data and cache](/architecture/data-and-cache) for how their contents are combined.
+If you used an older release that stored data in a `HyPrism` folder, the launcher moves it to `Hyprism` automatically when it starts. When both folders exist, see [Data and cache](/architecture/data-and-cache) for how their contents are combined.
 
-## 1. Choose the interface language
+## Complete the setup wizard
 
-Open **Settings → General → Interface Language**. The launcher changes language immediately
+1. On **Welcome to Hyprism**, select **Continue**.
+2. Choose the interface language. The wizard updates immediately.
+3. Choose the launcher theme and accent color. You can change both later in **Settings → Visual**.
+4. Choose **Official Hytale account** or **Offline profile**.
 
-## 2. Create a profile
+The language screen shows the current language and its flag.
 
-Open **Profiles**, select **Add**, then choose a profile type
+[![Language selection in the setup wizard](../../../static/img/user/en/onboarding-language.png)](../../../static/img/user/en/onboarding-language.png)
 
-- **Official Hytale account** opens the Hytale sign-in page in your system browser and requires an entitled Hytale account
-- **Offline profile** creates a local identity with a name from 3 to 16 ASCII letters, digits, hyphens, or underscores
+The appearance screen previews each theme and shows the available accent colors.
 
-See [Profiles](/user-guide/profiles) for authentication modes and profile management
+[![Theme previews and accent colors in the setup wizard](../../../static/img/user/en/onboarding-appearance.png)](../../../static/img/user/en/onboarding-appearance.png)
 
-## 3. Create an instance
+The final selection offers the two profile types.
 
-Open **Instances**, select **New Instance**, choose a release branch and version, then create the instance. Creating the entry does not download the game yet
+[![Official account and offline profile choices in the setup wizard](../../../static/img/user/en/onboarding-profile-choice.png)](../../../static/img/user/en/onboarding-profile-choice.png)
 
-See [Instances](/user-guide/instances-profiles-mods) for installation, launch, and deletion behavior
+An **Official Hytale account** opens sign-in in your system browser and requires an entitled Hytale account. When sign-in succeeds, setup finishes.
 
-## 4. Review launch settings
+[![Hytale sign-in step in the setup wizard](../../../static/img/user/en/onboarding-official-sign-in.png)](../../../static/img/user/en/onboarding-official-sign-in.png)
 
-The defaults are suitable for most systems. Before the first download, check these options when needed:
+An **Offline profile** needs a name of 3 to 16 ASCII letters, digits, hyphens, or underscores. On a new installation without an enabled mirror, Hyprism first warns that it has no download source. Select **Continue** to enter the name and create the profile. If a mirror was already enabled, the warning is skipped.
 
-- **Settings → Java** for a custom Java executable or memory limits
-- **Settings → General → Game GPU** on systems with more than one graphics adapter
-- **Settings → Downloads** when you intentionally use a custom mirror
-- **Settings → Network** to choose connected or autonomous sessions for offline profiles
+[![Warning that an offline profile has no download source](../../../static/img/user/en/onboarding-download-warning.png)](../../../static/img/user/en/onboarding-download-warning.png)
 
-## 5. Install and launch
+[![Offline profile name entry in the setup wizard](../../../static/img/user/en/onboarding-offline-name.png)](../../../static/img/user/en/onboarding-offline-name.png)
 
-Open the instance and select **Launch**. Hyprism downloads the selected version, prepares the runtime, and starts the game when installation succeeds
+Without an official account or enabled mirror, you cannot list available builds or install the game. After setup, open **Settings → Downloads**, select **Add**, and add a source you trust. See [Download sources](/user-guide/settings#downloads) for the available methods.
 
-After creation, the instance remains available from the [Instances](/user-guide/instances-profiles-mods) page
+See [Profiles](/user-guide/profiles) for authentication modes and profile management.
 
-:::tip
-Keep the launcher open during the first installation. Hover the active instance action to reveal **Cancel** when you need to stop the download
-:::
+## Create and launch an instance
+
+1. Open **Instances**, select **New Instance**, and choose a release branch and build.
+2. Confirm creation. This adds an instance entry without downloading game files.
+3. Open the instance and select **Launch**. Hyprism downloads the selected build, prepares the runtime, and starts the game when installation succeeds.
+
+See [Instances](/user-guide/instances-profiles-mods) for installation, launch, and deletion behavior.
+
+The defaults suit most systems. Before downloading, review **Settings → Java** if you need a custom Java executable or memory limits, **Settings → General → Game GPU** if you have multiple graphics adapters, and **Settings → Network** if you use an offline profile.

@@ -1266,6 +1266,9 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Kimlik Doğrulama Sunucusu Oluşturucusu</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Başlatıcı için bir tema ve vurgu rengi seçin</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Arka Plan</value>
   </data>
@@ -1388,6 +1391,9 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Hyprism'e Hoş Geldiniz</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Hesap veya profil</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>Tekrar hoş geldin, {{name}}!</value>
@@ -1675,10 +1681,10 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
     <value>Başlatıcı dosyaları, oyun sürümleri ve önbellek</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>İndirme kaynakları, bağlantı denetimi ve oyun başlatma</value>
+    <value>İndirme kaynakları ve kullanılabilirlik</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Dil, güncellemeler, başlatıcı davranışı, GPU tercihi ve ortam değişkenleri</value>
+    <value>Dil, GPU ve başlatıcı davranışı</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Hytale'ı başlatmak için GPU seçimi</value>
@@ -1693,7 +1699,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
     <value>Hytale'a aktarılan ortam değişkenleri</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Arka plan ve haber görünümü</value>
+    <value>Tema ve vurgu rengi</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Kapat</value>
@@ -2471,6 +2477,9 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Yeni örneğin için bir dal ve oyun sürümü seç</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Oyunu indirmek için Ayarlar → İndirmeler bölümüne bir yansıtıcı ekleyin veya oyunun satın alındığı Hytale hesabıyla oturum açın</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Kararlı veya ön sürüm yapıları</value>

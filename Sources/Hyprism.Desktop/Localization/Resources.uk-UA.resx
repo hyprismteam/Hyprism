@@ -1266,6 +1266,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Творець сервера автентифікації</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Виберіть тему й акцентний колір лаунчера</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Фон</value>
   </data>
@@ -1388,6 +1391,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Ласкаво просимо до Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Обліковий запис або профіль</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>З поверненням, {{name}}!</value>
@@ -1675,10 +1681,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Файли лаунчера, версії гри та кеш</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Джерела завантаження, перевірка з’єднання та запуск гри</value>
+    <value>Джерела завантаження та їх доступність</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Мова, оновлення, поведінка лаунчера, вибір GPU і змінні середовища</value>
+    <value>Мова, GPU і поведінка лаунчера</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Вибір відеокарти для запуску Hytale</value>
@@ -1693,7 +1699,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Змінні середовища, що передаються Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Тло та відображення новин</value>
+    <value>Тема й акцентний колір</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Закрити</value>
@@ -2471,6 +2477,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Виберіть гілку та версію гри для вашого нового екземпляра</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Щоб завантажити гру, додайте дзеркало в Налаштування → Завантаження або увійдіть в обліковий запис Hytale, на якому придбано гру</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Стабільні або передрелізні збірки</value>

@@ -8,6 +8,9 @@ namespace Hyprism.Desktop.Screens.Settings;
 /// </summary>
 public interface IDesktopSettingsStore
 {
+    /// <summary>Gets or sets whether first-run setup was completed</summary>
+    bool HasCompletedOnboarding { get; set; }
+
     /// <summary>Gets or sets the interface language code</summary>
     string Language { get; set; }
 

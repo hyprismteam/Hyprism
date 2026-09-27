@@ -1266,6 +1266,9 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Criador do servidor de autenticação</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Escolha um tema e uma cor de destaque para o launcher</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Fundo</value>
   </data>
@@ -1388,6 +1391,9 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Bem-vindo ao Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Conta ou perfil</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>Bem-vindo de volta, {{name}}!</value>
@@ -1675,10 +1681,10 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
     <value>Arquivos do launcher, versões do jogo e cache</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Fontes de download, teste de conexão e inicialização do jogo</value>
+    <value>Fontes de download e disponibilidade</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Idioma, atualizações, comportamento do launcher, preferência de GPU e variáveis de ambiente</value>
+    <value>Idioma, GPU e comportamento do launcher</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Seleção de GPU para iniciar o Hytale</value>
@@ -1693,7 +1699,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
     <value>Variáveis de ambiente enviadas ao Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Plano de fundo e exibição de notícias</value>
+    <value>Tema e cor de destaque</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Fechar</value>
@@ -2471,6 +2477,9 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Escolha um ramo e versão do jogo para sua nova instância</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Para baixar o jogo, adicione um espelho em Configurações → Downloads ou entre na conta Hytale que comprou o jogo</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Compilações estáveis ou pré-lançamento</value>
