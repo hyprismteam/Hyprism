@@ -2251,10 +2251,12 @@ public sealed class MainWindowRenderTests
         var settingsContent = window.GetVisualDescendants()
             .OfType<ScrollViewer>()
             .Single(scrollViewer => scrollViewer.Name == "SettingsContent");
+        var scrollOffsetBefore = settingsContent.Offset.Y;
         var comboPositionBeforeScroll = fadingLanguageComboBox.TranslatePoint(default, window);
         var popupPositionBeforeScroll = languagePopupBorder.TranslatePoint(default, window);
-        settingsContent.Offset = new Vector(0, 100);
+        settingsContent.Offset = new Vector(0, scrollOffsetBefore + 100);
         Dispatcher.UIThread.RunJobs();
+        var appliedScrollOffset = settingsContent.Offset.Y - scrollOffsetBefore;
         var comboPositionAfterScroll = fadingLanguageComboBox.TranslatePoint(default, window);
         var popupPositionAfterScroll = languagePopupBorder.TranslatePoint(default, window);
         Assert.NotNull(comboPositionBeforeScroll);
@@ -2267,14 +2269,15 @@ public sealed class MainWindowRenderTests
             ? comboPositionBeforeScroll.Value.Y - popupBottom
             : popupPositionBeforeScroll.Value.Y - comboBottom;
         Assert.Equal(8, popupGap, precision: 3);
-        Assert.InRange(
+        Assert.True(appliedScrollOffset > 0, "The settings content should scroll in the test layout");
+        Assert.Equal(
+            appliedScrollOffset,
             comboPositionBeforeScroll!.Value.Y - comboPositionAfterScroll!.Value.Y,
-            99,
-            101);
-        Assert.InRange(
+            precision: 3);
+        Assert.Equal(
+            appliedScrollOffset,
             popupPositionBeforeScroll!.Value.Y - popupPositionAfterScroll!.Value.Y,
-            99,
-            101);
+            precision: 3);
         settingsContent.Offset = default;
         Dispatcher.UIThread.RunJobs();
         var settingsComboPreviewPath = Environment.GetEnvironmentVariable(
