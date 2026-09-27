@@ -1266,6 +1266,9 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Creatore del server di autenticazione</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Scegli un tema e un colore principale per il launcher</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Sfondo</value>
   </data>
@@ -1388,6 +1391,9 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Benvenuto in Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Account o profilo</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>Bentornato, {{name}}!</value>
@@ -1675,10 +1681,10 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
     <value>File del launcher, versioni del gioco e cache</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Fonti di download, verifica della connessione e avvio del gioco</value>
+    <value>Fonti di download e disponibilità</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Lingua, aggiornamenti, comportamento del launcher, preferenza GPU e variabili d'ambiente</value>
+    <value>Lingua, GPU e comportamento del launcher</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Selezione della GPU per avviare Hytale</value>
@@ -1693,7 +1699,7 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
     <value>Variabili d’ambiente passate a Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Sfondo e visualizzazione delle notizie</value>
+    <value>Tema e colore di accento</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Chiudi</value>
@@ -2474,6 +2480,9 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Scegli un ramo e una versione del gioco per la tua nuova istanza</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Per scaricare il gioco, aggiungi un mirror in Impostazioni → Download oppure accedi con l’account Hytale con cui hai acquistato il gioco</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Build stabili o pre-release</value>

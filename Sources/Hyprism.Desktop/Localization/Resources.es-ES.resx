@@ -1266,6 +1266,9 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Creador del servidor de autenticación</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Elige un tema y un color de acento para el lanzador</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Fondo</value>
   </data>
@@ -1388,6 +1391,9 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Bienvenido a Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Cuenta o perfil</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>¡Bienvenido de nuevo, {{name}}!</value>
@@ -1675,10 +1681,10 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
     <value>Archivos del launcher, versiones del juego y caché</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Fuentes de descarga, pruebas de conexión e inicio del juego</value>
+    <value>Fuentes de descarga y su disponibilidad</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Idioma, actualizaciones, comportamiento del launcher, preferencia de GPU y variables de entorno</value>
+    <value>Idioma, GPU y comportamiento del launcher</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Selección de GPU para iniciar Hytale</value>
@@ -1693,7 +1699,7 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
     <value>Variables de entorno enviadas a Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Fondo y presentación de noticias</value>
+    <value>Tema y color de acento</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Cerrar</value>
@@ -2471,6 +2477,9 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Elige una rama y versión del juego para tu nueva instancia</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Para descargar el juego, añade un servidor espejo en Ajustes → Descargas o inicia sesión con la cuenta de Hytale que compró el juego</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Compilaciones estables o preliminares</value>

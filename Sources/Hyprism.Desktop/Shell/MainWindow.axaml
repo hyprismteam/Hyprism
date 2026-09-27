@@ -238,6 +238,24 @@ SPDX-License-Identifier: GPL-3.0-only
 
   </Grid>
 
+  <ContentControl x:Name="OnboardingScreen"
+                  Content="{Binding Onboarding}"
+                  IsVisible="{Binding IsOnboardingVisible}"
+                  ZIndex="900">
+    <ContentControl.Transitions>
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.38">
+          <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+        </DoubleTransition>
+      </Transitions>
+    </ContentControl.Transitions>
+    <ContentControl.ContentTemplate>
+      <DataTemplate x:DataType="shell:OnboardingViewModel">
+        <shell:OnboardingView />
+      </DataTemplate>
+    </ContentControl.ContentTemplate>
+  </ContentControl>
+
   <Border x:Name="StartupLoadingScreen"
           IsVisible="False"
           IsHitTestVisible="False"

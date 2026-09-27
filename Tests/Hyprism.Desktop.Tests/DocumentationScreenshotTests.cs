@@ -6,16 +6,21 @@ using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Hyprism.Core.Accounts;
 using Hyprism.Core.Game.Sources;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Models;
 using Hyprism.Desktop.Controls;
 using Hyprism.Desktop.Screens.Instances;
 using Hyprism.Desktop.Screens.Settings;
+using Hyprism.Desktop.Screens.Profiles;
+using Hyprism.Desktop.Localization;
+using Hyprism.Desktop.Platform;
 using Hyprism.Desktop.Shell;
 using Moq;
 using Xunit;
@@ -118,6 +123,7 @@ public sealed class DocumentationScreenshotTests
         });
 
         var versions = new Mock<IGameVersionCatalog>();
+        versions.Setup(service => service.HasDownloadSources()).Returns(true);
         versions
             .Setup(service => service.GetVersionListAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([72, 71, 70]);
@@ -210,7 +216,83 @@ public sealed class DocumentationScreenshotTests
         dialogFrame.Save(Path.Combine(outputDirectory, "java-arguments.png"), PngBitmapEncoderOptions.Default);
 
         window.Close();
+        versions.Setup(service => service.HasDownloadSources()).Returns(false);
+        using (var emptyViewModel = MainWindowViewModelFactory.Create(
+                   httpClient, mirrorCatalog, versions.Object, language, emptyInstances: true))
+        {
+            var emptyWindow = new MainWindow
+            {
+                Width = WindowWidth,
+                Height = WindowHeight,
+                DataContext = emptyViewModel
+            };
+            emptyWindow.Show();
+            emptyViewModel.NavigateCommand.Execute("instances");
+            await WaitFramesAsync(8);
+            Capture(emptyWindow, Path.Combine(outputDirectory, "instances-no-sources.png"));
+            emptyWindow.Close();
+        }
+
         CaptureSelectionControls(outputDirectory, language);
+        await CaptureOnboardingAsync(outputDirectory, language);
+    }
+
+    private static async Task CaptureOnboardingAsync(string outputDirectory, string language)
+    {
+        var localizer = new StringLocalizer(language);
+        var settingsStore = new Mock<IDesktopSettingsStore>();
+        settingsStore.SetupProperty(store => store.Language, language);
+        var uriLauncher = new Mock<IExternalUriLauncher>();
+        var profileRepository = new Mock<IProfileRepository>();
+        profileRepository.Setup(repository => repository.GetProfiles()).Returns([]);
+        using var settings = new SettingsViewModel(
+            settingsStore.Object, uriLauncher.Object, localizer);
+        using var profiles = new ProfilesViewModel(
+            new Mock<IProfileManager>().Object,
+            profileRepository.Object,
+            uriLauncher.Object,
+            localizer);
+        using var onboarding = new OnboardingViewModel(
+            settingsStore.Object,
+            settings,
+            profiles,
+            new Mock<IGameVersionCatalog>().Object,
+            localizer,
+            () => { });
+        var view = new OnboardingView { DataContext = onboarding };
+        var window = new Window
+        {
+            Width = WindowWidth,
+            Height = WindowHeight,
+            Content = view
+        };
+        window.Show();
+
+        async Task ClickAndWaitAsync(string buttonName)
+        {
+            view.FindControl<Button>(buttonName)!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await WaitFramesAsync(28);
+        }
+
+        await ClickAndWaitAsync("WelcomeNextButton");
+        Capture(window, Path.Combine(outputDirectory, "onboarding-language.png"));
+        await ClickAndWaitAsync("LanguageNextButton");
+        Capture(window, Path.Combine(outputDirectory, "onboarding-appearance.png"));
+        await ClickAndWaitAsync("AppearanceNextButton");
+        Capture(window, Path.Combine(outputDirectory, "onboarding-profile-choice.png"));
+        await ClickAndWaitAsync("ChooseOfflineButton");
+        Capture(window, Path.Combine(outputDirectory, "onboarding-download-warning.png"));
+        await ClickAndWaitAsync("WarningContinueButton");
+        Assert.True(view.FindControl<StackPanel>("OfflineNameContent")!.IsEffectivelyVisible);
+        profiles.OfflineProfileName = "ExamplePlayer";
+        Dispatcher.UIThread.RunJobs();
+        Capture(window, Path.Combine(outputDirectory, "onboarding-offline-name.png"));
+        await ClickAndWaitAsync("OfflineNameBackButton");
+        await ClickAndWaitAsync("WarningBackButton");
+        await ClickAndWaitAsync("ChooseOfficialButton");
+        Assert.True(view.FindControl<StackPanel>("OfficialContent")!.IsEffectivelyVisible);
+        Capture(window, Path.Combine(outputDirectory, "onboarding-official-sign-in.png"));
+        window.Close();
     }
 
     private static void CaptureSelectionControls(string outputDirectory, string language)

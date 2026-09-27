@@ -1266,6 +1266,9 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Créateur du serveur d’authentification</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Choisissez un thème et une couleur d’accentuation pour le lanceur</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Arrière-plan</value>
   </data>
@@ -1388,6 +1391,9 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Bienvenue sur Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Compte ou profil</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>Content de te revoir, {{name}} !</value>
@@ -1675,10 +1681,10 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
     <value>Fichiers du launcher, versions du jeu et cache</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Sources de téléchargement, test de connexion et lancement du jeu</value>
+    <value>Sources de téléchargement et leur disponibilité</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Langue, mises à jour, comportement du launcher, préférence de GPU et variables d'environnement</value>
+    <value>Langue, GPU et comportement du launcher</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Choix du GPU pour lancer Hytale</value>
@@ -1693,7 +1699,7 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
     <value>Variables d’environnement transmises à Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Arrière-plan et affichage des actualités</value>
+    <value>Thème et couleur d’accentuation</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Fermer</value>
@@ -2471,6 +2477,9 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Choisissez une branche et une version du jeu pour votre nouvelle instance</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Pour télécharger le jeu, ajoutez un miroir dans Paramètres → Téléchargements ou connectez-vous au compte Hytale ayant acheté le jeu</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Versions stables ou pré-publiées</value>

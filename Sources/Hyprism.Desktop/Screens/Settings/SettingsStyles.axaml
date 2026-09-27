@@ -49,6 +49,40 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
 
+  <Style Selector="StackPanel.appearancePickerSections">
+    <Setter Property="Spacing" Value="22" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerDivider">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerGroup.wizard">
+    <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerGroup.wizard StackPanel.appearancePickerSections">
+    <Setter Property="Spacing" Value="0" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerGroup.wizard TextBlock.settingsCategoryHeading">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerGroup.wizard Border.themeChoicePicker,
+                  Border.appearancePickerGroup.wizard Border.accentColorPicker">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+
+  <Style Selector="Border.appearancePickerGroup.wizard Border.appearancePickerDivider">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="Height" Value="3" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+  </Style>
+
   <Style Selector="Border.themeChoicePicker">
     <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
     <Setter Property="CornerRadius" Value="14" />

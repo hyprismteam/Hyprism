@@ -70,23 +70,31 @@ SPDX-License-Identifier: GPL-3.0-only
           </TranslateTransform>
         </Grid.RenderTransform>
         <controls:EmptyState IsVisible="{Binding !HasInstances}"
-
+                             MaxWidth="640"
                              Title="{Binding CreateInstanceTitle}"
                              Description="{Binding CreateInstanceHint}">
           <controls:EmptyState.Icon>
             <Image Width="56"
                    Height="56"
-                   Source="avares://Hyprism.Desktop/Assets/Fluent/puzzle.png"
+                   Source="avares://Hyprism.Desktop/Assets/Fluent/layers.png"
                    Stretch="Uniform" />
           </controls:EmptyState.Icon>
           <controls:EmptyState.ActionContent>
-            <Button Classes="primary"
-                    Click="OnOpenCreatorClicked">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <Path Classes="actionIcon" Width="18" Height="18" Stretch="Uniform" Data="{StaticResource GestureSelectIcon}" />
-                <TextBlock Text="{Binding SelectVersionLabel}" />
-              </StackPanel>
-            </Button>
+            <StackPanel Spacing="16" HorizontalAlignment="Center">
+              <controls:NoteCard x:Name="EmptySourcesNote" Classes="note" Width="560"
+                                 IsVisible="{Binding HasNoDownloadSources}"
+                                 Title="{Binding NoDownloadSourcesTitle}">
+                <TextBlock Text="{Binding NoDownloadSourcesHint}" TextWrapping="Wrap" />
+              </controls:NoteCard>
+              <Button x:Name="EmptyCreateButton" Classes="wizardAction create" HorizontalAlignment="Center"
+                      IsEnabled="{Binding HasDownloadSources}"
+                      Click="OnOpenCreatorClicked">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <Path Width="18" Height="18" Stretch="Uniform" Fill="{Binding $parent[Button].Foreground}" Data="{StaticResource GestureSelectIcon}" />
+                  <TextBlock Text="{Binding SelectVersionLabel}" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
           </controls:EmptyState.ActionContent>
         </controls:EmptyState>
 

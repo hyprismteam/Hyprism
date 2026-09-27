@@ -29,6 +29,13 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
     }
 
     /// <inheritdoc/>
+    public bool HasCompletedOnboarding
+    {
+        get => _configStore.Configuration.HasCompletedOnboarding;
+        set => Save(config => config.HasCompletedOnboarding = value);
+    }
+
+    /// <inheritdoc/>
     public string Language
     {
         get => _configStore.Configuration.Language;

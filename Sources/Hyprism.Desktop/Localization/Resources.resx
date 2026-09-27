@@ -351,6 +351,9 @@ You may need to reinstall the game if switching drives</value>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Choose a branch and game version for your new instance</value>
   </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>To download the game, add a mirror in Settings → Downloads or sign in to the Hytale account that owns the game</value>
+  </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Stable or pre-release builds</value>
   </data>
@@ -1359,6 +1362,9 @@ You may need to reinstall the game if switching drives</value>
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Auth Server Creator</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Choose a theme and accent color for the launcher</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Background</value>
   </data>
@@ -1499,6 +1505,9 @@ You may need to reinstall the game if switching drives</value>
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Welcome to Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Account or profile</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>Welcome back, {{name}}!</value>
@@ -1858,10 +1867,10 @@ You may need to reinstall the game if switching drives</value>
     <value>Launcher files, game versions and cache</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Download sources, connection checks and game launch</value>
+    <value>Download sources and availability</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Language, launcher behavior, GPU preference, and environment variables</value>
+    <value>Language, GPU and launcher behavior</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>GPU selection for launching Hytale</value>
@@ -1876,7 +1885,7 @@ You may need to reinstall the game if switching drives</value>
     <value>Environment variables passed to Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Background and news presentation</value>
+    <value>Theme and accent color</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Close</value>

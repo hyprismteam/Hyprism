@@ -1,0 +1,38 @@
+<!--
+Copyright (C) 2026 Hyprism Launcher
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Hyprism.Desktop.Screens.Settings"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
+             x:Class="Hyprism.Desktop.Screens.Settings.SettingsLanguagePickerView"
+             x:Name="LanguagePickerRoot"
+             x:DataType="vm:SettingsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="SettingChoiceTemplate" x:DataType="vm:SettingChoiceViewModel">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+        <Border Width="24" Height="16" CornerRadius="3" ClipToBounds="True"
+                VerticalAlignment="Center" IsVisible="{Binding HasIcon}">
+          <Image Source="{Binding Icon}" Stretch="UniformToFill" IsHitTestVisible="False" />
+        </Border>
+        <TextBlock Grid.Column="1" Text="{Binding Display}" TextWrapping="NoWrap" VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="10">
+    <TextBlock x:Name="LanguagePickerHeading" Text="{Binding LanguageCategoryTitle}" Classes="settingsCategoryHeading"
+               IsVisible="{Binding ShowHeading, ElementName=LanguagePickerRoot}" />
+    <Border Classes="formGroup">
+      <controls:FormRow Label="{Binding LanguageLabel}" Hint="{Binding LanguageHint}">
+        <controls:FadingComboBox Width="220"
+                                 Classes="uiComboBox"
+                                 ItemsSource="{Binding Languages}"
+                                 ItemTemplate="{StaticResource SettingChoiceTemplate}"
+                                 ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                 SelectedItem="{Binding SelectedLanguage}" />
+      </controls:FormRow>
+    </Border>
+  </StackPanel>
+</UserControl>

@@ -130,7 +130,11 @@ public sealed partial class App : Application
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(viewModel.CompleteStartupLoading);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            viewModel.BeginOnboardingIfNeeded();
+            viewModel.CompleteStartupLoading();
+        });
     }
 
     private static MainWindowViewModel CreateMainWindowViewModel(

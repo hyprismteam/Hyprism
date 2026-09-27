@@ -348,6 +348,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>Выберите ветку и версию игры для нового экземпляра</value>
   </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>Чтобы загрузить игру, добавьте зеркало в разделе «Настройки» → «Загрузки» или войдите в аккаунт Hytale, на котором куплена игра</value>
+  </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>Стабильная или предварительная ветка</value>
   </data>
@@ -1356,6 +1359,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>Создатель сервера авторизации</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>Выберите тему и акцентный цвет лаунчера</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>Фон</value>
   </data>
@@ -1496,6 +1502,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Добро пожаловать в Hyprism</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>Аккаунт или профиль</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>С возвращением, {{name}}!</value>
@@ -1855,10 +1864,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Файлы лаунчера, установленные версии игры и кеш</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>Источники загрузки, проверка соединения и запуск игры</value>
+    <value>Источники загрузки и их доступность</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Язык, поведение лаунчера, выбор GPU и переменные окружения</value>
+    <value>Язык, GPU и поведение лаунчера</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Выбор видеокарты для запуска Hytale</value>
@@ -1873,7 +1882,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Переменные окружения, передаваемые Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Фон и отображение новостей</value>
+    <value>Тема и акцентный цвет</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Закрыть</value>

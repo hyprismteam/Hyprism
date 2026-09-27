@@ -156,6 +156,8 @@ public sealed class StartupLoadingTests
         Dispatcher.UIThread.RunJobs();
         news.Verify(service => service.GetNewsAsync(It.IsAny<int>()), Times.Once);
 
+        viewModel.BeginOnboardingIfNeeded();
+        Assert.NotNull(viewModel.Onboarding);
         viewModel.CompleteStartupLoading();
         await AvaloniaTestWait.UntilAsync(
             () => !startupScreen.IsVisible,
@@ -164,6 +166,7 @@ public sealed class StartupLoadingTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.False(startupScreen.IsVisible);
+        Assert.True(window.FindControl<ContentControl>("OnboardingScreen")!.IsEffectivelyVisible);
         Assert.Equal(1, launcherShell.Opacity);
         Assert.True(launcherShell.IsHitTestVisible);
         window.Close();

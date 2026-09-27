@@ -45,6 +45,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     private readonly HttpClient _httpClient;
     private readonly StringLocalizer _localizer;
     private bool _isOfficialProfile;
+    private OnboardingViewModel? _onboarding;
 
     [ObservableProperty]
     private bool _isStartupLoading;
@@ -151,6 +152,17 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     public ProfilesViewModel Profiles { get; }
     public NewsViewModel News { get; }
     public InstancesViewModel Instances { get; }
+    public OnboardingViewModel? Onboarding
+    {
+        get => _onboarding;
+        private set
+        {
+            if (SetProperty(ref _onboarding, value))
+                OnPropertyChanged(nameof(IsOnboardingVisible));
+        }
+    }
+
+    public bool IsOnboardingVisible => Onboarding is not null;
 
     public Bitmap? ActiveProfileAvatar => Profiles.ActiveProfile?.Avatar;
     public bool HasActiveProfileAvatar => ActiveProfileAvatar is not null;
@@ -191,6 +203,9 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
 
         NotifyPageStateChanged();
 
+        if (IsInstances)
+            Instances.RefreshDownloadSourceAvailability();
+
         if (IsNews)
         {
             if (News.HasLoadedNews)
@@ -204,6 +219,28 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
     {
         StartupLoadingStatus = _localizer["startup.loading.content"];
         IsStartupLoading = true;
+    }
+
+    public void BeginOnboardingIfNeeded()
+    {
+        if (_settingsStore.HasCompletedOnboarding || Profiles.HasProfiles ||
+            _instances.GetCachedInstances().Count > 0 || Onboarding is not null)
+        {
+            return;
+        }
+
+        Onboarding = new OnboardingViewModel(
+            _settingsStore,
+            Settings,
+            Profiles,
+            _versionCatalog,
+            _localizer,
+            () =>
+            {
+                Onboarding?.Dispose();
+                Onboarding = null;
+                Instances.RefreshDownloadSourceAvailability();
+            });
     }
 
     public async Task PreloadStartupDataAsync(CancellationToken cancellationToken)
@@ -273,6 +310,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
         AccountType = _isOfficialProfile
             ? _localizer["desktopSettings.accountHytale"]
             : _localizer["desktopSettings.accountOffline"];
+        Instances.RefreshDownloadSourceAvailability();
     }
 
     private void OnProfilesPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -302,6 +340,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
 
     public void Dispose()
     {
+        Onboarding?.Dispose();
         _localizer.LanguageChanged -= ApplyLanguage;
         Profiles.ActiveProfileChanged -= OnActiveProfileChanged;
         Profiles.PropertyChanged -= OnProfilesPropertyChanged;

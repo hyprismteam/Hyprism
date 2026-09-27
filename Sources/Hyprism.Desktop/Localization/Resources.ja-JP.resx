@@ -1266,6 +1266,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="onboarding.authServerCreator" xml:space="preserve">
     <value>認証サーバー作成者</value>
   </data>
+  <data name="onboarding.appearanceDescription" xml:space="preserve">
+    <value>ランチャーのテーマとアクセントカラーを選択してください。</value>
+  </data>
   <data name="onboarding.background" xml:space="preserve">
     <value>背景</value>
   </data>
@@ -1388,6 +1391,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="onboarding.welcome" xml:space="preserve">
     <value>Hyprismへようこそ</value>
+  </data>
+  <data name="onboarding.accountChoice.title" xml:space="preserve">
+    <value>アカウントまたはプロフィール</value>
   </data>
   <data name="onboarding.welcomeBack" xml:space="preserve">
     <value>お帰りなさい、{{name}}さん！</value>
@@ -1675,10 +1681,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>ランチャーのファイル、ゲームバージョン、キャッシュ</value>
   </data>
   <data name="settings.categoryDescriptions.downloads" xml:space="preserve">
-    <value>ダウンロード元、接続確認、ゲーム起動</value>
+    <value>ダウンロード元と利用状況</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>言語、アップデート、ランチャーの動作、GPU の設定、環境変数</value>
+    <value>言語、GPU、ランチャーの動作</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>Hytale の起動に使用する GPU</value>
@@ -1693,7 +1699,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Hytale に渡す環境変数</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>背景とニュースの表示</value>
+    <value>テーマとアクセントカラー</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>閉じる</value>
@@ -2471,6 +2477,9 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.newInstanceHint" xml:space="preserve">
     <value>新しいインスタンスのブランチとゲームバージョンを選択してください</value>
+  </data>
+  <data name="instances.noDownloadSourcesHint" xml:space="preserve">
+    <value>ゲームをダウンロードするには、設定 → ダウンロードでミラーを追加するか、ゲームを購入した Hytale アカウントでサインインしてください</value>
   </data>
   <data name="instances.branchHint" xml:space="preserve">
     <value>安定版またはプレリリースビルド</value>

@@ -504,6 +504,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public string NewInstanceTitle => _localizer["instances.newInstance"];
     public string NewInstanceHint => _localizer["instances.newInstanceHint"];
     public string CreateInstanceHint => _localizer["instances.createInstanceHint"];
+    public string NoDownloadSourcesTitle => _localizer["onboarding.warning.title"];
+    public string NoDownloadSourcesHint => _localizer["instances.noDownloadSourcesHint"];
     public string InstanceBranchHint => _localizer["instances.branchHint"];
     public string InstanceVersionHint => _localizer["instances.versionHint"];
     public string CancelLabel => _localizer["common.cancel"];
@@ -696,6 +698,14 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     };
 
     public bool HasInstances => AllInstances.Count > 0;
+    public bool HasDownloadSources => _versionCatalog?.HasDownloadSources() ?? true;
+    public bool HasNoDownloadSources => !HasDownloadSources;
+
+    public void RefreshDownloadSourceAvailability()
+    {
+        OnPropertyChanged(nameof(HasDownloadSources));
+        OnPropertyChanged(nameof(HasNoDownloadSources));
+    }
     public bool HasSelectedInstance => _selectedInstance is not null;
     public bool HasManagedInstance => _managedInstance is not null;
     public bool HasAvailableInstanceVersions => AvailableInstanceVersions.Count > 0;

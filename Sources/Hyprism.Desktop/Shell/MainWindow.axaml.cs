@@ -152,10 +152,7 @@ public sealed partial class MainWindow : Window
         StartupMarkScale.ScaleX = 1.08;
         StartupMarkScale.ScaleY = 1.08;
         StartupLoadingScreen.Opacity = 0;
-        LauncherShell.Opacity = 1;
-        LauncherShellScale.ScaleX = 1;
-        LauncherShellScale.ScaleY = 1;
-        LauncherShellTranslation.Y = 0;
+        RevealLauncherShell();
 
         await Task.Delay(440);
         if (transitionVersion != _startupTransitionVersion ||
@@ -168,6 +165,49 @@ public sealed partial class MainWindow : Window
         _isStartupLoadingHiding = false;
         LauncherShell.IsHitTestVisible = true;
         StartupAnimation.Stop();
+    }
+
+    internal async Task RevealLauncherFromOnboardingAsync(OnboardingViewModel onboarding)
+    {
+        if (DataContext is not MainWindowViewModel { Onboarding: var current } ||
+            !ReferenceEquals(current, onboarding))
+            return;
+
+        var shellTransitions = LauncherShell.Transitions;
+        var scaleTransitions = LauncherShellScale.Transitions;
+        var translationTransitions = LauncherShellTranslation.Transitions;
+        LauncherShell.Transitions = null;
+        LauncherShellScale.Transitions = null;
+        LauncherShellTranslation.Transitions = null;
+        LauncherShell.IsHitTestVisible = false;
+        LauncherShell.Opacity = 0;
+        LauncherShellScale.ScaleX = 0.975;
+        LauncherShellScale.ScaleY = 0.975;
+        LauncherShellTranslation.Y = 12;
+        LauncherShell.Transitions = shellTransitions;
+        LauncherShellScale.Transitions = scaleTransitions;
+        LauncherShellTranslation.Transitions = translationTransitions;
+
+        OnboardingScreen.IsHitTestVisible = false;
+        OnboardingScreen.Opacity = 0;
+        RevealLauncherShell();
+
+        await Task.Delay(440);
+        if (DataContext is MainWindowViewModel { Onboarding: var active } &&
+            ReferenceEquals(active, onboarding))
+        {
+            onboarding.FinishCompletion();
+            OnboardingScreen.Opacity = 1;
+            LauncherShell.IsHitTestVisible = true;
+        }
+    }
+
+    private void RevealLauncherShell()
+    {
+        LauncherShell.Opacity = 1;
+        LauncherShellScale.ScaleX = 1;
+        LauncherShellScale.ScaleY = 1;
+        LauncherShellTranslation.Y = 0;
     }
 
     private void ShowLauncherImmediately()
