@@ -58,7 +58,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 Data="{StaticResource DirectionsRunIcon}" />
           <controls:FadingTextBlock Grid.Column="1"
                                     Classes="managedActionStatus"
-                                    Text="{Binding ManagedInstanceActionStatusText}"
+                                    State="{Binding ManagedInstanceActionStatusState}"
                                     Foreground="{Binding $parent[Button].Foreground}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center" />

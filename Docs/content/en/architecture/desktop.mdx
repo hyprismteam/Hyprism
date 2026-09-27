@@ -50,7 +50,9 @@ The following fragment illustrates a compiled binding to the existing settings v
 </UserControl>
 ```
 
-Publish observable collection changes on the UI dispatcher. Unsubscribe from service events and release image resources when their owner is disposed
+Startup constructs the shell and screen view models on a worker thread. Timers that update the interface must explicitly use `Dispatcher.UIThread`. Publish observable collection changes on that dispatcher. Unsubscribe from service events and release image resources when their owner is disposed.
+
+The instance action reads process state when selecting an instance and handles typed process events. Its elapsed-time timer uses the stored start time without querying the process registry on each tick. Selecting a different instance applies the new button state immediately. Launch progress within the same instance retains its normal animations.
 
 ## Shared UI foundation
 

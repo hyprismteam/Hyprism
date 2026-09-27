@@ -379,6 +379,64 @@ public sealed class InstanceContentViewModelTests
     }
 
     [AvaloniaFact]
+    public async Task ManagedActionSwitchesToEachRunningInstanceTimeAndKeepsRefreshing()
+    {
+        var idle = new InstanceInfo { Id = "idle", Name = "Idle", Branch = "release", Version = 20 };
+        var first = new InstanceInfo { Id = "first", Name = "First", Branch = "release", Version = 20 };
+        var second = new InstanceInfo { Id = "second", Name = "Second", Branch = "release", Version = 20 };
+        var now = DateTime.UtcNow;
+        var processes = new[]
+        {
+            new GameProcessInfo(101, now.AddMinutes(-15), first.Id, "profile-id", null, now),
+            new GameProcessInfo(102, now.AddMinutes(-2), second.Id, "profile-id", null, now)
+        };
+        var instances = new Mock<IInstanceRepository>();
+        var gameProcess = new Mock<IGameProcessTracker>();
+        instances.Setup(service => service.GetCachedInstances()).Returns([idle, first, second]);
+        instances.Setup(service => service.GetSelectedInstance()).Returns(idle);
+        gameProcess.Setup(service => service.IsGameRunning()).Returns(true);
+        gameProcess.Setup(service => service.IsInstanceRunning(It.IsAny<string>()))
+            .Returns((string id) => id != idle.Id);
+        gameProcess.Setup(service => service.GetRunningProcesses()).Returns(processes);
+
+        using var viewModel = await Task.Run(() => new MainWindowViewModel(
+            instances.Object,
+            new Mock<IProfileManager>().Object,
+            new Mock<IProfileRepository>().Object,
+            new Mock<IGameLaunchCoordinator>().Object,
+            new Mock<IGameInstallationWorkflow>().Object,
+            gameProcess.Object,
+            new Mock<IProgressReporter>().Object,
+            new Mock<IDesktopSettingsStore>().Object,
+            new Mock<IHytaleNewsClient>().Object,
+            new Mock<IExternalUriLauncher>().Object,
+            new HttpClient(),
+            new StringLocalizer("en-US")));
+
+        viewModel.OpenInstanceDetailsCommand.Execute(first.Id);
+        Assert.Equal("Running", viewModel.Instances.ManagedInstanceActionStatusText);
+        Assert.StartsWith("15:", viewModel.ManagedInstanceActionMetricText);
+
+        viewModel.OpenInstanceDetailsCommand.Execute(second.Id);
+        Assert.StartsWith("2:", viewModel.ManagedInstanceActionMetricText);
+        Assert.Equal("Running", viewModel.Instances.ManagedInstanceActionStatusText);
+        var initialMetric = viewModel.ManagedInstanceActionMetricText;
+        var processChecks = gameProcess.Invocations.Count(invocation =>
+            invocation.Method.Name == nameof(IGameProcessTracker.IsInstanceRunning));
+
+        var updates = 0;
+        viewModel.Instances.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(viewModel.ManagedInstanceActionMetricText))
+                updates++;
+        };
+        await WaitUntilAsync(() => updates >= 2);
+        await WaitUntilAsync(() => viewModel.ManagedInstanceActionMetricText != initialMetric);
+        Assert.Equal(processChecks, gameProcess.Invocations.Count(invocation =>
+            invocation.Method.Name == nameof(IGameProcessTracker.IsInstanceRunning)));
+    }
+
+    [AvaloniaFact]
     public async Task ManagedInstallShowsProgressAndSecondActionCancelsIt()
     {
         var instance = new InstanceInfo

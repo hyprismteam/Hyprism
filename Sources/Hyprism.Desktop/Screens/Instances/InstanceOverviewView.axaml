@@ -10,6 +10,7 @@ SPDX-License-Identifier: GPL-3.0-only
              xmlns:easing="using:Avalonia.Animation.Easings"
              x:Class="Hyprism.Desktop.Screens.Instances.InstanceOverviewView"
              x:Name="InstanceOverviewRoot"
+             Classes.switchingInstance="{Binding IsManagedInstanceSelectionSwitching}"
              x:DataType="instances:InstancesViewModel">
   <UserControl.Resources>
     <ResourceDictionary>

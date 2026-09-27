@@ -999,11 +999,20 @@ public sealed class MainWindowRenderTests
             Version = 42,
             IsInstalled = true
         };
-
-        instances.Setup(service => service.GetCachedInstances()).Returns([instance]);
+        var idleInstance = new InstanceInfo
+        {
+            Id = "idle-action",
+            Name = "Idle Action",
+            Branch = "release",
+            Version = 42,
+            IsInstalled = true
+        };
+        instances.Setup(service => service.GetCachedInstances()).Returns([instance, idleInstance]);
         instances.Setup(service => service.GetSelectedInstance()).Returns(instance);
         instances.Setup(service => service.GetInstancePathById(instance.Id))
             .Returns("/tmp/hyprism-animated-action");
+        instances.Setup(service => service.GetInstancePathById(idleInstance.Id))
+            .Returns("/tmp/hyprism-idle-action");
         instances.Setup(service => service.IsClientPresent(It.IsAny<string>())).Returns(true);
         profile.Setup(service => service.GetNick()).Returns("Action Test");
         launchCoordinator.Setup(service => service.LaunchAsync(
@@ -1011,9 +1020,10 @@ public sealed class MainWindowRenderTests
                 It.IsAny<AuthUriPresenter?>()))
             .Returns(launchCompletion.Task);
         var gameRunning = false;
-        gameProcess.Setup(service => service.IsInstanceRunning(instance.Id)).Returns(() => gameRunning);
+        gameProcess.Setup(service => service.IsInstanceRunning(It.IsAny<string>()))
+            .Returns((string id) => id == instance.Id && gameRunning);
 
-        using var viewModel = new MainWindowViewModel(
+        using var viewModel = await Task.Run(() => new MainWindowViewModel(
             instances.Object,
             profile.Object,
             profileManagement.Object,
@@ -1025,7 +1035,7 @@ public sealed class MainWindowRenderTests
             news.Object,
             uriLauncher.Object,
             new HttpClient(),
-            new StringLocalizer("en-US"));
+            new StringLocalizer("en-US")));
         var window = new MainWindow
         {
             Width = width,
@@ -1056,7 +1066,7 @@ public sealed class MainWindowRenderTests
         if (compact)
         {
             var instanceRow = instancesView.GetVisualDescendants().OfType<Button>()
-                .Single(button => button.Classes.Contains("managerListItem"));
+                .First(button => button.Classes.Contains("managerListItem"));
             instanceRow.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             await WaitForConditionAsync(
                 () => primaryAction.IsEffectivelyVisible && primaryAction.Bounds.Width > 0,
@@ -1108,8 +1118,12 @@ public sealed class MainWindowRenderTests
             progressContent.GetVisualDescendants().OfType<FadingTextBlock>(),
             control => control.Classes.Contains("managedActionStatus"));
         var metric = Assert.Single(progressContent.Children.OfType<TextBlock>());
+        var initialLaunchMetric = metric.Text;
+        await WaitForConditionAsync(
+            () => metric.Text != initialLaunchMetric,
+            "launch elapsed time to update in the rendered button");
         var spinner = Assert.Single(
-            progressContent.Children.OfType<Avalonia.Controls.Shapes.Path>(),
+            progressContent.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("managedActionSpinner"));
         Assert.Equal(0, Grid.GetColumn(spinner));
         Assert.Equal(HorizontalAlignment.Center, spinner.HorizontalAlignment);
@@ -1202,7 +1216,7 @@ public sealed class MainWindowRenderTests
                 DateTime.UtcNow)));
         Dispatcher.UIThread.RunJobs();
         var runningIcon = Assert.Single(
-            progressContent.Children.OfType<Avalonia.Controls.Shapes.Path>(),
+            progressContent.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("running"));
         var runningIconCenter = runningIcon.TranslatePoint(
             new Point(runningIcon.Bounds.Width / 2, runningIcon.Bounds.Height / 2),
@@ -1224,6 +1238,58 @@ public sealed class MainWindowRenderTests
             0,
             0.5);
         Assert.Equal(metricBounds, metric.Bounds);
+        var initialRunningMetric = metric.Text;
+        await WaitForConditionAsync(
+            () => metric.Text != initialRunningMetric,
+            "running game elapsed time to update in the rendered button");
+
+        window.MouseMove(new Point(window.Bounds.Width / 2, window.Bounds.Height - 8));
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(primaryAction.IsPointerOver);
+
+        viewModel.OpenInstanceDetailsCommand.Execute(idleInstance.Id);
+        Dispatcher.UIThread.RunJobs();
+        var idleContent = Assert.Single(primaryAction.GetVisualDescendants().OfType<StackPanel>(),
+            panel => panel.Classes.Contains("managedActionIdle"));
+        Assert.DoesNotContain("active", primaryAction.Classes);
+        Assert.Equal(compact ? 126 : 150, primaryAction.Width);
+        Assert.Equal(1, idleContent.Opacity);
+        Assert.Equal(0, progressContent.Opacity);
+        Assert.Equal(string.Empty, status.FindControl<TextBlock>("CurrentText")!.Text);
+        Assert.Equal(0, status.FindControl<TextBlock>("IncomingText")!.Opacity);
+        Assert.False(viewModel.Instances.IsManagedInstanceSelectionSwitching);
+        Assert.NotEmpty(progressContent.Transitions!);
+
+        viewModel.OpenInstanceDetailsCommand.Execute(instance.Id);
+        Assert.True(viewModel.Instances.IsManagedInstanceActionRunning);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Contains("active", primaryAction.Classes);
+        Assert.Equal(compact ? 180 : 265, primaryAction.Width);
+        Assert.Equal(0, idleContent.Opacity);
+        Assert.Equal(1, progressContent.Opacity);
+        Assert.Equal("Running", status.FindControl<TextBlock>("CurrentText")!.Text);
+        Assert.Equal(0, status.FindControl<TextBlock>("IncomingText")!.Opacity);
+        Assert.False(spinner.IsVisible);
+        Assert.True(runningIcon.IsVisible);
+        Assert.False(viewModel.Instances.IsManagedInstanceSelectionSwitching);
+        Assert.NotEmpty(progressContent.Transitions!);
+        Assert.Contains("cancelArmed", primaryAction.Classes);
+
+        var returnedActionPoint = primaryAction.TranslatePoint(
+            new Point(primaryAction.Bounds.Width / 2, primaryAction.Bounds.Height / 2),
+            window);
+        Assert.NotNull(returnedActionPoint);
+        window.MouseMove(returnedActionPoint!.Value);
+        Dispatcher.UIThread.RunJobs();
+        await WaitForConditionAsync(
+            () => primaryAction.Background is ISolidColorBrush { Color: var color } &&
+                  color == Color.Parse("#D83B45") &&
+                  cancelLabel.Opacity >= 0.99,
+            "running instance cancellation to appear on the first hover after switching back");
+        window.MouseDown(returnedActionPoint.Value, MouseButton.Left);
+        window.MouseUp(returnedActionPoint.Value, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+        gameProcess.Verify(service => service.ExitGame(instance.Id), Times.Once);
 
         gameRunning = false;
         gameProcess.Raise(
