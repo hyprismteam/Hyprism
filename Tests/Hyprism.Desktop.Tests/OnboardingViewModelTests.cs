@@ -45,20 +45,22 @@ public sealed class OnboardingViewModelTests
         var window = new Window { Width = 1280, Height = 800, Content = view };
         window.Show();
 
-        async Task ClickAndWaitAsync(string name)
+        async Task ClickAndWaitAsync(string name, OnboardingStep expectedStep, string contentName)
         {
             view.FindControl<Button>(name)!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            await Task.Delay(450, TestContext.Current.CancellationToken);
-            Dispatcher.UIThread.RunJobs();
+            var content = view.FindControl<StackPanel>(contentName)!;
+            await AvaloniaTestWait.UntilAsync(
+                () => onboarding.Step == expectedStep && content.IsHitTestVisible,
+                $"{expectedStep} step to finish opening");
         }
 
-        await ClickAndWaitAsync("WelcomeNextButton");
+        await ClickAndWaitAsync("WelcomeNextButton", OnboardingStep.Language, "LanguageContent");
         Assert.Equal(OnboardingStep.Language, onboarding.Step);
         var languagePicker = view.GetVisualDescendants().OfType<SettingsLanguagePickerView>().Single();
         Assert.True(languagePicker.IsEffectivelyVisible);
         Assert.False(languagePicker.FindControl<TextBlock>("LanguagePickerHeading")!.IsEffectivelyVisible);
 
-        await ClickAndWaitAsync("LanguageNextButton");
+        await ClickAndWaitAsync("LanguageNextButton", OnboardingStep.Appearance, "AppearanceContent");
         Assert.Equal(OnboardingStep.Appearance, onboarding.Step);
         var appearancePicker = view.GetVisualDescendants().OfType<SettingsAppearancePickerView>().Single();
         Assert.True(appearancePicker.IsEffectivelyVisible);
@@ -66,9 +68,9 @@ public sealed class OnboardingViewModelTests
         Assert.DoesNotContain(appearancePicker.GetVisualDescendants().OfType<TextBlock>(),
             text => text.Classes.Contains("settingsCategoryHeading") && text.IsEffectivelyVisible);
 
-        await ClickAndWaitAsync("AppearanceNextButton");
+        await ClickAndWaitAsync("AppearanceNextButton", OnboardingStep.Account, "AccountContent");
         Assert.Equal(OnboardingStep.Account, onboarding.Step);
-        await ClickAndWaitAsync("ChooseOfflineButton");
+        await ClickAndWaitAsync("ChooseOfflineButton", OnboardingStep.OfflineName, "OfflineNameContent");
         Assert.Equal(OnboardingStep.OfflineName, onboarding.Step);
         Assert.False(view.FindControl<StackPanel>("WarningContent")!.IsEffectivelyVisible);
         onboarding.Step = OnboardingStep.Finishing;
