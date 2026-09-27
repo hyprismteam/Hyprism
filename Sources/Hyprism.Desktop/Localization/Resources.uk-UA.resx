@@ -252,14 +252,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Це видалить усі дані профілю, включаючи:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Оголошення</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Звіт про баг</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Показувати оголошення</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Екземпляри</value>
@@ -1197,18 +1191,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Переглянути журнал змін</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Вимкнути звук</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Музика вимкнена під час гри</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Музика</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Увімкнути звук</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Всі</value>
   </data>
@@ -1512,9 +1494,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Усе готово</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Улюблена збірка</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Введіть назву профілю...</value>
   </data>
@@ -1714,7 +1693,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Змінні середовища, що передаються Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Тло, музика, новини та оголошення</value>
+    <value>Тло та відображення новин</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Закрити</value>
@@ -2474,15 +2453,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Налаштування запуску, гри та системи</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Показувати оголошення запуску, отримані з Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Фоновa музикa</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Відтворювати музику запуску під час перегляду</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Створити екземпляр</value>

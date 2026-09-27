@@ -6,6 +6,7 @@ using Hyprism.Core.Infrastructure;
 using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Accounts;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Hyprism.Core.Tests.Accounts.Profiles;
 
@@ -175,21 +176,35 @@ public class JsonProfileRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void RecordPlayTime_AccumulatesProfileAndInstanceStatistics()
+    public void RecordPlayTime_AccumulatesProfileTotal()
     {
         var profile = _svc.CreateProfile("Player", Guid.NewGuid().ToString())!;
         var raised = 0;
         _svc.ProfilesChanged += () => raised++;
 
-        Assert.True(_svc.RecordPlayTime(profile.Id, "instance-a", 3720));
-        Assert.True(_svc.RecordPlayTime(profile.Id, "instance-a", 60));
-        Assert.True(_svc.RecordPlayTime(profile.Id, "instance-b", 120));
+        Assert.True(_svc.RecordPlayTime(profile.Id, 3720));
+        Assert.True(_svc.RecordPlayTime(profile.Id, 60));
+        Assert.True(_svc.RecordPlayTime(profile.Id, 120));
 
         var saved = Assert.Single(_svc.GetProfiles());
         Assert.Equal(TimeSpan.FromSeconds(3900), saved.TotalPlaytime);
-        Assert.Equal(3780, saved.InstancePlayTimeSeconds["instance-a"]);
-        Assert.Equal(120, saved.InstancePlayTimeSeconds["instance-b"]);
         Assert.Equal(3, raised);
+    }
+
+    [Fact]
+    public void RecordPlayTime_PreservesLegacyProfileTotalAndDropsUnusedInstanceBreakdown()
+    {
+        var profile = _svc.CreateProfile("Player", Guid.NewGuid().ToString())!;
+        Assert.True(_svc.RecordPlayTime(profile.Id, 120));
+        var profilesPath = Path.Combine(_svc.GetProfilesFolder(), "Profiles.json");
+        var storedProfiles = JsonNode.Parse(File.ReadAllText(profilesPath))!.AsArray();
+        storedProfiles[0]!["InstancePlayTimeSeconds"] = new JsonObject { ["removed-instance"] = 120 };
+        File.WriteAllText(profilesPath, storedProfiles.ToJsonString());
+
+        Assert.True(_svc.RecordPlayTime(profile.Id, 60));
+
+        Assert.Equal(TimeSpan.FromSeconds(180), Assert.Single(_svc.GetProfiles()).TotalPlaytime);
+        Assert.DoesNotContain("InstancePlayTimeSeconds", File.ReadAllText(profilesPath));
     }
 
 
@@ -299,7 +314,7 @@ public class JsonProfileRepositoryTests : IDisposable
         Assert.False(_svc.DeleteProfile("missing"));
         Assert.False(_svc.SwitchProfile("missing"));
         Assert.False(_svc.UpdateProfile("missing", "Name", null));
-        Assert.False(_svc.RecordPlayTime("missing", "instance", 60));
+        Assert.False(_svc.RecordPlayTime("missing", 60));
         Assert.Equal(0, raised);
     }
 }

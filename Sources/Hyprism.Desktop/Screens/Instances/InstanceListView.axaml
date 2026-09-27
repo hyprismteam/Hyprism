@@ -6,6 +6,7 @@ SPDX-License-Identifier: GPL-3.0-only
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
              xmlns:easing="using:Avalonia.Animation.Easings"
              x:Class="Hyprism.Desktop.Screens.Instances.InstanceListView"
              x:Name="InstanceListRoot"
@@ -43,12 +44,13 @@ SPDX-License-Identifier: GPL-3.0-only
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="instances:InstanceItemViewModel">
+                    <Grid Classes="managerListItemHost" Classes.menuOpen="{Binding IsMenuOpen}">
                     <Button Classes="managerRailCategory managerListItem"
                             Classes.managed="{Binding IsManaged}"
                             Click="OnInstanceClicked"
                             Command="{Binding DataContext.OpenInstanceDetailsCommand, ElementName=InstanceListRoot}"
                             CommandParameter="{Binding Id}">
-                      <Grid Classes="managerListItemLayout" ColumnDefinitions="Auto,*,22" ColumnSpacing="12">
+                      <Grid Classes="managerListItemLayout" ColumnDefinitions="Auto,*,40" ColumnSpacing="12">
                         <Border Classes="managerListDragTarget"
                                 Cursor="Arrow"
                                 PointerPressed="OnInstanceDragHandlePressed"
@@ -81,11 +83,54 @@ SPDX-License-Identifier: GPL-3.0-only
                                        TextWrapping="NoWrap" />
                           </StackPanel>
                         </Grid>
-                        <Path Grid.Column="2"
-                              Classes="managerListMore"
-                              Data="{StaticResource MoreVerticalIcon}" />
                       </Grid>
                     </Button>
+                        <Border x:Name="InstanceMoreTarget"
+                                Classes="managerListMoreTarget"
+                                Classes.open="{Binding IsMenuOpen}"
+                                Cursor="Hand"
+                                PointerPressed="OnInstanceMenuPointerPressed"
+                                PointerReleased="OnToggleInstanceMenuPointerReleased">
+                          <PathIcon Classes="managerListMoreIcon"
+                                    Data="{StaticResource MoreVerticalIcon}" />
+                        </Border>
+
+                        <controls:FadingPopup
+                                              Placement="BottomEdgeAlignedRight"
+                                              PlacementTarget="InstanceMoreTarget"
+                                              VerticalOffset="8"
+                                              IsRequestedOpen="{Binding IsMenuOpen, Mode=TwoWay}">
+                          <Border Classes="uiPopupSurface managerCompactActionFlyout">
+                            <StackPanel Spacing="2">
+                              <Button Classes="managerCompactMenuAction"
+                                      Click="OnOpenInstanceFolderMenuClicked">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                  <Path Classes="managerCompactMenuIcon" Data="{StaticResource FolderOpenIcon}" />
+                                  <TextBlock Text="{Binding DataContext.ManagedInstanceOpenFolderLabel, ElementName=InstanceListRoot}"
+                                             VerticalAlignment="Center" />
+                                </StackPanel>
+                              </Button>
+                              <Button Classes="managerCompactMenuAction"
+                                      Click="OnEditInstanceMenuClicked">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                  <Path Classes="managerCompactMenuIcon" Data="{StaticResource EditRoundedIcon}" />
+                                  <TextBlock Text="{Binding DataContext.EditInstanceLabel, ElementName=InstanceListRoot}"
+                                             VerticalAlignment="Center" />
+                                </StackPanel>
+                              </Button>
+                              <Button Classes="managerCompactMenuAction danger"
+                                      IsVisible="{Binding !IsRunning}"
+                                      Click="OnDeleteInstanceMenuClicked">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                  <Path Classes="managerCompactMenuIcon" Data="{StaticResource DeleteIcon}" />
+                                  <TextBlock Text="{Binding DataContext.ManagedInstanceDeleteLabel, ElementName=InstanceListRoot}"
+                                             VerticalAlignment="Center" />
+                                </StackPanel>
+                              </Button>
+                            </StackPanel>
+                          </Border>
+                        </controls:FadingPopup>
+                    </Grid>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>

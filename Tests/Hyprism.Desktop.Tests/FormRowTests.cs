@@ -65,8 +65,8 @@ public sealed class FormRowTests
         };
         var errorRow = new FormRow
         {
-            Label = "Show announcements",
-            Hint = "Show launcher announcements received from Discord",
+            Label = "Use custom Java",
+            Hint = "Choose a Java executable for the game",
             Error = "This setting could not be saved",
             Content = new Border { Width = 56, Height = 32 }
         };

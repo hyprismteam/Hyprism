@@ -34,6 +34,38 @@ public sealed partial class InstanceListView : UserControl
     private void OnOpenCreatorClicked(object? sender, RoutedEventArgs args)
         => CreateRequested?.Invoke(sender, args);
 
+    private static void OnInstanceMenuPointerPressed(object? sender, PointerPressedEventArgs args)
+        => args.Handled = true;
+
+    private static void OnToggleInstanceMenuPointerReleased(object? sender, PointerReleasedEventArgs args)
+    {
+        if (sender is Border { DataContext: InstanceItemViewModel instance })
+            instance.IsMenuOpen = !instance.IsMenuOpen;
+
+        args.Handled = true;
+    }
+
+    private InstancesViewModel? SelectInstanceForMenuAction(object? sender, RoutedEventArgs args)
+    {
+        args.Handled = true;
+        if (DataContext is not InstancesViewModel viewModel ||
+            sender is not Button { DataContext: InstanceItemViewModel instance })
+            return null;
+
+        instance.IsMenuOpen = false;
+        viewModel.OpenInstanceDetailsCommand.Execute(instance.Id);
+        return viewModel;
+    }
+
+    private void OnOpenInstanceFolderMenuClicked(object? sender, RoutedEventArgs args)
+        => SelectInstanceForMenuAction(sender, args)?.OpenManagedInstanceFolderCommand.Execute(null);
+
+    private void OnEditInstanceMenuClicked(object? sender, RoutedEventArgs args)
+        => SelectInstanceForMenuAction(sender, args)?.BeginEditManagedInstanceCommand.Execute(null);
+
+    private void OnDeleteInstanceMenuClicked(object? sender, RoutedEventArgs args)
+        => SelectInstanceForMenuAction(sender, args)?.RequestManagedInstanceDeletionCommand.Execute(null);
+
     private void OnInstanceDragHandlePressed(object? sender, PointerPressedEventArgs args)
         => DragHandlePressed?.Invoke(sender, args);
 

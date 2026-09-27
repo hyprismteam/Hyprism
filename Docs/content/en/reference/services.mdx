@@ -67,6 +67,8 @@ ZIP imports must include `Meta.json` with an explicit numeric version. Archives 
 
 Repositories raise `InstancesChanged` and `ProfilesChanged` after mutations. Process start and exit use typed events on `IGameProcessTracker`. `IGameLaunchCoordinator.LaunchFailed` reports failures or cancellation returned by its launch workflow; preflight rejections can report through progress or return early
 
+`IProfileRepository.RecordPlayTime(profileId, elapsedSeconds)` adds completed session time to the profile total. The instance repository maintains each instance's separate play-time total
+
 Progress scopes associate nested asynchronous operations with the correct instance. Stage changes and completion bypass same-stage throttling. Hosts must dispatch UI updates and unsubscribe when disposed
 
 Where a contract accepts `CancellationToken`, forward it through network and file I/O. Installation owns cancellation per instance instead of accepting a token on its public entry point

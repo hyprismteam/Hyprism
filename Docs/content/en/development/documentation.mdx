@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Open the [local documentation](http://localhost:3000/launcher/docs/). Development and GitHub Pages use the same `/launcher/docs` base path.
+Open the [local documentation](http://localhost:3000/Hyprism/docs/). Development and GitHub Pages use the same `/Hyprism/docs` base path.
 
 ## Content and languages
 
@@ -76,7 +76,7 @@ HYPRISM_DOCS_SCREENSHOTS="$PWD/Docs/static/img/user" \
 
 The test writes English and Russian PNGs under `Docs/static/img/user/en` and `ru`. It runs only when the output variable is set. The actual views are rendered at 2× pixel density into PNG, without enlarging an existing bitmap. Dialog captures render only the relevant real control.
 
-The run refreshes the selection control sheet, instance creation wizard, Java settings, and Java argument dialog images used by the [desktop UI guide](/architecture/desktop-ui/).
+The run refreshes bilingual images of the instance and profile managers, instance creation wizard, news feed and article, download, general, Java, and GPU settings, Java argument dialog, and selection controls. The [settings guide](/user-guide/settings), [news guide](/user-guide/news), and [desktop UI reference](/architecture/desktop-ui/) use these captures.
 
 Use the matching language image, write useful alternative text, and link to the original image for full-size inspection. Crop dialogs or pickers only when the surrounding window is irrelevant. Review every updated capture for missing data, clipped controls, and unfinished transitions.
 
@@ -86,10 +86,10 @@ Use the matching language image, write useful alternative text, and link to the 
 cd Docs
 npm ci
 npm run check
-PAGES_BASE_PATH=/launcher/docs npm run build
+PAGES_BASE_PATH=/Hyprism/docs npm run build
 ```
 
-`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/launcher/docs` so GitHub Pages serves it at `/launcher/docs/`.
+`npm run check` validates prose, language parity, code fences, local images, internal routes, explicit bilingual anchors, repository links, and Core contract documentation, then runs TypeScript checks. The static export goes to `Docs/out/Hyprism/docs` so GitHub Pages serves it at `/Hyprism/docs/`.
 
 Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus language switching, section links, sidebar icons, and narrow-window layout.
 
@@ -97,6 +97,6 @@ Check highlighted C#, shell, JSON, and XML examples in the rendered site, plus l
 
 `docs-pages.yml` validates and publishes the static export. In repository **Settings → Pages**, the source must be **GitHub Actions**.
 
-The published entry point is the [Hyprism documentation site](https://hyprism.org/launcher/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products.
+The published entry point is the [Hyprism documentation site](https://hyprism.org/Hyprism/docs/). Do not commit `out`, `.docusaurus`, `node_modules`, or obsolete `.next` build products.
 
 Source: [AGENTS.md](../../../../AGENTS.md), [DocumentationScreenshotTests](../../../../Tests/Hyprism.Desktop.Tests/DocumentationScreenshotTests.cs).

@@ -82,18 +82,40 @@ public class JsonConfigStoreTests : IDisposable
         AssertExactFileName(profilesDirectory, "Profiles.json");
     }
 
+    [Fact]
+    public void LegacyUnusedPreferences_AreIgnoredAndRemovedOnSave()
+    {
+        File.WriteAllText(Path.Combine(_tempDir, "Config.json"), """
+            {
+              "Language": "ru-RU",
+              "MusicEnabled": false,
+              "ShowDiscordAnnouncements": false,
+              "DismissedAnnouncementIds": ["old-announcement"],
+              "FutureSetting": "keep"
+            }
+            """);
+
+        var store = new JsonConfigStore(_tempDir);
+        Assert.Equal("ru-RU", store.Configuration.Language);
+
+        using var saved = JsonDocument.Parse(File.ReadAllText(Path.Combine(_tempDir, "Config.json")));
+        Assert.False(saved.RootElement.TryGetProperty("MusicEnabled", out _));
+        Assert.False(saved.RootElement.TryGetProperty("ShowDiscordAnnouncements", out _));
+        Assert.False(saved.RootElement.TryGetProperty("DismissedAnnouncementIds", out _));
+        Assert.Equal("keep", saved.RootElement.GetProperty("FutureSetting").GetString());
+    }
+
 
     [Fact]
     public void ResetConfig_ReplacesConfigWithDefaults()
     {
         var svc = new JsonConfigStore(_tempDir);
         svc.Configuration.SelectedProfileId = "custom-profile";
-        svc.Configuration.MusicEnabled = false;
+        svc.Configuration.ShowAlphaMods = true;
 
         svc.ResetConfig();
 
-        // Default MusicEnabled is true
-        Assert.True(svc.Configuration.MusicEnabled);
+        Assert.False(svc.Configuration.ShowAlphaMods);
     }
 
 

@@ -252,14 +252,8 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Dies löscht dauerhaft alle Profildaten, einschließlich:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Ankündigung</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Fehlerbericht</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Ankündigungen anzeigen</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Instanzen</value>
@@ -1197,18 +1191,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Changelog anzeigen</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Stummschalten</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Musik stumm während Spiel läuft</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Musik</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Ton an</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Alle</value>
   </data>
@@ -1512,9 +1494,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Startklar</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Lieblingsinstanz</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Profilnamen eingeben...</value>
   </data>
@@ -1714,7 +1693,7 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
     <value>Umgebungsvariablen für Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Hintergrund, Musik, Neuigkeiten und Ankündigungen</value>
+    <value>Hintergrund und Anzeige von Neuigkeiten</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Schließen</value>
@@ -2474,15 +2453,6 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Launcher-, Spiel- und Systemeinstellungen</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Launcher-Ankündigungen von Discord anzeigen</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Hintergrundmusik</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Launcher-Musik beim Durchsuchen abspielen</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Eine Instanz erstellen</value>

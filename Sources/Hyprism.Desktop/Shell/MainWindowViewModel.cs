@@ -112,8 +112,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable,
             profileRepository,
             _uriLauncher,
             _localizer,
-            authenticator,
-            _instances);
+            authenticator);
         Profiles.ActiveProfileChanged += OnActiveProfileChanged;
         Profiles.PropertyChanged += OnProfilesPropertyChanged;
 

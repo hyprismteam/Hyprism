@@ -7,7 +7,7 @@ import { themes as prismThemes } from 'prism-react-renderer'
 import path from 'node:path'
 import repositoryLinks from './plugins/remark-repository-links'
 
-const configuredBasePath = process.env.PAGES_BASE_PATH || '/launcher/docs'
+const configuredBasePath = process.env.PAGES_BASE_PATH || '/Hyprism/docs'
 const baseUrl = `/${configuredBasePath.replace(/^\/+|\/+$/g, '')}/`
 
 const localeBootstrapScript = `try {
@@ -69,7 +69,7 @@ const config: Config = {
           lastmod: 'date',
           changefreq: 'weekly',
           priority: 0.7,
-          ignorePatterns: ['/__source/**', '/launcher/docs/__source/**'],
+          ignorePatterns: ['/__source/**', '/Hyprism/docs/__source/**'],
           filename: 'sitemap.xml'
         },
         theme: {

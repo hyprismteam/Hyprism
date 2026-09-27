@@ -57,11 +57,18 @@ public class JsonConfigStore : IConfigStore
                         out profileConfigMigrated);
                 }
                 config = JsonSerializer.Deserialize<Config>(json, JsonDefaults.CaseInsensitive) ?? new Config();
+                var retiredKeys = config.UnknownProperties?.Keys
+                    .Where(key => key.Equals("MusicEnabled", StringComparison.OrdinalIgnoreCase) ||
+                                  key.Equals("ShowDiscordAnnouncements", StringComparison.OrdinalIgnoreCase) ||
+                                  key.Equals("DismissedAnnouncementIds", StringComparison.OrdinalIgnoreCase))
+                    .ToArray() ?? [];
+                foreach (var key in retiredKeys)
+                    config.UnknownProperties!.Remove(key);
 
                 Logger.Info("Config", $"Loaded config - Language: '{config.Language}'");
 
                 bool needsSave = applyLegacyMigrations &&
-                                 (profileConfigMigrated || !UsesPascalCaseRootProperties(json));
+                                 (profileConfigMigrated || retiredKeys.Length > 0 || !UsesPascalCaseRootProperties(json));
 
 #pragma warning disable CS0618 // Using obsolete fields for migration
                 if (applyLegacyMigrations && config.VersionType == "latest")

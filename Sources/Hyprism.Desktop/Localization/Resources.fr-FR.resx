@@ -252,14 +252,8 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Cela supprimera définitivement toutes les données du profil, y compris :</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Annonce</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Signaler un bug</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Afficher les annonces</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Instances</value>
@@ -1197,18 +1191,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Voir le changelog</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Couper le son</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Musique coupée pendant le jeu</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Musique</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Activer le son</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Tout</value>
   </data>
@@ -1512,9 +1494,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Prêt</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Instance favorite</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Entre le nom du profil...</value>
   </data>
@@ -1714,7 +1693,7 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
     <value>Variables d’environnement transmises à Hytale</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Arrière-plan, musique, actualités et annonces</value>
+    <value>Arrière-plan et affichage des actualités</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Fermer</value>
@@ -2474,15 +2453,6 @@ Vous devrez peut-être réinstaller le jeu si vous changez de lecteur</value>
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Préférences du lanceur, du jeu et du système</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Afficher les annonces du lanceur reçues de Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Musique de fond</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Jouer la musique du lanceur pendant la navigation</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Créer une instance</value>

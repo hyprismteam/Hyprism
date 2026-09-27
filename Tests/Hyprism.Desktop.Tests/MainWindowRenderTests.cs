@@ -184,11 +184,12 @@ public sealed class MainWindowRenderTests
         profileRepository.Setup(repository => repository.GetProfiles()).Returns(profiles);
         profileRepository.Setup(repository => repository.GetSelectedProfileId()).Returns("active-profile");
 
+        var localizer = new StringLocalizer("en-US");
         using var viewModel = new ProfilesViewModel(
             profileManager.Object,
             profileRepository.Object,
             uriLauncher.Object,
-            new StringLocalizer("en-US"));
+            localizer);
         var view = new ProfilesView { DataContext = viewModel };
         var window = new Window
         {
@@ -208,14 +209,51 @@ public sealed class MainWindowRenderTests
         var profilesListPane = Assert.IsType<Border>(view.FindControl<Border>("ProfilesListPane"));
         Assert.Equal(2, cards.Length);
         var selectedProfile = viewModel.SelectedProfile;
+        var widePrimaryAction = Assert.Single(view.GetVisualDescendants().OfType<Button>(),
+            button => button.Classes.Contains("managerAction") &&
+                      button.Classes.Contains("primary"));
+        var wideIdleContent = Assert.Single(widePrimaryAction.GetVisualDescendants().OfType<StackPanel>(),
+            panel => panel.Classes.Contains("profileActivationIdle"));
+        var wideActiveContent = Assert.Single(widePrimaryAction.GetVisualDescendants().OfType<TextBlock>(),
+            text => text.Classes.Contains("profileActivationActive"));
         var secondProfileRow = Assert.Single(
             cards,
             button => button.DataContext is ProfileItemViewModel { Id: "second-profile" });
         Assert.Same(viewModel.SelectProfileCommand, secondProfileRow.Command);
         Assert.Same(viewModel.Profiles[1], secondProfileRow.CommandParameter);
         secondProfileRow.Command!.Execute(secondProfileRow.CommandParameter);
+        Dispatcher.UIThread.RunJobs();
         Assert.Same(viewModel.Profiles[1], viewModel.SelectedProfile);
+        Assert.DoesNotContain("active", widePrimaryAction.Classes);
+        Assert.Equal(1, wideIdleContent.Opacity);
+        Assert.Equal(0, wideActiveContent.Opacity);
+        Assert.False(wideIdleContent.IsAnimating(Visual.OpacityProperty));
+        var wideProfileDelete = Assert.Single(view.GetVisualDescendants().OfType<Button>(),
+            button => button.Classes.Contains("deleteAction"));
+        Assert.Equal(50, wideProfileDelete.Width);
+        Assert.IsType<Avalonia.Controls.Shapes.Path>(wideProfileDelete.Content);
+        var wideDeleteBaseColor = Assert.IsAssignableFrom<ISolidColorBrush>(wideProfileDelete.Background).Color;
+        Assert.Equal((byte)0, wideDeleteBaseColor.A);
+        Assert.True(wideDeleteBaseColor.R > wideDeleteBaseColor.G);
+        var wideDeletePoint = wideProfileDelete.TranslatePoint(
+            new Point(wideProfileDelete.Bounds.Width / 2, wideProfileDelete.Bounds.Height / 2), window);
+        Assert.NotNull(wideDeletePoint);
+        window.MouseMove(wideDeletePoint!.Value);
+        await WaitForConditionAsync(
+            () => wideProfileDelete.Background is ISolidColorBrush { Color.A: > 0 },
+            "wide profile deletion hover to turn red");
+        var wideDeleteHoverColor = Assert.IsAssignableFrom<ISolidColorBrush>(wideProfileDelete.Background).Color;
+        Assert.True(wideDeleteHoverColor.R > wideDeleteHoverColor.G);
+        Assert.True(wideDeleteHoverColor.R > wideDeleteHoverColor.B);
+        window.MouseMove(new Point(0, 0));
         viewModel.SelectProfileCommand.Execute(selectedProfile);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Contains("active", widePrimaryAction.Classes);
+        Assert.Equal(0, wideIdleContent.Opacity);
+        Assert.Equal(1, wideActiveContent.Opacity);
+        Assert.False(wideActiveContent.IsAnimating(Visual.OpacityProperty));
+        Assert.False(viewModel.IsProfileSelectionSwitching);
+        Assert.NotEmpty(wideIdleContent.Transitions!);
         Assert.All(cards, card => Assert.Equal(new Thickness(0), card.BorderThickness));
         Assert.All(
             cards,
@@ -229,9 +267,75 @@ public sealed class MainWindowRenderTests
                     profilesListPane.Bounds.Width - origin.Value.X - card.Bounds.Width,
                     3);
             });
+        var activeProfileRow = Assert.Single(cards, card => card.Classes.Contains("managed"));
+        var activeProfilePoint = activeProfileRow.TranslatePoint(
+            new Point(activeProfileRow.Bounds.Width / 2, activeProfileRow.Bounds.Height / 2), window);
+        Assert.NotNull(activeProfilePoint);
+        window.MouseMove(activeProfilePoint!.Value);
+        await Task.Delay(250);
+        Assert.Equal(Color.Parse("#12FFFFFF"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(activeProfileRow.Background).Color);
+        var activeProfileHost = Assert.IsType<Grid>(activeProfileRow.Parent);
+        var activeProfileMenuTarget = Assert.Single(activeProfileHost.GetVisualDescendants().OfType<Border>(),
+            border => border.Classes.Contains("managerListMoreTarget"));
+        var activeProfileMenuPoint = activeProfileMenuTarget.TranslatePoint(
+            new Point(activeProfileMenuTarget.Bounds.Width / 2, activeProfileMenuTarget.Bounds.Height / 2), window);
+        Assert.NotNull(activeProfileMenuPoint);
+        window.MouseMove(activeProfileMenuPoint!.Value);
+        await Task.Delay(250);
+        Assert.Equal(Color.Parse("#12FFFFFF"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(activeProfileRow.Background).Color);
+        window.MouseMove(new Point(0, 0));
         Assert.Equal(2, view.GetVisualDescendants()
             .OfType<Border>()
             .Count(border => border.IsEffectivelyVisible && border.Classes.Contains("managerListDragTarget")));
+
+        var profileDragTarget = Assert.Single(secondProfileRow.GetVisualDescendants().OfType<Border>(),
+            border => border.Classes.Contains("managerListDragTarget"));
+        var profileDragHandle = Assert.Single(profileDragTarget.GetVisualDescendants()
+            .OfType<Avalonia.Controls.Shapes.Path>());
+        var profileHandleCenter = profileDragHandle.TranslatePoint(
+            new Point(profileDragHandle.Bounds.Width / 2, profileDragHandle.Bounds.Height / 2),
+            profileDragTarget);
+        Assert.NotNull(profileHandleCenter);
+        Assert.InRange(profileHandleCenter.Value.X,
+            profileDragTarget.Bounds.Width / 2 - 0.5,
+            profileDragTarget.Bounds.Width / 2 + 0.5);
+        Assert.Equal(profileDragTarget.Bounds.Height / 2, profileHandleCenter.Value.Y, 2);
+        var profileDragBaseColor = Assert.IsAssignableFrom<ISolidColorBrush>(profileDragHandle.Fill).Color;
+        var profileDragPoint = profileDragTarget.TranslatePoint(
+            new Point(profileDragTarget.Bounds.Width / 2, profileDragTarget.Bounds.Height / 2), window);
+        Assert.NotNull(profileDragPoint);
+        window.MouseMove(profileDragPoint!.Value);
+        await WaitForConditionAsync(
+            () => profileDragTarget.Background is ISolidColorBrush { Color.A: > 0 } &&
+                  profileDragHandle.Fill is ISolidColorBrush { Color: var color } &&
+                  color != profileDragBaseColor,
+            "profile drag handle hover background and icon");
+        await Task.Delay(200);
+        var dragTargetOrigin = profileDragTarget.TranslatePoint(default, window);
+        Assert.NotNull(dragTargetOrigin);
+        using (var imageStream = new MemoryStream())
+        {
+            window.CaptureRenderedFrame()!.Save(imageStream, PngBitmapEncoderOptions.Default);
+            imageStream.Position = 0;
+            using var bitmap = SkiaSharp.SKBitmap.Decode(imageStream);
+            Assert.NotNull(bitmap);
+            var brightColumns = Enumerable.Range(
+                    (int)Math.Ceiling(dragTargetOrigin.Value.X),
+                    (int)profileDragTarget.Bounds.Width)
+                .Where(x => Enumerable.Range(
+                        (int)Math.Ceiling(dragTargetOrigin.Value.Y),
+                        (int)profileDragTarget.Bounds.Height)
+                    .Any(y => bitmap!.GetPixel(x, y) is { Red: > 180, Green: > 180, Blue: > 180 }))
+                .ToArray();
+            Assert.NotEmpty(brightColumns);
+            var paintedCenter = (brightColumns[0] + brightColumns[^1] + 1) / 2.0;
+            Assert.InRange(paintedCenter,
+                dragTargetOrigin.Value.X + profileDragTarget.Bounds.Width / 2 - 1,
+                dragTargetOrigin.Value.X + profileDragTarget.Bounds.Width / 2 + 1);
+        }
+        window.MouseMove(new Point(0, 0));
 
         var menuTargets = view.GetVisualDescendants()
             .OfType<Border>()
@@ -255,11 +359,6 @@ public sealed class MainWindowRenderTests
             avatar => Assert.Equal(new Thickness(0), avatar.BorderThickness));
         Assert.All(
             view.GetVisualDescendants()
-                .OfType<StackPanel>()
-                .Where(panel => panel.Classes.Contains("managerDeleteActionContent")),
-            panel => Assert.Equal(HorizontalAlignment.Center, panel.HorizontalAlignment));
-        Assert.All(
-            view.GetVisualDescendants()
                 .OfType<Button>()
                 .Where(button => button.Classes.Contains("deleteAction")),
             button => Assert.Equal(new Thickness(0), button.Padding));
@@ -271,7 +370,7 @@ public sealed class MainWindowRenderTests
             .OfType<Border>()
             .Where(border => border.Classes.Contains("managerInfoCell"))
             .ToArray();
-        Assert.Equal(4, profileInfoCells.Length);
+        Assert.Equal(3, profileInfoCells.Length);
         Assert.All(
             profileInfoCells,
             cell => Assert.Equal(VerticalAlignment.Center, cell.Child?.VerticalAlignment));
@@ -478,6 +577,101 @@ public sealed class MainWindowRenderTests
         await wizardClosed;
         window.Width = 760;
         Dispatcher.UIThread.RunJobs();
+        Assert.Contains("compact", view.Classes);
+        Assert.Equal(Colors.Transparent,
+            Assert.IsAssignableFrom<ISolidColorBrush>(activeProfileRow.Background).Color);
+        Assert.False(activeProfileRow.IsAnimating(TemplatedControl.BackgroundProperty));
+        window.Width = 1180;
+        Dispatcher.UIThread.RunJobs();
+        await WaitForConditionAsync(
+            () => activeProfileRow.Background is ISolidColorBrush { Color: var color } &&
+                  color == Color.Parse("#12FFFFFF"),
+            "active profile row to regain its wide selection background");
+        window.Width = 760;
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(Colors.Transparent,
+            Assert.IsAssignableFrom<ISolidColorBrush>(activeProfileRow.Background).Color);
+        Assert.False(activeProfileRow.IsAnimating(TemplatedControl.BackgroundProperty));
+        var profileListItem = Assert.IsType<Grid>(secondProfileRow.Parent);
+        var profileListMenuTarget = Assert.Single(profileListItem.GetVisualDescendants().OfType<Border>(),
+            border => border.Classes.Contains("managerListMoreTarget"));
+        var profileListMenuPopup = Assert.Single(profileListItem.GetVisualDescendants().OfType<FadingPopup>());
+        var profileListMenuPoint = profileListMenuTarget.TranslatePoint(
+            new Point(profileListMenuTarget.Bounds.Width / 2, profileListMenuTarget.Bounds.Height / 2), window);
+        Assert.NotNull(profileListMenuPoint);
+        var profileListMenuIcon = Assert.Single(profileListMenuTarget.GetVisualDescendants().OfType<PathIcon>());
+        var mutedMenuColor = Assert.IsAssignableFrom<ISolidColorBrush>(profileListMenuIcon.Foreground).Color;
+        window.MouseMove(profileListMenuPoint!.Value);
+        await WaitForConditionAsync(
+            () => profileListMenuTarget.Background is ISolidColorBrush { Color.A: > 0 } &&
+                  profileListMenuIcon.Foreground is ISolidColorBrush { Color: var color } &&
+                  color != mutedMenuColor &&
+                  secondProfileRow.Background is ISolidColorBrush { Color.A: >= 7 },
+            "profile list menu hover keeps card highlighted");
+        window.MouseDown(profileListMenuPoint.Value, MouseButton.Left);
+        window.MouseUp(profileListMenuPoint.Value, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(viewModel.Profiles[1].IsMenuOpen);
+        Assert.True(profileListMenuPopup.IsRequestedOpen);
+        await WaitForConditionAsync(
+            () => profileListMenuPopup.IsOpen && profileListMenuPopup.Child?.Opacity >= 0.99,
+            "profile list menu to finish opening");
+        var profileListMenuActions = profileListMenuPopup.Child!.GetVisualDescendants()
+            .OfType<Button>().Where(button => button.Classes.Contains("managerCompactMenuAction")).ToArray();
+        Assert.Equal(2, profileListMenuActions.Length);
+        var profileEditMenuPoint = profileListMenuActions[0].TranslatePoint(
+            new Point(profileListMenuActions[0].Bounds.Width / 2, profileListMenuActions[0].Bounds.Height / 2), window);
+        Assert.NotNull(profileEditMenuPoint);
+        window.MouseMove(profileEditMenuPoint!.Value);
+        Assert.False(profileListItem.IsPointerOver);
+        Assert.Contains("menuOpen", profileListItem.Classes);
+        Assert.True(Assert.IsAssignableFrom<ISolidColorBrush>(secondProfileRow.Background).Color.A >= 7);
+        window.MouseDown(profileEditMenuPoint.Value, MouseButton.Left);
+        window.MouseUp(profileEditMenuPoint.Value, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(viewModel.IsEditing);
+        Assert.Same(viewModel.Profiles[1], viewModel.SelectedProfile);
+        Assert.False(viewModel.Profiles[1].IsMenuOpen);
+        Assert.True(Assert.IsType<TranslateTransform>(view.FindControl<Grid>("ProfileMain")!.RenderTransform).X > 0);
+        viewModel.CancelEditingCommand.Execute(null);
+        await WaitForConditionAsync(
+            () => !view.FindControl<OverlayModal>("ProfileEditModal")!.IsEffectivelyVisible,
+            "profile editing overlay to close");
+
+        window.MouseMove(profileListMenuPoint.Value);
+        window.MouseDown(profileListMenuPoint.Value, MouseButton.Left);
+        window.MouseUp(profileListMenuPoint.Value, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(viewModel.Profiles[1].IsMenuOpen);
+        await WaitForConditionAsync(
+            () => profileListMenuPopup.IsOpen && profileListMenuPopup.Child?.Opacity >= 0.99,
+            "profile list menu to finish reopening");
+        var profileDeleteMenuPoint = profileListMenuActions[1].TranslatePoint(
+            new Point(profileListMenuActions[1].Bounds.Width / 2, profileListMenuActions[1].Bounds.Height / 2), window);
+        Assert.NotNull(profileDeleteMenuPoint);
+        var compactDeleteBaseColor = Assert.IsAssignableFrom<ISolidColorBrush>(
+            profileListMenuActions[1].Background).Color;
+        Assert.Equal((byte)0, compactDeleteBaseColor.A);
+        Assert.True(compactDeleteBaseColor.R > compactDeleteBaseColor.G);
+        window.MouseMove(profileDeleteMenuPoint!.Value);
+        await WaitForConditionAsync(
+            () => profileListMenuActions[1].Background is ISolidColorBrush { Color.A: > 0 },
+            "compact profile deletion hover to turn red");
+        var compactDeleteHoverColor = Assert.IsAssignableFrom<ISolidColorBrush>(
+            profileListMenuActions[1].Background).Color;
+        Assert.True(compactDeleteHoverColor.R > compactDeleteHoverColor.G);
+        Assert.True(compactDeleteHoverColor.R > compactDeleteHoverColor.B);
+        window.MouseDown(profileDeleteMenuPoint.Value, MouseButton.Left);
+        window.MouseUp(profileDeleteMenuPoint.Value, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(viewModel.IsProfileDeletionOpen);
+        Assert.Same(viewModel.Profiles[1], viewModel.PendingProfileDeletion);
+        Assert.True(Assert.IsType<TranslateTransform>(view.FindControl<Grid>("ProfileMain")!.RenderTransform).X > 0);
+        viewModel.CancelProfileDeletionCommand.Execute(null);
+        await WaitForConditionAsync(
+            () => !view.FindControl<OverlayModal>("ProfileDeleteModal")!.IsEffectivelyVisible,
+            "profile deletion overlay to close");
+        viewModel.SelectProfileCommand.Execute(viewModel.Profiles[0]);
         var activeCard = view.GetVisualDescendants()
             .OfType<Button>()
             .First(button => button.Classes.Contains("managerListItem"));
@@ -486,26 +680,85 @@ public sealed class MainWindowRenderTests
             () => view.Classes.Contains("compact") &&
                   view.FindControl<Border>("CompactProfilesToolbar")!.IsEffectivelyVisible,
             "compact profiles detail to open");
+        var compactProfileTranslation = Assert.IsType<TranslateTransform>(
+            view.FindControl<Grid>("ProfileMain")!.RenderTransform);
+        await WaitForConditionAsync(
+            () => Math.Abs(compactProfileTranslation.X) < 0.01,
+            "compact profile detail to finish opening");
         Dispatcher.UIThread.RunJobs();
         Assert.Contains("compact", view.Classes);
         Assert.True(view.FindControl<Border>("CompactProfilesToolbar")!.IsEffectivelyVisible);
-        var compactPrimaryAction = view.GetVisualDescendants()
-            .OfType<Button>()
-            .Single(button => button.Classes.Contains("managerCompactActionPart") &&
-                              button.Classes.Contains("main"));
+        var compactToolbar = view.FindControl<Border>("CompactProfilesToolbar")!;
+        var compactPrimaryAction = view.FindControl<Button>("CompactProfilePrimaryAction")!;
+        var compactMoreButton = view.FindControl<Button>("CompactProfileMoreButton")!;
+        var compactProfileDelete = view.FindControl<Button>("CompactProfileDeleteAction")!;
+        Assert.False(compactProfileDelete.IsVisible);
+        var heroAvatar = Assert.Single(view.GetVisualDescendants().OfType<Border>(),
+            border => border.Classes.Contains("profileHeroAvatar"));
+        var heroIdentity = Assert.Single(view.GetVisualDescendants().OfType<StackPanel>(),
+            panel => panel.Classes.Contains("profileHeroIdentity"));
+        Assert.True(heroAvatar.IsEffectivelyVisible);
+        Assert.True(heroIdentity.IsEffectivelyVisible);
+        Assert.True(compactMoreButton.IsEffectivelyVisible);
+        var compactActionCenter = compactPrimaryAction.TranslatePoint(
+            new Point(compactPrimaryAction.Bounds.Width / 2, 0), window);
+        var compactToolbarCenter = compactToolbar.TranslatePoint(
+            new Point(compactToolbar.Bounds.Width / 2, 0), window);
+        Assert.NotNull(compactActionCenter);
+        Assert.NotNull(compactToolbarCenter);
+        Assert.InRange(Math.Abs(compactActionCenter!.Value.X - compactToolbarCenter!.Value.X), 0, 0.5);
+        if (!string.IsNullOrWhiteSpace(previewPath))
+        {
+            var directory = Path.GetDirectoryName(previewPath)!;
+            var stem = Path.GetFileNameWithoutExtension(previewPath);
+            window.CaptureRenderedFrame()!.Save(
+                Path.Combine(directory, $"{stem}-compact-detail.png"),
+                PngBitmapEncoderOptions.Default);
+        }
+        var compactIdleContent = Assert.Single(compactPrimaryAction.GetVisualDescendants()
+            .OfType<StackPanel>(), panel => panel.Classes.Contains("profileActivationIdle"));
+        var compactActiveContent = Assert.Single(compactPrimaryAction.GetVisualDescendants()
+            .OfType<TextBlock>(), text => text.Classes.Contains("profileActivationActive"));
         Assert.Equal(126, compactPrimaryAction.Width);
         Assert.Contains("active", compactPrimaryAction.Classes);
-        Assert.Equal(0, compactPrimaryAction.GetVisualDescendants()
-            .OfType<StackPanel>()
-            .Single(panel => panel.Classes.Contains("profileActivationIdle"))
-            .Opacity);
-        Assert.Equal(1, compactPrimaryAction.GetVisualDescendants()
-            .OfType<TextBlock>()
-            .Single(text => text.Classes.Contains("profileActivationActive"))
-            .Opacity);
+        Assert.Equal(0, compactIdleContent.Opacity);
+        Assert.Equal(1, compactActiveContent.Opacity);
 
-        var compactProfileTranslation = Assert.IsType<TranslateTransform>(
-            view.FindControl<Grid>("ProfileMain")!.RenderTransform);
+        viewModel.SelectProfileCommand.Execute(viewModel.Profiles[1]);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(compactProfileDelete.IsVisible);
+        Assert.DoesNotContain("active", compactPrimaryAction.Classes);
+        Assert.Equal(1, compactIdleContent.Opacity);
+        Assert.Equal(0, compactActiveContent.Opacity);
+        Assert.False(compactIdleContent.IsAnimating(Visual.OpacityProperty));
+        Assert.Equal(170, compactPrimaryAction.Width);
+        var compactIdleLabel = Assert.Single(compactIdleContent.Children.OfType<TextBlock>());
+        foreach (var language in localizer.AvailableLanguages.Keys)
+        {
+            localizer.SetLanguage(language);
+            viewModel.RefreshLocalization();
+            Dispatcher.UIThread.RunJobs();
+            compactIdleLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            Assert.Equal(viewModel.ActivationLabel, compactIdleLabel.Text);
+            Assert.True(compactPrimaryAction.Bounds.Width >=
+                        compactIdleLabel.DesiredSize.Width + 16 + compactIdleContent.Spacing +
+                        compactPrimaryAction.Padding.Left + compactPrimaryAction.Padding.Right,
+                $"Compact profile action clips its {language} label.");
+        }
+        Assert.True(localizer.SetLanguage("en-US"));
+        viewModel.RefreshLocalization();
+        Dispatcher.UIThread.RunJobs();
+
+        viewModel.SelectProfileCommand.Execute(viewModel.Profiles[0]);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(compactProfileDelete.IsVisible);
+        Assert.Contains("active", compactPrimaryAction.Classes);
+        Assert.Equal(0, compactIdleContent.Opacity);
+        Assert.Equal(1, compactActiveContent.Opacity);
+        Assert.False(compactActiveContent.IsAnimating(Visual.OpacityProperty));
+        Assert.False(viewModel.IsProfileSelectionSwitching);
+        Assert.NotEmpty(compactIdleContent.Transitions!);
+
         Assert.True(view.TryCloseCompactContent());
         await WaitForConditionAsync(
             () => compactProfileTranslation.X > 0,
@@ -1054,17 +1307,22 @@ public sealed class MainWindowRenderTests
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("managerAction") &&
                                   button.Classes.Contains("primary"));
-        var collapsingAction = compact
+        var secondaryAction = compact
             ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
                 .FindControl<Button>("CompactInstanceMoreButton")!
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("deleteAction"));
+        var compactInstanceDelete = compact
+            ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
+                .FindControl<Button>("CompactInstanceDeleteAction")!
+            : null;
         var collapsingEditAction = compact
             ? null
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("editAction"));
         if (compact)
         {
+            Assert.True(compactInstanceDelete!.IsVisible);
             var instanceRow = instancesView.GetVisualDescendants().OfType<Button>()
                 .First(button => button.Classes.Contains("managerListItem"));
             instanceRow.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1074,7 +1332,7 @@ public sealed class MainWindowRenderTests
             Dispatcher.UIThread.RunJobs();
         }
 
-        var expectedPrimaryActionWidth = compact ? 126 : 150;
+        var expectedPrimaryActionWidth = compact ? 170 : 150;
         var instancesContentTranslation = Assert.IsType<TranslateTransform>(
             instancesView.FindControl<Grid>("InstancesContent")!.RenderTransform);
         await WaitForConditionAsync(
@@ -1092,9 +1350,17 @@ public sealed class MainWindowRenderTests
         Assert.True(primaryAction.IsPointerOver);
 
         var launchOperation = viewModel.RunManagedInstanceCommand.ExecuteAsync(null);
+        if (compact)
+        {
+            await WaitForConditionAsync(
+                () => primaryAction.Bounds.Width > expectedPrimaryActionWidth + 1 &&
+                      primaryAction.Bounds.Width < 215,
+                "compact managed instance action width to animate");
+        }
         await WaitForConditionAsync(
             () => primaryAction.Classes.Contains("active") &&
-                  collapsingAction.Bounds.Width <= 0.5 &&
+                  Math.Abs(primaryAction.Bounds.Width - (compact ? 216 : 438)) <= 0.5 &&
+                  (compact || secondaryAction.Bounds.Width <= 0.5) &&
                   (collapsingEditAction is null || collapsingEditAction.Bounds.Width <= 0.5),
             "managed instance action to enter progress state");
         Dispatcher.UIThread.RunJobs();
@@ -1102,13 +1368,19 @@ public sealed class MainWindowRenderTests
         Assert.DoesNotContain("cancelArmed", primaryAction.Classes);
         Assert.True(primaryAction.IsEffectivelyVisible);
         Assert.InRange(primaryAction.Bounds.Width, compact ? 215.5 : 437.5, compact ? 216.5 : 438.5);
-        Assert.InRange(collapsingAction.Bounds.Width, 0, 0.5);
+        if (compact)
+            Assert.Equal(36, secondaryAction.Bounds.Width);
+        else
+            Assert.InRange(secondaryAction.Bounds.Width, 0, 0.5);
         if (collapsingEditAction is not null)
             Assert.InRange(collapsingEditAction.Bounds.Width, 0, 0.5);
         var progressContent = Assert.Single(
             primaryAction.GetVisualDescendants().OfType<Grid>(),
             grid => grid.Classes.Contains("managedActionProgress"));
         var actionContent = Assert.IsType<Grid>(progressContent.Parent);
+        await WaitForConditionAsync(
+            () => progressContent.Opacity == 1,
+            "managed instance action content to finish appearing");
         Assert.Equal(compact ? 190 : 225, actionContent.Bounds.Width);
         Assert.Equal(1, progressContent.Opacity);
         Assert.Equal(new GridLength(48), progressContent.ColumnDefinitions[0].Width);
@@ -1215,6 +1487,21 @@ public sealed class MainWindowRenderTests
                 null,
                 DateTime.UtcNow)));
         Dispatcher.UIThread.RunJobs();
+        if (compact)
+        {
+            Assert.False(compactInstanceDelete!.IsVisible);
+            var runningListItem = Assert.Single(viewModel.Instances.AllInstances,
+                item => item.Id == instance.Id);
+            Assert.True(runningListItem.IsRunning);
+            var runningListRow = Assert.Single(instancesView.GetVisualDescendants().OfType<Button>(),
+                button => button.Classes.Contains("managerListItem") &&
+                          ReferenceEquals(button.DataContext, runningListItem));
+            var runningListPopup = Assert.Single(Assert.IsType<Grid>(runningListRow.Parent)
+                .GetVisualDescendants().OfType<FadingPopup>());
+            var runningListDelete = Assert.Single(runningListPopup.Child!.GetVisualDescendants()
+                .OfType<Button>(), button => button.Classes.Contains("danger"));
+            Assert.False(runningListDelete.IsVisible);
+        }
         var runningIcon = Assert.Single(
             progressContent.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("running"));
@@ -1233,6 +1520,15 @@ public sealed class MainWindowRenderTests
             progressContent);
         Assert.NotNull(settledRunningIconCenter);
         Assert.Equal(compact ? 190 : 225, actionContent.Bounds.Width);
+        await WaitForConditionAsync(
+            () => Math.Abs(primaryAction.Width - (compact ? 216 : 265)) <= 0.5,
+            "managed instance action to reach running width");
+        var runningIconLeft = runningIcon.TranslatePoint(new Point(0, 0), primaryAction);
+        var runningMetricRight = metric.TranslatePoint(new Point(metric.Bounds.Width, 0), primaryAction);
+        Assert.NotNull(runningIconLeft);
+        Assert.NotNull(runningMetricRight);
+        Assert.True(runningIconLeft!.Value.X >= 0);
+        Assert.True(runningMetricRight!.Value.X <= primaryAction.Bounds.Width);
         Assert.InRange(
             Math.Abs(settledRunningIconCenter!.Value.X - runningIconCenter.Value.X),
             0,
@@ -1252,7 +1548,9 @@ public sealed class MainWindowRenderTests
         var idleContent = Assert.Single(primaryAction.GetVisualDescendants().OfType<StackPanel>(),
             panel => panel.Classes.Contains("managedActionIdle"));
         Assert.DoesNotContain("active", primaryAction.Classes);
-        Assert.Equal(compact ? 126 : 150, primaryAction.Width);
+        Assert.Equal(compact ? 170 : 150, primaryAction.Width);
+        if (compact)
+            Assert.True(compactInstanceDelete!.IsVisible);
         Assert.Equal(1, idleContent.Opacity);
         Assert.Equal(0, progressContent.Opacity);
         Assert.Equal(string.Empty, status.FindControl<TextBlock>("CurrentText")!.Text);
@@ -1264,7 +1562,9 @@ public sealed class MainWindowRenderTests
         Assert.True(viewModel.Instances.IsManagedInstanceActionRunning);
         Dispatcher.UIThread.RunJobs();
         Assert.Contains("active", primaryAction.Classes);
-        Assert.Equal(compact ? 180 : 265, primaryAction.Width);
+        Assert.Equal(compact ? 216 : 265, primaryAction.Width);
+        if (compact)
+            Assert.False(compactInstanceDelete!.IsVisible);
         Assert.Equal(0, idleContent.Opacity);
         Assert.Equal(1, progressContent.Opacity);
         Assert.Equal("Running", status.FindControl<TextBlock>("CurrentText")!.Text);
@@ -1303,6 +1603,86 @@ public sealed class MainWindowRenderTests
                 null,
                 DateTime.UtcNow), 0));
         Dispatcher.UIThread.RunJobs();
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task CompactInstallActionFitsLocalizedLabel()
+    {
+        var instances = new Mock<IInstanceRepository>();
+        var instance = new InstanceInfo
+        {
+            Id = "compact-install",
+            Name = "Compact install",
+            Branch = "release",
+            Version = 42,
+            IsInstalled = false
+        };
+        instances.Setup(service => service.GetCachedInstances()).Returns([instance]);
+        instances.Setup(service => service.GetSelectedInstance()).Returns(instance);
+        instances.Setup(service => service.GetInstancePathById(instance.Id))
+            .Returns("/tmp/hyprism-compact-install");
+        instances.Setup(service => service.IsClientPresent(It.IsAny<string>())).Returns(false);
+
+        var localizer = new StringLocalizer("ru-RU");
+        using var viewModel = await Task.Run(() => new MainWindowViewModel(
+            instances.Object,
+            new Mock<IProfileManager>().Object,
+            new Mock<IProfileRepository>().Object,
+            new Mock<IGameLaunchCoordinator>().Object,
+            new Mock<IGameInstallationWorkflow>().Object,
+            new Mock<IGameProcessTracker>().Object,
+            new Mock<IProgressReporter>().Object,
+            new Mock<IDesktopSettingsStore>().Object,
+            new Mock<IHytaleNewsClient>().Object,
+            new Mock<IExternalUriLauncher>().Object,
+            new HttpClient(),
+            localizer));
+        var window = new MainWindow
+        {
+            Width = 1024,
+            Height = 700,
+            DataContext = viewModel
+        };
+        window.Show();
+        viewModel.NavigateCommand.Execute("instances");
+        Dispatcher.UIThread.RunJobs();
+
+        var instancesView = Assert.Single(window.GetVisualDescendants().OfType<InstancesView>());
+        var overview = instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!;
+        var action = overview.FindControl<Button>("CompactInstancePrimaryAction")!;
+        var contentTranslation = Assert.IsType<TranslateTransform>(
+            instancesView.FindControl<Grid>("InstancesContent")!.RenderTransform);
+        var row = Assert.Single(instancesView.GetVisualDescendants().OfType<Button>(),
+            button => button.Classes.Contains("managerListItem"));
+        row.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        await WaitForConditionAsync(
+            () => action.IsEffectivelyVisible && Math.Abs(action.Bounds.Width - 170) < 0.5 &&
+                  Math.Abs(contentTranslation.X) < 0.01,
+            "localized compact install action to fit its label");
+        Dispatcher.UIThread.RunJobs();
+
+        var idleContent = Assert.Single(action.GetVisualDescendants().OfType<StackPanel>(),
+            panel => panel.Classes.Contains("managedActionIdle"));
+        var label = Assert.Single(idleContent.Children.OfType<TextBlock>());
+        Assert.Equal(170, action.Width);
+
+        var previewPath = Environment.GetEnvironmentVariable("HYPRISM_COMPACT_INSTALL_RENDER_OUTPUT");
+        if (!string.IsNullOrWhiteSpace(previewPath))
+            window.CaptureRenderedFrame()!.Save(previewPath, PngBitmapEncoderOptions.Default);
+
+        foreach (var language in localizer.AvailableLanguages.Keys)
+        {
+            localizer.SetLanguage(language);
+            viewModel.Instances.RefreshLocalization();
+            Dispatcher.UIThread.RunJobs();
+            label.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            Assert.Equal(viewModel.Instances.ManagedInstanceInstallLabel, label.Text);
+            Assert.True(action.Bounds.Width >=
+                        label.DesiredSize.Width + 18 + idleContent.Spacing +
+                        action.Padding.Left + action.Padding.Right,
+                $"Compact install action clips its {language} label.");
+        }
         window.Close();
     }
 
@@ -1871,10 +2251,12 @@ public sealed class MainWindowRenderTests
         var settingsContent = window.GetVisualDescendants()
             .OfType<ScrollViewer>()
             .Single(scrollViewer => scrollViewer.Name == "SettingsContent");
+        var scrollOffsetBefore = settingsContent.Offset.Y;
         var comboPositionBeforeScroll = fadingLanguageComboBox.TranslatePoint(default, window);
         var popupPositionBeforeScroll = languagePopupBorder.TranslatePoint(default, window);
-        settingsContent.Offset = new Vector(0, 100);
+        settingsContent.Offset = new Vector(0, scrollOffsetBefore + 100);
         Dispatcher.UIThread.RunJobs();
+        var appliedScrollOffset = settingsContent.Offset.Y - scrollOffsetBefore;
         var comboPositionAfterScroll = fadingLanguageComboBox.TranslatePoint(default, window);
         var popupPositionAfterScroll = languagePopupBorder.TranslatePoint(default, window);
         Assert.NotNull(comboPositionBeforeScroll);
@@ -1887,14 +2269,15 @@ public sealed class MainWindowRenderTests
             ? comboPositionBeforeScroll.Value.Y - popupBottom
             : popupPositionBeforeScroll.Value.Y - comboBottom;
         Assert.Equal(8, popupGap, precision: 3);
-        Assert.InRange(
+        Assert.True(appliedScrollOffset > 0, "The settings content should scroll in the test layout");
+        Assert.Equal(
+            appliedScrollOffset,
             comboPositionBeforeScroll!.Value.Y - comboPositionAfterScroll!.Value.Y,
-            99,
-            101);
-        Assert.InRange(
+            precision: 3);
+        Assert.Equal(
+            appliedScrollOffset,
             popupPositionBeforeScroll!.Value.Y - popupPositionAfterScroll!.Value.Y,
-            99,
-            101);
+            precision: 3);
         settingsContent.Offset = default;
         Dispatcher.UIThread.RunJobs();
         var settingsComboPreviewPath = Environment.GetEnvironmentVariable(
@@ -2110,6 +2493,8 @@ public sealed class MainWindowRenderTests
             .Returns(selected);
         instances.Setup(service => service.GetInstancePathById(selected.Id))
             .Returns("/tmp/hyprism-preview-instance");
+        instances.Setup(service => service.GetInstanceMeta("/tmp/hyprism-preview-instance"))
+            .Returns(new InstanceMeta { Id = selected.Id, Name = selected.Name });
         instances.Setup(service => service.IsClientPresent(It.IsAny<string>()))
             .Returns(true);
         profile.Setup(service => service.GetNick()).Returns("Hyprism Player");
@@ -2572,14 +2957,12 @@ public sealed class MainWindowRenderTests
         Assert.Single(
             instanceListGroup.GetVisualDescendants().OfType<Button>(),
             button => button.Classes.Contains("managerAddRow"));
-        Assert.Equal(
-            2,
-            instanceListGroup.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>()
-                .Count(path => path.Classes.Contains("managerListHandle") || path.Classes.Contains("managerListMore")));
+        Assert.Single(instanceListGroup.GetVisualDescendants().OfType<PathIcon>(),
+            icon => icon.Classes.Contains("managerListMoreIcon"));
         var instanceDragHandle = Assert.Single(
             instanceListGroup.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("managerListHandle"));
-        Assert.Equal(14, instanceDragHandle.Bounds.Width);
+        Assert.Equal(9, instanceDragHandle.Bounds.Width);
         Assert.Equal(arrowCursor, instanceDragHandle.Cursor?.ToString());
         var instanceDragTarget = Assert.Single(
             instanceListGroup.GetVisualDescendants().OfType<Border>(),
@@ -2587,6 +2970,14 @@ public sealed class MainWindowRenderTests
         Assert.Equal(usesCompactInstancesLayout ? 44 : 40, instanceDragTarget.Bounds.Width);
         Assert.Equal(usesCompactInstancesLayout ? 44 : 40, instanceDragTarget.Bounds.Height);
         Assert.Equal(arrowCursor, instanceDragTarget.Cursor?.ToString());
+        var instanceHandleCenter = instanceDragHandle.TranslatePoint(
+            new Point(instanceDragHandle.Bounds.Width / 2, instanceDragHandle.Bounds.Height / 2),
+            instanceDragTarget);
+        Assert.NotNull(instanceHandleCenter);
+        Assert.InRange(instanceHandleCenter.Value.X,
+            instanceDragTarget.Bounds.Width / 2 - 0.5,
+            instanceDragTarget.Bounds.Width / 2 + 0.5);
+        Assert.Equal(instanceDragTarget.Bounds.Height / 2, instanceHandleCenter.Value.Y, 2);
         var managedInstanceRow = Assert.Single(
             instanceListGroup.GetVisualDescendants().OfType<Button>(),
             button => button.Classes.Contains("managerListItem") && button.Classes.Contains("managed"));
@@ -2604,6 +2995,21 @@ public sealed class MainWindowRenderTests
         Assert.Equal(
             usesCompactInstancesLayout ? Colors.Transparent : Color.Parse("#12FFFFFF"),
             Assert.IsAssignableFrom<ISolidColorBrush>(managedInstanceRow.Background).Color);
+        if (!usesCompactInstancesLayout)
+        {
+            window.Width = 760;
+            Dispatcher.UIThread.RunJobs();
+            Assert.Contains("compact", instancesView.Classes);
+            Assert.Equal(Colors.Transparent,
+                Assert.IsAssignableFrom<ISolidColorBrush>(managedInstanceRow.Background).Color);
+            Assert.False(managedInstanceRow.IsAnimating(TemplatedControl.BackgroundProperty));
+            window.Width = width;
+            Dispatcher.UIThread.RunJobs();
+            await WaitForConditionAsync(
+                () => managedInstanceRow.Background is ISolidColorBrush { Color: var color } &&
+                      color == Color.Parse("#12FFFFFF"),
+                "active instance row to regain its wide selection background");
+        }
         var managedInstanceTitle = Assert.Single(
             managedInstanceRow.GetVisualDescendants().OfType<TextBlock>(),
             text => text.Classes.Contains("managerListTitle"));
@@ -2626,7 +3032,11 @@ public sealed class MainWindowRenderTests
         window.MouseMove(managedInstanceRowPoint!.Value);
         Dispatcher.UIThread.RunJobs();
         Assert.True(managedInstanceRow.IsPointerOver);
-        var expectedManagedInstanceHoverAlpha = usesCompactInstancesLayout ? (byte)8 : (byte)24;
+        if (!usesCompactInstancesLayout)
+        {
+            await Task.Delay(250);
+        }
+        var expectedManagedInstanceHoverAlpha = usesCompactInstancesLayout ? (byte)8 : (byte)18;
         await WaitForConditionAsync(
             () => managedInstanceRow.Background is ISolidColorBrush { Color.A: var alpha } &&
                   alpha >= expectedManagedInstanceHoverAlpha - 1,
@@ -2641,6 +3051,33 @@ public sealed class MainWindowRenderTests
             managedInstanceHoverColor.A,
             (byte)(expectedManagedInstanceHoverAlpha - 1),
             expectedManagedInstanceHoverAlpha);
+        if (!usesCompactInstancesLayout)
+        {
+            var managedInstanceHost = Assert.IsType<Grid>(managedInstanceRow.Parent);
+            var managedInstanceMenuTarget = Assert.Single(
+                managedInstanceHost.GetVisualDescendants().OfType<Border>(),
+                border => border.Classes.Contains("managerListMoreTarget"));
+            var managedInstanceMenuPoint = managedInstanceMenuTarget.TranslatePoint(
+                new Point(managedInstanceMenuTarget.Bounds.Width / 2,
+                    managedInstanceMenuTarget.Bounds.Height / 2), window);
+            Assert.NotNull(managedInstanceMenuPoint);
+            window.MouseMove(managedInstanceMenuPoint!.Value);
+            await Task.Delay(250);
+            Assert.Equal(Color.Parse("#12FFFFFF"),
+                Assert.IsAssignableFrom<ISolidColorBrush>(managedInstanceRow.Background).Color);
+        }
+
+        var instanceDragBaseColor = Assert.IsAssignableFrom<ISolidColorBrush>(instanceDragHandle.Fill).Color;
+        var instanceDragPoint = instanceDragTarget.TranslatePoint(
+            new Point(instanceDragTarget.Bounds.Width / 2, instanceDragTarget.Bounds.Height / 2), window);
+        Assert.NotNull(instanceDragPoint);
+        window.MouseMove(instanceDragPoint!.Value);
+        await WaitForConditionAsync(
+            () => instanceDragTarget.Background is ISolidColorBrush { Color.A: > 0 } &&
+                  instanceDragHandle.Fill is ISolidColorBrush { Color: var color } &&
+                  color != instanceDragBaseColor,
+            "instance drag handle hover background and icon");
+        window.MouseMove(new Point(0, 0));
 
         var inactiveInstance = new InstanceItemViewModel(
             "inactive-preview",
@@ -2678,6 +3115,74 @@ public sealed class MainWindowRenderTests
         Dispatcher.UIThread.RunJobs();
         viewModel.AllInstances.Remove(inactiveInstance);
         Dispatcher.UIThread.RunJobs();
+
+        if (usesCompactInstancesLayout)
+        {
+            var listRow = Assert.Single(instanceListGroup.GetVisualDescendants().OfType<Button>(),
+                button => button.Classes.Contains("managerListItem"));
+            var listItem = Assert.IsType<Grid>(listRow.Parent);
+            var listMenuTarget = Assert.Single(listItem.GetVisualDescendants().OfType<Border>(),
+                border => border.Classes.Contains("managerListMoreTarget"));
+            var listMenuPopup = Assert.Single(listItem.GetVisualDescendants().OfType<FadingPopup>());
+            var listMenuPoint = listMenuTarget.TranslatePoint(
+                new Point(listMenuTarget.Bounds.Width / 2, listMenuTarget.Bounds.Height / 2), window);
+            Assert.NotNull(listMenuPoint);
+            window.MouseMove(listMenuPoint!.Value);
+            await WaitForConditionAsync(
+                () => listMenuTarget.Background is ISolidColorBrush { Color.A: > 0 } &&
+                      listRow.Background is ISolidColorBrush { Color.A: >= 7 },
+                "instance list menu hover keeps card highlighted");
+            window.MouseDown(listMenuPoint.Value, MouseButton.Left);
+            window.MouseUp(listMenuPoint.Value, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(viewModel.AllInstances[0].IsMenuOpen);
+            Assert.True(listMenuPopup.IsRequestedOpen);
+            await WaitForConditionAsync(
+                () => listMenuPopup.IsOpen && listMenuPopup.Child?.Opacity >= 0.99,
+                "instance list menu to finish opening");
+            var listMenuActions = listMenuPopup.Child!.GetVisualDescendants()
+                .OfType<Button>().Where(button => button.Classes.Contains("managerCompactMenuAction")).ToArray();
+            Assert.Equal(3, listMenuActions.Length);
+            var deleteMenuPoint = listMenuActions[2].TranslatePoint(
+                new Point(listMenuActions[2].Bounds.Width / 2, listMenuActions[2].Bounds.Height / 2), window);
+            Assert.NotNull(deleteMenuPoint);
+            window.MouseMove(deleteMenuPoint!.Value);
+            Assert.False(listItem.IsPointerOver);
+            Assert.Contains("menuOpen", listItem.Classes);
+            Assert.True(Assert.IsAssignableFrom<ISolidColorBrush>(listRow.Background).Color.A >= 7);
+            window.MouseDown(deleteMenuPoint.Value, MouseButton.Left);
+            window.MouseUp(deleteMenuPoint.Value, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(viewModel.Instances.IsManagedInstanceDeletionOpen);
+            Assert.False(viewModel.AllInstances[0].IsMenuOpen);
+            Assert.True(Assert.IsType<TranslateTransform>(instancesView.FindControl<Grid>("InstancesContent")!
+                .RenderTransform).X > 0);
+            viewModel.Instances.CancelManagedInstanceDeletionCommand.Execute(null);
+            await WaitForConditionAsync(
+                () => !instancesView.FindControl<OverlayModal>("InstanceDeleteModal")!.IsEffectivelyVisible,
+                "instance deletion overlay to close");
+
+            window.MouseMove(listMenuPoint.Value);
+            window.MouseDown(listMenuPoint.Value, MouseButton.Left);
+            window.MouseUp(listMenuPoint.Value, MouseButton.Left);
+            await WaitForConditionAsync(
+                () => listMenuPopup.IsRequestedOpen && listMenuPopup.Child?.Opacity >= 0.99,
+                "instance list menu to finish reopening");
+            var editMenuPoint = listMenuActions[1].TranslatePoint(
+                new Point(listMenuActions[1].Bounds.Width / 2, listMenuActions[1].Bounds.Height / 2), window);
+            Assert.NotNull(editMenuPoint);
+            window.MouseMove(editMenuPoint!.Value);
+            window.MouseDown(editMenuPoint.Value, MouseButton.Left);
+            window.MouseUp(editMenuPoint.Value, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(viewModel.Instances.IsEditingInstance);
+            Assert.True(Assert.IsType<TranslateTransform>(instancesView.FindControl<Grid>("InstancesContent")!
+                .RenderTransform).X > 0);
+            viewModel.Instances.CancelEditManagedInstanceCommand.Execute(null);
+            await WaitForConditionAsync(
+                () => !instancesView.FindControl<OverlayModal>("InstanceEditModal")!.IsEffectivelyVisible,
+                "instance editing overlay to close");
+        }
 
         var addInstanceRow = Assert.Single(
             instanceListGroup.GetVisualDescendants().OfType<Button>(),
@@ -2757,13 +3262,7 @@ public sealed class MainWindowRenderTests
         Assert.Equal(144, instanceGameIcon.Width);
         Assert.Equal(144, instanceGameIcon.Height);
         Assert.NotNull(Assert.Single(instanceGameIcon.Children.OfType<Image>(), image => image.IsVisible).Source);
-        Assert.Equal(instancesView.Bounds.Width >= 940, instanceGameIcon.IsVisible);
-        var compactInstanceGameIcon = Assert.Single(
-            instancesView.GetVisualDescendants().OfType<Grid>(),
-            icon => icon.Classes.Contains("compactInstanceGameIcon"));
-        Assert.Equal(30, compactInstanceGameIcon.Width);
-        Assert.Equal(30, compactInstanceGameIcon.Height);
-        Assert.NotNull(Assert.Single(compactInstanceGameIcon.Children.OfType<Image>(), image => image.IsVisible).Source);
+        Assert.True(instanceGameIcon.IsVisible);
         var instanceSummary = Assert.Single(
             instancesView.GetVisualDescendants().OfType<StackPanel>(),
             panel => panel.Classes.Contains("instanceSummary"));
@@ -2776,11 +3275,6 @@ public sealed class MainWindowRenderTests
         var instancesListPane = instancesView.FindControl<InstanceListView>("InstanceListContentView")?
             .FindControl<Border>("InstancesListPane");
         var compactInstanceToolbar = instanceOverview?.FindControl<Border>("CompactInstanceToolbar");
-        var managerCompactSplitAction = instancesView.GetVisualDescendants()
-            .OfType<Border>()
-            .Single(border => border.Classes.Contains("managerCompactSplitAction") &&
-                              border.GetVisualDescendants().OfType<Button>()
-                                  .Any(button => button.Name == "CompactInstancePrimaryAction"));
         var compactInstancePrimaryAction = instanceOverview?.FindControl<Button>("CompactInstancePrimaryAction");
         var compactInstanceMoreButton = instanceOverview?.FindControl<Button>("CompactInstanceMoreButton");
         var compactInstanceMenuPopup = instanceOverview?.FindControl<FadingPopup>("CompactInstanceMenuPopup");
@@ -2913,20 +3407,21 @@ public sealed class MainWindowRenderTests
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(0, instanceContentTranslation.X);
             Assert.False(managerWideActions.IsVisible);
-            Assert.True(managerCompactSplitAction.IsEffectivelyVisible);
             Assert.True(compactInstancePrimaryAction!.IsEffectivelyVisible);
-            Assert.True(compactInstanceGameIcon.IsEffectivelyVisible);
+            Assert.True(compactInstanceMoreButton!.IsEffectivelyVisible);
+            Assert.True(instanceGameIcon.IsEffectivelyVisible);
+            var instanceHeroIdentity = Assert.Single(instanceOverview!.GetVisualDescendants()
+                .OfType<StackPanel>(), panel => panel.Classes.Contains("instanceHeroIdentity"));
+            Assert.True(instanceHeroIdentity.IsEffectivelyVisible);
 
-            var compactActionRight = managerCompactSplitAction.TranslatePoint(
-                new Point(managerCompactSplitAction.Bounds.Width, 0),
-                window);
-            var compactContentRight = instanceHubContent!.TranslatePoint(
-                new Point(instanceHubContent.Bounds.Width, 0),
-                window);
-            Assert.NotNull(compactActionRight);
-            Assert.NotNull(compactContentRight);
+            var compactActionCenter = compactInstancePrimaryAction.TranslatePoint(
+                new Point(compactInstancePrimaryAction.Bounds.Width / 2, 0), window);
+            var compactToolbarCenter = compactInstanceToolbar.TranslatePoint(
+                new Point(compactInstanceToolbar.Bounds.Width / 2, 0), window);
+            Assert.NotNull(compactActionCenter);
+            Assert.NotNull(compactToolbarCenter);
             Assert.InRange(
-                Math.Abs(compactActionRight!.Value.X - compactContentRight!.Value.X),
+                Math.Abs(compactActionCenter!.Value.X - compactToolbarCenter!.Value.X),
                 0,
                 0.5);
 
@@ -3015,8 +3510,8 @@ public sealed class MainWindowRenderTests
             Assert.True(instancesListPane!.IsHitTestVisible);
             Assert.True(instancesContent.IsHitTestVisible);
             Assert.True(managerWideActions.IsEffectivelyVisible);
-            Assert.False(managerCompactSplitAction.IsEffectivelyVisible);
-            Assert.False(compactInstanceGameIcon.IsEffectivelyVisible);
+            Assert.False(compactInstancePrimaryAction!.IsEffectivelyVisible);
+            Assert.True(instanceGameIcon.IsEffectivelyVisible);
         }
 
         var instanceHub = instanceOverview?.FindControl<Grid>("InstanceHubScreen");
@@ -4056,6 +4551,12 @@ public sealed class MainWindowRenderTests
             .Where(border => border.IsEffectivelyVisible && border.Classes.Contains("formGroup"))
             .ToArray();
         Assert.Equal(4, visibleSettingsGroups.Length);
+        var generalSettingsGroup = Assert.Single(visibleSettingsGroups,
+            group => group.GetVisualDescendants().OfType<FormRow>()
+                .Any(row => row.Label == viewModel.Settings.CloseAfterLaunchLabel));
+        Assert.Collection(generalSettingsGroup.GetVisualDescendants().OfType<FormRow>(),
+            row => Assert.Equal(viewModel.Settings.CloseAfterLaunchLabel, row.Label),
+            row => Assert.Equal(viewModel.Settings.AlphaModsLabel, row.Label));
         Assert.All(visibleSettingsGroups, group =>
         {
             Assert.Equal(new Thickness(0), group.BorderThickness);

@@ -273,23 +273,8 @@ You may need to reinstall the game if switching drives</value>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Launcher, game and system preferences</value>
   </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Show launcher announcements received from Discord</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Background music</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Play launcher music while browsing</value>
-  </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Announcement</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Bug Report</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Show announcements</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Instances</value>
@@ -1281,18 +1266,6 @@ You may need to reinstall the game if switching drives</value>
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>View changelog</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Mute</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Music muted while game is running</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Music</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Unmute</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>All</value>
   </data>
@@ -1632,9 +1605,6 @@ You may need to reinstall the game if switching drives</value>
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Ready to launch</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Favorite instance</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Enter profile name...</value>
   </data>
@@ -1891,7 +1861,7 @@ You may need to reinstall the game if switching drives</value>
     <value>Download sources, connection checks and game launch</value>
   </data>
   <data name="settings.categoryDescriptions.general" xml:space="preserve">
-    <value>Language, music, launcher behavior, GPU preference, and environment variables</value>
+    <value>Language, launcher behavior, GPU preference, and environment variables</value>
   </data>
   <data name="settings.categoryDescriptions.graphics" xml:space="preserve">
     <value>GPU selection for launching Hytale</value>

@@ -252,14 +252,8 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>Bu işlem aşağıdakileri kalıcı olarak silecektir:</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>Duyuru</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>Hata Bildirimi</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>Duyuruları göster</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>Örnekler</value>
@@ -1197,18 +1191,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>Değişiklik günlüğünü görüntüle</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>Sesi Kapat</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>Oyun çalışırken müzik kapatıldı</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>Müzik</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>Sesi Aç</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>Tümü</value>
   </data>
@@ -1512,9 +1494,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="startup.loading.ready" xml:space="preserve">
     <value>Hazır</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>Favori örnek</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>Profil adı girin...</value>
   </data>
@@ -1714,7 +1693,7 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
     <value>Hytale'a aktarılan ortam değişkenleri</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>Arka plan, müzik, haberler ve duyurular</value>
+    <value>Arka plan ve haber görünümü</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>Kapat</value>
@@ -2474,15 +2453,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>Başlatıcı, oyun ve sistem tercihleri</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>Discord üzerinden alınan başlatıcı duyurularını göster</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>Arka plan müziği</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>Göz atarken başlatıcı müziğini çal</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>Bir örnek oluştur</value>

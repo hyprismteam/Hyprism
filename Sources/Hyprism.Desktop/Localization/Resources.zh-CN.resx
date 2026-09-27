@@ -252,14 +252,8 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="deleteProfile.warning" xml:space="preserve">
     <value>这将永久删除所有配置文件数据，包括：</value>
   </data>
-  <data name="discord.announcement" xml:space="preserve">
-    <value>公告</value>
-  </data>
   <data name="discord.bugReport" xml:space="preserve">
     <value>错误报告</value>
-  </data>
-  <data name="discord.showAnnouncements" xml:space="preserve">
-    <value>显示公告</value>
   </data>
   <data name="dock.instances" xml:space="preserve">
     <value>实例</value>
@@ -1197,18 +1191,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.viewChangelog" xml:space="preserve">
     <value>查看更新日志</value>
   </data>
-  <data name="music.mute" xml:space="preserve">
-    <value>静音</value>
-  </data>
-  <data name="music.mutedWhilePlaying" xml:space="preserve">
-    <value>游戏运行时音乐已静音</value>
-  </data>
-  <data name="music.on" xml:space="preserve">
-    <value>音乐</value>
-  </data>
-  <data name="music.unmute" xml:space="preserve">
-    <value>取消静音</value>
-  </data>
   <data name="news.all" xml:space="preserve">
     <value>全部</value>
   </data>
@@ -1512,9 +1494,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="startup.loading.ready" xml:space="preserve">
     <value>准备就绪</value>
   </data>
-  <data name="profiles.favoriteInstance" xml:space="preserve">
-    <value>最常用实例</value>
-  </data>
   <data name="profiles.enterName" xml:space="preserve">
     <value>输入配置文件名称...</value>
   </data>
@@ -1714,7 +1693,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>传递给 Hytale 的环境变量</value>
   </data>
   <data name="settings.categoryDescriptions.visual" xml:space="preserve">
-    <value>背景、音乐、新闻和公告</value>
+    <value>背景和新闻展示</value>
   </data>
   <data name="settings.close" xml:space="preserve">
     <value>关闭</value>
@@ -2474,15 +2453,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="desktopSettings.description" xml:space="preserve">
     <value>启动器、游戏和系统偏好设置</value>
-  </data>
-  <data name="desktopSettings.discordAnnouncementsHint" xml:space="preserve">
-    <value>显示从 Discord 接收到的启动器公告</value>
-  </data>
-  <data name="desktopSettings.music" xml:space="preserve">
-    <value>背景音乐</value>
-  </data>
-  <data name="desktopSettings.musicHint" xml:space="preserve">
-    <value>浏览时播放启动器音乐</value>
   </data>
   <data name="home.createInstance" xml:space="preserve">
     <value>创建一个实例</value>

@@ -371,6 +371,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="16,10" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
+  <Style Selector=":is(UserControl).compact Button.managerListItem.managed">
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
   <Style Selector=":is(UserControl).compact Grid.managerListItemLayout">
     <Setter Property="ColumnSpacing" Value="14" />
   </Style>
@@ -389,7 +396,16 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
   <Style Selector=":is(UserControl).wide Button.managerListItem.managed:pointerover">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedHoverBrush}" />
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl) Grid.managerListItemHost:pointerover Button.managerListItem,
+                  :is(UserControl) Grid.managerListItemHost.menuOpen Button.managerListItem">
+    <Setter Property="Background" Value="{DynamicResource NavigationItemHoverBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl).wide Grid.managerListItemHost:pointerover Button.managerListItem.managed,
+                  :is(UserControl).wide Grid.managerListItemHost.menuOpen Button.managerListItem.managed">
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerListItem.dragging">
     <Setter Property="Opacity" Value="0.58" />
@@ -400,9 +416,15 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector=":is(UserControl) Border.managerListDragTarget">
     <Setter Property="Width" Value="40" />
     <Setter Property="Height" Value="40" />
-    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Background" Value="{DynamicResource PopupTransparentBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
   <Style Selector=":is(UserControl).compact Border.managerListDragTarget">
     <Setter Property="Width" Value="44" />
@@ -415,6 +437,58 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector=":is(UserControl) Path.managerListHandle">
+    <Setter Property="Width" Value="9" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Fill" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector=":is(UserControl) Border.managerListDragTarget:pointerover">
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedSurfaceBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl) Border.managerListDragTarget:pointerover Path.managerListHandle">
+    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl) Border.managerListMoreTarget">
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Background" Value="{DynamicResource PopupTransparentBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Margin" Value="0,0,12,0" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector=":is(UserControl).compact Border.managerListMoreTarget">
+    <Setter Property="Margin" Value="0,0,16,0" />
+  </Style>
+  <Style Selector=":is(UserControl) Border.managerListMoreTarget:pointerover,
+                  :is(UserControl) Border.managerListMoreTarget.open">
+    <Setter Property="Background" Value="{DynamicResource NavigationItemSelectedSurfaceBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl) PathIcon.managerListMoreIcon">
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Height" Value="14" />
+    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector=":is(UserControl) Border.managerListMoreTarget:pointerover PathIcon.managerListMoreIcon,
+                  :is(UserControl) Border.managerListMoreTarget.open PathIcon.managerListMoreIcon">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAddRow Path">
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
@@ -471,6 +545,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Template">
       <ControlTemplate>
         <Border Background="{TemplateBinding Background}"
+                CornerRadius="{TemplateBinding CornerRadius}"
                 Padding="{TemplateBinding Padding}">
           <ContentPresenter Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -484,7 +559,7 @@ SPDX-License-Identifier: GPL-3.0-only
     </Setter>
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart.main">
-    <Setter Property="Width" Value="126" />
+    <Setter Property="Width" Value="170" />
     <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
   </Style>
@@ -511,6 +586,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
+  <Style Selector=":is(UserControl) Button.managerCompactActionPart.standalone">
+    <Setter Property="CornerRadius" Value="18" />
+  </Style>
   <Style Selector=":is(UserControl) Button.managerCompactActionPart:disabled">
     <Setter Property="Opacity" Value="0.45" />
   </Style>
@@ -521,9 +599,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
-  <Style Selector=":is(UserControl) PathIcon.managerCompactActionChevron">
-    <Setter Property="Width" Value="13" />
-    <Setter Property="Height" Value="13" />
+  <Style Selector=":is(UserControl) PathIcon.managerCompactActionMenuIcon">
+    <Setter Property="Width" Value="16" />
+    <Setter Property="Height" Value="16" />
     <Setter Property="Foreground" Value="{Binding $parent[Button].Foreground}" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -536,7 +614,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="12,0" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -562,12 +640,17 @@ SPDX-License-Identifier: GPL-3.0-only
       </ControlTemplate>
     </Setter>
   </Style>
-  <Style Selector=":is(UserControl) Button.managerCompactMenuAction:pointerover">
+  <Style Selector=":is(UserControl) Button.managerCompactMenuAction:not(.danger):pointerover">
     <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerCompactMenuAction.danger">
+    <Setter Property="Background" Value="{DynamicResource DangerPopupTransparentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
+  </Style>
+  <Style Selector=":is(UserControl) Button.managerCompactMenuAction.danger:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Path.managerCompactMenuIcon">
     <Setter Property="Width" Value="16" />
@@ -615,7 +698,7 @@ SPDX-License-Identifier: GPL-3.0-only
       </ControlTemplate>
     </Setter>
   </Style>
-  <Style Selector=":is(UserControl) Button.managerAction:pointerover">
+  <Style Selector=":is(UserControl) Button.managerAction:not(.danger):pointerover">
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="RenderTransform" Value="{x:Null}" />
@@ -645,6 +728,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector=":is(UserControl) Button.managerAction.primary.active">
     <Setter Property="Width" Value="265" />
   </Style>
+  <Style Selector=":is(UserControl) Button.managerAction.deleteAction">
+    <Setter Property="Width" Value="50" />
+  </Style>
   <Style Selector=":is(UserControl) StackPanel.managerWideActions.editCollapsed Button.managerAction.editAction,
                   :is(UserControl) StackPanel.managerWideActions.actionActive Button.managerAction.deleteAction">
     <Setter Property="Width" Value="0" />
@@ -660,10 +746,11 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.danger">
+    <Setter Property="Background" Value="{DynamicResource DangerPopupTransparentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction.secondary.danger:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
+    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
   </Style>
   <Style Selector=":is(UserControl) Button.managerAction:disabled">
@@ -674,10 +761,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="18" />
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-  <Style Selector=":is(UserControl) StackPanel.managerDeleteActionContent">
-    <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
   <Style Selector=":is(UserControl) Border.managerWideSplitAction">

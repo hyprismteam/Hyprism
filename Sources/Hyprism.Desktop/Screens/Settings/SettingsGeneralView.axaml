@@ -54,14 +54,8 @@ SPDX-License-Identifier: GPL-3.0-only
                   <controls:FormRow Label="{Binding CloseAfterLaunchLabel}" Hint="{Binding CloseAfterLaunchHint}">
                     <ToggleSwitch Classes="uiToggle" IsChecked="{Binding CloseAfterLaunch}" />
                   </controls:FormRow>
-                  <controls:FormRow Label="{Binding AlphaModsLabel}" Hint="{Binding AlphaModsHint}">
+                  <controls:FormRow Classes="last" Label="{Binding AlphaModsLabel}" Hint="{Binding AlphaModsHint}">
                     <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowAlphaMods}" />
-                  </controls:FormRow>
-                  <controls:FormRow Label="{Binding DiscordAnnouncementsLabel}" Hint="{Binding DiscordAnnouncementsHint}">
-                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowDiscordAnnouncements}" />
-                  </controls:FormRow>
-                  <controls:FormRow Classes="last" Label="{Binding MusicLabel}" Hint="{Binding MusicHint}">
-                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding MusicEnabled}" />
                   </controls:FormRow>
                   </StackPanel>
                 </Border>

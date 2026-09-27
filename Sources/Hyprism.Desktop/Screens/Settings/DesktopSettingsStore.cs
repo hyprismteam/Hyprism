@@ -55,24 +55,10 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
     }
 
     /// <inheritdoc/>
-    public bool MusicEnabled
-    {
-        get => _configStore.Configuration.MusicEnabled;
-        set => Save(config => config.MusicEnabled = value);
-    }
-
-    /// <inheritdoc/>
     public bool CloseAfterLaunch
     {
         get => _configStore.Configuration.CloseAfterLaunch;
         set => Save(config => config.CloseAfterLaunch = value);
-    }
-
-    /// <inheritdoc/>
-    public bool ShowDiscordAnnouncements
-    {
-        get => _configStore.Configuration.ShowDiscordAnnouncements;
-        set => Save(config => config.ShowDiscordAnnouncements = value);
     }
 
     /// <inheritdoc/>
