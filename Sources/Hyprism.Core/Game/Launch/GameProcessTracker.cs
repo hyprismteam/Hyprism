@@ -16,6 +16,7 @@ namespace Hyprism.Core.Game.Launch;
 public sealed class GameProcessTracker : IGameProcessTracker, IDisposable
 {
     private const string RegistryFileName = "GameProcesses.json";
+    private static readonly TimeSpan ProcessStartTimeTolerance = TimeSpan.FromMilliseconds(100);
     private readonly Lock _processLock = new();
     private readonly Dictionary<int, TrackedProcess> _processes = [];
     private readonly List<GameProcessInfo> _processesExitedWhileUnavailable = [];
@@ -210,7 +211,7 @@ public sealed class GameProcessTracker : IGameProcessTracker, IDisposable
         try
         {
             var process = Process.GetProcessById(record.ProcessId);
-            if (!IsAlive(process) || GetProcessStartTimeUtc(process) != record.ProcessStartedAtUtc)
+            if (!IsAlive(process) || !HasMatchingStartTime(process, record))
             {
                 process.Dispose();
                 return null;
@@ -398,7 +399,7 @@ public sealed class GameProcessTracker : IGameProcessTracker, IDisposable
         {
             try
             {
-                return IsAlive(process) && GetProcessStartTimeUtc(process) == record.ProcessStartedAtUtc;
+                return IsAlive(process) && HasMatchingStartTime(process, record);
             }
             catch
             {
@@ -429,6 +430,10 @@ public sealed class GameProcessTracker : IGameProcessTracker, IDisposable
 
     private static DateTime GetProcessStartTimeUtc(Process process)
         => process.StartTime.ToUniversalTime();
+
+    private static bool HasMatchingStartTime(Process process, GameProcessInfo record)
+        => Math.Abs((GetProcessStartTimeUtc(process) - record.ProcessStartedAtUtc).Ticks)
+           <= ProcessStartTimeTolerance.Ticks;
 
     private static bool IsAlive(Process? process)
     {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 using System.Diagnostics;
+using System.Text.Json;
 using Hyprism.Core;
 using Hyprism.Core.Game.Launch;
 
@@ -9,6 +10,46 @@ namespace Hyprism.Core.Tests.Game;
 
 public sealed class GameProcessTrackerTests
 {
+    [Fact]
+    public void PersistentRegistry_AllowsSmallStartTimeVariationButRejectsStaleIdentity()
+    {
+        var appDirectory = Path.Combine(Path.GetTempPath(), "HyprismProcessTrackerTests_" + Guid.NewGuid());
+        using var process = StartLongRunningProcess();
+        var registryDirectory = Path.Combine(appDirectory, "Runtime");
+        var registryPath = Path.Combine(registryDirectory, "GameProcesses.json");
+
+        try
+        {
+            Directory.CreateDirectory(registryDirectory);
+            var record = new GameProcessInfo(
+                process.Id,
+                process.StartTime.ToUniversalTime().AddMilliseconds(1),
+                "release-instance",
+                "profile-id",
+                null,
+                DateTime.UtcNow);
+            File.WriteAllText(registryPath, JsonSerializer.Serialize(new[] { record }));
+
+            using (var restoredTracker = new GameProcessTracker(new AppPathConfiguration(appDirectory)))
+                Assert.True(restoredTracker.IsInstanceRunning("release-instance"));
+
+            File.WriteAllText(registryPath, JsonSerializer.Serialize(new[]
+            {
+                record with { ProcessStartedAtUtc = record.ProcessStartedAtUtc.AddSeconds(2) }
+            }));
+
+            using var staleTracker = new GameProcessTracker(new AppPathConfiguration(appDirectory));
+            Assert.False(staleTracker.IsInstanceRunning("release-instance"));
+            Assert.Single(staleTracker.TakeProcessesExitedWhileUnavailable());
+        }
+        finally
+        {
+            if (!process.HasExited)
+                process.Kill(entireProcessTree: true);
+            Directory.Delete(appDirectory, recursive: true);
+        }
+    }
+
     [Fact]
     public async Task PersistentRegistry_RestoresLiveProcessAndRemovesItAfterExit()
     {

@@ -46,7 +46,7 @@ The launcher builds Java arguments, GPU overrides, DualAuth settings, and user e
 
 ## Process ownership
 
-`GameProcessTracker` persists PID, process start time, instance, profile, and authentication owner. It restores only records that still match a live process, preventing PID reuse from identifying an unrelated process as a game
+`GameProcessTracker` persists PID, process start time, instance, profile, and authentication owner. On restart, it restores a live process only when its start time matches within 100 milliseconds. This accounts for small differences in process start times reported by separate launcher processes while rejecting stale records from ordinary PID reuse.
 
 Different instances may run together. The same instance cannot run twice, and official authentication permits only one running client per Hytale account owner
 

@@ -48,11 +48,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="10" />
   </Style>
 
-
-
-
-
-
   <Style Selector="instances|InstancesView Grid.instancesListGameIcon,
                    instances|InstancesView Image.instancesListGameIcon">
     <Setter Property="Width" Value="0" />
@@ -106,25 +101,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="IsVisible" Value="True" />
   </Style>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <Style Selector="instances|InstancesView Border.instancesVersionPicker">
     <Setter Property="Height" Value="44" />
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
@@ -142,7 +118,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView.compact StackPanel.managerWideActions">
     <Setter Property="IsVisible" Value="False" />
   </Style>
-
 
   <Style Selector="instances|InstancesView Grid.instanceGameIcon">
     <Setter Property="Width" Value="144" />
@@ -167,14 +142,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="30" />
   </Style>
 
-
-
-
-
-
-
-
-
   <Style Selector="instances|InstancesView Button.managerCompactActionPart.main.active.cancelArmed:pointerover">
     <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
     <Setter Property="Foreground" Value="White" />
@@ -185,27 +152,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Width" Value="0" />
     <Setter Property="Opacity" Value="0" />
   </Style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   <Style Selector="instances|InstancesView Button.managerAction.primary.active">
     <Setter Property="Width" Value="265" />
@@ -230,31 +176,11 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="White" />
   </Style>
 
-
-
-
-
-
-
-
-
-
-
-
-
   <Style Selector="instances|InstancesView Button.managerCompactActionPart.main.active Grid.managedActionContent">
     <Setter Property="Width" Value="190" />
     <Setter Property="MinWidth" Value="190" />
     <Setter Property="MaxWidth" Value="190" />
   </Style>
-
-
-
-
-
-
-
-
 
   <Style Selector="instances|InstancesView Path.managedActionIcon">
     <Setter Property="Width" Value="18" />
@@ -269,12 +195,14 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="FontFeatures" Value="tnum" />
   </Style>
 
-
-
-
-
-
-
+  <Style Selector="instances|InstanceOverviewView.switchingInstance Button.managerAction,
+                  instances|InstanceOverviewView.switchingInstance Button.managerCompactActionPart,
+                  instances|InstanceOverviewView.switchingInstance StackPanel.managedActionIdle,
+                  instances|InstanceOverviewView.switchingInstance Grid.managedActionProgress,
+                  instances|InstanceOverviewView.switchingInstance TextBlock.managedActionCancel,
+                  instances|InstanceOverviewView.switchingInstance Border.managerWideActionDivider">
+    <Setter Property="Transitions" Value="{x:Null}" />
+  </Style>
 
   <Style Selector="instances|InstancesView Border.instanceDeleteConfirmation">
     <Setter Property="Padding" Value="4" />
@@ -295,11 +223,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
   </Style>
-
-
-
-
-
 
   <Style Selector="instances|InstancesView Border.instanceMenuGroup">
     <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
@@ -606,14 +529,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource ItemSelectedBrush}" />
     <Setter Property="CornerRadius" Value="12" />
   </Style>
-
-
-
-
-
-
-
-
 
   <Style Selector="instances|InstancesView Button.instanceInstall">
     <Setter Property="MinWidth" Value="92" />
@@ -1237,7 +1152,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Opacity" Value="0" />
   </Style>
 
-
   <Style Selector="instances|InstancesView Border.instanceCompatibilitySummary">
     <Setter Property="Padding" Value="11,8" />
     <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
@@ -1350,9 +1264,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
     <Setter Property="Opacity" Value="0.45" />
   </Style>
-
-
-
 
   <Style Selector="instances|InstancesView ItemsControl.instancePreviewFiles > ContentPresenter">
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -1883,6 +1794,5 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView ListBox.instanceLogList SelectableTextBlock.logText.trace">
     <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
   </Style>
-
 
 </Styles>
