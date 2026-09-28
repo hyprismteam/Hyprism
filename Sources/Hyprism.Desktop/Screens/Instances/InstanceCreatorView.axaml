@@ -10,6 +10,23 @@ SPDX-License-Identifier: GPL-3.0-only
              x:Class="Hyprism.Desktop.Screens.Instances.InstanceCreatorView"
              x:Name="InstanceCreatorRoot"
              x:DataType="instances:InstancesViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="InstancePackageImportActionTemplate" x:DataType="instances:InstancesViewModel">
+      <Grid Classes="managedActionContent">
+        <StackPanel Classes="managedActionIdle" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="{Binding PickPackageLabel}" VerticalAlignment="Center" />
+        </StackPanel>
+        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+          <Path Classes="managedActionSpinner"
+                controls:RotatingVisual.IsActive="{Binding IsImportingInstancePackage}"
+                HorizontalAlignment="Center"
+                Data="M10,2 A8,8 0 1 1 2,10" />
+        </Grid>
+        <TextBlock Classes="managedActionCancel" Text="{Binding CancelLabel}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
   <StackPanel 
                     Width="560"
                     HorizontalAlignment="Center"
@@ -17,21 +34,143 @@ SPDX-License-Identifier: GPL-3.0-only
                     Margin="32"
                     Spacing="12">
             <controls:WizardRevealIcon x:Name="InstanceWizardReveal"
-                                       AnimationPath="/Assets/Lotties/server-reveal.json" />
-            <TextBlock Text="{Binding NewInstanceTitle}"
-                       HorizontalAlignment="Center"
-                       FontSize="26"
-                       FontWeight="Bold"
-                       TextAlignment="Center" />
-            <TextBlock Text="{Binding NewInstanceHint}"
-                       Classes="muted"
-                       MaxWidth="460"
-                       HorizontalAlignment="Center"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap" />
-
-            <Border Classes="formGroup" Margin="0,16,0,0">
+                                       AnimationPath="{Binding WizardAnimationPath}" />
+            <StackPanel x:Name="InstanceChoiceContent" Spacing="12" IsVisible="{Binding IsWizardChoice}">
+              <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+              <TextBlock x:Name="InstanceChoiceTitle" Text="{Binding ChoiceTitle}" HorizontalAlignment="Center"
+                         FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+              <TextBlock Text="{Binding ChoiceHint}" Classes="muted" MaxWidth="460"
+                         HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+              <Border Classes="formGroup" Margin="0,16,0,0">
               <StackPanel>
+                <Button x:Name="InstanceDownloadChoiceButton" Classes="formNavigationRow" IsEnabled="{Binding HasDownloadSources}"
+                        Click="OnChooseInstanceDownloadClicked">
+                  <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding DownloadChoiceLabel}" Classes="formLabel" />
+                    <TextBlock Text="{Binding DownloadChoiceHint}" Classes="formHint" />
+                  </StackPanel>
+                </Button>
+                <Button x:Name="InstanceImportChoiceButton" Classes="formNavigationRow last" Click="OnChooseInstanceImportClicked">
+                  <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding ImportLabel}" Classes="formLabel" />
+                    <TextBlock Text="{Binding ImportChoiceHint}" Classes="formHint" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+              </Border>
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
+                  <TextBlock Text="{Binding BackLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="InstanceImportContent" Spacing="12" IsVisible="{Binding IsWizardImport}">
+              <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+              <TextBlock x:Name="InstanceImportTitle" Text="{Binding ImportTitle}" HorizontalAlignment="Center"
+                         FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+              <TextBlock Text="{Binding ImportHint}" Classes="muted" MaxWidth="460"
+                         HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+              <Border Classes="formGroup" Margin="0,16,0,0">
+                <StackPanel Margin="16">
+                  <TextBlock Text="{Binding ImportMetadataHint}" Classes="muted" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+              <TextBlock Text="{Binding InstanceCreationError}" Margin="4,0"
+                         Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center"
+                         TextWrapping="Wrap" IsVisible="{Binding HasInstanceCreationError}" />
+              <Grid Width="272" Height="50" ColumnDefinitions="112,10,150"
+                    HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button x:Name="InstanceImportBackButton" Classes="wizardAction" Click="OnBackInstanceWizardClicked">
+                  <TextBlock Text="{Binding BackLabel}" />
+                </Button>
+                <Button x:Name="InstancePackageImportButton" Grid.Column="2" ZIndex="1"
+                        Classes="wizardAction create packageImportAction"
+                        Classes.active="{Binding IsImportingInstancePackage}"
+                        Classes.cancelArmed="{Binding IsInstanceImportCancellationArmed}"
+                        HorizontalAlignment="Right"
+                        PointerExited="OnImportActionPointerExited"
+                        Command="{Binding ImportInstancePackageCommand}">
+                  <ContentControl Content="{Binding}"
+                                  ContentTemplate="{StaticResource InstancePackageImportActionTemplate}" />
+                </Button>
+              </Grid>
+            </StackPanel>
+
+            <StackPanel x:Name="InstanceExportKindContent" Spacing="12" IsVisible="{Binding IsWizardExportKind}">
+              <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+              <TextBlock x:Name="InstanceExportTitle" Text="{Binding ExportTitle}" HorizontalAlignment="Center"
+                         FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+              <TextBlock Text="{Binding ExportHint}" Classes="muted" MaxWidth="460"
+                         HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+              <Border Classes="formGroup" Margin="0,16,0,0">
+              <StackPanel>
+                <Button x:Name="InstanceExportBuildButton" Classes="formNavigationRow" Click="OnSelectExportKindClicked" CommandParameter="Build">
+                  <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding ExportBuildLabel}" Classes="formLabel" />
+                    <TextBlock Text="{Binding ExportBuildHint}" Classes="formHint" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Button>
+                <Button x:Name="InstanceExportModpackButton" Classes="formNavigationRow" Click="OnSelectExportKindClicked" CommandParameter="Modpack">
+                  <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding ExportModpackLabel}" Classes="formLabel" />
+                    <TextBlock Text="{Binding ExportModpackHint}" Classes="formHint" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Button>
+                <Button Classes="formNavigationRow last" Click="OnSelectExportKindClicked" CommandParameter="Game">
+                  <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding ExportGameLabel}" Classes="formLabel" />
+                    <TextBlock Text="{Binding ExportGameHint}" Classes="formHint" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+              </Border>
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
+                  <TextBlock Text="{Binding BackLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="InstanceExportFormatContent" Spacing="12" IsVisible="{Binding IsWizardExportFormat}">
+              <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+              <TextBlock x:Name="InstanceExportFormatTitle" Text="{Binding ExportFormatTitle}" HorizontalAlignment="Center"
+                         FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+              <TextBlock Text="{Binding ExportFormatHint}" Classes="muted" MaxWidth="460"
+                         HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+              <Border Classes="formGroup" Margin="0,16,0,0">
+                <controls:FormRow Label="{Binding ExportFormatLabel}" MinHeight="72">
+                  <controls:FadingComboBox x:Name="InstanceExportFormatComboBox"
+                                           Classes="uiComboBox"
+                                           Width="236"
+                                           SelectedIndex="{Binding ExportFormatIndex, Mode=TwoWay}"
+                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}">
+                    <ComboBoxItem Content="{Binding ExportJsonLabel}" />
+                    <ComboBoxItem Content="{Binding ExportZipLabel}" />
+                  </controls:FadingComboBox>
+                </controls:FormRow>
+              </Border>
+              <TextBlock Text="{Binding InstanceExportError}" Margin="4,0"
+                         Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center"
+                         TextWrapping="Wrap" IsVisible="{Binding HasInstanceExportError}" />
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
+                  <TextBlock Text="{Binding BackLabel}" />
+                </Button>
+                <Button Classes="wizardAction create" Command="{Binding ExportInstanceCommand}">
+                  <TextBlock Text="{Binding ExportLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="InstanceDownloadContent" Spacing="12" IsVisible="{Binding IsWizardDownload}">
+              <StackPanel.RenderTransform><TranslateTransform /></StackPanel.RenderTransform>
+              <TextBlock x:Name="InstanceDownloadTitle" Text="{Binding NewInstanceTitle}" HorizontalAlignment="Center"
+                         FontSize="26" FontWeight="Bold" TextAlignment="Center" />
+              <TextBlock Text="{Binding NewInstanceHint}" Classes="muted" MaxWidth="460"
+                         HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+              <Border Classes="formGroup" Margin="0,16,0,0">
+                <StackPanel>
                 <controls:FormRow Label="{Binding BranchLabel}"
                                   Hint="{Binding InstanceBranchHint}"
                                   MinHeight="72">
@@ -114,29 +253,22 @@ SPDX-License-Identifier: GPL-3.0-only
                     </Grid>
                   </Border>
                 </controls:FormRow>
+                </StackPanel>
+              </Border>
+              <TextBlock Text="{Binding InstanceCreationError}" Margin="4,0"
+                         Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center"
+                         TextWrapping="Wrap" IsVisible="{Binding HasInstanceCreationError}" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                          Margin="0,10,0,0" Spacing="10">
+                <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
+                  <TextBlock Text="{Binding BackLabel}" />
+                </Button>
+                <Button Classes="wizardAction create"
+                        IsEnabled="{Binding CanCreateInstance}"
+                        Command="{Binding CreateInstanceCommand}">
+                  <TextBlock Text="{Binding CreateInstanceLabel}" />
+                </Button>
               </StackPanel>
-            </Border>
-
-            <TextBlock Text="{Binding InstanceCreationError}"
-                       Margin="4,0"
-                       Foreground="{DynamicResource DangerSoftBrush}"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap"
-                       IsVisible="{Binding HasInstanceCreationError}" />
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,10,0,0"
-                        Spacing="10">
-              <Button Classes="wizardAction"
-                      Command="{Binding CloseInstanceCreatorCommand}">
-                <TextBlock Text="{Binding BackLabel}" />
-              </Button>
-              <Button Classes="wizardAction create"
-                      IsEnabled="{Binding CanCreateInstance}"
-                      Command="{Binding CreateInstanceCommand}">
-                <TextBlock Text="{Binding CreateInstanceLabel}" />
-              </Button>
             </StackPanel>
         </StackPanel>
 </UserControl>

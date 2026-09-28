@@ -163,12 +163,49 @@ public sealed class DocumentationScreenshotTests
         await CapturePageAsync("instances", "instances.png");
         var instancesView = window.GetVisualDescendants().OfType<InstancesView>().Single();
         viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        await WaitFramesAsync(20);
+        var creator = instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView")!;
+        await AvaloniaTestWait.UntilAsync(
+            () => creator.StepControl(InstanceWizardStage.Choice).IsEffectivelyVisible &&
+                  creator.StepControl(InstanceWizardStage.Choice).Opacity >= 0.99,
+            "instance creation choice to open");
+        creator.FindControl<Button>("InstanceDownloadChoiceButton")!
+            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        await AvaloniaTestWait.UntilAsync(
+            () => creator.StepControl(InstanceWizardStage.Download).IsEffectivelyVisible &&
+                  creator.StepControl(InstanceWizardStage.Download).Opacity >= 0.99,
+            "instance download step to open");
         await AvaloniaTestWait.UntilAsync(
             () => !viewModel.Instances.IsInstanceVersionsLoading &&
                   viewModel.Instances.AvailableInstanceVersions.Count > 0,
             "instance creator versions to load");
         await WaitFramesAsync(20);
         Capture(window, Path.Combine(outputDirectory, "instances-creator.png"));
+        viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
+        await WaitFramesAsync(16);
+
+        viewModel.Instances.OpenInstanceExportCommand.Execute(null);
+        await WaitFramesAsync(20);
+        Capture(window, Path.Combine(outputDirectory, "instances-export.png"));
+        creator.FindControl<Button>("InstanceExportBuildButton")!
+            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        await AvaloniaTestWait.UntilAsync(
+            () => creator.StepControl(InstanceWizardStage.ExportFormat).IsEffectivelyVisible &&
+                  creator.StepControl(InstanceWizardStage.ExportFormat).Opacity >= 0.99,
+            "instance export format step to open");
+        Capture(window, Path.Combine(outputDirectory, "instances-export-format.png"));
+        viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
+        await WaitFramesAsync(16);
+
+        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        await WaitFramesAsync(20);
+        creator.FindControl<Button>("InstanceImportChoiceButton")!
+            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        await AvaloniaTestWait.UntilAsync(
+            () => creator.StepControl(InstanceWizardStage.Import).IsEffectivelyVisible &&
+                  creator.StepControl(InstanceWizardStage.Import).Opacity >= 0.99,
+            "instance import step to open");
+        Capture(window, Path.Combine(outputDirectory, "instances-import.png"));
         viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
         await WaitFramesAsync(16);
 
@@ -216,6 +253,22 @@ public sealed class DocumentationScreenshotTests
         dialogFrame.Save(Path.Combine(outputDirectory, "java-arguments.png"), PngBitmapEncoderOptions.Default);
 
         window.Close();
+        using (var emptyViewModel = MainWindowViewModelFactory.Create(
+                   httpClient, mirrorCatalog, versions.Object, language, emptyInstances: true))
+        {
+            var emptyWindow = new MainWindow
+            {
+                Width = WindowWidth,
+                Height = WindowHeight,
+                DataContext = emptyViewModel
+            };
+            emptyWindow.Show();
+            emptyViewModel.NavigateCommand.Execute("instances");
+            await WaitFramesAsync(8);
+            Capture(emptyWindow, Path.Combine(outputDirectory, "instances-empty.png"));
+            emptyWindow.Close();
+        }
+
         versions.Setup(service => service.HasDownloadSources()).Returns(false);
         using (var emptyViewModel = MainWindowViewModelFactory.Create(
                    httpClient, mirrorCatalog, versions.Object, language, emptyInstances: true))

@@ -4,6 +4,8 @@
 using System.ComponentModel;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Hyprism.Desktop.Controls;
 
@@ -22,6 +24,77 @@ public sealed partial class InstanceCreatorView : UserControl
     }
 
     public WizardRevealIcon Reveal => InstanceWizardReveal;
+    public Func<InstanceWizardStage, InstanceWizardStage, bool, Action, Task>? NavigateStageAsync { get; set; }
+
+    public Control StepControl(InstanceWizardStage stage) => stage switch
+    {
+        InstanceWizardStage.Choice => InstanceChoiceContent,
+        InstanceWizardStage.Download => InstanceDownloadContent,
+        InstanceWizardStage.Import => InstanceImportContent,
+        InstanceWizardStage.ExportKind => InstanceExportKindContent,
+        InstanceWizardStage.ExportFormat => InstanceExportFormatContent,
+        _ => InstanceChoiceContent
+    };
+
+    private async Task NavigateAsync(InstanceWizardStage destination, bool forward, Action updateStage)
+    {
+        if (DataContext is not InstancesViewModel viewModel ||
+            viewModel.InstanceWizardStage == destination)
+            return;
+
+        if (NavigateStageAsync is { } navigate)
+            await navigate(viewModel.InstanceWizardStage, destination, forward, updateStage);
+        else
+            updateStage();
+    }
+
+    private async void OnChooseInstanceDownloadClicked(object? sender, RoutedEventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel)
+            await NavigateAsync(InstanceWizardStage.Download, true,
+                () => viewModel.ChooseInstanceDownloadCommand.Execute(null));
+    }
+
+    private async void OnChooseInstanceImportClicked(object? sender, RoutedEventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel)
+            await NavigateAsync(InstanceWizardStage.Import, true,
+                () => viewModel.ChooseInstanceImportCommand.Execute(null));
+    }
+
+    private async void OnSelectExportKindClicked(object? sender, RoutedEventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel && sender is Button button)
+            await NavigateAsync(InstanceWizardStage.ExportFormat, true,
+                () => viewModel.SelectExportKindCommand.Execute(button.CommandParameter));
+    }
+
+    private async void OnBackInstanceWizardClicked(object? sender, RoutedEventArgs args)
+    {
+        if (DataContext is not InstancesViewModel viewModel)
+            return;
+        if (viewModel.TryCancelInstanceImport())
+            return;
+
+        var previous = viewModel.InstanceWizardStage switch
+        {
+            InstanceWizardStage.Download or InstanceWizardStage.Import
+                when viewModel.CanReturnToInstanceChoice => InstanceWizardStage.Choice,
+            InstanceWizardStage.ExportFormat => InstanceWizardStage.ExportKind,
+            _ => viewModel.InstanceWizardStage
+        };
+        if (previous == viewModel.InstanceWizardStage)
+            viewModel.BackInstanceWizardCommand.Execute(null);
+        else
+            await NavigateAsync(previous, false,
+                () => viewModel.BackInstanceWizardCommand.Execute(null));
+    }
+
+    private void OnImportActionPointerExited(object? sender, PointerEventArgs args)
+    {
+        if (DataContext is InstancesViewModel viewModel)
+            viewModel.ArmInstanceImportCancellation();
+    }
 
     public void RefreshBranchIndicator()
         => UpdateBranchIndicator(animate: false);

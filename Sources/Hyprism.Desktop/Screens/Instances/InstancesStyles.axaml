@@ -103,6 +103,29 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="11" />
   </Style>
 
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction">
+    <Setter Property="Width" Value="150" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active,
+                   instances|InstanceCreatorView Button.packageImportAction.active:pointerover">
+    <Setter Property="Width" Value="272" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active.cancelArmed:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active Grid.managedActionContent">
+    <Setter Property="Width" Value="232" />
+    <Setter Property="MinWidth" Value="232" />
+    <Setter Property="MaxWidth" Value="232" />
+  </Style>
+
   <Style Selector="instances|InstancesView Path.instancesVersionSpinner">
     <Setter Property="Fill" Value="Transparent" />
     <Setter Property="Stroke" Value="{DynamicResource TextPrimaryBrush}" />

@@ -1,0 +1,26 @@
+---
+title: Instance packages
+description: JSON manifests and ZIP archives for instance transfer
+---
+
+# Instance packages
+
+Hyprism exports an instance as a metadata-only JSON manifest or a ZIP archive containing the selected files. The instance wizard imports either format. See [Instances](/user-guide/instances-profiles-mods) for the user workflow.
+
+## Selection and layout
+
+| Kind | Included files |
+| --- | --- |
+| Build | All instance files, including game files, mods, worlds, and other user data. |
+| Modpack | Files under `UserData/Mods/`, including its mod manifest. |
+| Game | Instance files outside `UserData/` and `Client/mods/`. |
+
+Every JSON export records `SchemaVersion`, `Kind`, `Instance`, `Files`, and `Mods`. `SchemaVersion` is `1`. `Kind` is `Build`, `Modpack`, or `Game`. `Instance` contains the source `InstanceMeta`; `Files` lists paths relative to the instance root and sizes in bytes; `Mods` contains installed mod metadata when mods are included. JSON contains no file contents.
+
+Every ZIP export contains `HyprismExport.json` with the same manifest, `Meta.json` for instance import, and the selected files at their instance-relative paths. Symbolic links are excluded. Export writes to a temporary file beside the destination and replaces the destination only after completion. Cancellation removes the temporary file.
+
+JSON import creates a new uninstalled instance with the source name, branch, version, version name, and notes. It does not download or restore listed files. ZIP export assigns a new instance ID in `Meta.json`, while the manifest retains the source ID. ZIP import extracts the archive, assigns another ID if one already exists, and registers the imported instance.
+
+Cancellation during ZIP extraction removes the temporary extraction directory before any instance files are moved into place.
+
+The implementation is in [InstancePackageService](../../../../Sources/Hyprism.Core/Game/Instances/InstancePackageService.cs) and [InstanceRepository](../../../../Sources/Hyprism.Core/Game/Instances/InstanceRepository.cs).

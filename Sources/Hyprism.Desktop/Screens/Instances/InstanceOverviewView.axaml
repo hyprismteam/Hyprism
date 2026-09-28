@@ -107,6 +107,28 @@ SPDX-License-Identifier: GPL-3.0-only
                         </StackPanel>
                       </Button>
 
+                      <Button Classes="managerCompactMenuAction"
+                              IsEnabled="{Binding CanExportManagedInstance}"
+                              Command="{Binding OpenInstanceExportCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon" Data="{StaticResource DownloadIcon}">
+                            <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
+                          </Path>
+                          <TextBlock Text="{Binding ExportLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+
+                      <Button Classes="managerCompactMenuAction danger"
+                              IsVisible="{Binding IsManagedInstanceExporting}"
+                              Command="{Binding CancelInstanceExportCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon" Data="{StaticResource CloseIcon}" />
+                          <TextBlock Text="{Binding ManagedInstanceActionCancelLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+
                       <Button x:Name="CompactInstanceDeleteAction"
                               Classes="managerCompactMenuAction danger"
                               IsVisible="{Binding !IsManagedInstanceActionRunning}"
@@ -291,7 +313,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
                       </Grid>
                     </Button>
-                    <Button Classes="formNavigationRow instanceMenuRow last"
+                    <Button Classes="formNavigationRow instanceMenuRow"
                             IsEnabled="{Binding IsManagedInstanceInstalled}"
                             Command="{Binding SelectInstanceSectionCommand}"
                             CommandParameter="logs">
@@ -306,8 +328,48 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
                       </Grid>
                     </Button>
+                    <Grid>
+                      <Button x:Name="InstanceExportRow" Classes="formNavigationRow instanceMenuRow last"
+                              IsEnabled="{Binding CanExportManagedInstance}"
+                              Command="{Binding OpenInstanceExportCommand}">
+                        <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                          <Path Width="28" Height="28" Stretch="Uniform"
+                                Fill="{DynamicResource TextSecondaryBrush}"
+                                Data="{StaticResource DownloadIcon}">
+                            <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
+                          </Path>
+                          <StackPanel Grid.Column="1" Spacing="3">
+                            <TextBlock Text="{Binding ExportLabel}" Classes="formLabel instanceMenuTitle" />
+                            <TextBlock Text="{Binding ExportHint}" Classes="formHint instanceMenuDescription" />
+                          </StackPanel>
+                          <Path Grid.Column="2" Classes="instanceMenuChevron"
+                                IsVisible="{Binding !IsManagedInstanceExporting}"
+                                Data="{StaticResource NextIcon}" />
+                        </Grid>
+                      </Button>
+                      <Button x:Name="InstanceExportStatusButton"
+                              Classes="managerAction primary instanceExportStatus active cancelArmed"
+                              IsVisible="{Binding IsManagedInstanceExporting}"
+                              Width="152" Height="36"
+                              HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Margin="0,0,16,0"
+                              ToolTip.Tip="{Binding ManagedInstanceActionCancelLabel}"
+                              Command="{Binding CancelInstanceExportCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                          <TextBlock Text="{Binding ExportingLabel}" />
+                          <Path Width="12" Height="12" Stretch="Uniform"
+                                Fill="{Binding $parent[Button].Foreground}"
+                                Data="{StaticResource CloseIcon}" />
+                        </StackPanel>
+                      </Button>
+                    </Grid>
                   </StackPanel>
                 </Border>
+
+                <TextBlock Text="{Binding InstanceExportError}"
+                           IsVisible="{Binding HasInstanceExportError}"
+                           Foreground="{DynamicResource DangerSoftBrush}"
+                           TextWrapping="Wrap" />
 
               </StackPanel>
             </controls:SmoothScrollViewer>

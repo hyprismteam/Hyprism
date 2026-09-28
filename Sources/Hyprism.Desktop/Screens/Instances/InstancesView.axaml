@@ -86,14 +86,20 @@ SPDX-License-Identifier: GPL-3.0-only
                                  Title="{Binding NoDownloadSourcesTitle}">
                 <TextBlock Text="{Binding NoDownloadSourcesHint}" TextWrapping="Wrap" />
               </controls:NoteCard>
-              <Button x:Name="EmptyCreateButton" Classes="wizardAction create" HorizontalAlignment="Center"
-                      IsEnabled="{Binding HasDownloadSources}"
-                      Click="OnOpenCreatorClicked">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                  <Path Width="18" Height="18" Stretch="Uniform" Fill="{Binding $parent[Button].Foreground}" Data="{StaticResource GestureSelectIcon}" />
-                  <TextBlock Text="{Binding SelectVersionLabel}" />
-                </StackPanel>
-              </Button>
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                <Button x:Name="EmptyImportButton" Classes="wizardAction"
+                        Click="OnOpenEmptyImportClicked">
+                  <TextBlock Text="{Binding ImportLabel}" />
+                </Button>
+                <Button x:Name="EmptyCreateButton" Classes="wizardAction create"
+                        IsEnabled="{Binding HasDownloadSources}"
+                        Click="OnOpenEmptyDownloadClicked">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Path Width="18" Height="18" Stretch="Uniform" Fill="{Binding $parent[Button].Foreground}" Data="{StaticResource GestureSelectIcon}" />
+                    <TextBlock Text="{Binding SelectVersionLabel}" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
             </StackPanel>
           </controls:EmptyState.ActionContent>
         </controls:EmptyState>

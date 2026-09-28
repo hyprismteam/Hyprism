@@ -800,15 +800,35 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     }
     [RelayCommand]
     private void OpenInstanceCreator()
+        => OpenInstanceCreatorAt(HasInstances
+            ? InstanceWizardStage.Choice
+            : HasDownloadSources ? InstanceWizardStage.Download : InstanceWizardStage.Import);
+
+    [RelayCommand]
+    private void OpenEmptyInstanceDownload()
     {
+        if (HasDownloadSources)
+            OpenInstanceCreatorAt(InstanceWizardStage.Download);
+    }
+
+    [RelayCommand]
+    private void OpenEmptyInstanceImport()
+        => OpenInstanceCreatorAt(InstanceWizardStage.Import);
+
+    private void OpenInstanceCreatorAt(InstanceWizardStage stage)
+    {
+        CanReturnToInstanceChoice = stage == InstanceWizardStage.Choice;
+        InstanceWizardStage = stage;
         IsInstanceCreatorOpen = true;
         InstanceCreationError = string.Empty;
-        _ = LoadInstanceVersionsAsync(NewInstanceBranch);
+        if (stage != InstanceWizardStage.Import)
+            _ = LoadInstanceVersionsAsync(NewInstanceBranch);
     }
 
     [RelayCommand]
     private void CloseInstanceCreator()
     {
+        _instanceImportCancellation?.Cancel();
         IsInstanceCreatorOpen = false;
         CancelInstanceVersionLoading();
     }
@@ -3750,6 +3770,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void UpdateManagedInstancePresentation()
     {
+        NotifyExportStateChanged();
         ManagedInstanceIcon = _allInstances.FirstOrDefault(item => item.Id == _managedInstance?.Id)?.Icon;
         OnPropertyChanged(nameof(IsManagedInstanceInstalled));
         OnPropertyChanged(nameof(CanRunManagedInstanceAction));
@@ -4077,6 +4098,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         => FilterInstalledMods();
     public void Dispose()
     {
+        _instanceImportCancellation?.Cancel();
+        _instanceExportCancellation?.Cancel();
         ReplaceEditInstanceIcon(null);
         foreach (var item in _allInstances)
             item.Icon?.Dispose();

@@ -1483,71 +1483,73 @@ public partial class InstanceRepository : IInstanceRepository
         var tempDir = Path.Combine(Path.GetTempPath(), $"hyprism-import-{Guid.NewGuid()}");
         Directory.CreateDirectory(tempDir);
 
-        await ZipFile.ExtractToDirectoryAsync(
-            zipPath,
-            tempDir,
-            overwriteFiles: true,
-            cancellationToken);
-
-        var metaPath = LauncherJsonFile.GetPath(tempDir, "Meta.json", "meta.json");
-        var branch = "release";
-        var version = 0;
-        string? existingId = null;
-        InstanceMeta? importedMeta = null;
-
-        if (File.Exists(metaPath))
+        try
         {
-            var metaJson = await File.ReadAllTextAsync(metaPath, cancellationToken);
-            importedMeta = JsonSerializer.Deserialize<InstanceMeta>(metaJson, JsonOptions);
-            branch = importedMeta?.Branch ?? "release";
-            version = importedMeta?.Version ?? 0;
-            existingId = importedMeta?.Id;
-        }
+            await ZipFile.ExtractToDirectoryAsync(
+                zipPath,
+                tempDir,
+                overwriteFiles: true,
+                cancellationToken);
 
-        if (importedMeta is null || version <= 0)
+            var metaPath = LauncherJsonFile.GetPath(tempDir, "Meta.json", "meta.json");
+            var branch = "release";
+            var version = 0;
+            string? existingId = null;
+            InstanceMeta? importedMeta = null;
+
+            if (File.Exists(metaPath))
+            {
+                var metaJson = await File.ReadAllTextAsync(metaPath, cancellationToken);
+                importedMeta = JsonSerializer.Deserialize<InstanceMeta>(metaJson, JsonOptions);
+                branch = importedMeta?.Branch ?? "release";
+                version = importedMeta?.Version ?? 0;
+                existingId = importedMeta?.Id;
+            }
+
+            if (importedMeta is null || version <= 0)
+                throw new InvalidDataException(
+                    "The archive must contain Meta.json with an explicit game version");
+
+            var existingInstances = GetInstalledInstances();
+            var idAlreadyExists = !string.IsNullOrEmpty(existingId) &&
+                existingInstances.Any(i => i.Id == existingId);
+
+            var newInstanceId = idAlreadyExists || string.IsNullOrEmpty(existingId)
+                ? Guid.NewGuid().ToString()
+                : existingId;
+
+            if (importedMeta is not null)
+            {
+                importedMeta.Id = newInstanceId;
+                await File.WriteAllTextAsync(
+                    metaPath,
+                    JsonSerializer.Serialize(importedMeta, JsonOptions),
+                    cancellationToken);
+                if (idAlreadyExists || string.IsNullOrEmpty(existingId))
+                    Logger.Info("InstanceRepository", $"Updated instance ID from '{existingId}' to '{newInstanceId}'");
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            var targetPath = CreateInstanceDirectory(branch, newInstanceId);
+            foreach (var file in Directory.GetFiles(tempDir))
+            {
+                var destFile = Path.Combine(targetPath, Path.GetFileName(file));
+                File.Move(file, destFile, true);
+            }
+            foreach (var dir in Directory.GetDirectories(tempDir))
+            {
+                var destDir = Path.Combine(targetPath, Path.GetFileName(dir));
+                if (Directory.Exists(destDir)) Directory.Delete(destDir, true);
+                Directory.Move(dir, destDir);
+            }
+
+            Logger.Success("InstanceRepository", $"Imported ZIP instance to: {targetPath}");
+            SyncInstancesWithConfig();
+        }
+        finally
         {
             DeleteTemporaryImportDirectory(tempDir);
-            throw new InvalidDataException(
-                "The archive must contain Meta.json with an explicit game version");
         }
-
-        var existingInstances = GetInstalledInstances();
-        var idAlreadyExists = !string.IsNullOrEmpty(existingId) &&
-            existingInstances.Any(i => i.Id == existingId);
-
-        var newInstanceId = idAlreadyExists || string.IsNullOrEmpty(existingId)
-            ? Guid.NewGuid().ToString()
-            : existingId;
-
-        var targetPath = CreateInstanceDirectory(branch, newInstanceId);
-
-        if (importedMeta is not null)
-        {
-            importedMeta.Id = newInstanceId;
-            await File.WriteAllTextAsync(
-                metaPath,
-                JsonSerializer.Serialize(importedMeta, JsonOptions),
-                cancellationToken);
-            if (idAlreadyExists || string.IsNullOrEmpty(existingId))
-                Logger.Info("InstanceRepository", $"Updated instance ID from '{existingId}' to '{newInstanceId}'");
-        }
-
-        foreach (var file in Directory.GetFiles(tempDir))
-        {
-            var destFile = Path.Combine(targetPath, Path.GetFileName(file));
-            File.Move(file, destFile, true);
-        }
-        foreach (var dir in Directory.GetDirectories(tempDir))
-        {
-            var destDir = Path.Combine(targetPath, Path.GetFileName(dir));
-            if (Directory.Exists(destDir)) Directory.Delete(destDir, true);
-            Directory.Move(dir, destDir);
-        }
-
-        DeleteTemporaryImportDirectory(tempDir);
-
-        Logger.Success("InstanceRepository", $"Imported ZIP instance to: {targetPath}");
-        SyncInstancesWithConfig();
     }
 
     private static void DeleteTemporaryImportDirectory(string path)

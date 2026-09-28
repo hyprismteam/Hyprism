@@ -36,6 +36,7 @@ public sealed class InstanceWizardViewModelTests
         var news = new Mock<IHytaleNewsClient>();
         var uriLauncher = new Mock<IExternalUriLauncher>();
         var versionCatalog = new Mock<IGameVersionCatalog>();
+        versionCatalog.Setup(catalog => catalog.HasDownloadSources()).Returns(true);
         var releaseVersions = new List<int> { 20, 19 };
         var preReleaseVersions = new List<int> { 61, 60 };
 
@@ -106,6 +107,7 @@ public sealed class InstanceWizardViewModelTests
         var news = new Mock<IHytaleNewsClient>();
         var uriLauncher = new Mock<IExternalUriLauncher>();
         var versionCatalog = new Mock<IGameVersionCatalog>();
+        versionCatalog.Setup(catalog => catalog.HasDownloadSources()).Returns(true);
         var releaseVersions = new List<int> { 20, 19 };
         var preReleaseVersions = new List<int> { 61, 60 };
 
@@ -178,6 +180,7 @@ public sealed class InstanceWizardViewModelTests
         var news = new Mock<IHytaleNewsClient>();
         var uriLauncher = new Mock<IExternalUriLauncher>();
         var versionCatalog = new Mock<IGameVersionCatalog>();
+        versionCatalog.Setup(catalog => catalog.HasDownloadSources()).Returns(true);
         var cachedVersions = new List<CachedVersionEntry>
         {
             new() { Version = 100, VersionName = "build-100" },
@@ -232,6 +235,7 @@ public sealed class InstanceWizardViewModelTests
         var news = new Mock<IHytaleNewsClient>();
         var uriLauncher = new Mock<IExternalUriLauncher>();
         var versionCatalog = new Mock<IGameVersionCatalog>();
+        versionCatalog.Setup(catalog => catalog.HasDownloadSources()).Returns(true);
         var cachedVersions = new List<CachedVersionEntry>
         {
             new() { Version = 101, VersionName = "0.6.4" }

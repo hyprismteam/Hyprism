@@ -31,6 +31,11 @@ public sealed class FilePicker(Func<TopLevel?> topLevelProvider) : IFilePicker
         Patterns = ["*.zip", "*.pwr"]
     };
 
+    private static readonly FilePickerFileType InstancePackageFileType = new("Hyprism instance package")
+    {
+        Patterns = ["*.json", "*.zip"]
+    };
+
     private static readonly FilePickerFileType ImageFileType = new("Image")
     {
         Patterns = ["*.png", "*.jpg", "*.jpeg"]
@@ -107,6 +112,10 @@ public sealed class FilePicker(Func<TopLevel?> topLevelProvider) : IFilePicker
     /// <inheritdoc/>
     public Task<string?> BrowseInstanceArchiveAsync()
         => PickSingleFileAsync("Select instance archive", [InstanceArchiveFileType]);
+
+    /// <inheritdoc/>
+    public Task<string?> BrowseInstancePackageAsync()
+        => PickSingleFileAsync("Select instance package", [InstancePackageFileType]);
 
     /// <inheritdoc/>
     public Task<string?> BrowseImageAsync(string title)

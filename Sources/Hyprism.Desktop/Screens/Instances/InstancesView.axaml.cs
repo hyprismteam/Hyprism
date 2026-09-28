@@ -47,12 +47,53 @@ public sealed partial class InstancesView : UserControl
             InstancesOverview,
             InstanceCreatorScreen,
             InstanceListContentView.Rail,
-            InstanceCreatorContentView.Reveal.Anchor,
-            InstanceCreatorContentView.Reveal.MotionTarget,
-            InstanceCreatorContentView.Reveal.Animation);
+            InstanceCreatorContentView.Reveal,
+            new WizardStepDefinition(InstanceCreatorContentView.StepControl(InstanceWizardStage.Choice),
+                "/Assets/Lotties/server-reveal.json"),
+            new WizardStepDefinition(InstanceCreatorContentView.StepControl(InstanceWizardStage.Download),
+                "/Assets/Lotties/server-reveal.json"),
+            new WizardStepDefinition(InstanceCreatorContentView.StepControl(InstanceWizardStage.Import),
+                "/Assets/Lotties/server-reveal.json"),
+            new WizardStepDefinition(InstanceCreatorContentView.StepControl(InstanceWizardStage.ExportKind),
+                "/Assets/Lotties/share-reveal.json"),
+            new WizardStepDefinition(InstanceCreatorContentView.StepControl(InstanceWizardStage.ExportFormat),
+                "/Assets/Lotties/share-reveal.json"));
+        _creatorWizard.ReplayRevealOnStepChange = false;
+        InstanceCreatorContentView.NavigateStageAsync = async (from, to, forward, updateStage) =>
+        {
+            while (_creatorTransitionActive &&
+                   DataContext is InstancesViewModel { IsInstanceCreatorOpen: true })
+                await Task.Delay(16);
+
+            if (DataContext is not InstancesViewModel { IsInstanceCreatorOpen: true } viewModel ||
+                viewModel.InstanceWizardStage != from)
+                return;
+
+            await _creatorWizard.SwitchStepAsync(
+                InstanceCreatorContentView.StepControl(from),
+                InstanceCreatorContentView.StepControl(to),
+                forward,
+                updateStage,
+                () => DataContext is InstancesViewModel { IsInstanceCreatorOpen: true });
+        };
         _creatorWizard.ConfigureNavigation(
             () => DataContext is InstancesViewModel { IsInstanceCreatorOpen: true },
-            () => (DataContext as InstancesViewModel)?.CloseInstanceCreatorCommand.Execute(null));
+            () => (DataContext as InstancesViewModel)?.CloseInstanceCreatorCommand.Execute(null),
+            () => (DataContext as InstancesViewModel)?.TryCancelInstanceImport() == true);
+        _creatorWizard.RegisterPreviousStep(
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.Download),
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.Choice),
+            () => (DataContext as InstancesViewModel)?.BackInstanceWizardCommand.Execute(null),
+            () => (DataContext as InstancesViewModel)?.CanReturnToInstanceChoice == true);
+        _creatorWizard.RegisterPreviousStep(
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.Import),
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.Choice),
+            () => (DataContext as InstancesViewModel)?.BackInstanceWizardCommand.Execute(null),
+            () => (DataContext as InstancesViewModel)?.CanReturnToInstanceChoice == true);
+        _creatorWizard.RegisterPreviousStep(
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.ExportFormat),
+            InstanceCreatorContentView.StepControl(InstanceWizardStage.ExportKind),
+            () => (DataContext as InstancesViewModel)?.BackInstanceWizardCommand.Execute(null));
         _layoutHost = new AdaptiveMasterDetailHost(
             InstancesLayout,
             InstanceListContentView.Rail,
@@ -292,13 +333,22 @@ public sealed partial class InstancesView : UserControl
     }
 
     private void OnOpenCreatorClicked(object? sender, RoutedEventArgs args)
+        => OpenCreator(viewModel => viewModel.OpenInstanceCreatorCommand.Execute(null));
+
+    private void OnOpenEmptyImportClicked(object? sender, RoutedEventArgs args)
+        => OpenCreator(viewModel => viewModel.OpenEmptyInstanceImportCommand.Execute(null));
+
+    private void OnOpenEmptyDownloadClicked(object? sender, RoutedEventArgs args)
+        => OpenCreator(viewModel => viewModel.OpenEmptyInstanceDownloadCommand.Execute(null));
+
+    private void OpenCreator(Action<InstancesViewModel> open)
     {
         _creatorOpenedFromCompactList = _layoutHost.IsOpeningWizardFromMaster();
         if (_layoutHost.IsCompact && !_creatorOpenedFromCompactList)
             _layoutHost.OpenDetail();
 
         if (DataContext is InstancesViewModel viewModel)
-            viewModel.OpenInstanceCreatorCommand.Execute(null);
+            open(viewModel);
     }
 
     private void OnCompactInstanceBackClicked(object? sender, RoutedEventArgs args)

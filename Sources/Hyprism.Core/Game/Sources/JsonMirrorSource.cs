@@ -29,8 +29,14 @@ public partial class JsonMirrorSource : IVersionSource
 
     private readonly Dictionary<string, (DateTime CachedAt, List<DiscoveredVersion> Versions)> _versionCache = [];
     private readonly Dictionary<string, List<CachedPatchStep>> _manifestSteps = [];
+    private readonly Dictionary<string, string> _manifestAssetBaseUrls = [];
 
     private sealed record DiscoveredVersion(int Build, string? Name);
+    private sealed record ManifestFileProbe(string FileName, int From, int To, long? Size);
+
+    internal bool UsesManifestDiscovery =>
+        _meta.SourceType == "pattern" &&
+        string.Equals(_meta.Pattern?.VersionDiscovery.Method, "manifest", StringComparison.OrdinalIgnoreCase);
 
     private JsonElement? _cachedJsonIndex;
     private DateTime _jsonIndexCachedAt = DateTime.MinValue;
@@ -476,6 +482,7 @@ public partial class JsonMirrorSource : IVersionSource
     {
         var versions = await DiscoverVersionsAsync(os, arch, branch, ct);
         var config = _meta.Pattern!;
+        _manifestAssetBaseUrls.TryGetValue($"{os}:{arch}:{branch}", out var manifestAssetBaseUrl);
 
         return [.. versions.Select(v => new CachedVersionEntry
         {
@@ -487,7 +494,8 @@ public partial class JsonMirrorSource : IVersionSource
                     .FirstOrDefault(step => step.From == 0 && step.To == v.Build)?.PwrUrl ?? ""
                 : BuildPatternUrl(config.FullBuildUrl, os, arch, branch, v.Build, 0, v.Build),
             SigUrl = config.SignatureUrl != null
-                ? BuildPatternUrl(config.SignatureUrl, os, arch, branch, v.Build, 0, v.Build)
+                ? BuildPatternUrl(config.SignatureUrl, os, arch, branch, v.Build, 0, v.Build,
+                    UsesManifestDiscovery ? manifestAssetBaseUrl : null)
                 : null
         }).OrderByDescending(e => e.Version)];
     }
@@ -701,7 +709,7 @@ public partial class JsonMirrorSource : IVersionSource
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         cts.CancelAfter(TimeSpan.FromSeconds(15));
 
-        var response = await GetWithHeadersAsync(url, cts.Token);
+        using var response = await GetWithHeadersAsync(url, cts.Token);
         if (!response.IsSuccessStatusCode)
         {
             Logger.Warning($"Mirror: {SourceId}", $"Manifest returned {response.StatusCode}");
@@ -709,7 +717,145 @@ public partial class JsonMirrorSource : IVersionSource
         }
 
         var json = await response.Content.ReadAsStringAsync(cts.Token);
-        return ParseVersionsFromManifest(json, os, arch, branch);
+        var assetBaseUrl = await ResolveManifestAssetBaseUrlAsync(json, os, arch, branch, url, cts.Token);
+        _manifestAssetBaseUrls[$"{os}:{arch}:{branch}"] = assetBaseUrl;
+        return ParseVersionsFromManifest(json, os, arch, branch, assetBaseUrl);
+    }
+
+    private async Task<string> ResolveManifestAssetBaseUrlAsync(
+        string json, string os, string arch, string branch, string manifestUrl, CancellationToken ct)
+    {
+        var config = _meta.Pattern!;
+        var configuredBaseUrl = config.BaseUrl.TrimEnd('/');
+        var probe = FindManifestFileProbe(json, os, arch, branch);
+        if (probe is null)
+            return configuredBaseUrl;
+
+        var candidateBaseUrls = new List<string> { configuredBaseUrl };
+        if (Uri.TryCreate(manifestUrl, UriKind.Absolute, out var manifestUri))
+        {
+            var manifestDirectory = new Uri(manifestUri, ".").GetLeftPart(UriPartial.Path).TrimEnd('/');
+            candidateBaseUrls.Add(manifestDirectory);
+        }
+
+        if (Uri.TryCreate(configuredBaseUrl, UriKind.Absolute, out var configuredBaseUri))
+        {
+            var origin = configuredBaseUri.GetLeftPart(UriPartial.Authority);
+            candidateBaseUrls.Add($"{origin}/patches");
+            candidateBaseUrls.Add($"{origin}/hytale/patches");
+        }
+
+        candidateBaseUrls.Add($"{configuredBaseUrl}/patches");
+        candidateBaseUrls.Add($"{configuredBaseUrl}/hytale/patches");
+
+        foreach (var candidateBaseUrl in candidateBaseUrls
+                     .Where(value => !string.IsNullOrWhiteSpace(value))
+                     .Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            var candidateUrl = BuildManifestAssetUrl(candidateBaseUrl, probe.FileName);
+
+            if (!await IsReadableManifestAssetAsync(candidateUrl, probe.Size, ct))
+                continue;
+
+            if (!candidateBaseUrl.Equals(configuredBaseUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.Info($"Mirror: {SourceId}", $"Resolved manifest asset root: {candidateBaseUrl}");
+            }
+
+            return candidateBaseUrl;
+        }
+
+        Logger.Warning($"Mirror: {SourceId}",
+            $"Could not verify an asset root from the manifest; using configured base URL {configuredBaseUrl}");
+        return configuredBaseUrl;
+    }
+
+    private ManifestFileProbe? FindManifestFileProbe(string json, string os, string arch, string branch)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (!doc.RootElement.TryGetProperty("files", out var filesNode) ||
+                filesNode.ValueKind != JsonValueKind.Object)
+                return null;
+
+            var mappedOs = ApplyMapping(_meta.Pattern?.OsMapping, os);
+            var mappedArch = ApplyMapping(_meta.Pattern?.ArchMapping, arch);
+            var mappedBranch = ApplyMapping(_meta.Pattern?.BranchMapping, branch);
+            var prefix = $"{mappedOs}/{mappedArch}/{mappedBranch}/";
+            var patchPattern = PatchFileNameRegex();
+            var probes = new List<ManifestFileProbe>();
+
+            foreach (var file in filesNode.EnumerateObject())
+            {
+                if (!file.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var match = patchPattern.Match(file.Name);
+                if (!match.Success || match.Index != prefix.Length ||
+                    !int.TryParse(match.Groups[1].Value, out var from) ||
+                    !int.TryParse(match.Groups[2].Value, out var to) ||
+                    from < 0 || to <= from)
+                    continue;
+
+                probes.Add(new ManifestFileProbe(
+                    file.Name,
+                    from,
+                    to,
+                    TryGetManifestFileSize(file.Value)));
+            }
+
+            return probes
+                .OrderByDescending(probe => probe.From == 0)
+                .ThenByDescending(probe => probe.To)
+                .FirstOrDefault();
+        }
+        catch (JsonException ex)
+        {
+            Logger.Debug($"Mirror: {SourceId}", $"Cannot inspect manifest asset paths: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task<bool> IsReadableManifestAssetAsync(string url, long? expectedSize, CancellationToken ct)
+    {
+        try
+        {
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(TimeSpan.FromSeconds(4));
+            using var request = await CreateRequestWithHeadersAsync(HttpMethod.Get, url, timeout.Token);
+            request.Headers.Range = new RangeHeaderValue(0, 0);
+
+            // A one-byte range verifies the asset path without downloading a multi-gigabyte PWR file.
+            using var response = await _httpClient.SendAsync(
+                request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+            if (!response.IsSuccessStatusCode ||
+                response.Content.Headers.ContentType?.MediaType?.Contains("html", StringComparison.OrdinalIgnoreCase) == true ||
+                response.Content.Headers.ContentType?.MediaType?.Contains("json", StringComparison.OrdinalIgnoreCase) == true)
+                return false;
+
+            var actualSize = response.Content.Headers.ContentRange?.Length;
+            if (actualSize is null && response.StatusCode != HttpStatusCode.PartialContent)
+                actualSize = response.Content.Headers.ContentLength;
+
+            if (expectedSize is > 0 && actualSize is > 0 && actualSize != expectedSize)
+                return false;
+            if (actualSize == 0)
+                return false;
+
+            using var stream = await response.Content.ReadAsStreamAsync(timeout.Token);
+            var firstByte = new byte[1];
+            return await stream.ReadAsync(firstByte.AsMemory(), timeout.Token) > 0;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.Debug($"Mirror: {SourceId}", $"Manifest asset path probe failed: {ex.Message}");
+            return false;
+        }
     }
 
     /// <summary>
@@ -719,7 +865,8 @@ public partial class JsonMirrorSource : IVersionSource
     /// or files[...].gameVersion
     /// Returns only targets reachable from a full archive for the requested platform.
     /// </summary>
-    private List<DiscoveredVersion> ParseVersionsFromManifest(string json, string os, string arch, string branch)
+    private List<DiscoveredVersion> ParseVersionsFromManifest(
+        string json, string os, string arch, string branch, string assetBaseUrl)
     {
         var cacheKey = $"{os}:{arch}:{branch}";
         _manifestSteps[cacheKey] = [];
@@ -780,17 +927,15 @@ public partial class JsonMirrorSource : IVersionSource
                         versions[toVersion] = fileVersionName;
                     }
 
-                    var template = fromVersion == 0
-                        ? _meta.Pattern!.FullBuildUrl
-                        : _meta.Pattern!.DiffPatchUrl;
-                    if (string.IsNullOrWhiteSpace(template))
+                    if ((fromVersion == 0 && string.IsNullOrWhiteSpace(_meta.Pattern!.FullBuildUrl)) ||
+                        (fromVersion != 0 && string.IsNullOrWhiteSpace(_meta.Pattern!.DiffPatchUrl)))
                         continue;
 
                     steps.Add(new CachedPatchStep
                     {
                         From = fromVersion,
                         To = toVersion,
-                        PwrUrl = BuildPatternUrl(template, os, arch, branch, toVersion, fromVersion, toVersion)
+                        PwrUrl = BuildManifestAssetUrl(assetBaseUrl, file.Name)
                     });
                 }
 
@@ -897,6 +1042,23 @@ public partial class JsonMirrorSource : IVersionSource
 
         return null;
     }
+
+    private static long? TryGetManifestFileSize(JsonElement value)
+    {
+        if (!TryGetPropertyIgnoreCase(value, "size", out var size))
+            return null;
+
+        if (size.ValueKind == JsonValueKind.Number && size.TryGetInt64(out var numericSize))
+            return numericSize;
+
+        if (size.ValueKind == JsonValueKind.String && long.TryParse(size.GetString(), out numericSize))
+            return numericSize;
+
+        return null;
+    }
+
+    private static string BuildManifestAssetUrl(string baseUrl, string relativePath)
+        => $"{baseUrl.TrimEnd('/')}/{relativePath.TrimStart('/')}";
 
     private static string ApplyMapping(Dictionary<string, string>? mapping, string value)
     {
@@ -1195,7 +1357,7 @@ public partial class JsonMirrorSource : IVersionSource
     /// Applies placeholder substitution to a URL template
     /// </summary>
     private string ApplyPlaceholders(string template, string os, string arch, string branch,
-        int version, int from, int to)
+        int version, int from, int to, string? baseUrlOverride = null)
     {
         var config = _meta.Pattern;
         var mappedOs = config?.OsMapping != null && config.OsMapping.TryGetValue(os, out var mo) ? mo : os;
@@ -1203,7 +1365,7 @@ public partial class JsonMirrorSource : IVersionSource
         var mappedBranch = config?.BranchMapping != null && config.BranchMapping.TryGetValue(branch, out var mb) ? mb : branch;
 
         return template
-            .Replace("{base}", config?.BaseUrl ?? "")
+            .Replace("{base}", baseUrlOverride ?? config?.BaseUrl ?? "")
             .Replace("{os}", mappedOs)
             .Replace("{arch}", mappedArch)
             .Replace("{branch}", mappedBranch)
@@ -1213,9 +1375,9 @@ public partial class JsonMirrorSource : IVersionSource
     }
 
     private string BuildPatternUrl(string template, string os, string arch, string branch,
-        int version, int from, int to)
+        int version, int from, int to, string? baseUrlOverride = null)
     {
-        return ApplyPlaceholders(template, os, arch, branch, version, from, to);
+        return ApplyPlaceholders(template, os, arch, branch, version, from, to, baseUrlOverride);
     }
 
     #endregion

@@ -43,6 +43,9 @@ public interface IFilePicker
     /// <returns>The selected local path, or <see langword="null"/> when cancelled</returns>
     Task<string?> BrowseInstanceArchiveAsync();
 
+    /// <summary>Selects a Hyprism JSON manifest or ZIP package for instance import.</summary>
+    Task<string?> BrowseInstancePackageAsync();
+
     /// <summary>Selects a PNG or JPEG image for an instance icon</summary>
     Task<string?> BrowseImageAsync(string title);
 }
