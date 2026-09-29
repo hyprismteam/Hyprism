@@ -220,7 +220,6 @@ def collect_assets(xaml_files: list[Path], code_files: list[Path]) -> tuple[list
             "Game": "Game artwork used in instance surfaces.",
             "Images": "Application or authentication imagery.",
             "Lotties": "Vector animation used by a screen or wizard.",
-            "Music": "Bundled menu music track.",
             "Screenshots": "Packaged product screenshot or preview.",
         }.get(family, "Asset used by Desktop.")
         assets.append({
