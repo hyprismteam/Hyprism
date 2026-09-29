@@ -130,7 +130,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Экспорт</value>
   </data>
   <data name="common.exporting" xml:space="preserve">
-    <value>Экспортируется</value>
+    <value>Экспорт...</value>
   </data>
   <data name="common.import" xml:space="preserve">
     <value>Импорт</value>
@@ -3094,7 +3094,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Выберите формат экспорта</value>
   </data>
   <data name="instances.package.formatHint" xml:space="preserve">
-    <value>JSON сохраняет метаданные; ZIP включает выбранные файлы</value>
+    <value>Выберите только метаданные или включите выбранные файлы</value>
   </data>
   <data name="instances.package.format" xml:space="preserve">
     <value>Формат</value>
@@ -3102,8 +3102,14 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.package.json" xml:space="preserve">
     <value>Метаданные JSON</value>
   </data>
+  <data name="instances.package.jsonHint" xml:space="preserve">
+    <value>Сохраняет настройки и сведения о файлах в JSON-манифесте, не включая сами файлы</value>
+  </data>
   <data name="instances.package.zip" xml:space="preserve">
     <value>ZIP-архив</value>
+  </data>
+  <data name="instances.package.zipHint" xml:space="preserve">
+    <value>Упаковывает выбранные файлы, метаданные экземпляра и JSON-манифест</value>
   </data>
   <data name="instances.package.pickFile" xml:space="preserve">
     <value>Выбрать файл</value>

@@ -19,6 +19,8 @@ Every JSON export records `SchemaVersion`, `Kind`, `Instance`, `Files`, and `Mod
 
 Every ZIP export contains `HyprismExport.json` with the same manifest, `Meta.json` for instance import, and the selected files at their instance-relative paths. Symbolic links are excluded. Export writes to a temporary file beside the destination and replaces the destination only after completion. Cancellation removes the temporary file.
 
+`InstancePackageService.ExportAsync` accepts optional `IProgress<int>` progress reporting. ZIP export reports the percentage of selected source file bytes copied, capped at 99 until the archive is complete and the destination is replaced. JSON export reports 0 before writing and 100 after replacement. Progress values do not represent compressed archive size.
+
 JSON import creates a new uninstalled instance with the source name, branch, version, version name, and notes. It does not download or restore listed files. ZIP export assigns a new instance ID in `Meta.json`, while the manifest retains the source ID. ZIP import extracts the archive, assigns another ID if one already exists, and registers the imported instance.
 
 Cancellation during ZIP extraction removes the temporary extraction directory before any instance files are moved into place.

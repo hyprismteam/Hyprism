@@ -26,10 +26,18 @@ public sealed partial class InstancesViewModel
     private InstanceWizardStage _instanceWizardStage;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsJsonExportFormatSelected))]
+    [NotifyPropertyChangedFor(nameof(IsZipExportFormatSelected))]
     private int _exportFormatIndex;
 
     [ObservableProperty]
     private bool _isImportingInstancePackage;
+
+    [ObservableProperty]
+    private bool _isChoosingInstanceExportFile;
+
+    [ObservableProperty]
+    private string _instanceExportMetricText = string.Empty;
 
     [ObservableProperty]
     private bool _isInstanceImportCancellationArmed;
@@ -46,11 +54,13 @@ public sealed partial class InstancesViewModel
     public bool IsWizardImport => InstanceWizardStage == InstanceWizardStage.Import;
     public bool IsWizardExportKind => InstanceWizardStage == InstanceWizardStage.ExportKind;
     public bool IsWizardExportFormat => InstanceWizardStage == InstanceWizardStage.ExportFormat;
+    public bool IsJsonExportFormatSelected => ExportFormatIndex == 0;
+    public bool IsZipExportFormatSelected => ExportFormatIndex == 1;
     public bool HasInstanceExportError => !string.IsNullOrWhiteSpace(InstanceExportError);
     public bool IsManagedInstanceExporting => _managedInstance is not null &&
         string.Equals(_managedInstance.Id, _exportingInstanceId, StringComparison.Ordinal);
-    public bool CanExportManagedInstance => _managedInstance is not null &&
-        _exportingInstanceId is null && !IsInstanceBusy(_managedInstance.Id);
+    public bool CanExportManagedInstance => _managedInstance is { IsInstalled: true } instance &&
+        _exportingInstanceId is null && !IsInstanceBusy(instance.Id);
     public string WizardAnimationPath => IsWizardExportKind || IsWizardExportFormat
         ? "/Assets/Lotties/share-reveal.json"
         : "/Assets/Lotties/server-reveal.json";
@@ -63,6 +73,8 @@ public sealed partial class InstancesViewModel
     public string ExportFormatHint => _localizer["instances.package.formatHint"];
     public string ExportLabel => _localizer["common.export"];
     public string ExportingLabel => _localizer["common.exporting"];
+    public string ExportJsonHint => _localizer["instances.package.jsonHint"];
+    public string ExportZipHint => _localizer["instances.package.zipHint"];
     public string ImportLabel => _localizer["common.import"];
     public string DownloadChoiceLabel => _localizer["instances.package.download"];
     public string DownloadChoiceHint => _localizer["instances.package.downloadHint"];
@@ -125,14 +137,26 @@ public sealed partial class InstancesViewModel
     {
         if (!Enum.TryParse<InstancePackageKind>(kind, true, out var selected))
             return;
+        if (selected == InstancePackageKind.Modpack && !HasExportableMods)
+            return;
+
         _selectedExportKind = selected;
         InstanceWizardStage = InstanceWizardStage.ExportFormat;
     }
 
     [RelayCommand]
+    private void SelectExportFormat(string? format)
+    {
+        if (int.TryParse(format, out var index) && index is 0 or 1)
+            ExportFormatIndex = index;
+    }
+
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task ExportInstanceAsync()
     {
-        if (_managedInstance is not { } instance || _filePicker is null ||
+        if (IsChoosingInstanceExportFile ||
+            _managedInstance is not { } instance ||
+            _filePicker is null ||
             !CanExportManagedInstance)
             return;
 
@@ -140,9 +164,19 @@ public sealed partial class InstancesViewModel
         var extension = format == InstancePackageFormat.Zip ? "zip" : "json";
         var name = string.Concat(instance.Name.Select(character =>
             Path.GetInvalidFileNameChars().Contains(character) ? '_' : character));
-        var destination = await _filePicker.SaveFileAsync(
-            $"{name}-{_selectedExportKind.ToString().ToLowerInvariant()}.{extension}",
-            format == InstancePackageFormat.Zip ? "ZIP archive|*.zip" : "JSON manifest|*.json");
+        string? destination;
+        IsChoosingInstanceExportFile = true;
+        try
+        {
+            destination = await _filePicker.SaveFileAsync(
+                $"{name}-{_selectedExportKind.ToString().ToLowerInvariant()}.{extension}",
+                format == InstancePackageFormat.Zip ? "ZIP archive|*.zip" : "JSON manifest|*.json");
+        }
+        finally
+        {
+            IsChoosingInstanceExportFile = false;
+        }
+
         if (string.IsNullOrWhiteSpace(destination) || !IsInstanceCreatorOpen ||
             InstanceWizardStage != InstanceWizardStage.ExportFormat)
             return;
@@ -157,13 +191,19 @@ public sealed partial class InstancesViewModel
 
         _instanceExportCancellation = new CancellationTokenSource();
         var cancellation = _instanceExportCancellation;
+        InstanceExportMetricText = "0%";
         _exportingInstanceId = instance.Id;
         NotifyExportStateChanged();
         IsInstanceCreatorOpen = false;
         try
         {
+            var progress = new Progress<int>(percent =>
+            {
+                if (ReferenceEquals(_instanceExportCancellation, cancellation))
+                    InstanceExportMetricText = $"{percent}%";
+            });
             await Task.Run(() => InstancePackageService.ExportAsync(
-                instancePath, meta, _selectedExportKind, format, destination, cancellation.Token));
+                instancePath, meta, _selectedExportKind, format, destination, cancellation.Token, progress));
         }
         catch (OperationCanceledException)
         {
@@ -179,6 +219,7 @@ public sealed partial class InstancesViewModel
             {
                 _instanceExportCancellation = null;
                 _exportingInstanceId = null;
+                InstanceExportMetricText = string.Empty;
                 NotifyExportStateChanged();
             }
             cancellation.Dispose();

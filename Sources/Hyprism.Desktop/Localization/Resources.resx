@@ -3097,7 +3097,7 @@ You may need to reinstall the game if switching drives</value>
     <value>Choose export format</value>
   </data>
   <data name="instances.package.formatHint" xml:space="preserve">
-    <value>JSON saves metadata; ZIP includes the selected files</value>
+    <value>Choose metadata only or include the selected files</value>
   </data>
   <data name="instances.package.format" xml:space="preserve">
     <value>Format</value>
@@ -3105,8 +3105,14 @@ You may need to reinstall the game if switching drives</value>
   <data name="instances.package.json" xml:space="preserve">
     <value>JSON metadata</value>
   </data>
+  <data name="instances.package.jsonHint" xml:space="preserve">
+    <value>Saves settings and file details in a JSON manifest without the file contents</value>
+  </data>
   <data name="instances.package.zip" xml:space="preserve">
     <value>ZIP archive</value>
+  </data>
+  <data name="instances.package.zipHint" xml:space="preserve">
+    <value>Bundles the selected files with instance metadata and a JSON manifest</value>
   </data>
   <data name="instances.package.pickFile" xml:space="preserve">
     <value>Choose file</value>

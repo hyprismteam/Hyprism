@@ -56,7 +56,7 @@ public sealed class InstancePackageWizardTests
                   creator.StepControl(InstanceWizardStage.ExportKind).Opacity >= 0.99,
             "instance export choices to open");
         reveal.ShowFinalFrame("/Assets/Lotties/share-reveal.json");
-        creator.FindControl<Button>("InstanceExportModpackButton")!
+        creator.FindControl<Button>("InstanceExportBuildButton")!
             .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         await AvaloniaTestWait.UntilAsync(
             () => launcher.Instances.InstanceWizardStage == InstanceWizardStage.ExportFormat &&

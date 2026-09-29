@@ -17,6 +17,27 @@ SPDX-License-Identifier: GPL-3.0-only
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Hyprism.Desktop/Screens/Instances/InstancesTemplates.axaml" />
       </ResourceDictionary.MergedDictionaries>
+      <DataTemplate x:Key="InstanceExportStatusTemplate" x:DataType="instances:InstancesViewModel">
+        <Grid Classes="managedActionContent">
+          <Grid Classes="managedActionProgress" ColumnDefinitions="48,*,48" VerticalAlignment="Center">
+            <Path Classes="managedActionSpinner"
+                  controls:RotatingVisual.IsActive="{Binding IsManagedInstanceExporting}"
+                  HorizontalAlignment="Center"
+                  Data="M10,2 A8,8 0 1 1 2,10" />
+            <controls:FadingTextBlock Grid.Column="1" Classes="managedActionStatus"
+                                      Text="{Binding ExportingLabel}"
+                                      Foreground="{Binding $parent[Button].Foreground}"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" Classes="managedActionMetric"
+                       Text="{Binding InstanceExportMetricText}"
+                       Width="48" FontFeatures="tnum" TextAlignment="Right"
+                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+          </Grid>
+          <TextBlock Classes="managedActionCancel"
+                     Text="{Binding ManagedInstanceActionCancelLabel}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+      </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -112,9 +133,8 @@ SPDX-License-Identifier: GPL-3.0-only
                               Command="{Binding OpenInstanceExportCommand}"
                               Click="OnCloseCompactInstanceMenuClicked">
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                          <Path Classes="managerCompactMenuIcon" Data="{StaticResource DownloadIcon}">
-                            <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
-                          </Path>
+                          <Image Width="16" Height="16" Stretch="Uniform"
+                                 Source="avares://Hyprism.Desktop/Assets/Fluent/pack.png" />
                           <TextBlock Text="{Binding ExportLabel}" VerticalAlignment="Center" />
                         </StackPanel>
                       </Button>
@@ -333,11 +353,9 @@ SPDX-License-Identifier: GPL-3.0-only
                               IsEnabled="{Binding CanExportManagedInstance}"
                               Command="{Binding OpenInstanceExportCommand}">
                         <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
-                          <Path Width="28" Height="28" Stretch="Uniform"
-                                Fill="{DynamicResource TextSecondaryBrush}"
-                                Data="{StaticResource DownloadIcon}">
-                            <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
-                          </Path>
+                          <Image Classes="instanceMenuIcon"
+                                 Source="avares://Hyprism.Desktop/Assets/Fluent/pack.png"
+                                 Stretch="Uniform" />
                           <StackPanel Grid.Column="1" Spacing="3">
                             <TextBlock Text="{Binding ExportLabel}" Classes="formLabel instanceMenuTitle" />
                             <TextBlock Text="{Binding ExportHint}" Classes="formHint instanceMenuDescription" />
@@ -348,19 +366,17 @@ SPDX-License-Identifier: GPL-3.0-only
                         </Grid>
                       </Button>
                       <Button x:Name="InstanceExportStatusButton"
-                              Classes="managerAction primary instanceExportStatus active cancelArmed"
-                              IsVisible="{Binding IsManagedInstanceExporting}"
-                              Width="152" Height="36"
+                              Classes="managerAction primary instanceExportStatus"
+                              Classes.active="{Binding IsManagedInstanceExporting}"
+                              Classes.cancelArmed="{Binding IsManagedInstanceExporting}"
+                              IsHitTestVisible="{Binding IsManagedInstanceExporting}"
+                              Focusable="{Binding IsManagedInstanceExporting}" ZIndex="1"
                               HorizontalAlignment="Right" VerticalAlignment="Center"
                               Margin="0,0,16,0"
                               ToolTip.Tip="{Binding ManagedInstanceActionCancelLabel}"
                               Command="{Binding CancelInstanceExportCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                          <TextBlock Text="{Binding ExportingLabel}" />
-                          <Path Width="12" Height="12" Stretch="Uniform"
-                                Fill="{Binding $parent[Button].Foreground}"
-                                Data="{StaticResource CloseIcon}" />
-                        </StackPanel>
+                        <ContentControl Content="{Binding}"
+                                        ContentTemplate="{StaticResource InstanceExportStatusTemplate}" />
                       </Button>
                     </Grid>
                   </StackPanel>

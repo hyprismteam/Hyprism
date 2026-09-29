@@ -745,6 +745,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool IsDisplayedInstanceWorldsSection => DisplayedInstanceSection == "worlds";
     public bool IsDisplayedInstanceLogsSection => DisplayedInstanceSection == "logs";
     public bool HasInstalledMods => VisibleInstalledMods.Count > 0;
+    public bool HasExportableMods => InstalledMods.Count > 0;
     public bool HasModCatalogItems => ModCatalogItems.Count > 0;
     public bool HasInstanceWorlds => InstanceWorlds.Count > 0;
     public bool IsInstalledModsEmpty =>
@@ -3092,6 +3093,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
         IsBusy = _busyInstanceCounts.Count > 0;
         UpdateSelectedInstancePresentation();
+        NotifyExportStateChanged();
         NotifyManagedInstanceActionStateChanged();
     }
 
@@ -3109,6 +3111,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
         IsBusy = _busyInstanceCounts.Count > 0;
         UpdateSelectedInstancePresentation();
+        NotifyExportStateChanged();
         NotifyManagedInstanceActionStateChanged();
     }
 
@@ -3572,6 +3575,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(InstanceModsCountText));
         OnPropertyChanged(nameof(InstanceWorldsCountText));
         OnPropertyChanged(nameof(HasInstalledMods));
+        OnPropertyChanged(nameof(HasExportableMods));
         OnPropertyChanged(nameof(HasModCatalogItems));
         OnPropertyChanged(nameof(HasInstanceWorlds));
         OnPropertyChanged(nameof(IsInstalledModsEmpty));

@@ -26,6 +26,19 @@ SPDX-License-Identifier: GPL-3.0-only
                    HorizontalAlignment="Center" VerticalAlignment="Center" />
       </Grid>
     </DataTemplate>
+    <DataTemplate x:Key="InstancePackageExportActionTemplate" x:DataType="instances:InstancesViewModel">
+      <Grid Classes="managedActionContent">
+        <StackPanel Classes="managedActionIdle" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="{Binding ExportLabel}" VerticalAlignment="Center" />
+        </StackPanel>
+        <Grid Classes="managedActionProgress" VerticalAlignment="Center">
+          <Path Classes="managedActionSpinner"
+                controls:RotatingVisual.IsActive="{Binding IsChoosingInstanceExportFile}"
+                HorizontalAlignment="Center"
+                Data="M10,2 A8,8 0 1 1 2,10" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
   </UserControl.Resources>
   <StackPanel 
                     Width="560"
@@ -106,22 +119,54 @@ SPDX-License-Identifier: GPL-3.0-only
               <Border Classes="formGroup" Margin="0,16,0,0">
               <StackPanel>
                 <Button x:Name="InstanceExportBuildButton" Classes="formNavigationRow" Click="OnSelectExportKindClicked" CommandParameter="Build">
-                  <StackPanel Spacing="3">
-                    <TextBlock Text="{Binding ExportBuildLabel}" Classes="formLabel" />
-                    <TextBlock Text="{Binding ExportBuildHint}" Classes="formHint" TextWrapping="Wrap" />
-                  </StackPanel>
+                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
+                    <Border Classes="wizardChoiceIcon"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                      <Image Classes="exportChoiceIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/cube.png" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding ExportBuildLabel}" Classes="formLabel" />
+                      <TextBlock Text="{Binding ExportBuildHint}" Classes="formHint" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
+                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
+                          Data="{StaticResource NextIcon}" />
+                  </Grid>
                 </Button>
-                <Button x:Name="InstanceExportModpackButton" Classes="formNavigationRow" Click="OnSelectExportKindClicked" CommandParameter="Modpack">
-                  <StackPanel Spacing="3">
-                    <TextBlock Text="{Binding ExportModpackLabel}" Classes="formLabel" />
-                    <TextBlock Text="{Binding ExportModpackHint}" Classes="formHint" TextWrapping="Wrap" />
-                  </StackPanel>
+                <Button x:Name="InstanceExportModpackButton" Classes="formNavigationRow"
+                        IsVisible="{Binding HasExportableMods}"
+                        Click="OnSelectExportKindClicked" CommandParameter="Modpack">
+                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
+                    <Border Classes="wizardChoiceIcon"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                      <Image Classes="exportChoiceIcon toolboxIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/toolbox.png" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding ExportModpackLabel}" Classes="formLabel" />
+                      <TextBlock Text="{Binding ExportModpackHint}" Classes="formHint" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
+                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
+                          Data="{StaticResource NextIcon}" />
+                  </Grid>
                 </Button>
                 <Button Classes="formNavigationRow last" Click="OnSelectExportKindClicked" CommandParameter="Game">
-                  <StackPanel Spacing="3">
-                    <TextBlock Text="{Binding ExportGameLabel}" Classes="formLabel" />
-                    <TextBlock Text="{Binding ExportGameHint}" Classes="formHint" TextWrapping="Wrap" />
-                  </StackPanel>
+                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
+                    <Border Classes="wizardChoiceIcon"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                      <Image Classes="exportChoiceIcon rubikIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/rubik.png" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding ExportGameLabel}" Classes="formLabel" />
+                      <TextBlock Text="{Binding ExportGameHint}" Classes="formHint" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
+                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
+                          Data="{StaticResource NextIcon}" />
+                  </Grid>
                 </Button>
               </StackPanel>
               </Border>
@@ -139,28 +184,64 @@ SPDX-License-Identifier: GPL-3.0-only
               <TextBlock Text="{Binding ExportFormatHint}" Classes="muted" MaxWidth="460"
                          HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
               <Border Classes="formGroup" Margin="0,16,0,0">
-                <controls:FormRow Label="{Binding ExportFormatLabel}" MinHeight="72">
-                  <controls:FadingComboBox x:Name="InstanceExportFormatComboBox"
-                                           Classes="uiComboBox"
-                                           Width="236"
-                                           SelectedIndex="{Binding ExportFormatIndex, Mode=TwoWay}"
-                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}">
-                    <ComboBoxItem Content="{Binding ExportJsonLabel}" />
-                    <ComboBoxItem Content="{Binding ExportZipLabel}" />
-                  </controls:FadingComboBox>
-                </controls:FormRow>
+                <StackPanel>
+                  <Border Classes="formRow instanceExportFormatRow">
+                    <RadioButton x:Name="InstanceExportJsonFormatOption"
+                                 Classes="uiSelectionRadio instanceExportFormatOption"
+                                 AutomationProperties.Name="{Binding ExportJsonLabel}"
+                                 GroupName="InstanceExportFormat"
+                                 IsChecked="{Binding IsJsonExportFormatSelected, Mode=OneWay}"
+                                 Command="{Binding SelectExportFormatCommand}"
+                                 CommandParameter="0">
+                      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Classes="radioSelectionIndicator">
+                          <Ellipse Classes="radioSelectionDot" IsVisible="{Binding IsJsonExportFormatSelected}" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                          <TextBlock Text="{Binding ExportJsonLabel}" Classes="formLabel" />
+                          <TextBlock Text="{Binding ExportJsonHint}" Classes="formHint" />
+                        </StackPanel>
+                      </Grid>
+                    </RadioButton>
+                  </Border>
+                  <Border Classes="formRow instanceExportFormatRow last">
+                    <RadioButton x:Name="InstanceExportZipFormatOption"
+                                 Classes="uiSelectionRadio instanceExportFormatOption"
+                                 AutomationProperties.Name="{Binding ExportZipLabel}"
+                                 GroupName="InstanceExportFormat"
+                                 IsChecked="{Binding IsZipExportFormatSelected, Mode=OneWay}"
+                                 Command="{Binding SelectExportFormatCommand}"
+                                 CommandParameter="1">
+                      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Classes="radioSelectionIndicator">
+                          <Ellipse Classes="radioSelectionDot" IsVisible="{Binding IsZipExportFormatSelected}" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                          <TextBlock Text="{Binding ExportZipLabel}" Classes="formLabel" />
+                          <TextBlock Text="{Binding ExportZipHint}" Classes="formHint" />
+                        </StackPanel>
+                      </Grid>
+                    </RadioButton>
+                  </Border>
+                </StackPanel>
               </Border>
               <TextBlock Text="{Binding InstanceExportError}" Margin="4,0"
                          Foreground="{DynamicResource DangerSoftBrush}" TextAlignment="Center"
                          TextWrapping="Wrap" IsVisible="{Binding HasInstanceExportError}" />
-              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+              <Grid Width="272" Height="50" ColumnDefinitions="112,10,150"
+                    HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
                   <TextBlock Text="{Binding BackLabel}" />
                 </Button>
-                <Button Classes="wizardAction create" Command="{Binding ExportInstanceCommand}">
-                  <TextBlock Text="{Binding ExportLabel}" />
+                <Button x:Name="InstanceExportActionButton" Grid.Column="2" ZIndex="1"
+                        Classes="wizardAction create instanceExportAction"
+                        Classes.active="{Binding IsChoosingInstanceExportFile}"
+                        HorizontalAlignment="Right"
+                        Command="{Binding ExportInstanceCommand}">
+                  <ContentControl Content="{Binding}"
+                                  ContentTemplate="{StaticResource InstancePackageExportActionTemplate}" />
                 </Button>
-              </StackPanel>
+              </Grid>
             </StackPanel>
 
             <StackPanel x:Name="InstanceDownloadContent" Spacing="12" IsVisible="{Binding IsWizardDownload}">

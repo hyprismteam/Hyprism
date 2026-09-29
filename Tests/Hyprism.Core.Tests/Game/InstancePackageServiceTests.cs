@@ -54,6 +54,30 @@ public sealed class InstancePackageServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task ZipReportsByteProgressAndCompletesAfterReplacingDestination()
+    {
+        var destination = Path.Combine(_root, "progress.zip");
+        var percentages = new List<int>();
+        var destinationExistsAtCompletion = false;
+        var progress = new InlineProgress(percent =>
+        {
+            percentages.Add(percent);
+            if (percent == 100)
+                destinationExistsAtCompletion = File.Exists(destination);
+        });
+
+        await InstancePackageService.ExportAsync(
+            Path.Combine(_root, "source"), _meta, InstancePackageKind.Build,
+            InstancePackageFormat.Zip, destination, progress: progress);
+
+        Assert.Equal(0, percentages[0]);
+        Assert.Contains(percentages, percent => percent is > 0 and < 100);
+        Assert.Equal(100, percentages[^1]);
+        Assert.True(percentages.SequenceEqual(percentages.Order()));
+        Assert.True(destinationExistsAtCompletion);
+    }
+
+    [Fact]
     public async Task JsonRecordsMetadataWithoutFileContents()
     {
         var destination = Path.Combine(_root, "modpack.json");
@@ -153,6 +177,11 @@ public sealed class InstancePackageServiceTests : IDisposable
         var path = Path.Combine(_root, "source", relativePath);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content);
+    }
+
+    private sealed class InlineProgress(Action<int> report) : IProgress<int>
+    {
+        public void Report(int value) => report(value);
     }
 
     public void Dispose()

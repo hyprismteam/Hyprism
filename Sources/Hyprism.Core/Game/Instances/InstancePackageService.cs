@@ -65,6 +65,7 @@ public static class InstancePackageService
     };
 
     /// <summary>Writes a JSON manifest or ZIP archive to the destination atomically.</summary>
+    /// <remarks>Optional progress reports selected file bytes copied and reaches 100 after completion.</remarks>
     /// <returns>A task that completes when the package has been written.</returns>
     public static async Task ExportAsync(
         string instancePath,
@@ -72,7 +73,8 @@ public static class InstancePackageService
         InstancePackageKind kind,
         InstancePackageFormat format,
         string destination,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IProgress<int>? progress = null)
     {
         ArgumentNullException.ThrowIfNull(instance);
         if (!Directory.Exists(instancePath))
@@ -107,6 +109,7 @@ public static class InstancePackageService
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
+            progress?.Report(0);
             if (format == InstancePackageFormat.Json)
             {
                 await using var output = File.Create(temporaryPath);
@@ -131,6 +134,10 @@ public static class InstancePackageService
                     PendingVersion = 0,
                     Notes = instance.Notes
                 }, cancellationToken);
+                var totalBytes = manifest.Files.Sum(file => (double)file.Size);
+                double copiedBytes = 0;
+                var lastPercent = 0;
+                var buffer = new byte[81920];
                 foreach (var file in files)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -139,12 +146,26 @@ public static class InstancePackageService
                         entry.ExternalAttributes = (int)File.GetUnixFileMode(file.Source) << 16;
                     await using var source = File.OpenRead(file.Source);
                     await using var target = entry.Open();
-                    await source.CopyToAsync(target, cancellationToken);
+                    int read;
+                    while ((read = await source.ReadAsync(buffer.AsMemory(), cancellationToken)) != 0)
+                    {
+                        await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+                        copiedBytes += read;
+                        if (totalBytes <= 0)
+                            continue;
+
+                        var percent = Math.Min(99, (int)(copiedBytes * 100 / totalBytes));
+                        if (percent <= lastPercent)
+                            continue;
+                        progress?.Report(percent);
+                        lastPercent = percent;
+                    }
                 }
             }
 
             cancellationToken.ThrowIfCancellationRequested();
             File.Move(temporaryPath, destination, overwrite: true);
+            progress?.Report(100);
         }
         finally
         {
