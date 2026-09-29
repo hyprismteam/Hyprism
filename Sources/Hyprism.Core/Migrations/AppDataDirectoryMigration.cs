@@ -16,7 +16,7 @@ public static class AppDataDirectoryMigration
     private const string PendingName = ".HyPrism-rename-pending";
     private const string ConflictsName = ".HyPrism-merge-conflicts";
 
-    /// <summary>Renames or merges the former default directory into the current one.</summary>
+    /// <summary>Renames or merges the former default directory into the current one</summary>
     public static void Migrate(string currentDirectory)
     {
         var current = Path.GetFullPath(currentDirectory);

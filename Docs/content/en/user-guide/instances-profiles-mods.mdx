@@ -11,20 +11,46 @@ When an available source provides a human-readable version name, Hyprism uses it
 
 ## Create an instance
 
-If there are no instances and no download sources, **Select version** is unavailable. Add a mirror in **Settings → Downloads** or sign in with the Hytale account that owns the game, then return to **Instances**. The note above the button explains this requirement.
+When the instance list is empty, **Import** and **Select version** open their respective steps directly.
+
+![Empty Instances screen with Import and Select version buttons](/img/user/en/instances-empty.png)
+
+If there are no instances and no download sources, **Select version** is unavailable. Add a mirror in **Settings → Downloads** or sign in with the Hytale account that owns the game, then return to **Instances**. You can still choose **Import** to restore a saved package.
 
 ![Empty Instances screen showing the download sources note and disabled Select version button](/img/user/en/instances-no-sources.png)
 
-1. Open **Instances** and select **New Instance**, or **Select version** when the list is empty.
-2. Choose a branch
+1. Open **Instances**. If the list is empty, select **Select version** to open the version picker directly. Otherwise select **New Instance**, then **Download**.
+2. Choose a branch.
 3. Choose one of the available builds. For manifest mirrors, the list includes only builds reachable from a full archive through published patches. When the source provides a game version, Hyprism shows it in gray parentheses after the build number. Builds without a game version show only the number.
-4. Confirm the creation
+4. Confirm the creation.
 
 The new entry appears immediately, but its game files are downloaded only when you launch it
 
-Press **Esc** while creating an instance to close the creation screen. If a text field has focus, the first press leaves that field.
+Press **Esc** to leave the version picker when the list is empty. If you entered through **New Instance**, the first press returns to the **Download** or **Import** choice and the next closes the wizard. If a text field has focus, the first press leaves that field.
 
 New instances store the default name `Hytale`; the interface displays it as `Hytale <version>`
+
+## Export or import an instance
+
+1. Open an instance and select **Export** in its section list.
+2. Choose **Export build** for the game, mods, and user data, or **Export game** for game files without user data. **Export modpack** exports only installed mods and appears when the instance has at least one installed mod.
+3. For **Export build** or **Export game**, choose **Instance template (JSON)** or **ZIP archive**. Modpack exports use ZIP. Select **Export**, then choose a destination.
+
+The **Export** menu item becomes available after installation when the instance is idle.
+
+While a ZIP archive is being created, **Exporting** shows the percentage of selected file bytes copied. Hover over the button and select **Cancel** to stop. Cancellation removes the temporary package and leaves an existing destination file unchanged.
+
+![Instance export wizard offering build and game choices when no mods are installed](/img/user/en/instances-export.png)
+
+The wizard closes when export starts. The instance's **Export** row shows **Exporting** until the file is ready. Select that status button to cancel. A canceled export removes its temporary file and leaves any existing destination file intact.
+
+The JSON template records the instance name, branch, build, and optional version name. A build template also records notes; a game template leaves them out. Neither contains game files or mods. ZIP includes the selected files, instance metadata, and a JSON manifest. A build archive also includes worlds and other user data.
+
+To import from an empty list, select **Import** to the left of **Select version**. If instances already exist, select **New Instance**, then **Import**. Select **Choose file** and pick a JSON or ZIP package. JSON creates an uninstalled instance definition and requires a configured download source. If no source is configured, a dialog explains how to add a mirror in **Settings → Downloads** or sign in with a Hytale account that owns the game; dismiss it and import again after setting up a source. ZIP restores the packaged files. Importing a game-only or modpack-only ZIP restores only those selected files.
+
+![Instance import wizard with the file chooser beside Back](/img/user/en/instances-import.png)
+
+During import, hover over the progress button and select **Cancel** to stop.
 
 ## Install or launch
 

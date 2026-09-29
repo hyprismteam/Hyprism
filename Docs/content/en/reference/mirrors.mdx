@@ -75,6 +75,8 @@ For JSON API entries, `JsonPath` points to the version name or numeric build. Wh
 
 Manifest discovery also reads names from `versions[branch][build].version` and from `gameVersion` in matching file entries. This supports manifests where the file path contains only the numeric build, such as `0_to_27.pwr`. The `files` index supplies the actual patch transitions for the requested OS, architecture, and branch. The instance creator lists a build only when a route from a full archive exists. The global `versions` section supplies names but cannot make a build installable.
 
+A manifest URL and its asset root can differ. If a manifest is available at the host root while its files are under `/patches`, Hyprism checks a listed file with a one-byte range request and uses the responding root for patch downloads. This also supports mirrors that expose the same manifest at both locations.
+
 The official source reads the authenticated `game-assets/version/{branch}.json` manifest and follows its signed JSON URL when necessary. The returned name is paired with the latest numeric build from the patches API
 
 The official source applies the same separation to metadata returned with patch steps. The version cache stores the numeric build and display name separately, and the patch cache stores the published transitions per mirror. A canceled fetch does not mark a branch as fresh or save a partial source list, so the next request fetches it again. Older version cache snapshots refresh once after this format change. Existing instance files without a version name continue to use the numeric build as a fallback.

@@ -54,7 +54,7 @@ internal static class MirrorSchemaInferrer
 
     #region MirrorMeta Builders
 
-    /// <summary>Builds a source that discovers protected full PWR files with HEAD requests.</summary>
+    /// <summary>Builds a source that discovers protected full PWR files with HEAD requests</summary>
     /// <param name="baseUri">Mirror address entered by the user.</param>
     /// <param name="pathPrefix">Path before the platform and branch directories.</param>
     /// <returns>The discovered mirror definition.</returns>

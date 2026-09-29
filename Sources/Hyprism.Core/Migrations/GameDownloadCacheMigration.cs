@@ -12,7 +12,7 @@ public static class GameDownloadCacheMigration
 {
     private static readonly Lock MigrationLock = new();
 
-    /// <summary>Moves legacy PWR payloads without touching unrelated cache content.</summary>
+    /// <summary>Moves legacy PWR payloads without touching unrelated cache content</summary>
     public static void Migrate(string appDirectory)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(appDirectory);

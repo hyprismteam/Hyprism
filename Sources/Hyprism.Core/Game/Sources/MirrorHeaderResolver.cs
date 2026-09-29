@@ -7,7 +7,7 @@ namespace Hyprism.Core.Game.Sources;
 
 internal static class MirrorHeaderResolver
 {
-    /// <summary>Expands launcher placeholders in a mirror's request headers.</summary>
+    /// <summary>Expands launcher placeholders in a mirror's request headers</summary>
     /// <param name="headers">Configured header templates.</param>
     /// <param name="httpClient">Client used to fetch the current launcher version.</param>
     /// <param name="ct">Cancellation token.</param>

@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Labs.Lottie;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -23,7 +24,7 @@ public sealed class WizardHost
     private readonly WizardRevealIcon? _revealIcon;
     private readonly IReadOnlyDictionary<Control, string> _stepAnimationPaths;
     private readonly Control[] _steps;
-    private readonly Dictionary<Control, (Control Previous, Action SelectPrevious)> _previousSteps = [];
+    private readonly Dictionary<Control, (Control Previous, Action SelectPrevious, Func<bool>? CanNavigate)> _previousSteps = [];
     private Func<bool>? _isOpen;
     private Action? _close;
     private Func<bool>? _cancelActiveOperation;
@@ -33,6 +34,9 @@ public sealed class WizardHost
     private bool _isClosing;
     private Action? _closeCompletion;
     private TopLevel? _topLevel;
+
+    /// <summary>Whether step navigation restarts the reveal animation</summary>
+    public bool ReplayRevealOnStepChange { get; set; } = true;
 
     public WizardHost(
         Control overview,
@@ -91,8 +95,12 @@ public sealed class WizardHost
         _cancelActiveOperation = cancelActiveOperation;
     }
 
-    public void RegisterPreviousStep(Control step, Control previous, Action selectPrevious)
-        => _previousSteps.Add(step, (previous, selectPrevious));
+    public void RegisterPreviousStep(
+        Control step,
+        Control previous,
+        Action selectPrevious,
+        Func<bool>? canNavigate = null)
+        => _previousSteps.Add(step, (previous, selectPrevious, canNavigate));
 
     public bool TryNavigateBack()
     {
@@ -113,7 +121,8 @@ public sealed class WizardHost
             _backRequested = _stepTransitionForward;
         }
         else if (_steps.FirstOrDefault(step => step.IsVisible) is { } activeStep &&
-                 _previousSteps.ContainsKey(activeStep))
+                 _previousSteps.TryGetValue(activeStep, out var previous) &&
+                 (previous.CanNavigate?.Invoke() ?? true))
         {
             _ = NavigateBackAsync();
         }
@@ -135,7 +144,7 @@ public sealed class WizardHost
 
         var activeStep = _steps.FirstOrDefault(step => step.IsVisible);
         if (activeStep is null || !_previousSteps.TryGetValue(activeStep, out var previous) ||
-            _isOpen is null)
+            previous.CanNavigate?.Invoke() == false || _isOpen is null)
             return Task.CompletedTask;
 
         return SwitchStepAsync(
@@ -232,9 +241,16 @@ public sealed class WizardHost
     {
         if (isOpen)
         {
+            if (!_isClosing && !_isStepTransitioning && _wizard.IsVisible &&
+                _wizard.IsHitTestVisible && _wizard.Opacity >= 0.99 &&
+                _wizard.RenderTransform is TranslateTransform { X: >= -0.5 and <= 0.5 })
+                return;
+
             _isClosing = false;
             _closeCompletion = null;
-            ShowWizardImmediately();
+            NormalizeSteps();
+            SelectActiveStepAnimation(preserveCurrentFrame: true);
+            _transition.ShowWizardImmediately();
         }
         else
         {
@@ -280,7 +296,7 @@ public sealed class WizardHost
                 forward,
                 switchStep,
                 shouldRemainOpen);
-            if (completed && shouldRemainOpen())
+            if (completed && shouldRemainOpen() && ReplayRevealOnStepChange)
             {
                 if (!forward && ReferenceEquals(incomingStep, _steps.FirstOrDefault()))
                     ShowStepAnimationFinalFrame(incomingStep);
@@ -372,14 +388,15 @@ public sealed class WizardHost
         }
     }
 
-    private void SelectActiveStepAnimation()
+    private void SelectActiveStepAnimation(bool preserveCurrentFrame = false)
     {
         if (_revealIcon is null)
             return;
 
         var activeStep = _steps.FirstOrDefault(step => step.IsVisible);
         if (activeStep is not null &&
-            _stepAnimationPaths.TryGetValue(activeStep, out var animationPath))
+            _stepAnimationPaths.TryGetValue(activeStep, out var animationPath) &&
+            (!preserveCurrentFrame || _revealIcon.AnimationPath != animationPath))
         {
             _revealIcon.ShowInitialFrame(animationPath);
         }

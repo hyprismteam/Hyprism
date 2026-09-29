@@ -26,6 +26,8 @@ Desktop instance action
 
 Game payloads are cached under `Cache/Game/Downloads`. Transfer and patching propagate cancellation through network I/O, writes, extraction, and process waits. A successful installation automatically starts the game
 
+`InstancePackageService` exports a selected instance as a metadata manifest or an archive of selected files. The Desktop instance wizard chooses the content and destination. `InstanceRepository` imports ZIP contents and registers the resulting instance; JSON import creates an uninstalled instance from its metadata. See [instance packages](/reference/instance-packages) for the package layout.
+
 ## Authentication and patching
 
 | Profile and mode | Session provider |

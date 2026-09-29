@@ -745,6 +745,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool IsDisplayedInstanceWorldsSection => DisplayedInstanceSection == "worlds";
     public bool IsDisplayedInstanceLogsSection => DisplayedInstanceSection == "logs";
     public bool HasInstalledMods => VisibleInstalledMods.Count > 0;
+    public bool HasExportableMods => InstalledMods.Count > 0;
     public bool HasModCatalogItems => ModCatalogItems.Count > 0;
     public bool HasInstanceWorlds => InstanceWorlds.Count > 0;
     public bool IsInstalledModsEmpty =>
@@ -800,15 +801,36 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     }
     [RelayCommand]
     private void OpenInstanceCreator()
+        => OpenInstanceCreatorAt(HasInstances
+            ? InstanceWizardStage.Choice
+            : HasDownloadSources ? InstanceWizardStage.Download : InstanceWizardStage.Import);
+
+    [RelayCommand]
+    private void OpenEmptyInstanceDownload()
     {
+        if (HasDownloadSources)
+            OpenInstanceCreatorAt(InstanceWizardStage.Download);
+    }
+
+    [RelayCommand]
+    private void OpenEmptyInstanceImport()
+        => OpenInstanceCreatorAt(InstanceWizardStage.Import);
+
+    private void OpenInstanceCreatorAt(InstanceWizardStage stage)
+    {
+        CanReturnToInstanceChoice = stage == InstanceWizardStage.Choice;
+        InstanceWizardStage = stage;
         IsInstanceCreatorOpen = true;
         InstanceCreationError = string.Empty;
-        _ = LoadInstanceVersionsAsync(NewInstanceBranch);
+        if (stage != InstanceWizardStage.Import)
+            _ = LoadInstanceVersionsAsync(NewInstanceBranch);
     }
 
     [RelayCommand]
     private void CloseInstanceCreator()
     {
+        _instanceImportCancellation?.Cancel();
+        IsJsonImportSourceWarningOpen = false;
         IsInstanceCreatorOpen = false;
         CancelInstanceVersionLoading();
     }
@@ -3072,6 +3094,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
         IsBusy = _busyInstanceCounts.Count > 0;
         UpdateSelectedInstancePresentation();
+        NotifyExportStateChanged();
         NotifyManagedInstanceActionStateChanged();
     }
 
@@ -3089,6 +3112,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
         IsBusy = _busyInstanceCounts.Count > 0;
         UpdateSelectedInstancePresentation();
+        NotifyExportStateChanged();
         NotifyManagedInstanceActionStateChanged();
     }
 
@@ -3552,6 +3576,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(InstanceModsCountText));
         OnPropertyChanged(nameof(InstanceWorldsCountText));
         OnPropertyChanged(nameof(HasInstalledMods));
+        OnPropertyChanged(nameof(HasExportableMods));
         OnPropertyChanged(nameof(HasModCatalogItems));
         OnPropertyChanged(nameof(HasInstanceWorlds));
         OnPropertyChanged(nameof(IsInstalledModsEmpty));
@@ -3750,6 +3775,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void UpdateManagedInstancePresentation()
     {
+        NotifyExportStateChanged();
         ManagedInstanceIcon = _allInstances.FirstOrDefault(item => item.Id == _managedInstance?.Id)?.Icon;
         OnPropertyChanged(nameof(IsManagedInstanceInstalled));
         OnPropertyChanged(nameof(CanRunManagedInstanceAction));
@@ -4077,6 +4103,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         => FilterInstalledMods();
     public void Dispose()
     {
+        _instanceImportCancellation?.Cancel();
+        _instanceExportCancellation?.Cancel();
         ReplaceEditInstanceIcon(null);
         foreach (var item in _allInstances)
             item.Icon?.Dispose();

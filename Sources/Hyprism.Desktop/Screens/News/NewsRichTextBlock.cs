@@ -14,7 +14,7 @@ using Hyprism.Desktop.Platform;
 
 namespace Hyprism.Desktop.Screens.News;
 
-/// <summary>Renders the safe inline subset produced by <see cref="NewsContentNode"/>.</summary>
+/// <summary>Renders the safe inline subset produced by <see cref="NewsContentNode"/></summary>
 public sealed class NewsRichTextBlock : TextBlock
 {
     private static readonly Cursor LinkCursor = new(StandardCursorType.Hand);

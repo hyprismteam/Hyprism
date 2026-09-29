@@ -16,7 +16,7 @@ public sealed class ProfileSessionMigration
     private readonly AppPathConfiguration _appPath;
     private readonly IConfigStore _configStore;
 
-    /// <summary>Creates the profile session migration.</summary>
+    /// <summary>Creates the profile session migration</summary>
     public ProfileSessionMigration(AppPathConfiguration appPath, IConfigStore configStore)
     {
         _appPath = appPath;

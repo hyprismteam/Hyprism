@@ -127,7 +127,7 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
     <value>Exportar</value>
   </data>
   <data name="common.exporting" xml:space="preserve">
-    <value>Exportando...</value>
+    <value>Exporting</value>
   </data>
   <data name="common.import" xml:space="preserve">
     <value>Importar</value>
@@ -3038,5 +3038,95 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   </data>
   <data name="instances.logs.showInFolder" xml:space="preserve">
     <value>Mostrar na pasta</value>
+  </data>
+  <data name="instances.package.createChoiceTitle" xml:space="preserve">
+    <value>Create an instance</value>
+  </data>
+  <data name="instances.package.createChoiceHint" xml:space="preserve">
+    <value>Download a game version or import a saved package</value>
+  </data>
+  <data name="instances.package.download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="instances.package.downloadHint" xml:space="preserve">
+    <value>Choose a game branch and version</value>
+  </data>
+  <data name="instances.package.importTitle" xml:space="preserve">
+    <value>Import an instance</value>
+  </data>
+  <data name="instances.package.importHint" xml:space="preserve">
+    <value>Select a Hyprism JSON manifest or ZIP package</value>
+  </data>
+  <data name="instances.package.importChoiceHint" xml:space="preserve">
+    <value>Restore metadata from JSON or files from ZIP</value>
+  </data>
+  <data name="instances.package.exportTitle" xml:space="preserve">
+    <value>Export an instance</value>
+  </data>
+  <data name="instances.package.exportHint" xml:space="preserve">
+    <value>Choose which parts of this instance to export</value>
+  </data>
+  <data name="instances.package.build" xml:space="preserve">
+    <value>Export build</value>
+  </data>
+  <data name="instances.package.buildHint" xml:space="preserve">
+    <value>The full game, user data, and all mods</value>
+  </data>
+  <data name="instances.package.modpack" xml:space="preserve">
+    <value>Export modpack</value>
+  </data>
+  <data name="instances.package.modpackHint" xml:space="preserve">
+    <value>Only the mods and their manifest</value>
+  </data>
+  <data name="instances.package.game" xml:space="preserve">
+    <value>Export game</value>
+  </data>
+  <data name="instances.package.gameHint" xml:space="preserve">
+    <value>Game files without user data or mods</value>
+  </data>
+  <data name="instances.package.formatTitle" xml:space="preserve">
+    <value>Choose export format</value>
+  </data>
+  <data name="instances.package.formatHint" xml:space="preserve">
+    <value>Choose a reusable instance template or include the selected files</value>
+  </data>
+  <data name="instances.package.zipOnlyHint" xml:space="preserve">
+    <value>Modpack exports contain mod files and use ZIP</value>
+  </data>
+  <data name="instances.package.format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="instances.package.json" xml:space="preserve">
+    <value>Instance template (JSON)</value>
+  </data>
+  <data name="instances.package.jsonHint" xml:space="preserve">
+    <value>Saves the instance name, branch, build, and notes without game or mod files</value>
+  </data>
+  <data name="instances.package.gameJsonHint" xml:space="preserve">
+    <value>Saves the instance name, branch, and game build without game files or user data</value>
+  </data>
+  <data name="instances.package.zip" xml:space="preserve">
+    <value>ZIP archive</value>
+  </data>
+  <data name="instances.package.zipHint" xml:space="preserve">
+    <value>Bundles the selected files with instance metadata and a JSON manifest</value>
+  </data>
+  <data name="instances.package.pickFile" xml:space="preserve">
+    <value>Choose file</value>
+  </data>
+  <data name="instances.package.metadataOnly" xml:space="preserve">
+    <value>JSON creates an uninstalled instance. Game files can be downloaded later from a configured source; mods require ZIP</value>
+  </data>
+  <data name="instances.package.jsonRequiresSource" xml:space="preserve">
+    <value>JSON does not contain game files. Add a mirror in Settings → Downloads or sign in with a Hytale account that owns the game, then import again</value>
+  </data>
+  <data name="instances.package.sourceRequiredTitle" xml:space="preserve">
+    <value>No download source configured</value>
+  </data>
+  <data name="instances.package.missingInstance" xml:space="preserve">
+    <value>The instance files are no longer available</value>
+  </data>
+  <data name="instances.package.unsupportedFile" xml:space="preserve">
+    <value>Select a JSON or ZIP package</value>
   </data>
 </root>

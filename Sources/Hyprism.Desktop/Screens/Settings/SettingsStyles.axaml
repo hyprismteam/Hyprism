@@ -10,6 +10,31 @@ SPDX-License-Identifier: GPL-3.0-only
         xmlns:settings="using:Hyprism.Desktop.Screens.Settings">
   <!-- Selectors owned by the Settings screen -->
 
+  <Style Selector="settings|SettingsView Image.sourceChoiceIcon">
+    <Setter Property="Width" Value="28" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+
+  <Style Selector="settings|SettingsView TextBlock.sourceChoiceTitle">
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+  </Style>
+
+  <Style Selector="settings|SettingsView TextBlock.sourceChoiceDescription">
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="MaxLines" Value="2" />
+  </Style>
+
+  <Style Selector="settings|SettingsView Path.sourceChoiceChevron">
+    <Setter Property="Width" Value="15" />
+    <Setter Property="Height" Value="15" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Fill" Value="{DynamicResource TextSecondaryBrush}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
   <Style Selector="Border.settingsRail">
     <Setter Property="Background" Value="{DynamicResource NavigationPaneBrush}" />
     <Setter Property="BorderThickness" Value="0" />

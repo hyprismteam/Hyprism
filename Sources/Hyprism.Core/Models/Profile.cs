@@ -10,16 +10,16 @@ namespace Hyprism.Core.Models;
 /// </summary>
 public class Profile
 {
-    /// <summary>Unique profile identifier (UUID v4).</summary>
+    /// <summary>Unique profile identifier (UUID v4)</summary>
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    /// <summary>Player UUID used for the game session.</summary>
+    /// <summary>Player UUID used for the game session</summary>
     public string UUID { get; set; } = "";
-    /// <summary>Display name shown in the launcher and in-game (offline mode).</summary>
+    /// <summary>Display name shown in the launcher and in-game (offline mode)</summary>
     public string Name { get; set; } = "";
-    /// <summary>Whether this profile is linked to an official Hytale account.</summary>
+    /// <summary>Whether this profile is linked to an official Hytale account</summary>
     public bool IsOfficial { get; set; } = false;
-    /// <summary>Total accumulated play time across all instances.</summary>
+    /// <summary>Total accumulated play time across all instances</summary>
     public TimeSpan TotalPlaytime { get; set; } = TimeSpan.Zero;
-    /// <summary>UTC timestamp when the profile was created.</summary>
+    /// <summary>UTC timestamp when the profile was created</summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

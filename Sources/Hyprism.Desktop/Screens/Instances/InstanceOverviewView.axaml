@@ -17,6 +17,27 @@ SPDX-License-Identifier: GPL-3.0-only
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Hyprism.Desktop/Screens/Instances/InstancesTemplates.axaml" />
       </ResourceDictionary.MergedDictionaries>
+      <DataTemplate x:Key="InstanceExportStatusTemplate" x:DataType="instances:InstancesViewModel">
+        <Grid Classes="managedActionContent">
+          <Grid Classes="managedActionProgress" ColumnDefinitions="48,*,48" VerticalAlignment="Center">
+            <Path Classes="managedActionSpinner"
+                  controls:RotatingVisual.IsActive="{Binding IsManagedInstanceExporting}"
+                  HorizontalAlignment="Center"
+                  Data="M10,2 A8,8 0 1 1 2,10" />
+            <controls:FadingTextBlock Grid.Column="1" Classes="managedActionStatus"
+                                      Text="{Binding ExportingLabel}"
+                                      Foreground="{Binding $parent[Button].Foreground}"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" Classes="managedActionMetric"
+                       Text="{Binding InstanceExportMetricText}"
+                       Width="48" FontFeatures="tnum" TextAlignment="Right"
+                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+          </Grid>
+          <TextBlock Classes="managedActionCancel"
+                     Text="{Binding ManagedInstanceActionCancelLabel}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+      </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -104,6 +125,16 @@ SPDX-License-Identifier: GPL-3.0-only
                                 Data="{StaticResource EditRoundedIcon}" />
                           <TextBlock Text="{Binding EditInstanceLabel}"
                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+
+                      <Button Classes="managerCompactMenuAction danger"
+                              IsVisible="{Binding IsManagedInstanceExporting}"
+                              Command="{Binding CancelInstanceExportCommand}"
+                              Click="OnCloseCompactInstanceMenuClicked">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <Path Classes="managerCompactMenuIcon" Data="{StaticResource CloseIcon}" />
+                          <TextBlock Text="{Binding ManagedInstanceActionCancelLabel}" VerticalAlignment="Center" />
                         </StackPanel>
                       </Button>
 
@@ -291,7 +322,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
                       </Grid>
                     </Button>
-                    <Button Classes="formNavigationRow instanceMenuRow last"
+                    <Button Classes="formNavigationRow instanceMenuRow"
                             IsEnabled="{Binding IsManagedInstanceInstalled}"
                             Command="{Binding SelectInstanceSectionCommand}"
                             CommandParameter="logs">
@@ -306,8 +337,44 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
                       </Grid>
                     </Button>
+                    <Grid>
+                      <Button x:Name="InstanceExportRow" Classes="formNavigationRow instanceMenuRow last"
+                              IsEnabled="{Binding CanExportManagedInstance}"
+                              Command="{Binding OpenInstanceExportCommand}">
+                        <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                          <Image Classes="instanceMenuIcon"
+                                 Source="avares://Hyprism.Desktop/Assets/Fluent/pack.png"
+                                 Stretch="Uniform" />
+                          <StackPanel Grid.Column="1" Spacing="3">
+                            <TextBlock Text="{Binding ExportLabel}" Classes="formLabel instanceMenuTitle" />
+                            <TextBlock Text="{Binding ExportHint}" Classes="formHint instanceMenuDescription" />
+                          </StackPanel>
+                          <Path Grid.Column="2" Classes="instanceMenuChevron"
+                                IsVisible="{Binding !IsManagedInstanceExporting}"
+                                Data="{StaticResource NextIcon}" />
+                        </Grid>
+                      </Button>
+                      <Button x:Name="InstanceExportStatusButton"
+                              Classes="managerAction primary instanceExportStatus"
+                              Classes.active="{Binding IsManagedInstanceExporting}"
+                              Classes.cancelArmed="{Binding IsManagedInstanceExporting}"
+                              IsHitTestVisible="{Binding IsManagedInstanceExporting}"
+                              Focusable="{Binding IsManagedInstanceExporting}" ZIndex="1"
+                              HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Margin="0,0,16,0"
+                              ToolTip.Tip="{Binding ManagedInstanceActionCancelLabel}"
+                              Command="{Binding CancelInstanceExportCommand}">
+                        <ContentControl Content="{Binding}"
+                                        ContentTemplate="{StaticResource InstanceExportStatusTemplate}" />
+                      </Button>
+                    </Grid>
                   </StackPanel>
                 </Border>
+
+                <TextBlock Text="{Binding InstanceExportError}"
+                           IsVisible="{Binding HasInstanceExportError}"
+                           Foreground="{DynamicResource DangerSoftBrush}"
+                           TextWrapping="Wrap" />
 
               </StackPanel>
             </controls:SmoothScrollViewer>

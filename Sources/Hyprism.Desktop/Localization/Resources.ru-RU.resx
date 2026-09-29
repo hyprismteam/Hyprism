@@ -3045,4 +3045,94 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.logs.showInFolder" xml:space="preserve">
     <value>Показать в папке</value>
   </data>
+  <data name="instances.package.createChoiceTitle" xml:space="preserve">
+    <value>Создать экземпляр</value>
+  </data>
+  <data name="instances.package.createChoiceHint" xml:space="preserve">
+    <value>Загрузите версию игры или импортируйте сохранённую сборку</value>
+  </data>
+  <data name="instances.package.download" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="instances.package.downloadHint" xml:space="preserve">
+    <value>Выберите ветку и версию игры</value>
+  </data>
+  <data name="instances.package.importTitle" xml:space="preserve">
+    <value>Импорт экземпляра</value>
+  </data>
+  <data name="instances.package.importHint" xml:space="preserve">
+    <value>Выберите JSON-манифест или ZIP-архив Hyprism</value>
+  </data>
+  <data name="instances.package.importChoiceHint" xml:space="preserve">
+    <value>Восстановите метаданные из JSON или файлы из ZIP</value>
+  </data>
+  <data name="instances.package.exportTitle" xml:space="preserve">
+    <value>Экспорт экземпляра</value>
+  </data>
+  <data name="instances.package.exportHint" xml:space="preserve">
+    <value>Выберите, что включить в экспорт</value>
+  </data>
+  <data name="instances.package.build" xml:space="preserve">
+    <value>Экспорт сборки</value>
+  </data>
+  <data name="instances.package.buildHint" xml:space="preserve">
+    <value>Вся игра, пользовательские данные и все моды</value>
+  </data>
+  <data name="instances.package.modpack" xml:space="preserve">
+    <value>Экспорт модпака</value>
+  </data>
+  <data name="instances.package.modpackHint" xml:space="preserve">
+    <value>Только моды и их манифест</value>
+  </data>
+  <data name="instances.package.game" xml:space="preserve">
+    <value>Экспорт игры</value>
+  </data>
+  <data name="instances.package.gameHint" xml:space="preserve">
+    <value>Файлы игры без пользовательских данных и модов</value>
+  </data>
+  <data name="instances.package.formatTitle" xml:space="preserve">
+    <value>Выберите формат экспорта</value>
+  </data>
+  <data name="instances.package.formatHint" xml:space="preserve">
+    <value>Выберите шаблон экземпляра или архив с выбранными файлами</value>
+  </data>
+  <data name="instances.package.zipOnlyHint" xml:space="preserve">
+    <value>Экспорт модпака содержит файлы модов и использует ZIP</value>
+  </data>
+  <data name="instances.package.format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="instances.package.json" xml:space="preserve">
+    <value>Шаблон экземпляра (JSON)</value>
+  </data>
+  <data name="instances.package.jsonHint" xml:space="preserve">
+    <value>Сохраняет имя, ветку, сборку и заметки без файлов игры и модов</value>
+  </data>
+  <data name="instances.package.gameJsonHint" xml:space="preserve">
+    <value>Сохраняет имя, ветку и сборку игры без файлов и пользовательских данных</value>
+  </data>
+  <data name="instances.package.zip" xml:space="preserve">
+    <value>ZIP-архив</value>
+  </data>
+  <data name="instances.package.zipHint" xml:space="preserve">
+    <value>Упаковывает выбранные файлы, метаданные экземпляра и JSON-манифест</value>
+  </data>
+  <data name="instances.package.pickFile" xml:space="preserve">
+    <value>Выбрать файл</value>
+  </data>
+  <data name="instances.package.metadataOnly" xml:space="preserve">
+    <value>JSON создаёт незагруженный экземпляр. Игру можно загрузить позже из настроенного источника; для модов нужен ZIP</value>
+  </data>
+  <data name="instances.package.jsonRequiresSource" xml:space="preserve">
+    <value>JSON не содержит файлов игры. Добавьте зеркало в разделе «Настройки → Загрузки» или войдите в аккаунт Hytale с лицензией, затем повторите импорт</value>
+  </data>
+  <data name="instances.package.sourceRequiredTitle" xml:space="preserve">
+    <value>Не настроен источник загрузки</value>
+  </data>
+  <data name="instances.package.missingInstance" xml:space="preserve">
+    <value>Файлы экземпляра больше недоступны</value>
+  </data>
+  <data name="instances.package.unsupportedFile" xml:space="preserve">
+    <value>Выберите файл JSON или ZIP</value>
+  </data>
 </root>

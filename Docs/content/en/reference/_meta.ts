@@ -6,5 +6,6 @@ export default {
   services: 'Core contracts',
   'local-node': 'Local Node',
   configuration: 'Configuration',
-  mirrors: 'Mirrors'
+  mirrors: 'Mirrors',
+  'instance-packages': 'Instance packages'
 }

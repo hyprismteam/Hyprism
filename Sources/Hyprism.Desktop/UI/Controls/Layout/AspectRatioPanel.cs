@@ -6,7 +6,7 @@ using Avalonia.Controls;
 
 namespace Hyprism.Desktop.Controls;
 
-/// <summary>Arranges one child inside a fixed aspect-ratio surface.</summary>
+/// <summary>Arranges one child inside a fixed aspect-ratio surface</summary>
 public sealed class AspectRatioPanel : Panel
 {
     public static readonly StyledProperty<double> RatioProperty =

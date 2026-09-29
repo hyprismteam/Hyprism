@@ -21,7 +21,7 @@ public class Config
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? UnknownProperties { get; set; }
 
-    /// <summary>Launcher config schema version string.</summary>
+    /// <summary>Launcher config schema version string</summary>
     public string Version { get; set; } = "2.0.0";
     /// <summary>
     /// ID of the currently selected instance to launch.

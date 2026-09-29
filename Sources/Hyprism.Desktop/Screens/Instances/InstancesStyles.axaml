@@ -103,6 +103,104 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="CornerRadius" Value="11" />
   </Style>
 
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction,
+                   instances|InstanceCreatorView Button.instanceExportAction">
+    <Setter Property="Width" Value="150" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active,
+                   instances|InstanceCreatorView Button.packageImportAction.active:pointerover,
+                   instances|InstanceCreatorView Button.instanceExportAction.active,
+                   instances|InstanceCreatorView Button.instanceExportAction.active:pointerover">
+    <Setter Property="Width" Value="272" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active.cancelArmed:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Button.packageImportAction.active Grid.managedActionContent,
+                   instances|InstanceCreatorView Button.instanceExportAction.active Grid.managedActionContent">
+    <Setter Property="Width" Value="232" />
+    <Setter Property="MinWidth" Value="232" />
+    <Setter Property="MaxWidth" Value="232" />
+  </Style>
+
+  <Style Selector="instances|InstanceOverviewView Button.managerAction.primary.instanceExportStatus">
+    <Setter Property="Width" Value="0" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Opacity" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Width" Duration="0:0:0.32">
+          <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+        </DoubleTransition>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.22" />
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+        <BrushTransition Property="Foreground" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstanceOverviewView Button.managerAction.primary.instanceExportStatus.active">
+    <Setter Property="Width" Value="220" />
+    <Setter Property="Padding" Value="10,0" />
+    <Setter Property="Opacity" Value="1" />
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+  </Style>
+
+  <Style Selector="instances|InstanceOverviewView Button.managerAction.primary.instanceExportStatus.active.cancelArmed:pointerover">
+    <Setter Property="Background" Value="{DynamicResource DangerActionBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="instances|InstanceOverviewView Button.managerAction.primary.instanceExportStatus.active Grid.managedActionContent">
+    <Setter Property="Width" Value="188" />
+    <Setter Property="MinWidth" Value="188" />
+    <Setter Property="MaxWidth" Value="188" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView Border.instanceExportFormatRow">
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView RadioButton.instanceExportFormatOption">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="MinHeight" Value="58" />
+    <Setter Property="Padding" Value="18,10" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView RadioButton.instanceExportFormatOption:pointerover">
+    <Setter Property="Background" Value="{DynamicResource SubtleHoverBrush}" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+  </Style>
+
+  <Style Selector="instances|InstanceCreatorView RadioButton.instanceExportFormatOption:pressed">
+    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+  </Style>
+
   <Style Selector="instances|InstancesView Path.instancesVersionSpinner">
     <Setter Property="Fill" Value="Transparent" />
     <Setter Property="Stroke" Value="{DynamicResource TextPrimaryBrush}" />
@@ -214,7 +312,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-  <Style Selector="instances|InstancesView Image.instanceMenuIcon">
+  <Style Selector="instances|InstancesView Image.instanceMenuIcon,
+                   instances|InstanceCreatorView Image.exportKindIcon,
+                   instances|InstanceCreatorView Image.creationChoiceIcon">
     <Setter Property="Width" Value="28" />
     <Setter Property="Height" Value="28" />
     <Setter Property="Stretch" Value="Uniform" />

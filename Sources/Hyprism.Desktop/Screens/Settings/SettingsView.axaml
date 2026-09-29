@@ -351,43 +351,29 @@ SPDX-License-Identifier: GPL-3.0-only
                   <Button x:Name="BeginAutomaticSourceAdditionButton"
                           Classes="formNavigationRow"
                           Click="OnBeginAutomaticSourceAdditionClicked">
-                    <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="wizardChoiceIcon">
-                        <Path Data="{StaticResource SearchIcon}" />
-                      </Border>
-                      <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                        <TextBlock Text="{Binding AutomaticSourceLabel}" Classes="formLabel" />
-                        <TextBlock Text="{Binding AutomaticSourceHint}" Classes="formHint" />
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="sourceChoiceIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/search.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding AutomaticSourceLabel}" Classes="formLabel sourceChoiceTitle" />
+                        <TextBlock Text="{Binding AutomaticSourceHint}" Classes="formHint sourceChoiceDescription" />
                       </StackPanel>
-                      <Path Grid.Column="2"
-                            Width="15"
-                            Height="15"
-                            VerticalAlignment="Center"
-                            Stretch="Uniform"
-                            Fill="{DynamicResource TextSecondaryBrush}"
-                            Data="{StaticResource NextIcon}" />
+                      <Path Grid.Column="2" Classes="sourceChoiceChevron" Data="{StaticResource NextIcon}" />
                     </Grid>
                   </Button>
                   <Button x:Name="BeginManualSourceAdditionButton"
                           Classes="formNavigationRow last"
                           Click="OnBeginManualSourceAdditionClicked">
-                    <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                      <Border Classes="wizardChoiceIcon">
-                        <Path Data="{StaticResource DataObjectIcon}">
-                          <Path.RenderTransform><TranslateTransform Y="2" /></Path.RenderTransform>
-                        </Path>
-                      </Border>
-                      <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                        <TextBlock Text="{Binding ManualSourceLabel}" Classes="formLabel" />
-                        <TextBlock Text="{Binding ManualSourceHint}" Classes="formHint" />
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="sourceChoiceIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/code.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding ManualSourceLabel}" Classes="formLabel sourceChoiceTitle" />
+                        <TextBlock Text="{Binding ManualSourceHint}" Classes="formHint sourceChoiceDescription" />
                       </StackPanel>
-                      <Path Grid.Column="2"
-                            Width="15"
-                            Height="15"
-                            VerticalAlignment="Center"
-                            Stretch="Uniform"
-                            Fill="{DynamicResource TextSecondaryBrush}"
-                            Data="{StaticResource NextIcon}" />
+                      <Path Grid.Column="2" Classes="sourceChoiceChevron" Data="{StaticResource NextIcon}" />
                     </Grid>
                   </Button>
                 </StackPanel>

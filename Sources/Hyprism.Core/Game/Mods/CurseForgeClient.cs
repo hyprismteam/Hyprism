@@ -20,7 +20,7 @@ internal sealed class CurseForgeClient
 
     private const string ApiBaseUrl = "https://api.curseforge.com";
 
-    /// <summary>Hytale game identifier on CurseForge.</summary>
+    /// <summary>Hytale game identifier on CurseForge</summary>
     public const int HytaleGameId = 70216;
 
     private static readonly JsonSerializerOptions JsonOptions = new()

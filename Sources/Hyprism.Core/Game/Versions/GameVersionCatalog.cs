@@ -829,7 +829,8 @@ public class GameVersionCatalog : IGameVersionCatalog
         var snapshot = _cache.LoadPatches();
         foreach (var mirror in await GetMirrorCandidatesAsync(ct))
         {
-            var steps = snapshot?.Os.Equals(os, StringComparison.OrdinalIgnoreCase) == true &&
+            var steps = mirror is not JsonMirrorSource { UsesManifestDiscovery: true } &&
+                        snapshot?.Os.Equals(os, StringComparison.OrdinalIgnoreCase) == true &&
                         snapshot.Arch.Equals(arch, StringComparison.OrdinalIgnoreCase)
                 ? snapshot.Data.Mirrors.FirstOrDefault(entry => entry.MirrorId == mirror.SourceId)?
                     .Branches.GetValueOrDefault(normalizedBranch)

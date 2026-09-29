@@ -8,7 +8,7 @@ namespace Hyprism.Core.Migrations;
 /// </summary>
 public interface IMigration
 {
-    /// <summary>Stable identifier persisted after a successful run.</summary>
+    /// <summary>Stable identifier persisted after a successful run</summary>
     string Id { get; }
 
     /// <summary>Applies the migration</summary>

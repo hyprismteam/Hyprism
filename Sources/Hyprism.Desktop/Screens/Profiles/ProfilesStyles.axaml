@@ -11,6 +11,31 @@ SPDX-License-Identifier: GPL-3.0-only
       <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
     </Style>
 
+    <Style Selector="Image.profileChoiceIcon">
+      <Setter Property="Width" Value="28" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="Stretch" Value="Uniform" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <Style Selector="TextBlock.profileChoiceTitle">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.profileChoiceDescription">
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Setter Property="MaxLines" Value="2" />
+    </Style>
+
+    <Style Selector="Path.profileChoiceChevron">
+      <Setter Property="Width" Value="15" />
+      <Setter Property="Height" Value="15" />
+      <Setter Property="Stretch" Value="Uniform" />
+      <Setter Property="Fill" Value="{DynamicResource TextSecondaryBrush}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <Style Selector="Border.profileListPane">
       <Setter Property="Background" Value="{DynamicResource NavigationPaneBrush}" />
     </Style>

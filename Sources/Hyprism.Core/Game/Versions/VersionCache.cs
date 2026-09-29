@@ -46,15 +46,15 @@ public class VersionCache
         _getAllowedMirrorIds = getAllowedMirrorIds;
     }
 
-    /// <summary>Stores a snapshot in the in-memory cache.</summary>
+    /// <summary>Stores a snapshot in the in-memory cache</summary>
     public void Set(VersionsCacheSnapshot snapshot) => Current = snapshot;
 
-    /// <summary>Clears the in-memory cache, forcing the next read from disk.</summary>
+    /// <summary>Clears the in-memory cache, forcing the next read from disk</summary>
     public void Invalidate() => Current = null;
 
     #region Path helpers
 
-    /// <summary>Returns the path to the on-disk versions cache file.</summary>
+    /// <summary>Returns the path to the on-disk versions cache file</summary>
     /// <returns>The versions cache snapshot path</returns>
     public string GetSnapshotPath()
         => LauncherJsonFile.GetPath(
@@ -62,7 +62,7 @@ public class VersionCache
             "Versions.json",
             "versions.json");
 
-    /// <summary>Returns the path to the on-disk patches cache file.</summary>
+    /// <summary>Returns the path to the on-disk patches cache file</summary>
     /// <returns>The patch cache snapshot path</returns>
     public string GetPatchSnapshotPath()
         => LauncherJsonFile.GetPath(
@@ -176,7 +176,7 @@ public class VersionCache
         return null;
     }
 
-    /// <summary>Loads the versions snapshot from disk, or returns <c>null</c> if absent or corrupt.</summary>
+    /// <summary>Loads the versions snapshot from disk, or returns <c>null</c> if absent or corrupt</summary>
     /// <returns>The loaded value, or null when unavailable</returns>
     public VersionsCacheSnapshot? Load()
     {
@@ -200,7 +200,7 @@ public class VersionCache
         }
     }
 
-    /// <summary>Writes the versions snapshot to disk and updates the in-memory copy.</summary>
+    /// <summary>Writes the versions snapshot to disk and updates the in-memory copy</summary>
     public void Save(VersionsCacheSnapshot snapshot)
     {
         try
@@ -253,7 +253,7 @@ public class VersionCache
 
     #region Patches snapshot
 
-    /// <summary>Loads the patches snapshot from disk, or returns <c>null</c> if absent or corrupt.</summary>
+    /// <summary>Loads the patches snapshot from disk, or returns <c>null</c> if absent or corrupt</summary>
     /// <returns>The loaded patches, or null when unavailable</returns>
     public PatchesCacheSnapshot? LoadPatches()
     {
@@ -288,7 +288,7 @@ public class VersionCache
         }
     }
 
-    /// <summary>Writes the patches snapshot to disk.</summary>
+    /// <summary>Writes the patches snapshot to disk</summary>
     public void SavePatches(PatchesCacheSnapshot snapshot)
     {
         try

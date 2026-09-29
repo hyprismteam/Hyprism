@@ -86,14 +86,20 @@ SPDX-License-Identifier: GPL-3.0-only
                                  Title="{Binding NoDownloadSourcesTitle}">
                 <TextBlock Text="{Binding NoDownloadSourcesHint}" TextWrapping="Wrap" />
               </controls:NoteCard>
-              <Button x:Name="EmptyCreateButton" Classes="wizardAction create" HorizontalAlignment="Center"
-                      IsEnabled="{Binding HasDownloadSources}"
-                      Click="OnOpenCreatorClicked">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                  <Path Width="18" Height="18" Stretch="Uniform" Fill="{Binding $parent[Button].Foreground}" Data="{StaticResource GestureSelectIcon}" />
-                  <TextBlock Text="{Binding SelectVersionLabel}" />
-                </StackPanel>
-              </Button>
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                <Button x:Name="EmptyImportButton" Classes="wizardAction"
+                        Click="OnOpenEmptyImportClicked">
+                  <TextBlock Text="{Binding ImportLabel}" />
+                </Button>
+                <Button x:Name="EmptyCreateButton" Classes="wizardAction create"
+                        IsEnabled="{Binding HasDownloadSources}"
+                        Click="OnOpenEmptyDownloadClicked">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Path Width="18" Height="18" Stretch="Uniform" Fill="{Binding $parent[Button].Foreground}" Data="{StaticResource GestureSelectIcon}" />
+                    <TextBlock Text="{Binding SelectVersionLabel}" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
             </StackPanel>
           </controls:EmptyState.ActionContent>
         </controls:EmptyState>
@@ -286,6 +292,38 @@ SPDX-License-Identifier: GPL-3.0-only
       </Grid>
     </Border>
   </Grid>
+
+    <controls:OverlayModal x:Name="JsonImportSourceWarningModal"
+                           BackdropTarget="{Binding ElementName=InstancesLayout}"
+                           InitialFocusTarget="{Binding ElementName=JsonImportSourceWarningConfirmButton}"
+                           IsOpen="{Binding IsJsonImportSourceWarningOpen}"
+                           DismissCommand="{Binding DismissJsonImportSourceWarningCommand}"
+                           SheetMaxWidth="480"
+                           SheetMaxHeight="400"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="522"
+                           HiddenOffset="500"
+                           ZIndex="230">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <TextBlock Text="{Binding JsonImportSourceWarningTitle}"
+                         FontSize="22" FontWeight="Bold" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding JsonImportSourceWarningMessage}"
+                         Classes="muted" TextWrapping="Wrap" />
+              <Button x:Name="JsonImportSourceWarningConfirmButton"
+                      Classes="wizardAction create"
+                      HorizontalAlignment="Right"
+                      Command="{Binding DismissJsonImportSourceWarningCommand}">
+                <TextBlock Text="{Binding JsonImportSourceWarningConfirmLabel}" />
+              </Button>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
 
     <controls:OverlayModal x:Name="ModCatalogModal"
                            BackdropTarget="{Binding ElementName=InstancesLayout}"

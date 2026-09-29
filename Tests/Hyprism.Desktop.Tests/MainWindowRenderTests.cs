@@ -83,6 +83,15 @@ public sealed class MainWindowRenderTests
 
         var creatorView = Assert.IsType<InstanceCreatorView>(
             instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView"));
+        await WaitForConditionAsync(
+            () => creatorView.StepControl(InstanceWizardStage.Choice).Opacity >= 0.99,
+            "instance choice step to finish opening");
+        creatorView.FindControl<Button>("InstanceDownloadChoiceButton")!
+            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        await WaitForConditionAsync(
+            () => creatorView.StepControl(InstanceWizardStage.Download).IsEffectivelyVisible &&
+                  creatorView.StepControl(InstanceWizardStage.Download).Opacity >= 0.99,
+            "instance download step to open");
         var comboBox = creatorView.FindControl<FadingComboBox>("InstanceVersionComboBox");
         Assert.NotNull(comboBox);
         comboBox!.Margin = new Thickness(0, 32, 0, 0);
@@ -1306,7 +1315,8 @@ public sealed class MainWindowRenderTests
                 .FindControl<Button>("CompactInstancePrimaryAction")!
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("managerAction") &&
-                                  button.Classes.Contains("primary"));
+                                  button.Classes.Contains("primary") &&
+                                  !button.Classes.Contains("instanceExportStatus"));
         var secondaryAction = compact
             ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
                 .FindControl<Button>("CompactInstanceMoreButton")!
@@ -3227,7 +3237,9 @@ public sealed class MainWindowRenderTests
         window.MouseUp(resolvedDragPoint + new Vector(36, 24), MouseButton.Left);
         Dispatcher.UIThread.RunJobs();
         Assert.False(dragPreview.IsVisible);
-        var managerActions = instancesView.GetVisualDescendants()
+        var managerActions = Assert.IsType<InstanceOverviewView>(
+                instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView"))
+            .FindControl<StackPanel>("WideInstanceActions")!.GetVisualDescendants()
             .OfType<Button>()
             .Where(button => button.Classes.Contains("managerAction"))
             .ToList();
@@ -3239,18 +3251,19 @@ public sealed class MainWindowRenderTests
             .OfType<Button>()
             .Where(button => button.Classes.Contains("instanceMenuRow"))
             .ToList();
-        Assert.Equal(4, instanceMenuRows.Count);
+        Assert.Equal(5, instanceMenuRows.Count);
         var instanceMenuIcons = instancesView.GetVisualDescendants()
             .OfType<Image>()
             .Where(image => image.Classes.Contains("instanceMenuIcon"))
             .ToList();
-        Assert.Equal(4, instanceMenuIcons.Count);
+        Assert.Equal(instanceMenuRows.Count, instanceMenuIcons.Count);
         Assert.All(instanceMenuIcons, icon =>
         {
             Assert.Equal(28, icon.Width);
             Assert.Equal(28, icon.Height);
             Assert.NotNull(icon.Source);
         });
+        Assert.Contains(instanceMenuRows, row => row.Name == "InstanceExportRow");
         Assert.All(instanceMenuRows.Take(3), row => Assert.InRange(row.Bounds.Height, 68.5, 69.5));
         Assert.InRange(instanceMenuRows[^1].Bounds.Height, 65.5, 66.5);
         Assert.DoesNotContain(

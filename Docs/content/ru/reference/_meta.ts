@@ -6,5 +6,6 @@ export default {
   services: 'Контракты Core',
   'local-node': 'Local Node',
   configuration: 'Конфигурация',
-  mirrors: 'Зеркала'
+  mirrors: 'Зеркала',
+  'instance-packages': 'Пакеты экземпляров'
 }
