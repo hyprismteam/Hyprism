@@ -43,6 +43,9 @@ public sealed partial class InstancesViewModel
     private bool _isInstanceImportCancellationArmed;
 
     [ObservableProperty]
+    private bool _isJsonImportSourceWarningOpen;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasInstanceExportError))]
     private string _instanceExportError = string.Empty;
 
@@ -96,6 +99,9 @@ public sealed partial class InstancesViewModel
     public string ExportZipLabel => _localizer["instances.package.zip"];
     public string PickPackageLabel => _localizer["instances.package.pickFile"];
     public string ImportMetadataHint => _localizer["instances.package.metadataOnly"];
+    public string JsonImportSourceWarningTitle => _localizer["instances.package.sourceRequiredTitle"];
+    public string JsonImportSourceWarningMessage => _localizer["instances.package.jsonRequiresSource"];
+    public string JsonImportSourceWarningConfirmLabel => _localizer["common.ok"];
 
     [RelayCommand]
     private void ChooseInstanceDownload() => InstanceWizardStage = InstanceWizardStage.Download;
@@ -243,6 +249,9 @@ public sealed partial class InstancesViewModel
     [RelayCommand]
     private void CancelInstanceExport() => _instanceExportCancellation?.Cancel();
 
+    [RelayCommand]
+    private void DismissJsonImportSourceWarning() => IsJsonImportSourceWarningOpen = false;
+
     [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task ImportInstancePackageAsync()
     {
@@ -261,6 +270,7 @@ public sealed partial class InstancesViewModel
         IsInstanceImportCancellationArmed = false;
         IsImportingInstancePackage = true;
         InstanceCreationError = string.Empty;
+        IsJsonImportSourceWarningOpen = false;
         try
         {
             var path = await _filePicker.BrowseInstancePackageAsync();
@@ -281,7 +291,7 @@ public sealed partial class InstancesViewModel
                 var package = await InstancePackageService.ReadJsonAsync(path, cancellation.Token);
                 if (_versionCatalog?.HasDownloadSources() != true)
                 {
-                    InstanceCreationError = _localizer["instances.package.jsonRequiresSource"];
+                    IsJsonImportSourceWarningOpen = true;
                     return;
                 }
 

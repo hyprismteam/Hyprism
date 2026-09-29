@@ -32,7 +32,7 @@ New instances store the default name `Hytale`; the interface displays it as `Hyt
 
 ## Export or import an instance
 
-1. Select an instance and choose **Export** in its menu. In a compact window, open the three-dot menu to find **Export**.
+1. Open an instance and select **Export** in its section list.
 2. Choose **Export build** for the game, mods, and user data, or **Export game** for game files without user data. **Export modpack** exports only installed mods and appears when the instance has at least one installed mod.
 3. For **Export build** or **Export game**, choose **Instance template (JSON)** or **ZIP archive**. Modpack exports use ZIP. Select **Export**, then choose a destination.
 
@@ -46,7 +46,7 @@ The wizard closes when export starts. The instance's **Export** row shows **Expo
 
 The JSON template records the instance name, branch, build, and optional version name. A build template also records notes; a game template leaves them out. Neither contains game files or mods. ZIP includes the selected files, instance metadata, and a JSON manifest. A build archive also includes worlds and other user data.
 
-To import from an empty list, select **Import** to the left of **Select version**. If instances already exist, select **New Instance**, then **Import**. Select **Choose file** and pick a JSON or ZIP package. JSON creates an uninstalled instance definition and requires a configured download source; add a mirror in **Settings → Downloads** or sign in with a Hytale account that owns the game before importing. ZIP restores the packaged files. Importing a game-only or modpack-only ZIP restores only those selected files.
+To import from an empty list, select **Import** to the left of **Select version**. If instances already exist, select **New Instance**, then **Import**. Select **Choose file** and pick a JSON or ZIP package. JSON creates an uninstalled instance definition and requires a configured download source. If no source is configured, a dialog explains how to add a mirror in **Settings → Downloads** or sign in with a Hytale account that owns the game; dismiss it and import again after setting up a source. ZIP restores the packaged files. Importing a game-only or modpack-only ZIP restores only those selected files.
 
 ![Instance import wizard with the file chooser beside Back](/img/user/en/instances-import.png)
 

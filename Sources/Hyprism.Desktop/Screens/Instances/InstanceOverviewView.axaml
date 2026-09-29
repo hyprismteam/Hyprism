@@ -128,17 +128,6 @@ SPDX-License-Identifier: GPL-3.0-only
                         </StackPanel>
                       </Button>
 
-                      <Button Classes="managerCompactMenuAction"
-                              IsEnabled="{Binding CanExportManagedInstance}"
-                              Command="{Binding OpenInstanceExportCommand}"
-                              Click="OnCloseCompactInstanceMenuClicked">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                          <Image Width="16" Height="16" Stretch="Uniform"
-                                 Source="avares://Hyprism.Desktop/Assets/Fluent/pack.png" />
-                          <TextBlock Text="{Binding ExportLabel}" VerticalAlignment="Center" />
-                        </StackPanel>
-                      </Button>
-
                       <Button Classes="managerCompactMenuAction danger"
                               IsVisible="{Binding IsManagedInstanceExporting}"
                               Command="{Binding CancelInstanceExportCommand}"

@@ -3126,6 +3126,9 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.package.jsonRequiresSource" xml:space="preserve">
     <value>JSON не содержит файлов игры. Добавьте зеркало в разделе «Настройки → Загрузки» или войдите в аккаунт Hytale с лицензией, затем повторите импорт</value>
   </data>
+  <data name="instances.package.sourceRequiredTitle" xml:space="preserve">
+    <value>Не настроен источник загрузки</value>
+  </data>
   <data name="instances.package.missingInstance" xml:space="preserve">
     <value>Файлы экземпляра больше недоступны</value>
   </data>

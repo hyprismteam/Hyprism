@@ -293,6 +293,38 @@ SPDX-License-Identifier: GPL-3.0-only
     </Border>
   </Grid>
 
+    <controls:OverlayModal x:Name="JsonImportSourceWarningModal"
+                           BackdropTarget="{Binding ElementName=InstancesLayout}"
+                           InitialFocusTarget="{Binding ElementName=JsonImportSourceWarningConfirmButton}"
+                           IsOpen="{Binding IsJsonImportSourceWarningOpen}"
+                           DismissCommand="{Binding DismissJsonImportSourceWarningCommand}"
+                           SheetMaxWidth="480"
+                           SheetMaxHeight="400"
+                           SheetMargin="12,20,12,0"
+                           ShoulderMaxWidth="522"
+                           HiddenOffset="500"
+                           ZIndex="230">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <TextBlock Text="{Binding JsonImportSourceWarningTitle}"
+                         FontSize="22" FontWeight="Bold" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding JsonImportSourceWarningMessage}"
+                         Classes="muted" TextWrapping="Wrap" />
+              <Button x:Name="JsonImportSourceWarningConfirmButton"
+                      Classes="wizardAction create"
+                      HorizontalAlignment="Right"
+                      Command="{Binding DismissJsonImportSourceWarningCommand}">
+                <TextBlock Text="{Binding JsonImportSourceWarningConfirmLabel}" />
+              </Button>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
+
     <controls:OverlayModal x:Name="ModCatalogModal"
                            BackdropTarget="{Binding ElementName=InstancesLayout}"
                            Classes="modCatalogModal"

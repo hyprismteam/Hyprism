@@ -830,6 +830,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private void CloseInstanceCreator()
     {
         _instanceImportCancellation?.Cancel();
+        IsJsonImportSourceWarningOpen = false;
         IsInstanceCreatorOpen = false;
         CancelInstanceVersionLoading();
     }

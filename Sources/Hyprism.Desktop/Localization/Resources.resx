@@ -3129,6 +3129,9 @@ You may need to reinstall the game if switching drives</value>
   <data name="instances.package.jsonRequiresSource" xml:space="preserve">
     <value>JSON does not contain game files. Add a mirror in Settings → Downloads or sign in with a Hytale account that owns the game, then import again</value>
   </data>
+  <data name="instances.package.sourceRequiredTitle" xml:space="preserve">
+    <value>No download source configured</value>
+  </data>
   <data name="instances.package.missingInstance" xml:space="preserve">
     <value>The instance files are no longer available</value>
   </data>
