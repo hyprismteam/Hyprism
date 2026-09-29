@@ -9,51 +9,77 @@ using Hyprism.Core.Models;
 
 namespace Hyprism.Core.Game.Instances;
 
-/// <summary>The content selected for an instance package.</summary>
+/// <summary>The content selected for an instance package</summary>
 public enum InstancePackageKind
 {
-    /// <summary>Game, mods, and user data.</summary>
+    /// <summary>Game, mods, and user data</summary>
     Build,
-    /// <summary>Mods and their metadata.</summary>
+    /// <summary>Mods and their metadata</summary>
     Modpack,
-    /// <summary>Game files without user data or mods.</summary>
+    /// <summary>Game files without user data or mods</summary>
     Game
 }
 
-/// <summary>The destination format for an instance package.</summary>
+/// <summary>The destination format for an instance package</summary>
 public enum InstancePackageFormat
 {
-    /// <summary>Metadata without file contents.</summary>
+    /// <summary>Instance template without file contents.</summary>
     Json,
-    /// <summary>Metadata and selected file contents.</summary>
+    /// <summary>Metadata and selected file contents</summary>
     Zip
 }
 
-/// <summary>Portable description of the selected instance content.</summary>
+/// <summary>Portable description of the selected instance content</summary>
 public sealed class InstancePackageManifest
 {
-    /// <summary>The package schema version.</summary>
+    /// <summary>The package schema version</summary>
     public int SchemaVersion { get; set; } = 1;
-    /// <summary>The selected content category.</summary>
+    /// <summary>The selected content category</summary>
     public InstancePackageKind Kind { get; set; }
-    /// <summary>The source instance metadata.</summary>
+    /// <summary>The source instance metadata</summary>
     public InstanceMeta Instance { get; set; } = new();
-    /// <summary>The selected files and their sizes.</summary>
+    /// <summary>The selected files and their sizes</summary>
     public List<InstancePackageFile> Files { get; set; } = [];
-    /// <summary>The installed mod metadata when mods are included.</summary>
+    /// <summary>The installed mod metadata when mods are included</summary>
     public List<InstalledMod> Mods { get; set; } = [];
 }
 
-/// <summary>A file recorded in a package manifest.</summary>
+/// <summary>Instance details restored by a JSON template.</summary>
+public sealed class InstancePackageTemplate
+{
+    /// <summary>The JSON template schema version.</summary>
+    public int SchemaVersion { get; set; }
+    /// <summary>The user-facing instance details.</summary>
+    public InstancePackageTemplateDetails Instance { get; set; } = new();
+}
+
+/// <summary>The instance details needed to create an uninstalled instance.</summary>
+public sealed class InstancePackageTemplateDetails
+{
+    /// <summary>The instance display name.</summary>
+    public string Name { get; set; } = string.Empty;
+    /// <summary>The game branch.</summary>
+    public string Branch { get; set; } = string.Empty;
+    /// <summary>The numeric game build.</summary>
+    public int Version { get; set; }
+    /// <summary>The optional display name of the game version.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? VersionName { get; set; }
+    /// <summary>The optional user notes.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Notes { get; set; }
+}
+
+/// <summary>A file recorded in a package manifest</summary>
 public sealed class InstancePackageFile
 {
-    /// <summary>The path relative to the instance root.</summary>
+    /// <summary>The path relative to the instance root</summary>
     public string Path { get; set; } = string.Empty;
-    /// <summary>The file size in bytes.</summary>
+    /// <summary>The file size in bytes</summary>
     public long Size { get; set; }
 }
 
-/// <summary>Exports instance metadata or a portable archive and imports its metadata.</summary>
+/// <summary>Exports an instance template or portable archive and reads templates for import.</summary>
 public static class InstancePackageService
 {
     private const string ManifestName = "HyprismExport.json";
@@ -64,7 +90,7 @@ public static class InstancePackageService
         Converters = { new JsonStringEnumConverter() }
     };
 
-    /// <summary>Writes a JSON manifest or ZIP archive to the destination atomically.</summary>
+    /// <summary>Writes a JSON template or ZIP archive to the destination atomically.</summary>
     /// <remarks>Optional progress reports selected file bytes copied and reaches 100 after completion.</remarks>
     /// <returns>A task that completes when the package has been written.</returns>
     public static async Task ExportAsync(
@@ -82,28 +108,8 @@ public static class InstancePackageService
         if (!Enum.IsDefined(kind) || !Enum.IsDefined(format))
             throw new ArgumentOutOfRangeException(nameof(kind));
 
-        var files = Directory.EnumerateFiles(instancePath, "*", new EnumerationOptions
-            {
-                RecurseSubdirectories = true,
-                AttributesToSkip = FileAttributes.ReparsePoint
-            })
-            .Select(path => (Source: path, Relative: Path.GetRelativePath(instancePath, path)
-                .Replace(Path.DirectorySeparatorChar, '/')))
-            .Where(file => !file.Relative.Equals("Meta.json", StringComparison.OrdinalIgnoreCase))
-            .Where(file => Includes(kind, file.Relative))
-            .OrderBy(file => file.Relative, StringComparer.Ordinal)
-            .ToArray();
-        var manifest = new InstancePackageManifest
-        {
-            Kind = kind,
-            Instance = instance,
-            Files = files.Select(file => new InstancePackageFile
-            {
-                Path = file.Relative,
-                Size = new FileInfo(file.Source).Length
-            }).ToList(),
-            Mods = await ReadModsAsync(instancePath, kind, cancellationToken)
-        };
+        if (format == InstancePackageFormat.Json && kind == InstancePackageKind.Modpack)
+            throw new ArgumentException("Modpack exports require a ZIP archive", nameof(kind));
 
         var temporaryPath = destination + ".tmp-" + Guid.NewGuid().ToString("N");
         try
@@ -113,10 +119,43 @@ public static class InstancePackageService
             if (format == InstancePackageFormat.Json)
             {
                 await using var output = File.Create(temporaryPath);
-                await JsonSerializer.SerializeAsync(output, manifest, JsonOptions, cancellationToken);
+                await JsonSerializer.SerializeAsync(output, new InstancePackageTemplate
+                {
+                    SchemaVersion = 2,
+                    Instance = new InstancePackageTemplateDetails
+                    {
+                        Name = instance.Name,
+                        Branch = instance.Branch,
+                        Version = instance.Version,
+                        VersionName = instance.VersionName,
+                        Notes = kind == InstancePackageKind.Build ? instance.Notes : null
+                    }
+                }, JsonOptions, cancellationToken);
             }
             else
             {
+                var files = Directory.EnumerateFiles(instancePath, "*", new EnumerationOptions
+                    {
+                        RecurseSubdirectories = true,
+                        AttributesToSkip = FileAttributes.ReparsePoint
+                    })
+                    .Select(path => (Source: path, Relative: Path.GetRelativePath(instancePath, path)
+                        .Replace(Path.DirectorySeparatorChar, '/')))
+                    .Where(file => !file.Relative.Equals("Meta.json", StringComparison.OrdinalIgnoreCase))
+                    .Where(file => Includes(kind, file.Relative))
+                    .OrderBy(file => file.Relative, StringComparer.Ordinal)
+                    .ToArray();
+                var manifest = new InstancePackageManifest
+                {
+                    Kind = kind,
+                    Instance = instance,
+                    Files = files.Select(file => new InstancePackageFile
+                    {
+                        Path = file.Relative,
+                        Size = new FileInfo(file.Source).Length
+                    }).ToList(),
+                    Mods = await ReadModsAsync(instancePath, kind, cancellationToken)
+                };
                 await using var output = File.Create(temporaryPath);
                 using var archive = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true);
                 await WriteJsonEntryAsync(archive, ManifestName, manifest, cancellationToken);
@@ -174,19 +213,20 @@ public static class InstancePackageService
         }
     }
 
-    /// <summary>Reads and validates an exported JSON manifest.</summary>
-    /// <returns>The validated package manifest.</returns>
-    public static async Task<InstancePackageManifest> ReadJsonAsync(
+    /// <summary>Reads a compact JSON template or a legacy schema 1 JSON manifest.</summary>
+    /// <returns>The instance details to restore.</returns>
+    public static async Task<InstancePackageTemplate> ReadJsonAsync(
         string path,
         CancellationToken cancellationToken = default)
     {
         await using var input = File.OpenRead(path);
-        var manifest = await JsonSerializer.DeserializeAsync<InstancePackageManifest>(
+        var template = await JsonSerializer.DeserializeAsync<InstancePackageTemplate>(
             input, JsonOptions, cancellationToken);
-        if (manifest is not { SchemaVersion: 1, Instance: { Version: > 0 } } ||
-            !Enum.IsDefined(manifest.Kind))
+        if (template is not { SchemaVersion: 1 or 2, Instance: { Version: > 0 } details } ||
+            string.IsNullOrWhiteSpace(details.Name) ||
+            string.IsNullOrWhiteSpace(details.Branch))
             throw new InvalidDataException("Unsupported or incomplete Hyprism instance package");
-        return manifest;
+        return template;
     }
 
     private static bool Includes(InstancePackageKind kind, string path) => kind switch

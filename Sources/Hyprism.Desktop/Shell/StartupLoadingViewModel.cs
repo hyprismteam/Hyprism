@@ -10,7 +10,7 @@ namespace Hyprism.Desktop.Shell;
 /// </summary>
 public sealed class StartupLoadingViewModel : IStartupLoadingState
 {
-    /// <summary>Creates the loading-screen state from the current localization.</summary>
+    /// <summary>Creates the loading-screen state from the current localization</summary>
     public StartupLoadingViewModel(StringLocalizer localizer)
     {
         ArgumentNullException.ThrowIfNull(localizer);

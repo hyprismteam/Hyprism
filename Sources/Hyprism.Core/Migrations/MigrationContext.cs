@@ -10,12 +10,12 @@ namespace Hyprism.Core.Migrations;
 /// </summary>
 public sealed class MigrationContext
 {
-    /// <summary>Creates a migration context for one application data directory.</summary>
+    /// <summary>Creates a migration context for one application data directory</summary>
     public MigrationContext(AppPathConfiguration appPath)
     {
         AppPath = appPath ?? throw new ArgumentNullException(nameof(appPath));
     }
 
-    /// <summary>Application data root owned by the launcher.</summary>
+    /// <summary>Application data root owned by the launcher</summary>
     public AppPathConfiguration AppPath { get; }
 }

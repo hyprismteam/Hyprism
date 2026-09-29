@@ -35,7 +35,7 @@ public sealed class WizardHost
     private Action? _closeCompletion;
     private TopLevel? _topLevel;
 
-    /// <summary>Whether step navigation restarts the reveal animation.</summary>
+    /// <summary>Whether step navigation restarts the reveal animation</summary>
     public bool ReplayRevealOnStepChange { get; set; } = true;
 
     public WizardHost(

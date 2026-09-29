@@ -22,7 +22,7 @@ public enum OnboardingStep
     Finishing
 }
 
-/// <summary>Coordinates first-run setup using the existing settings and profile flows.</summary>
+/// <summary>Coordinates first-run setup using the existing settings and profile flows</summary>
 public sealed partial class OnboardingViewModel : ObservableObject, IDisposable
 {
     private readonly IDesktopSettingsStore _settings;

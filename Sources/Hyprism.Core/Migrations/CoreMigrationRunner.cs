@@ -28,7 +28,7 @@ public sealed class CoreMigrationRunner
     private readonly IServiceProvider _services;
     private readonly MigrationContext _context;
 
-    /// <summary>Creates the Core migration orchestrator.</summary>
+    /// <summary>Creates the Core migration orchestrator</summary>
     public CoreMigrationRunner(
         AppPathConfiguration appPath,
         JsonConfigStore configStore,

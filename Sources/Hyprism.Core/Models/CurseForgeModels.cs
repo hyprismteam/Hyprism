@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Hyprism.Core.Models;
 
-/// <summary>Paged search response from the CurseForge Search API.</summary>
+/// <summary>Paged search response from the CurseForge Search API</summary>
 public class CurseForgeSearchResponse
 {
     /// <summary>Mods returned for the current search page</summary>
@@ -14,14 +14,14 @@ public class CurseForgeSearchResponse
     public CurseForgePagination? Pagination { get; set; }
 }
 
-/// <summary>Single-mod response from the CurseForge Mod API.</summary>
+/// <summary>Single-mod response from the CurseForge Mod API</summary>
 public class CurseForgeModResponse
 {
     /// <summary>Mod returned by the API</summary>
     public CurseForgeMod? Data { get; set; }
 }
 
-/// <summary>Pagination metadata included in CurseForge list responses.</summary>
+/// <summary>Pagination metadata included in CurseForge list responses</summary>
 public class CurseForgePagination
 {
     /// <summary>Zero-based page index</summary>
@@ -34,7 +34,7 @@ public class CurseForgePagination
     public int TotalCount { get; set; }
 }
 
-/// <summary>Represents a single mod entry from the CurseForge API.</summary>
+/// <summary>Represents a single mod entry from the CurseForge API</summary>
 public class CurseForgeMod
 {
     /// <summary>CurseForge mod identifier</summary>
@@ -63,7 +63,7 @@ public class CurseForgeMod
     public List<CurseForgeScreenshot>? Screenshots { get; set; }
 }
 
-/// <summary>A screenshot attached to a CurseForge mod.</summary>
+/// <summary>A screenshot attached to a CurseForge mod</summary>
 public class CurseForgeScreenshot
 {
     /// <summary>Screenshot identifier</summary>
@@ -76,7 +76,7 @@ public class CurseForgeScreenshot
     public string? Url { get; set; }
 }
 
-/// <summary>Logo/thumbnail image for a CurseForge mod.</summary>
+/// <summary>Logo/thumbnail image for a CurseForge mod</summary>
 public class CurseForgeLogo
 {
     /// <summary>Logo identifier</summary>
@@ -87,7 +87,7 @@ public class CurseForgeLogo
     public string? Url { get; set; }
 }
 
-/// <summary>A mod category from CurseForge.</summary>
+/// <summary>A mod category from CurseForge</summary>
 public class CurseForgeCategory
 {
     /// <summary>Category identifier</summary>
@@ -102,7 +102,7 @@ public class CurseForgeCategory
     public bool? IsClass { get; set; }
 }
 
-/// <summary>Author entry for a CurseForge mod.</summary>
+/// <summary>Author entry for a CurseForge mod</summary>
 public class CurseForgeAuthor
 {
     /// <summary>Author identifier</summary>
@@ -115,7 +115,7 @@ public class CurseForgeAuthor
     public string? AvatarUrl { get; set; }
 }
 
-/// <summary>A specific file/release attached to a CurseForge mod.</summary>
+/// <summary>A specific file/release attached to a CurseForge mod</summary>
 public class CurseForgeFile
 {
     /// <summary>File identifier</summary>
@@ -142,7 +142,7 @@ public class CurseForgeFile
     public List<CurseForgeFileDependency>? Dependencies { get; set; }
 }
 
-/// <summary>A dependency or compatibility relation declared by a CurseForge file.</summary>
+/// <summary>A dependency or compatibility relation declared by a CurseForge file</summary>
 public class CurseForgeFileDependency
 {
     /// <summary>Related CurseForge project identifier</summary>
@@ -153,14 +153,14 @@ public class CurseForgeFileDependency
     public CurseForgeDependencyRelationType RelationType { get; set; }
 }
 
-/// <summary>Categories list response from the CurseForge API.</summary>
+/// <summary>Categories list response from the CurseForge API</summary>
 public class CurseForgeCategoriesResponse
 {
     /// <summary>Categories returned by the API</summary>
     public List<CurseForgeCategory>? Data { get; set; }
 }
 
-/// <summary>Paged files list response from the CurseForge Files API.</summary>
+/// <summary>Paged files list response from the CurseForge Files API</summary>
 public class CurseForgeFilesResponse
 {
     /// <summary>Files returned for the current page</summary>
@@ -169,14 +169,14 @@ public class CurseForgeFilesResponse
     public CurseForgePagination? Pagination { get; set; }
 }
 
-/// <summary>Single-file response from the CurseForge Files API.</summary>
+/// <summary>Single-file response from the CurseForge Files API</summary>
 public class CurseForgeFileResponse
 {
     /// <summary>File returned by the API</summary>
     public CurseForgeFile? Data { get; set; }
 }
 
-/// <summary>Download URL response from the CurseForge Files API.</summary>
+/// <summary>Download URL response from the CurseForge Files API</summary>
 public class CurseForgeDownloadUrlResponse
 {
     /// <summary>Resolved direct download URL</summary>

@@ -1,11 +1,11 @@
 ---
 title: Instance packages
-description: JSON manifests and ZIP archives for instance transfer
+description: JSON templates and ZIP archives for instance transfer
 ---
 
 # Instance packages
 
-Hyprism exports an instance as a metadata-only JSON manifest or a ZIP archive containing the selected files. The instance wizard imports either format. See [Instances](/user-guide/instances-profiles-mods) for the user workflow.
+Hyprism exports a build or game definition as a JSON template or packages selected instance files in a ZIP archive. The instance wizard imports either format. See [Instances](/user-guide/instances-profiles-mods) for the user workflow.
 
 ## Selection and layout
 
@@ -15,13 +15,28 @@ Hyprism exports an instance as a metadata-only JSON manifest or a ZIP archive co
 | Modpack | Files under `UserData/Mods/`, including its mod manifest. |
 | Game | Instance files outside `UserData/` and `Client/mods/`. |
 
-Every JSON export records `SchemaVersion`, `Kind`, `Instance`, `Files`, and `Mods`. `SchemaVersion` is `1`. `Kind` is `Build`, `Modpack`, or `Game`. `Instance` contains the source `InstanceMeta`; `Files` lists paths relative to the instance root and sizes in bytes; `Mods` contains installed mod metadata when mods are included. JSON contains no file contents.
+A build or game can be exported as a JSON template with `SchemaVersion` set to `2` and an `Instance` object containing its name, branch, numeric build, and optional version name. Build templates also contain notes; game templates omit them. Templates contain no file paths, mod metadata, or file contents. Modpack export requires ZIP. Schema `1` JSON manifests remain importable; their file and mod lists are ignored during import.
 
-Every ZIP export contains `HyprismExport.json` with the same manifest, `Meta.json` for instance import, and the selected files at their instance-relative paths. Symbolic links are excluded. Export writes to a temporary file beside the destination and replaces the destination only after completion. Cancellation removes the temporary file.
+The template has this shape. `VersionName` and `Notes` are omitted when their values are not set.
+
+```json
+{
+  "SchemaVersion": 2,
+  "Instance": {
+    "Name": "My instance",
+    "Branch": "release",
+    "Version": 72,
+    "VersionName": "Pre-release",
+    "Notes": "My settings"
+  }
+}
+```
+
+Every ZIP export contains a schema `1` `HyprismExport.json` manifest with `Kind`, source `InstanceMeta`, selected relative file paths and sizes, and installed mod metadata when mods are included. It also contains `Meta.json` for instance import and the selected files at their instance-relative paths. Symbolic links are excluded. Export writes to a temporary file beside the destination and replaces the destination only after completion. Cancellation removes the temporary file.
 
 `InstancePackageService.ExportAsync` accepts optional `IProgress<int>` progress reporting. ZIP export reports the percentage of selected source file bytes copied, capped at 99 until the archive is complete and the destination is replaced. JSON export reports 0 before writing and 100 after replacement. Progress values do not represent compressed archive size.
 
-JSON import creates a new uninstalled instance with the source name, branch, version, version name, and notes. It does not download or restore listed files. ZIP export assigns a new instance ID in `Meta.json`, while the manifest retains the source ID. ZIP import extracts the archive, assigns another ID if one already exists, and registers the imported instance.
+JSON import requires a configured download source and creates a new uninstalled instance with the source name, branch, version, version name, and notes. It does not download or restore files. ZIP export assigns a new instance ID in `Meta.json`, while the manifest retains the source ID. ZIP import extracts the archive, assigns another ID if one already exists, and registers the imported instance.
 
 Cancellation during ZIP extraction removes the temporary extraction directory before any instance files are moved into place.
 

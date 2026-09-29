@@ -56,6 +56,7 @@ public sealed partial class InstancesViewModel
     public bool IsWizardExportFormat => InstanceWizardStage == InstanceWizardStage.ExportFormat;
     public bool IsJsonExportFormatSelected => ExportFormatIndex == 0;
     public bool IsZipExportFormatSelected => ExportFormatIndex == 1;
+    public bool IsJsonExportAvailable => _selectedExportKind != InstancePackageKind.Modpack;
     public bool HasInstanceExportError => !string.IsNullOrWhiteSpace(InstanceExportError);
     public bool IsManagedInstanceExporting => _managedInstance is not null &&
         string.Equals(_managedInstance.Id, _exportingInstanceId, StringComparison.Ordinal);
@@ -70,10 +71,14 @@ public sealed partial class InstancesViewModel
     public string ImportHint => _localizer["instances.package.importHint"];
     public string ExportTitle => _localizer["instances.package.exportTitle"];
     public string ExportFormatTitle => _localizer["instances.package.formatTitle"];
-    public string ExportFormatHint => _localizer["instances.package.formatHint"];
+    public string ExportFormatHint => _localizer[IsJsonExportAvailable
+        ? "instances.package.formatHint"
+        : "instances.package.zipOnlyHint"];
     public string ExportLabel => _localizer["common.export"];
     public string ExportingLabel => _localizer["common.exporting"];
-    public string ExportJsonHint => _localizer["instances.package.jsonHint"];
+    public string ExportJsonHint => _localizer[_selectedExportKind == InstancePackageKind.Game
+        ? "instances.package.gameJsonHint"
+        : "instances.package.jsonHint"];
     public string ExportZipHint => _localizer["instances.package.zipHint"];
     public string ImportLabel => _localizer["common.import"];
     public string DownloadChoiceLabel => _localizer["instances.package.download"];
@@ -141,13 +146,18 @@ public sealed partial class InstancesViewModel
             return;
 
         _selectedExportKind = selected;
+        ExportFormatIndex = selected == InstancePackageKind.Modpack ? 1 : 0;
+        OnPropertyChanged(nameof(IsJsonExportAvailable));
+        OnPropertyChanged(nameof(ExportFormatHint));
+        OnPropertyChanged(nameof(ExportJsonHint));
         InstanceWizardStage = InstanceWizardStage.ExportFormat;
     }
 
     [RelayCommand]
     private void SelectExportFormat(string? format)
     {
-        if (int.TryParse(format, out var index) && index is 0 or 1)
+        if (int.TryParse(format, out var index) &&
+            (index == 1 || (index == 0 && IsJsonExportAvailable)))
             ExportFormatIndex = index;
     }
 
@@ -160,17 +170,21 @@ public sealed partial class InstancesViewModel
             !CanExportManagedInstance)
             return;
 
-        var format = ExportFormatIndex == 1 ? InstancePackageFormat.Zip : InstancePackageFormat.Json;
+        var format = IsJsonExportAvailable && ExportFormatIndex == 0
+            ? InstancePackageFormat.Json
+            : InstancePackageFormat.Zip;
         var extension = format == InstancePackageFormat.Zip ? "zip" : "json";
         var name = string.Concat(instance.Name.Select(character =>
             Path.GetInvalidFileNameChars().Contains(character) ? '_' : character));
+        var kindName = _selectedExportKind.ToString().ToLowerInvariant();
+        var suffix = format == InstancePackageFormat.Json ? $"{kindName}-template" : kindName;
         string? destination;
         IsChoosingInstanceExportFile = true;
         try
         {
             destination = await _filePicker.SaveFileAsync(
-                $"{name}-{_selectedExportKind.ToString().ToLowerInvariant()}.{extension}",
-                format == InstancePackageFormat.Zip ? "ZIP archive|*.zip" : "JSON manifest|*.json");
+                $"{name}-{suffix}.{extension}",
+                format == InstancePackageFormat.Zip ? "ZIP archive|*.zip" : "Instance template|*.json");
         }
         finally
         {
@@ -265,6 +279,12 @@ public sealed partial class InstancesViewModel
             else if (Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase))
             {
                 var package = await InstancePackageService.ReadJsonAsync(path, cancellation.Token);
+                if (_versionCatalog?.HasDownloadSources() != true)
+                {
+                    InstanceCreationError = _localizer["instances.package.jsonRequiresSource"];
+                    return;
+                }
+
                 var source = package.Instance;
                 var created = _instances.CreateInstanceMeta(
                     source.Branch, source.Version, source.Name, source.VersionName);
@@ -303,14 +323,14 @@ public sealed partial class InstancesViewModel
         }
     }
 
-    /// <summary>Allows the active import button to cancel after the pointer leaves it.</summary>
+    /// <summary>Allows the active import button to cancel after the pointer leaves it</summary>
     public void ArmInstanceImportCancellation()
     {
         if (IsImportingInstancePackage)
             IsInstanceImportCancellationArmed = true;
     }
 
-    /// <summary>Cancels an import that is waiting for file selection or reading a package.</summary>
+    /// <summary>Cancels an import that is waiting for file selection or reading a package</summary>
     /// <returns>Whether an import was active.</returns>
     public bool TryCancelInstanceImport()
     {

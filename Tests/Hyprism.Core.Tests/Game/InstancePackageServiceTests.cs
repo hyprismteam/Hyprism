@@ -80,34 +80,37 @@ public sealed class InstancePackageServiceTests : IDisposable
     [Fact]
     public async Task JsonRecordsMetadataWithoutFileContents()
     {
-        var destination = Path.Combine(_root, "modpack.json");
+        var destination = Path.Combine(_root, "template.json");
 
         await InstancePackageService.ExportAsync(
-            Path.Combine(_root, "source"), _meta, InstancePackageKind.Modpack,
+            Path.Combine(_root, "source"), _meta, InstancePackageKind.Build,
             InstancePackageFormat.Json, destination);
         var package = await InstancePackageService.ReadJsonAsync(destination);
+        var json = await File.ReadAllTextAsync(destination);
 
+        Assert.Equal(2, package.SchemaVersion);
         Assert.Equal("A saved build", package.Instance.Notes);
-        Assert.Equal(InstancePackageKind.Modpack, package.Kind);
-        Assert.Equal(2, package.Files.Count);
-        Assert.All(package.Files, file => Assert.StartsWith("UserData/Mods/", file.Path));
+        Assert.Equal("Example", package.Instance.Name);
+        Assert.DoesNotContain("\"Files\"", json);
+        Assert.DoesNotContain("\"Mods\"", json);
+        Assert.DoesNotContain("\"Id\"", json);
         Assert.False(File.Exists(destination + ".tmp"));
     }
 
     [Fact]
-    public async Task LegacyLowercaseModManifestIsIncludedInMetadata()
+    public async Task LegacySchemaOneJsonRemainsImportable()
     {
-        File.Delete(Path.Combine(_root, "source", "UserData", "Mods", "Manifest.json"));
-        Write("UserData/Mods/manifest.json", "[{\"Id\":\"sample\",\"Name\":\"Sample\"}]");
         var destination = Path.Combine(_root, "legacy.json");
-
-        await InstancePackageService.ExportAsync(
-            Path.Combine(_root, "source"), _meta, InstancePackageKind.Modpack,
-            InstancePackageFormat.Json, destination);
+        await File.WriteAllTextAsync(destination,
+            """
+            {"SchemaVersion":1,"Kind":"Modpack","Instance":{"Id":"old-id","Name":"Example","Branch":"release","Version":42,"Notes":"A saved build"},"Files":[{"Path":"UserData/Mods/first.jar","Size":3}],"Mods":[{"Name":"Sample"}]}
+            """);
 
         var package = await InstancePackageService.ReadJsonAsync(destination);
-        Assert.Equal("Sample", Assert.Single(package.Mods).Name);
-        Assert.Contains(package.Files, file => file.Path == "UserData/Mods/manifest.json");
+        Assert.Equal(1, package.SchemaVersion);
+        Assert.Equal("Example", package.Instance.Name);
+        Assert.Equal(42, package.Instance.Version);
+        Assert.Equal("A saved build", package.Instance.Notes);
     }
 
     [Fact]

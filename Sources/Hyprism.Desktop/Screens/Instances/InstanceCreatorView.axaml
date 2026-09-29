@@ -187,7 +187,8 @@ SPDX-License-Identifier: GPL-3.0-only
                          HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
               <Border Classes="formGroup" Margin="0,16,0,0">
                 <StackPanel>
-                  <Border Classes="formRow instanceExportFormatRow">
+                  <Border Classes="formRow instanceExportFormatRow"
+                          IsVisible="{Binding IsJsonExportAvailable}">
                     <RadioButton x:Name="InstanceExportJsonFormatOption"
                                  Classes="uiSelectionRadio instanceExportFormatOption"
                                  AutomationProperties.Name="{Binding ExportJsonLabel}"

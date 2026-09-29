@@ -15,13 +15,13 @@ public sealed class MigrationStateStore
     private readonly string _path;
     private readonly Lock _lock = new();
 
-    /// <summary>Creates a state store below the application data root.</summary>
+    /// <summary>Creates a state store below the application data root</summary>
     public MigrationStateStore(AppPathConfiguration appPath)
     {
         _path = Path.Combine(appPath.AppDir, FileName);
     }
 
-    /// <summary>Returns whether a migration completed successfully.</summary>
+    /// <summary>Returns whether a migration completed successfully</summary>
     /// <returns>true when the migration is marked as completed; otherwise false</returns>
     public bool IsCompleted(string migrationId)
     {
@@ -29,7 +29,7 @@ public sealed class MigrationStateStore
             return Read().Completed.ContainsKey(migrationId);
     }
 
-    /// <summary>Records completion only after the migration has fully returned.</summary>
+    /// <summary>Records completion only after the migration has fully returned</summary>
     public void MarkCompleted(string migrationId)
     {
         lock (_lock)

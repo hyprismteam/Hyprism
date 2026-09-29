@@ -3094,16 +3094,22 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Выберите формат экспорта</value>
   </data>
   <data name="instances.package.formatHint" xml:space="preserve">
-    <value>Выберите только метаданные или включите выбранные файлы</value>
+    <value>Выберите шаблон экземпляра или архив с выбранными файлами</value>
+  </data>
+  <data name="instances.package.zipOnlyHint" xml:space="preserve">
+    <value>Экспорт модпака содержит файлы модов и использует ZIP</value>
   </data>
   <data name="instances.package.format" xml:space="preserve">
     <value>Формат</value>
   </data>
   <data name="instances.package.json" xml:space="preserve">
-    <value>Метаданные JSON</value>
+    <value>Шаблон экземпляра (JSON)</value>
   </data>
   <data name="instances.package.jsonHint" xml:space="preserve">
-    <value>Сохраняет настройки и сведения о файлах в JSON-манифесте, не включая сами файлы</value>
+    <value>Сохраняет имя, ветку, сборку и заметки без файлов игры и модов</value>
+  </data>
+  <data name="instances.package.gameJsonHint" xml:space="preserve">
+    <value>Сохраняет имя, ветку и сборку игры без файлов и пользовательских данных</value>
   </data>
   <data name="instances.package.zip" xml:space="preserve">
     <value>ZIP-архив</value>
@@ -3115,7 +3121,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Выбрать файл</value>
   </data>
   <data name="instances.package.metadataOnly" xml:space="preserve">
-    <value>Импорт JSON создаёт только описание экземпляра; для файлов игры и модов нужен ZIP-архив</value>
+    <value>JSON создаёт незагруженный экземпляр. Игру можно загрузить позже из настроенного источника; для модов нужен ZIP</value>
+  </data>
+  <data name="instances.package.jsonRequiresSource" xml:space="preserve">
+    <value>JSON не содержит файлов игры. Добавьте зеркало в разделе «Настройки → Загрузки» или войдите в аккаунт Hytale с лицензией, затем повторите импорт</value>
   </data>
   <data name="instances.package.missingInstance" xml:space="preserve">
     <value>Файлы экземпляра больше недоступны</value>

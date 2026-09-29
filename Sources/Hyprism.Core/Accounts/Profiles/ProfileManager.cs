@@ -217,7 +217,7 @@ public class ProfileManager : IProfileManager
         catch { }
     }
 
-    /// <summary>Gets a field value from the currently selected profile, or null if none is active.</summary>
+    /// <summary>Gets a field value from the currently selected profile, or null if none is active</summary>
     private string? GetActiveProfileField(Func<Profile, string?> selector)
     {
         var id = _configStore.Configuration.SelectedProfileId;
@@ -225,7 +225,7 @@ public class ProfileManager : IProfileManager
         return selector(ReadProfilesFromCache().FirstOrDefault(p => p.Id == id) ?? new Profile());
     }
 
-    /// <summary>Mutates the currently selected profile in the cache.</summary>
+    /// <summary>Mutates the currently selected profile in the cache</summary>
     private bool UpdateActiveProfileField(Action<Profile> mutate)
     {
         var id = _configStore.Configuration.SelectedProfileId;

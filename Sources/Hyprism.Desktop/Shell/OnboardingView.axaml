@@ -88,25 +88,27 @@ SPDX-License-Identifier: GPL-3.0-only
             <Border Classes="formGroup" Margin="0,16,0,0">
               <StackPanel>
                 <Button x:Name="ChooseOfficialButton" Classes="formNavigationRow" Click="OnOfficialClicked">
-                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                    <Border Classes="wizardChoiceIcon"><Path Data="{StaticResource WorldsIcon}" /></Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                      <TextBlock Text="{Binding OfficialLabel}" Classes="formLabel" />
-                      <TextBlock Text="{Binding OfficialHint}" Classes="formHint" />
+                  <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                    <Image Classes="profileChoiceIcon"
+                           Source="avares://Hyprism.Desktop/Assets/Fluent/globe.png"
+                           Stretch="Uniform" />
+                    <StackPanel Grid.Column="1" Spacing="3">
+                      <TextBlock Text="{Binding OfficialLabel}" Classes="formLabel profileChoiceTitle" />
+                      <TextBlock Text="{Binding OfficialHint}" Classes="formHint profileChoiceDescription" />
                     </StackPanel>
-                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center" Stretch="Uniform"
-                          Fill="{DynamicResource TextSecondaryBrush}" Data="{StaticResource NextIcon}" />
+                    <Path Grid.Column="2" Classes="profileChoiceChevron" Data="{StaticResource NextIcon}" />
                   </Grid>
                 </Button>
                 <Button x:Name="ChooseOfflineButton" Classes="formNavigationRow last" Click="OnOfflineClicked">
-                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                    <Border Classes="wizardChoiceIcon"><Path Data="{StaticResource ProfilesIcon}" /></Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                      <TextBlock Text="{Binding OfflineLabel}" Classes="formLabel" />
-                      <TextBlock Text="{Binding OfflineHint}" Classes="formHint" />
+                  <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                    <Image Classes="profileChoiceIcon"
+                           Source="avares://Hyprism.Desktop/Assets/Fluent/profile.png"
+                           Stretch="Uniform" />
+                    <StackPanel Grid.Column="1" Spacing="3">
+                      <TextBlock Text="{Binding OfflineLabel}" Classes="formLabel profileChoiceTitle" />
+                      <TextBlock Text="{Binding OfflineHint}" Classes="formHint profileChoiceDescription" />
                     </StackPanel>
-                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center" Stretch="Uniform"
-                          Fill="{DynamicResource TextSecondaryBrush}" Data="{StaticResource NextIcon}" />
+                    <Path Grid.Column="2" Classes="profileChoiceChevron" Data="{StaticResource NextIcon}" />
                   </Grid>
                 </Button>
               </StackPanel>

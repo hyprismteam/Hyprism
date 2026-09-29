@@ -7,7 +7,7 @@ using Hyprism.Core.Models;
 
 namespace Hyprism.Core.Game.Mods;
 
-/// <summary>Reads dependency metadata from Hytale mod archives.</summary>
+/// <summary>Reads dependency metadata from Hytale mod archives</summary>
 internal static class HytaleModManifestReader
 {
     private const long MaxManifestBytes = 1024 * 1024;
@@ -17,7 +17,7 @@ internal static class HytaleModManifestReader
         PropertyNameCaseInsensitive = true
     };
 
-    /// <summary>Reads the root <c>manifest.json</c> entry from a JAR or ZIP archive.</summary>
+    /// <summary>Reads the root <c>manifest.json</c> entry from a JAR or ZIP archive</summary>
     /// <returns>Parsed manifest metadata, or <see langword="null"/> when the archive has no readable manifest</returns>
     public static HytaleModManifestInfo? Read(string archivePath)
     {
@@ -96,7 +96,7 @@ internal static class HytaleModManifestReader
     }
 }
 
-/// <summary>Normalized manifest metadata returned by <see cref="HytaleModManifestReader"/>.</summary>
+/// <summary>Normalized manifest metadata returned by <see cref="HytaleModManifestReader"/></summary>
 internal sealed class HytaleModManifestInfo
 {
     public string ManifestId { get; init; } = "";
