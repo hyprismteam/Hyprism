@@ -3256,7 +3256,7 @@ public sealed class MainWindowRenderTests
             .OfType<Image>()
             .Where(image => image.Classes.Contains("instanceMenuIcon"))
             .ToList();
-        Assert.Equal(4, instanceMenuIcons.Count);
+        Assert.Equal(instanceMenuRows.Count, instanceMenuIcons.Count);
         Assert.All(instanceMenuIcons, icon =>
         {
             Assert.Equal(28, icon.Width);
