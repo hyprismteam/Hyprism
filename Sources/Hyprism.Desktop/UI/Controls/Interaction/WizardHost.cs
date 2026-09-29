@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Labs.Lottie;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -240,9 +241,16 @@ public sealed class WizardHost
     {
         if (isOpen)
         {
+            if (!_isClosing && !_isStepTransitioning && _wizard.IsVisible &&
+                _wizard.IsHitTestVisible && _wizard.Opacity >= 0.99 &&
+                _wizard.RenderTransform is TranslateTransform { X: >= -0.5 and <= 0.5 })
+                return;
+
             _isClosing = false;
             _closeCompletion = null;
-            ShowWizardImmediately();
+            NormalizeSteps();
+            SelectActiveStepAnimation(preserveCurrentFrame: true);
+            _transition.ShowWizardImmediately();
         }
         else
         {
@@ -380,14 +388,15 @@ public sealed class WizardHost
         }
     }
 
-    private void SelectActiveStepAnimation()
+    private void SelectActiveStepAnimation(bool preserveCurrentFrame = false)
     {
         if (_revealIcon is null)
             return;
 
         var activeStep = _steps.FirstOrDefault(step => step.IsVisible);
         if (activeStep is not null &&
-            _stepAnimationPaths.TryGetValue(activeStep, out var animationPath))
+            _stepAnimationPaths.TryGetValue(activeStep, out var animationPath) &&
+            (!preserveCurrentFrame || _revealIcon.AnimationPath != animationPath))
         {
             _revealIcon.ShowInitialFrame(animationPath);
         }

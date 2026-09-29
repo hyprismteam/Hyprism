@@ -54,22 +54,34 @@ SPDX-License-Identifier: GPL-3.0-only
                          FontSize="26" FontWeight="Bold" TextAlignment="Center" />
               <TextBlock Text="{Binding ChoiceHint}" Classes="muted" MaxWidth="460"
                          HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
-              <Border Classes="formGroup" Margin="0,16,0,0">
-              <StackPanel>
-                <Button x:Name="InstanceDownloadChoiceButton" Classes="formNavigationRow" IsEnabled="{Binding HasDownloadSources}"
-                        Click="OnChooseInstanceDownloadClicked">
-                  <StackPanel Spacing="3">
-                    <TextBlock Text="{Binding DownloadChoiceLabel}" Classes="formLabel" />
-                    <TextBlock Text="{Binding DownloadChoiceHint}" Classes="formHint" />
-                  </StackPanel>
-                </Button>
-                <Button x:Name="InstanceImportChoiceButton" Classes="formNavigationRow last" Click="OnChooseInstanceImportClicked">
-                  <StackPanel Spacing="3">
-                    <TextBlock Text="{Binding ImportLabel}" Classes="formLabel" />
-                    <TextBlock Text="{Binding ImportChoiceHint}" Classes="formHint" />
-                  </StackPanel>
-                </Button>
-              </StackPanel>
+              <Border Classes="instanceMenuGroup" Margin="0,16,0,0">
+                <StackPanel>
+                  <Button x:Name="InstanceDownloadChoiceButton" Classes="formNavigationRow" IsEnabled="{Binding HasDownloadSources}"
+                          Click="OnChooseInstanceDownloadClicked">
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="creationChoiceIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/cloud-download.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding DownloadChoiceLabel}" Classes="formLabel instanceMenuTitle" />
+                        <TextBlock Text="{Binding DownloadChoiceHint}" Classes="formHint instanceMenuDescription" />
+                      </StackPanel>
+                      <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                    </Grid>
+                  </Button>
+                  <Button x:Name="InstanceImportChoiceButton" Classes="formNavigationRow last" Click="OnChooseInstanceImportClicked">
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="creationChoiceIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/file-add.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding ImportLabel}" Classes="formLabel instanceMenuTitle" />
+                        <TextBlock Text="{Binding ImportChoiceHint}" Classes="formHint instanceMenuDescription" />
+                      </StackPanel>
+                      <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                    </Grid>
+                  </Button>
+                </StackPanel>
               </Border>
               <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
@@ -116,59 +128,49 @@ SPDX-License-Identifier: GPL-3.0-only
                          FontSize="26" FontWeight="Bold" TextAlignment="Center" />
               <TextBlock Text="{Binding ExportHint}" Classes="muted" MaxWidth="460"
                          HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
-              <Border Classes="formGroup" Margin="0,16,0,0">
-              <StackPanel>
-                <Button x:Name="InstanceExportBuildButton" Classes="formNavigationRow" Click="OnSelectExportKindClicked" CommandParameter="Build">
-                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                    <Border Classes="wizardChoiceIcon"
-                            HorizontalAlignment="Center" VerticalAlignment="Center">
-                      <Image Classes="exportChoiceIcon"
-                             Source="avares://Hyprism.Desktop/Assets/Fluent/cube.png" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                      <TextBlock Text="{Binding ExportBuildLabel}" Classes="formLabel" />
-                      <TextBlock Text="{Binding ExportBuildHint}" Classes="formHint" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
-                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
-                          Data="{StaticResource NextIcon}" />
-                  </Grid>
-                </Button>
-                <Button x:Name="InstanceExportModpackButton" Classes="formNavigationRow"
-                        IsVisible="{Binding HasExportableMods}"
-                        Click="OnSelectExportKindClicked" CommandParameter="Modpack">
-                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                    <Border Classes="wizardChoiceIcon"
-                            HorizontalAlignment="Center" VerticalAlignment="Center">
-                      <Image Classes="exportChoiceIcon toolboxIcon"
-                             Source="avares://Hyprism.Desktop/Assets/Fluent/toolbox.png" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                      <TextBlock Text="{Binding ExportModpackLabel}" Classes="formLabel" />
-                      <TextBlock Text="{Binding ExportModpackHint}" Classes="formHint" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
-                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
-                          Data="{StaticResource NextIcon}" />
-                  </Grid>
-                </Button>
-                <Button Classes="formNavigationRow last" Click="OnSelectExportKindClicked" CommandParameter="Game">
-                  <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="14">
-                    <Border Classes="wizardChoiceIcon"
-                            HorizontalAlignment="Center" VerticalAlignment="Center">
-                      <Image Classes="exportChoiceIcon rubikIcon"
-                             Source="avares://Hyprism.Desktop/Assets/Fluent/rubik.png" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                      <TextBlock Text="{Binding ExportGameLabel}" Classes="formLabel" />
-                      <TextBlock Text="{Binding ExportGameHint}" Classes="formHint" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <Path Grid.Column="2" Width="15" Height="15" VerticalAlignment="Center"
-                          Stretch="Uniform" Fill="{DynamicResource TextSecondaryBrush}"
-                          Data="{StaticResource NextIcon}" />
-                  </Grid>
-                </Button>
-              </StackPanel>
+              <Border Classes="instanceMenuGroup" Margin="0,16,0,0">
+                <StackPanel>
+                  <Button x:Name="InstanceExportBuildButton" Classes="formNavigationRow"
+                          Click="OnSelectExportKindClicked" CommandParameter="Build">
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="exportKindIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/cube.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding ExportBuildLabel}" Classes="formLabel instanceMenuTitle" />
+                        <TextBlock Text="{Binding ExportBuildHint}" Classes="formHint instanceMenuDescription" />
+                      </StackPanel>
+                      <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                    </Grid>
+                  </Button>
+                  <Button x:Name="InstanceExportModpackButton" Classes="formNavigationRow"
+                          IsVisible="{Binding HasExportableMods}"
+                          Click="OnSelectExportKindClicked" CommandParameter="Modpack">
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="exportKindIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/toolbox.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding ExportModpackLabel}" Classes="formLabel instanceMenuTitle" />
+                        <TextBlock Text="{Binding ExportModpackHint}" Classes="formHint instanceMenuDescription" />
+                      </StackPanel>
+                      <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                    </Grid>
+                  </Button>
+                  <Button Classes="formNavigationRow last"
+                          Click="OnSelectExportKindClicked" CommandParameter="Game">
+                    <Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="14">
+                      <Image Classes="exportKindIcon"
+                             Source="avares://Hyprism.Desktop/Assets/Fluent/rubik.png"
+                             Stretch="Uniform" />
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <TextBlock Text="{Binding ExportGameLabel}" Classes="formLabel instanceMenuTitle" />
+                        <TextBlock Text="{Binding ExportGameHint}" Classes="formHint instanceMenuDescription" />
+                      </StackPanel>
+                      <Path Grid.Column="2" Classes="instanceMenuChevron" Data="{StaticResource NextIcon}" />
+                    </Grid>
+                  </Button>
+                </StackPanel>
               </Border>
               <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Classes="wizardAction" Click="OnBackInstanceWizardClicked">
