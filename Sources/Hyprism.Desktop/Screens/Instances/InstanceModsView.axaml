@@ -259,7 +259,7 @@ SPDX-License-Identifier: GPL-3.0-only
                     RowSpacing="10">
                 <Grid x:Name="ModCatalogBrowseContent"
                       Grid.RowSpan="2"
-                      RowDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,*"
                       RowSpacing="10">
                   <Grid.Transitions>
                     <Transitions>
@@ -279,8 +279,6 @@ SPDX-License-Identifier: GPL-3.0-only
                       </TranslateTransform.Transitions>
                     </TranslateTransform>
                   </Grid.RenderTransform>
-                  <Grid ColumnDefinitions="2*,Auto,*,*"
-                        ColumnSpacing="8">
                   <Grid>
                     <TextBox x:Name="ModCatalogSearchBox"
                              Classes="instanceSearch catalogSearch"
@@ -300,16 +298,19 @@ SPDX-License-Identifier: GPL-3.0-only
                             Data="M9.5,3 A6.5,6.5 0 1 0 13.72,14.43 L19.49,20.19 L20.9,18.78 L15.14,13.02 A6.5,6.5 0 0 0 9.5,3 M9.5,5 A4.5,4.5 0 1 1 9.5,14 A4.5,4.5 0 0 1 9.5,5" />
                     </Button>
                   </Grid>
-                  <controls:FadingComboBox Grid.Column="1"
+                  <Grid Grid.Row="1"
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="8">
+                  <controls:FadingComboBox Grid.Column="0"
                                            Classes="uiComboBox instanceFilterCombo"
-                                           Width="160"
+                                           Width="200"
                                            Padding="10,6,24,6"
                                            ItemsSource="{Binding ModCatalogSourceOptions}"
-                                           ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
+                                           ItemTemplate="{StaticResource ModCatalogSourceOptionTemplate}"
                                            ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
                                            SelectedItem="{Binding SelectedModCatalogSource, Mode=TwoWay}"
                                            MaxDropDownHeight="120" />
-                  <controls:FadingComboBox Grid.Column="2"
+                  <controls:FadingComboBox Grid.Column="1"
                                            Classes="uiComboBox instanceFilterCombo"
                                            ItemsSource="{Binding ModCatalogCategories}"
                                            ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
@@ -317,8 +318,9 @@ SPDX-License-Identifier: GPL-3.0-only
                                            SelectedItem="{Binding SelectedModCatalogCategory, Mode=TwoWay}"
                                            PlaceholderText="{Binding InstanceBrowseCategoryLabel}"
                                            MaxDropDownHeight="280" />
-                  <controls:FadingComboBox Grid.Column="3"
+                  <controls:FadingComboBox Grid.Column="2"
                                            Classes="uiComboBox instanceFilterCombo"
+                                           Width="190"
                                            ItemsSource="{Binding ModCatalogSortOptions}"
                                            ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
                                            ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
@@ -326,7 +328,7 @@ SPDX-License-Identifier: GPL-3.0-only
                                            PlaceholderText="{Binding InstanceBrowseSortLabel}"
                                            MaxDropDownHeight="220" />
                   </Grid>
-                  <Border Grid.Row="1" Classes="instanceContentPanel catalog">
+                  <Border Grid.Row="2" Classes="instanceContentPanel catalog">
                   <Grid>
                     <Grid.RowDefinitions>
                       <RowDefinition Height="*" />

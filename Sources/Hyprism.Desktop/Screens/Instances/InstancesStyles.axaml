@@ -1243,9 +1243,9 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Border.instancePreviewImageSwitch">
     <Setter Property="Padding" Value="4" />
-    <Setter Property="Background" Value="#D90A0B0D" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
     <Setter Property="CornerRadius" Value="13" />
-    <Setter Property="BoxShadow" Value="0 6 18 0 #66000000" />
+    <Setter Property="BoxShadow" Value="{DynamicResource PopupShadow}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.instancePreviewImageButton">
@@ -1279,7 +1279,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.instancePreviewImageButton:pointerover">
-    <Setter Property="Background" Value="#20FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ItemHoverBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Viewbox.instancePreviewImageSymbol">

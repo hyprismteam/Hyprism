@@ -308,10 +308,8 @@ public sealed partial class InstanceModsView : UserControl
     private void OnCatalogSearchKeyDown(object? sender, KeyEventArgs args)
     {
         if (args.Key is not (Key.Enter or Key.Return) ||
-            DataContext is not InstancesViewModel viewModel)
-        {
+            DataContext is not InstancesViewModel { CanSearchModCatalog: true } viewModel)
             return;
-        }
 
         args.Handled = true;
         viewModel.SearchModCatalogCommand.Execute(null);

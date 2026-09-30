@@ -269,7 +269,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
   </Style>
-  <Style Selector="TextBlock.detailToolbarTitle">
+  <Style Selector="TextBlock.detailToolbarTitle, controls|FadingTextBlock.detailToolbarTitle">
     <Setter Property="Opacity" Value="0" />
     <Setter Property="Transitions">
       <Transitions>
@@ -277,7 +277,7 @@ SPDX-License-Identifier: GPL-3.0-only
       </Transitions>
     </Setter>
   </Style>
-  <Style Selector="Border.detailToolbar.compact.scrolled TextBlock.detailToolbarTitle">
+  <Style Selector="Border.detailToolbar.compact.scrolled TextBlock.detailToolbarTitle, Border.detailToolbar.compact.scrolled controls|FadingTextBlock.detailToolbarTitle">
     <Setter Property="Opacity" Value="1" />
   </Style>
   <Style Selector="Button.detailBack">

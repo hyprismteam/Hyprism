@@ -355,40 +355,39 @@ public sealed class InstanceSectionRenderTests
             viewModel.Instances.ModCatalogSourceOptions.Single(option => option.Value == "curseforge");
         await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1 &&
             viewModel.ModCatalogItems[0].Source == "curseforge");
-        var searchBox = view.GetVisualDescendants()
-            .OfType<TextBox>()
-            .Single(textBox => textBox.IsEffectivelyVisible && textBox.Classes.Contains("instanceSearch"));
+        var modsView = Assert.IsType<InstanceModsView>(view.FindControl<InstanceModsView>("InstanceModsContentView"));
+        var searchBox = Assert.IsType<TextBox>(modsView.FindControl<TextBox>("ModCatalogSearchBox"));
         Assert.Contains("catalogSearch", searchBox.Classes);
         Assert.Equal(new Thickness(0), searchBox.BorderThickness);
-        var modsView = Assert.IsType<InstanceModsView>(view.FindControl<InstanceModsView>("InstanceModsContentView"));
         var searchButton = Assert.IsType<Button>(modsView.FindControl<Button>("ModCatalogSearchButton"));
+        Assert.Same(searchBox.Parent, searchButton.Parent);
+        Assert.Equal(HorizontalAlignment.Right, searchButton.HorizontalAlignment);
         Assert.Contains("hidden", searchButton.Classes);
         Assert.False(searchButton.IsHitTestVisible);
+        Assert.False(searchButton.IsEnabled);
         viewModel.ModCatalogSearchQuery = "abcd";
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
         Assert.Contains("visible", searchButton.Classes);
         Assert.True(searchButton.IsHitTestVisible);
         Assert.Equal(34, searchButton.Width);
-        await WaitUntilAsync(() => searchButton.Opacity >= 0.99);
+        Assert.True(searchButton.IsEnabled);
         var searchCallsBeforeButtonClick = modManager.Invocations.Count(invocation =>
             invocation.Method.Name == nameof(IModManager.SearchModsAsync));
-        var searchButtonPoint = searchButton.TranslatePoint(
-            new Point(searchButton.Bounds.Width / 2, searchButton.Bounds.Height / 2),
-            window);
-        Assert.NotNull(searchButtonPoint);
-        window.MouseMove(searchButtonPoint!.Value);
-        Dispatcher.UIThread.RunJobs();
-        Assert.True(searchButton.IsPointerOver);
-        window.MouseDown(searchButtonPoint!.Value, MouseButton.Left);
-        window.MouseUp(searchButtonPoint.Value, MouseButton.Left);
+        Assert.Same(viewModel.SearchModCatalogCommand, searchButton.Command);
+        searchButton.Command!.Execute(null);
         await WaitUntilAsync(() => modManager.Invocations.Count(invocation =>
             invocation.Method.Name == nameof(IModManager.SearchModsAsync)) > searchCallsBeforeButtonClick);
         viewModel.ModCatalogSearchQuery = string.Empty;
-        var filterRow = Assert.IsType<Grid>(searchBox.Parent?.Parent);
+        Assert.Contains("hidden", searchButton.Classes);
+        Assert.False(searchButton.IsHitTestVisible);
+        var filterRow = Assert.IsType<Grid>(filterCombos[0].Parent);
         Assert.All(filterCombos, combo => Assert.Same(filterRow, combo.Parent));
+        Assert.Equal(1, Grid.GetRow(filterRow));
 
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
         Assert.True(viewModel.HasSelectedCatalogMods);
         var catalogTopInstall = Assert.Single(
             view.GetVisualDescendants().OfType<Border>(),
@@ -412,8 +411,6 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(
             Assert.IsAssignableFrom<IEnumerable<ITransition>>(catalogTopInstall.Transitions),
             transition => transition is TransformOperationsTransition);
-        Assert.Contains("hidden", searchButton.Classes);
-        Assert.False(searchButton.IsHitTestVisible);
         viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
         var installModal = view.FindControl<OverlayModal>("ModCatalogInstallModal");
         Assert.NotNull(installModal);
