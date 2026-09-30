@@ -387,7 +387,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasModCatalogPreview))]
     [NotifyPropertyChangedFor(nameof(CanShowModCatalogInstallAction))]
-    [NotifyPropertyChangedFor(nameof(InstanceContentBackLabel))]
     private bool _isModCatalogPreviewOpen;
 
     [ObservableProperty]
@@ -659,9 +658,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public string InstalledLabel => _localizer["instances.mods.installed"];
     public string EnabledLabel => _localizer["instances.mods.enabled"];
     public string DisabledLabel => _localizer["instances.mods.disabled"];
-    public string InstanceContentBackLabel => HasModCatalogPreview
-        ? InstanceBrowseTitle
-        : _localizer["instances.content.back"];
     public string ManagedInstancePlayLabel => _localizer["instances.actions.play"];
     public string ManagedInstanceInstallLabel => _localizer["instances.actions.install"];
     public string ManagedInstanceOpenFolderLabel => _localizer["instances.actions.openFolder"];
@@ -797,9 +793,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         NotifyLogsStateChanged();
 
         if (!IsInstanceOverviewSection)
-            DisplayedInstanceSectionTitle = HasModCatalogPreview
-                ? SelectedModCatalogPreview?.Name ?? InstanceBrowseTitle
-                : InstanceSectionTitle;
+            DisplayedInstanceSectionTitle = InstanceSectionTitle;
         UpdateSelectedInstancePresentation();
         UpdateManagedInstancePresentation();
         OnPropertyChanged(string.Empty);
@@ -1267,7 +1261,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         var previewVersion = ++_modCatalogPreviewVersion;
         SelectedModCatalogPreview = item;
         IsModCatalogPreviewOpen = true;
-        DisplayedInstanceSectionTitle = item.Name;
         OnPropertyChanged(nameof(ModCatalogOpenSourceLabel));
         SelectedModCatalogPreviewFile = null;
         _modCatalogPreviewFiles.Clear();
@@ -2273,7 +2266,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             foreach (var category in _loadedModCategories)
             {
                 if (category.Id == 0 ||
-                    string.Equals(category.Slug, "all", StringComparison.OrdinalIgnoreCase))
+                    string.Equals(category.Slug, "all", StringComparison.OrdinalIgnoreCase) ||
+                    IsNewWorldsFinalistsCategory(category))
                 {
                     continue;
                 }
@@ -2302,16 +2296,31 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             : category.Name;
     }
 
+    private static bool IsNewWorldsFinalistsCategory(ModCategory category)
+    {
+        static string Normalize(string value)
+            => string.Concat(value.Where(char.IsLetterOrDigit));
+
+        return string.Equals(
+                   Normalize(category.Slug),
+                   "newworldsfinalists",
+                   StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(
+                   Normalize(category.Name),
+                   "newworldsfinalists",
+                   StringComparison.OrdinalIgnoreCase);
+    }
+
     private void BuildModCatalogSortOptions()
     {
         var selectedValue = SelectedModCatalogSort?.Value ?? "2";
         _suppressCatalogReload = true;
         ModCatalogSortOptions.Clear();
-        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("1", _localizer["instances.browse.sortRelevancy"]));
-        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("2", _localizer["instances.browse.sortPopularity"]));
-        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("3", _localizer["instances.browse.sortLatestUpdate"]));
-        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("11", _localizer["instances.browse.sortCreationDate"]));
-        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("6", _localizer["instances.browse.sortTotalDownloads"]));
+        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("1", _localizer["modManager.sortRelevancy"]));
+        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("2", _localizer["modManager.sortPopularity"]));
+        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("3", _localizer["modManager.sortLatestUpdate"]));
+        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("11", _localizer["modManager.sortCreationDate"]));
+        ModCatalogSortOptions.Add(new InstanceListOptionViewModel("6", _localizer["modManager.sortTotalDownloads"]));
         SelectedModCatalogSort =
             ModCatalogSortOptions.FirstOrDefault(option => option.Value == selectedValue) ??
             ModCatalogSortOptions[1];

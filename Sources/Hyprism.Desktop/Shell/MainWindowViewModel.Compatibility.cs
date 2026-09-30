@@ -421,7 +421,6 @@ public sealed partial class MainWindowViewModel
     public string InstalledLabel => Instances.InstalledLabel;
     public string EnabledLabel => Instances.EnabledLabel;
     public string DisabledLabel => Instances.DisabledLabel;
-    public string InstanceContentBackLabel => Instances.InstanceContentBackLabel;
     public string ManagedInstancePlayLabel => Instances.ManagedInstancePlayLabel;
     public string ManagedInstanceInstallLabel => Instances.ManagedInstanceInstallLabel;
     public string ManagedInstanceOpenFolderLabel => Instances.ManagedInstanceOpenFolderLabel;

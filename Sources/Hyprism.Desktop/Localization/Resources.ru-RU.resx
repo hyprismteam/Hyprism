@@ -3024,21 +3024,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.sort" xml:space="preserve">
     <value>Сортировка</value>
   </data>
-  <data name="instances.browse.sortRelevancy" xml:space="preserve">
-    <value>Релевантность</value>
-  </data>
-  <data name="instances.browse.sortPopularity" xml:space="preserve">
-    <value>Популярность</value>
-  </data>
-  <data name="instances.browse.sortLatestUpdate" xml:space="preserve">
-    <value>Дата обновления</value>
-  </data>
-  <data name="instances.browse.sortCreationDate" xml:space="preserve">
-    <value>Дата создания</value>
-  </data>
-  <data name="instances.browse.sortTotalDownloads" xml:space="preserve">
-    <value>Число загрузок</value>
-  </data>
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Загружается еще...</value>
   </data>

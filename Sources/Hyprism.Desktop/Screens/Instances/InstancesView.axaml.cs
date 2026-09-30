@@ -24,6 +24,7 @@ public sealed partial class InstancesView : UserControl
     private readonly WizardHost _creatorWizard;
     private readonly AdaptiveMasterDetailHost _layoutHost;
     private readonly ReorderableListController _instanceReorder;
+    private readonly WizardScreenTransition _modCatalogPreviewTransition;
     private INotifyPropertyChanged? _viewModel;
     private bool _creatorOpenedFromCompactList;
     private bool _creatorTransitionActive;
@@ -37,6 +38,9 @@ public sealed partial class InstancesView : UserControl
     public InstancesView()
     {
         InitializeComponent();
+        _modCatalogPreviewTransition = new WizardScreenTransition(
+            InstanceSectionScreen,
+            InstanceModCatalogPreviewPage);
         InstanceOverviewContentView.BackRequested += OnCompactInstanceBackClicked;
         InstanceListContentView.InstanceClicked += OnInstanceClicked;
         InstanceListContentView.CreateRequested += OnOpenCreatorClicked;
@@ -140,10 +144,24 @@ public sealed partial class InstancesView : UserControl
 
         if (args.PropertyName is nameof(InstancesViewModel.InstanceSection))
         {
+            if (InstanceModCatalogPreviewPage.IsVisible)
+            {
+                ApplySectionStateImmediately();
+                return;
+            }
+
             if (DataContext is InstancesViewModel { IsInstanceOverviewSection: true })
                 _ = PlaySectionCloseAnimationAsync();
             else
                 _ = PlaySectionOpenAnimationAsync();
+        }
+
+        if (args.PropertyName is nameof(InstancesViewModel.IsModCatalogPreviewOpen))
+        {
+            if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+                _ = PlayModCatalogPreviewOpenAnimationAsync();
+            else
+                _ = PlayModCatalogPreviewCloseAnimationAsync();
         }
 
         if (args.PropertyName is nameof(InstancesViewModel.IsInstanceCreatorOpen))
@@ -154,6 +172,63 @@ public sealed partial class InstancesView : UserControl
                 _ = PlayCreatorCloseAnimationAsync();
         }
 
+    }
+
+    private void ApplyModCatalogPreviewStateImmediately(bool showHub)
+    {
+        if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+        {
+            _modCatalogPreviewTransition.ShowWizardImmediately();
+            return;
+        }
+
+        if (!showHub)
+        {
+            _modCatalogPreviewTransition.ShowOverviewImmediately();
+        }
+        else
+        {
+            _modCatalogPreviewTransition.Cancel();
+            var translation = (TranslateTransform)InstanceModCatalogPreviewPage.RenderTransform!;
+            var transitions = InstanceModCatalogPreviewPage.Transitions;
+            var translationTransitions = translation.Transitions;
+            InstanceModCatalogPreviewPage.Transitions = null;
+            translation.Transitions = null;
+            InstanceModCatalogPreviewPage.IsVisible = false;
+            InstanceModCatalogPreviewPage.IsHitTestVisible = false;
+            InstanceModCatalogPreviewPage.Opacity = 0;
+            translation.X = 36;
+            InstanceModCatalogPreviewPage.Transitions = transitions;
+            translation.Transitions = translationTransitions;
+        }
+
+        (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
+    }
+
+    private Task PlayModCatalogPreviewOpenAnimationAsync()
+    {
+        Func<bool> shouldRemainOpen =
+            () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true };
+        return _layoutHost.IsCompact
+            ? _modCatalogPreviewTransition.OpenCompactOverlayAsync(
+                shouldRemainOpen,
+                onSlideStarted: null,
+                onOpened: null,
+                horizontalOffset: GetSectionSlideDistance())
+            : _modCatalogPreviewTransition.OpenAsync(shouldRemainOpen);
+    }
+
+    private Task PlayModCatalogPreviewCloseAnimationAsync()
+    {
+        Func<bool> shouldRemainClosed =
+            () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: false };
+        Action onClosed = () => (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
+        return _layoutHost.IsCompact
+            ? _modCatalogPreviewTransition.CloseCompactOverlayAsync(
+                shouldRemainClosed,
+                onClosed,
+                horizontalOffset: GetSectionSlideDistance())
+            : _modCatalogPreviewTransition.CloseAsync(shouldRemainClosed, onClosed);
     }
 
     private void OnModCatalogInstallModalClosed(object? sender, EventArgs args)
@@ -176,8 +251,16 @@ public sealed partial class InstancesView : UserControl
 
     private void OnInstancesKeyDown(object? sender, KeyEventArgs args)
     {
-        if (args.Key is not Key.Escape ||
-            (!TryCloseModCatalogPreview() && !TryCloseModCatalogInstallConfirmation()))
+        if (args.Key is not Key.Escape)
+            return;
+
+        if (InstanceModsContentView.TryEndCatalogSearchInput())
+        {
+            args.Handled = true;
+            return;
+        }
+
+        if (!TryCloseModCatalogPreview() && !TryCloseModCatalogInstallConfirmation())
             return;
 
         args.Handled = true;
@@ -284,6 +367,7 @@ public sealed partial class InstancesView : UserControl
             : InstanceModsView.ModCatalogContentMaxWidth;
         InstanceModsContentView.SetMaximumWidth(maxWidth, catalogMaxWidth);
         InstanceLogsContentView.SetMaximumWidth(catalogMaxWidth);
+        InstanceModCatalogPreviewContentView.MaxWidth = catalogMaxWidth;
     }
 
     private void OnInstanceClicked(object? sender, RoutedEventArgs args)
@@ -613,6 +697,7 @@ public sealed partial class InstancesView : UserControl
         hubTranslation.Transitions = hubTranslationTransitions;
         sectionTranslation.Transitions = sectionTranslationTransitions;
         SetSectionTranslationDuration(compact ? CompactSectionSlideDuration : WideSectionSlideDuration);
+        ApplyModCatalogPreviewStateImmediately(showHub);
     }
 
     private async Task PlayCompactSectionOpenAnimationAsync()

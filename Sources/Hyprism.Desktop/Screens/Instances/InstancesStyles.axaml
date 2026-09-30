@@ -415,15 +415,9 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="IsHitTestVisible" Value="False" />
   </Style>
 
-  <Style Selector="instances|InstancesView TextBox.instanceSearch.catalogSearch">
+  <Style Selector="instances|InstancesView controls|ModalTextField TextBox.catalogSearch">
+    <Setter Property="Height" Value="40" />
     <Setter Property="Padding" Value="12,0,48,0" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-  </Style>
-
-  <Style Selector="instances|InstancesView TextBox.instanceSearch.catalogSearch:focus">
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.modCatalogSearchAction">

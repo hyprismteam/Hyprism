@@ -259,6 +259,8 @@ SPDX-License-Identifier: GPL-3.0-only
                     RowSpacing="10">
                 <Grid x:Name="ModCatalogBrowseContent"
                       Grid.RowSpan="2"
+                      Focusable="True"
+                      IsTabStop="False"
                       RowDefinitions="Auto,Auto,*"
                       RowSpacing="10">
                   <Grid.Transitions>
@@ -280,23 +282,27 @@ SPDX-License-Identifier: GPL-3.0-only
                     </TranslateTransform>
                   </Grid.RenderTransform>
                   <Grid>
-                    <TextBox x:Name="ModCatalogSearchBox"
-                             Classes="instanceSearch catalogSearch"
-                             PlaceholderText="{Binding InstanceBrowseSearchHint}"
-                             Text="{Binding ModCatalogSearchQuery, Mode=TwoWay}"
-                             KeyDown="OnCatalogSearchKeyDown" />
-                    <Button x:Name="ModCatalogSearchButton"
-                            Classes="dataPathOpen modCatalogSearchAction"
-                            Classes.visible="{Binding ShouldShowModCatalogSearchAction}"
-                            Classes.hidden="{Binding !ShouldShowModCatalogSearchAction}"
-                            IsEnabled="{Binding CanSearchModCatalog}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Command="{Binding SearchModCatalogCommand}"
-                            ToolTip.Tip="{Binding InstanceBrowseSearchHint}">
-                      <Path Classes="dataPathOpenIcon"
-                            Data="M9.5,3 A6.5,6.5 0 1 0 13.72,14.43 L19.49,20.19 L20.9,18.78 L15.14,13.02 A6.5,6.5 0 0 0 9.5,3 M9.5,5 A4.5,4.5 0 1 1 9.5,14 A4.5,4.5 0 0 1 9.5,5" />
-                    </Button>
+                    <controls:ModalTextField x:Name="ModCatalogSearchField">
+                      <Grid>
+                        <TextBox x:Name="ModCatalogSearchBox"
+                                 Classes="catalogSearch"
+                                 PlaceholderText="{Binding InstanceBrowseSearchHint}"
+                                 Text="{Binding ModCatalogSearchQuery, Mode=TwoWay}"
+                                 KeyDown="OnCatalogSearchKeyDown" />
+                        <Button x:Name="ModCatalogSearchButton"
+                                Classes="dataPathOpen modCatalogSearchAction"
+                                Classes.visible="{Binding ShouldShowModCatalogSearchAction}"
+                                Classes.hidden="{Binding !ShouldShowModCatalogSearchAction}"
+                                IsEnabled="{Binding CanSearchModCatalog}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding SearchModCatalogCommand}"
+                                ToolTip.Tip="{Binding InstanceBrowseSearchHint}">
+                          <Path Classes="dataPathOpenIcon"
+                                Data="M9.5,3 A6.5,6.5 0 1 0 13.72,14.43 L19.49,20.19 L20.9,18.78 L15.14,13.02 A6.5,6.5 0 0 0 9.5,3 M9.5,5 A4.5,4.5 0 1 1 9.5,14 A4.5,4.5 0 0 1 9.5,5" />
+                        </Button>
+                      </Grid>
+                    </controls:ModalTextField>
                   </Grid>
                   <Grid Grid.Row="1"
                         ColumnDefinitions="Auto,*,Auto"
@@ -458,32 +464,6 @@ SPDX-License-Identifier: GPL-3.0-only
                     </Border>
                   </Grid>
                   </Border>
-                </Grid>
-
-                <Grid x:Name="ModCatalogDetailsScreen"
-                      Grid.RowSpan="2"
-                      IsVisible="False"
-                      Opacity="0"
-                      ZIndex="1">
-                  <Grid.Transitions>
-                    <Transitions>
-                      <DoubleTransition Property="Opacity" Duration="0:0:0.19">
-                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
-                      </DoubleTransition>
-                    </Transitions>
-                  </Grid.Transitions>
-                  <Grid.RenderTransform>
-                    <TranslateTransform X="28">
-                      <TranslateTransform.Transitions>
-                        <Transitions>
-                          <DoubleTransition Property="X" Duration="0:0:0.19">
-                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
-                          </DoubleTransition>
-                        </Transitions>
-                      </TranslateTransform.Transitions>
-                    </TranslateTransform>
-                  </Grid.RenderTransform>
-                  <instances:ModCatalogPreviewView />
                 </Grid>
 
                 <Border x:Name="ModCatalogInstallScreen"

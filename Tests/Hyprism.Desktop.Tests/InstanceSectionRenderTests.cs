@@ -502,7 +502,7 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => view.GetVisualDescendants()
             .OfType<ItemsControl>()
             .Any(items => items.IsEffectivelyVisible && items.Classes.Contains("instancePreviewFiles")));
-        var preview = Assert.Single(modsView.GetVisualDescendants().OfType<ModCatalogPreviewView>());
+        var preview = Assert.Single(view.GetVisualDescendants().OfType<ModCatalogPreviewView>());
         Assert.True(preview.IsEffectivelyVisible);
         var instancesLayout = view.FindControl<Grid>("InstancesLayout");
         Assert.Null(instancesLayout?.Effect);
