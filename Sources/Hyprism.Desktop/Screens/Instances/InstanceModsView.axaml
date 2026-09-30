@@ -261,10 +261,25 @@ SPDX-License-Identifier: GPL-3.0-only
                       Grid.RowSpan="2"
                       RowDefinitions="Auto,*"
                       RowSpacing="10">
+                  <Grid.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.19">
+                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                      </DoubleTransition>
+                    </Transitions>
+                  </Grid.Transitions>
                   <Grid.RenderTransform>
-                    <TranslateTransform />
+                    <TranslateTransform>
+                      <TranslateTransform.Transitions>
+                        <Transitions>
+                          <DoubleTransition Property="X" Duration="0:0:0.19">
+                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                          </DoubleTransition>
+                        </Transitions>
+                      </TranslateTransform.Transitions>
+                    </TranslateTransform>
                   </Grid.RenderTransform>
-                  <Grid ColumnDefinitions="2*,*,*"
+                  <Grid ColumnDefinitions="2*,Auto,*,*"
                         ColumnSpacing="8">
                   <Grid>
                     <TextBox x:Name="ModCatalogSearchBox"
@@ -287,13 +302,22 @@ SPDX-License-Identifier: GPL-3.0-only
                   </Grid>
                   <controls:FadingComboBox Grid.Column="1"
                                            Classes="uiComboBox instanceFilterCombo"
+                                           Width="160"
+                                           Padding="10,6,24,6"
+                                           ItemsSource="{Binding ModCatalogSourceOptions}"
+                                           ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
+                                           ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
+                                           SelectedItem="{Binding SelectedModCatalogSource, Mode=TwoWay}"
+                                           MaxDropDownHeight="120" />
+                  <controls:FadingComboBox Grid.Column="2"
+                                           Classes="uiComboBox instanceFilterCombo"
                                            ItemsSource="{Binding ModCatalogCategories}"
                                            ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
                                            ItemContainerTheme="{StaticResource UiComboBoxItemTheme}"
                                            SelectedItem="{Binding SelectedModCatalogCategory, Mode=TwoWay}"
                                            PlaceholderText="{Binding InstanceBrowseCategoryLabel}"
                                            MaxDropDownHeight="280" />
-                  <controls:FadingComboBox Grid.Column="2"
+                  <controls:FadingComboBox Grid.Column="3"
                                            Classes="uiComboBox instanceFilterCombo"
                                            ItemsSource="{Binding ModCatalogSortOptions}"
                                            ItemTemplate="{StaticResource InstanceFilterOptionTemplate}"
@@ -432,6 +456,32 @@ SPDX-License-Identifier: GPL-3.0-only
                     </Border>
                   </Grid>
                   </Border>
+                </Grid>
+
+                <Grid x:Name="ModCatalogDetailsScreen"
+                      Grid.RowSpan="2"
+                      IsVisible="False"
+                      Opacity="0"
+                      ZIndex="1">
+                  <Grid.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.19">
+                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                      </DoubleTransition>
+                    </Transitions>
+                  </Grid.Transitions>
+                  <Grid.RenderTransform>
+                    <TranslateTransform X="28">
+                      <TranslateTransform.Transitions>
+                        <Transitions>
+                          <DoubleTransition Property="X" Duration="0:0:0.19">
+                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                          </DoubleTransition>
+                        </Transitions>
+                      </TranslateTransform.Transitions>
+                    </TranslateTransform>
+                  </Grid.RenderTransform>
+                  <instances:ModCatalogPreviewView />
                 </Grid>
 
                 <Border x:Name="ModCatalogInstallScreen"

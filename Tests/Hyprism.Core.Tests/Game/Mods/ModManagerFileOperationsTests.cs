@@ -109,6 +109,85 @@ public class ModManagerFileOperationsTests : IDisposable
     }
 
     [Fact]
+    public async Task ModifoldCatalog_MapsProjectsAndFilesWithoutCredentials()
+    {
+        var handler = new StaticJsonHandler("""
+            {
+              "projects": [{
+                "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+                "project_type": "mod", "summary": "Sea creatures",
+                "game_versions": ["0.6.8"], "tags": ["Utility", "Adventure"],
+                "owner": { "username": "Creator" }
+              }],
+              "pagination": { "hasMore": true }
+            }
+            """);
+        using var httpClient = new HttpClient(handler);
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+
+        var result = await manager.SearchModsAsync("modifold", "mermaids", 0, 20, [], 2, 1);
+
+        var mod = Assert.Single(result.Mods);
+        Assert.Equal("modifold", mod.Source);
+        Assert.Equal("Creator", mod.Author);
+        Assert.Equal("https://modifold.com/mod/mermaids", mod.PageUrl);
+        Assert.Equal("latest", mod.LatestFileId);
+        Assert.Equal(["Utility", "Adventure"], mod.Categories);
+        Assert.True(result.HasMore);
+        Assert.Null(handler.LastAuthorization);
+        Assert.Equal("api.modifold.com", handler.LastRequestUri?.Host);
+
+        await manager.SearchModsAsync("modifold", "mermaids", 0, 20, ["Utility"], 2, 1);
+        Assert.Contains("tags=Utility", handler.LastRequestUri?.Query);
+
+        handler.Json = """
+            {
+              "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+              "tags": "Utility,Adventure",
+              "versions": [{
+                "id": "jQi6xA", "version_number": "3.4.3",
+                "download_url": "https://cdn.modifold.com/mod.jar",
+                "game_versions": "0.6.8,0.6.7", "release_channel": "release"
+              }]
+            }
+            """;
+        var files = await manager.GetModFilesAsync("modifold", mod.Id, 0, 10);
+        var file = Assert.Single(files.Files);
+        Assert.Equal("jQi6xA", file.Id);
+        Assert.Equal(["0.6.8", "0.6.7"], file.GameVersions);
+        Assert.Null(handler.LastAuthorization);
+
+        var details = await manager.GetModAsync("modifold", mod.Id);
+        Assert.Equal(["Utility", "Adventure"], details?.Categories);
+    }
+
+    [Fact]
+    public async Task ModifoldInstall_PersistsSourceAndDoesNotDuplicateScannedFile()
+    {
+        using var archiveStream = new MemoryStream();
+        using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
+        {
+            using var writer = new StreamWriter(archive.CreateEntry("manifest.json").Open());
+            await writer.WriteAsync("""{"Group":"Example","Name":"SeaMod","Version":"1.0"}""");
+        }
+
+        using var httpClient = new HttpClient(new ModifoldInstallHandler(archiveStream.ToArray()));
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+
+        Assert.True(await manager.InstallModFileToInstanceAsync(
+            "modifold", "FlmWzw", "latest", _instancePath));
+
+        var installed = Assert.Single(manager.GetInstanceInstalledMods(_instancePath));
+        Assert.Equal("modifold", installed.Source);
+        Assert.Equal("FlmWzw", installed.SourceProjectId);
+        Assert.Equal("jQi6xA", installed.FileId);
+        Assert.Equal("Example:SeaMod", installed.ManifestId);
+        Assert.True(File.Exists(Path.Combine(_modsPath, installed.FileName)));
+    }
+
+    [Fact]
     public async Task GetModCategoriesAsync_ReturnsAllFallbackCategoriesWithoutAnApiKey()
     {
         var categories = await _manager.GetModCategoriesAsync();
@@ -361,13 +440,43 @@ public class ModManagerFileOperationsTests : IDisposable
 
     private sealed class StaticJsonHandler(string json) : HttpMessageHandler
     {
+        public string Json { get; set; } = json;
+        public Uri? LastRequestUri { get; private set; }
+        public System.Net.Http.Headers.AuthenticationHeaderValue? LastAuthorization { get; private set; }
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            LastRequestUri = request.RequestUri;
+            LastAuthorization = request.Headers.Authorization;
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(Json),
+                RequestMessage = request
+            });
+        }
+    }
+
+    private sealed class ModifoldInstallHandler(byte[] archive) : HttpMessageHandler
+    {
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
             => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(json),
-                RequestMessage = request
+                Content = request.RequestUri?.Host == "api.modifold.com"
+                    ? new StringContent("""
+                        {
+                          "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+                          "versions": [{
+                            "id": "jQi6xA", "version_number": "1.0",
+                            "download_url": "https://cdn.modifold.com/mod.jar",
+                            "game_versions": "0.6.8"
+                          }]
+                        }
+                        """)
+                    : new ByteArrayContent(archive)
             });
     }
 }

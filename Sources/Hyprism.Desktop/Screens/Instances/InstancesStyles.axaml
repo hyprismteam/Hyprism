@@ -964,20 +964,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="40" />
   </Style>
 
-  <Style Selector="instances|InstancesView controls|OverlayModal.modCatalogModal">
-    <Setter Property="SheetMaxWidth" Value="720" />
-    <Setter Property="SheetMaxHeight" Value="680" />
-    <Setter Property="SheetMargin" Value="20,20,20,0" />
-    <Setter Property="ShoulderMaxWidth" Value="780" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact controls|OverlayModal.modCatalogModal">
-    <Setter Property="SheetMaxWidth" Value="560" />
-    <Setter Property="SheetMaxHeight" Value="520" />
-    <Setter Property="SheetMargin" Value="12,36,12,0" />
-    <Setter Property="ShoulderMaxWidth" Value="608" />
-  </Style>
-
   <Style Selector="instances|InstancesView controls|OverlayModal.modCatalogInstallModal">
     <Setter Property="SheetMaxWidth" Value="620" />
     <Setter Property="SheetMaxHeight" Value="560" />
@@ -1118,14 +1104,6 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView.compact Border.instanceModPreviewBodyOutline">
     <Setter Property="CornerRadius" Value="16,16,0,0" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Border.instancePreviewHero.modalHero">
-    <Setter Property="Height" Value="260" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact Border.instancePreviewHero.modalHero">
-    <Setter Property="Height" Value="180" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instancePreviewHero">
@@ -1485,13 +1463,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView Button.modPreviewCurseForgeAction">
+  <Style Selector="instances|InstancesView Button.modPreviewSourceAction">
     <Setter Property="Height" Value="42" />
     <Setter Property="Padding" Value="16,0" />
-    <Setter Property="Background" Value="#F16436" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="0" />
-    <Setter Property="Foreground" Value="#FFFFFFFF" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -1519,20 +1497,12 @@ SPDX-License-Identifier: GPL-3.0-only
     </Setter>
   </Style>
 
-  <Style Selector="instances|InstancesView Button.modPreviewCurseForgeAction:pointerover">
-    <Setter Property="Background" Value="#E85E34" />
+  <Style Selector="instances|InstancesView Button.modPreviewSourceAction:pointerover">
+    <Setter Property="Background" Value="{DynamicResource MainCardStrokeBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView Button.modPreviewCurseForgeAction:pressed">
-    <Setter Property="Background" Value="#DD572F" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Path.modPreviewCurseForgeIcon">
-    <Setter Property="Width" Value="23" />
-    <Setter Property="Height" Value="23" />
-    <Setter Property="Stretch" Value="Uniform" />
-    <Setter Property="Fill" Value="#FFFFFFFF" />
-    <Setter Property="VerticalAlignment" Value="Center" />
+  <Style Selector="instances|InstancesView Button.modPreviewSourceAction:pressed">
+    <Setter Property="Background" Value="{DynamicResource MainCardStrokeBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Path.instanceInstalledCheck">

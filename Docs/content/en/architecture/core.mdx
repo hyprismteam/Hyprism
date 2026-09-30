@@ -21,7 +21,7 @@ Core owns launcher behavior that can operate without a UI toolkit. Interfaces li
 | `Game/Download` and `Game/Patching` | Resumable transfers, differential updates, Butler execution |
 | `Game/Instances` | Instance registry, paths, import, metadata, deletion, migrations |
 | `Game/Launch` | Runtime setup, authentication selection, client patching, JVM and GPU options, process tracking |
-| `Game/Mods` | CurseForge API, compatibility, imports, enabled state, updates |
+| `Game/Mods` | CurseForge and Modifold APIs, compatibility, imports, enabled state, updates |
 | `Game/Assets` | Avatar lookup and backup |
 | `Infrastructure` | JSON storage, application directories, caches, logging, shared HTTP identity |
 | `Integrations/Hytale` | Official launcher protocol headers |
@@ -42,7 +42,7 @@ News parsing and GitHub metadata belong to Desktop because they support presenta
 
 ## Mod storage and compatibility
 
-`ModManager` stores files under the target instance's `UserData/Mods`. Disabling a file adds the `.disabled` suffix, and enabling it restores the normal filename. Managed metadata connects installed files to CurseForge project and file identifiers
+`ModManager` stores files under the target instance's `UserData/Mods`. Disabling a file adds the `.disabled` suffix, and enabling it restores the normal filename. Managed metadata connects installed files to their source project and file identifiers. Modifold files retain their source, project ID, and public page URL in the instance manifest.
 
 CurseForge file relations are normalized into the instance manifest. Required relations are resolved as a depth-first graph before installation; cycles and unresolved required nodes fail the operation, optional relations are recorded but not installed automatically, and incompatible relations are checked against the current installed set. JAR and ZIP archives are also inspected for a root `manifest.json`; its plugin identifier, version, and dependency ranges are persisted for validation and removal protection
 

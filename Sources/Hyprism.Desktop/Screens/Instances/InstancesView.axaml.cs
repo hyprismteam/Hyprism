@@ -156,12 +156,6 @@ public sealed partial class InstancesView : UserControl
 
     }
 
-    private void OnModCatalogModalClosed(object? sender, EventArgs args)
-    {
-        if (DataContext is InstancesViewModel viewModel)
-            viewModel.CompleteModCatalogPreviewClose();
-    }
-
     private void OnModCatalogInstallModalClosed(object? sender, EventArgs args)
     {
         if (DataContext is InstancesViewModel viewModel)

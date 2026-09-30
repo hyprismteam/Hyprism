@@ -22,9 +22,12 @@ public sealed partial class InstanceModsView : UserControl
 
     private static readonly TimeSpan ModCatalogSearchFadeDuration = MotionDurations.ContentFade;
     private readonly WizardScreenTransition _installTransition;
+    private readonly WizardScreenTransition _detailsTransition;
     private INotifyPropertyChanged? _viewModel;
     private CancellationTokenSource? _modCatalogLoadingCancellation;
     private bool _modDropActive;
+    private bool _isCompact;
+    private double _detailsSlideOffset;
 
     public InstanceModsView()
     {
@@ -32,6 +35,9 @@ public sealed partial class InstanceModsView : UserControl
         _installTransition = new WizardScreenTransition(
             ModCatalogBrowseContent,
             ModCatalogInstallScreen);
+        _detailsTransition = new WizardScreenTransition(
+            ModCatalogBrowseContent,
+            ModCatalogDetailsScreen);
         DragDrop.SetAllowDrop(ModsDropZone, true);
         ModsDropZone.AddHandler(DragDrop.DragEnterEvent, OnModFilesDragEntered);
         ModsDropZone.AddHandler(DragDrop.DragLeaveEvent, OnModFilesDragLeft);
@@ -43,6 +49,12 @@ public sealed partial class InstanceModsView : UserControl
     {
         InstalledModsSection.MaxWidth = installedModsWidth;
         ModCatalogSection.MaxWidth = catalogWidth;
+        var isCompact = double.IsPositiveInfinity(catalogWidth);
+        if (_isCompact != isCompact)
+        {
+            _isCompact = isCompact;
+            ApplyModCatalogDetailsStateImmediately();
+        }
     }
 
     private void OnDataContextChanged(object? sender, EventArgs args)
@@ -56,6 +68,7 @@ public sealed partial class InstanceModsView : UserControl
 
         ApplyModCatalogLoadingStateImmediately();
         ApplyModCatalogInstallStateImmediately();
+        ApplyModCatalogDetailsStateImmediately();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -75,6 +88,54 @@ public sealed partial class InstanceModsView : UserControl
             else
                 _ = PlayModCatalogInstallCloseAnimationAsync();
         }
+
+        if (args.PropertyName is nameof(InstancesViewModel.IsModCatalogPreviewOpen))
+        {
+            if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+                _ = PlayModCatalogDetailsOpenAnimationAsync();
+            else
+                _ = PlayModCatalogDetailsCloseAnimationAsync();
+        }
+    }
+
+    private void ApplyModCatalogDetailsStateImmediately()
+    {
+        if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+            _detailsTransition.ShowWizardImmediately();
+        else
+        {
+            _detailsTransition.ShowOverviewImmediately();
+            (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
+        }
+    }
+
+    private Task PlayModCatalogDetailsOpenAnimationAsync()
+    {
+        if (!_isCompact)
+            return _detailsTransition.OpenAsync(
+                () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true });
+
+        _detailsSlideOffset = Math.Max(1, Math.Max(ModCatalogSection.Bounds.Width, Bounds.Width));
+        return _detailsTransition.OpenCompactOverlayAsync(
+            () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true },
+            null,
+            null,
+            _detailsSlideOffset);
+    }
+
+    private Task PlayModCatalogDetailsCloseAnimationAsync()
+    {
+        void CompleteClose()
+            => (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
+
+        return _isCompact
+            ? _detailsTransition.CloseCompactOverlayAsync(
+                () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: false },
+                CompleteClose,
+                _detailsSlideOffset)
+            : _detailsTransition.CloseAsync(
+                () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: false },
+                CompleteClose);
     }
 
     private void ApplyModCatalogInstallStateImmediately()

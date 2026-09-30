@@ -1116,6 +1116,33 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>Открыть мод на CurseForge</value>
   </data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>Открыть мод на Modifold</value>
+  </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>Последняя совместимая</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>Приключения</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>Проклятия</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>Декор</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>Косметика</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>Экономика</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>Снаряжение</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>Еда</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>Игровые механики</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>Библиотеки</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>Магия</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>Управление</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>Мини-игры</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>Существа</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>Оптимизация</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>Социальное</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>Хранение</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>Технологии</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>Транспорт</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>Утилиты</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>Генерация мира</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>Пакеты текстур</value></data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Папка модов</value>
   </data>

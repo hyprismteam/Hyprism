@@ -29,6 +29,17 @@ public interface IModManager
     /// <returns>A result containing matching mods and pagination info</returns>
     Task<ModSearchResult> SearchModsAsync(string query, int page, int pageSize, string[] categories, int sortField, int sortOrder);
 
+    /// <summary>Searches a selected mod catalog.</summary>
+    /// <param name="source">Catalog identifier.</param>
+    /// <param name="query">Search text.</param>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of results.</param>
+    /// <param name="categories">Source category identifiers.</param>
+    /// <param name="sortField">Sort field identifier.</param>
+    /// <param name="sortOrder">Sort direction.</param>
+    /// <returns>Matching projects and pagination information.</returns>
+    Task<ModSearchResult> SearchModsAsync(string source, string query, int page, int pageSize, string[] categories, int sortField, int sortOrder);
+
     /// <summary>
     /// Gets the list of available mod categories
     /// </summary>
@@ -44,6 +55,15 @@ public interface IModManager
     /// <param name="onProgress">Optional callback for progress updates (status, detail)</param>
     /// <returns><c>true</c> if installation succeeded; otherwise, <c>false</c></returns>
     Task<bool> InstallModFileToInstanceAsync(string slugOrId, string fileIdOrVersion, string instancePath, Action<string, string>? onProgress = null);
+
+    /// <summary>Installs a file from the selected catalog into an instance.</summary>
+    /// <param name="source">Catalog identifier.</param>
+    /// <param name="modId">Project identifier.</param>
+    /// <param name="fileId">File identifier.</param>
+    /// <param name="instancePath">Instance directory.</param>
+    /// <param name="onProgress">Optional progress callback.</param>
+    /// <returns>Whether the file was installed.</returns>
+    Task<bool> InstallModFileToInstanceAsync(string source, string modId, string fileId, string instancePath, Action<string, string>? onProgress = null);
 
     /// <summary>
     /// Gets the list of mods installed in a game instance
@@ -69,6 +89,14 @@ public interface IModManager
     /// <returns>A result containing mod files and pagination info</returns>
     Task<ModFilesResult> GetModFilesAsync(string modId, int page, int pageSize);
 
+    /// <summary>Gets files for a project in the selected catalog.</summary>
+    /// <param name="source">Catalog identifier.</param>
+    /// <param name="modId">Project identifier.</param>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of files.</param>
+    /// <returns>Available files and pagination information.</returns>
+    Task<ModFilesResult> GetModFilesAsync(string source, string modId, int page, int pageSize);
+
     /// <summary>
     /// Resolves the required dependencies declared by a specific mod file for catalog display
     /// </summary>
@@ -77,6 +105,13 @@ public interface IModManager
     /// <returns>Required dependencies with best-effort names, versions, and icon URLs</returns>
     Task<List<ModDependency>> GetModDependenciesAsync(string modId, string fileId);
 
+    /// <summary>Gets required dependencies for a file in the selected catalog.</summary>
+    /// <param name="source">Catalog identifier.</param>
+    /// <param name="modId">Project identifier.</param>
+    /// <param name="fileId">File identifier.</param>
+    /// <returns>Required dependencies reported by the source.</returns>
+    Task<List<ModDependency>> GetModDependenciesAsync(string source, string modId, string fileId);
+
     /// <summary>
     /// Gets a single mod's metadata from CurseForge by id or slug.
     /// Used to backfill missing slug/icon/description for installed mods
@@ -84,6 +119,12 @@ public interface IModManager
     /// <param name="modIdOrSlug">CurseForge numeric id or slug</param>
     /// <returns>Mod info when found; otherwise null</returns>
     Task<ModInfo?> GetModAsync(string modIdOrSlug);
+
+    /// <summary>Gets a project from the selected catalog.</summary>
+    /// <param name="source">Catalog identifier.</param>
+    /// <param name="modIdOrSlug">Project identifier or slug.</param>
+    /// <returns>Project details when available.</returns>
+    Task<ModInfo?> GetModAsync(string source, string modIdOrSlug);
 
     /// <summary>
     /// Checks for available updates for mods installed in an instance

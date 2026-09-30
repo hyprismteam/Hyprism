@@ -14,13 +14,14 @@ namespace Hyprism.Core.Game.Mods;
 
 /// <summary>
 /// Manages game modifications including searching, installing, updating, and tracking.
-/// Integrates with CurseForge API for mod discovery and downloading.
+/// Integrates with supported mod catalogs for discovery and downloading.
 /// </summary>
 public partial class ModManager : IModManager
 {
     private readonly HttpClient _httpClient;
     private readonly string _appDir;
     private readonly CurseForgeClient _cfClient;
+    private readonly ModifoldClient _modifoldClient;
 
     private static readonly SemaphoreSlim _modManifestLock = new(1, 1);
 
@@ -80,6 +81,167 @@ public partial class ModManager : IModManager
         _instances = instances;
         _progressNotificationService = progressNotificationService;
         _cfClient = new CurseForgeClient(httpClient, () => _configStore.Configuration.CurseForgeKey);
+        _modifoldClient = new ModifoldClient(httpClient);
+    }
+
+    /// <inheritdoc/>
+    public Task<ModSearchResult> SearchModsAsync(
+        string source, string query, int page, int pageSize, string[] categories, int sortField, int sortOrder)
+        => source switch
+        {
+            "curseforge" => SearchModsAsync(query, page, pageSize, categories, sortField, sortOrder),
+            "modifold" => _modifoldClient.SearchAsync(query, page, pageSize, sortField,
+                categories.FirstOrDefault()),
+            _ => Task.FromException<ModSearchResult>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<ModFilesResult> GetModFilesAsync(string source, string modId, int page, int pageSize)
+        => source switch
+        {
+            "curseforge" => GetModFilesAsync(modId, page, pageSize),
+            "modifold" => _modifoldClient.GetFilesAsync(modId, page, pageSize),
+            _ => Task.FromException<ModFilesResult>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<ModInfo?> GetModAsync(string source, string modIdOrSlug)
+        => source switch
+        {
+            "curseforge" => GetModAsync(modIdOrSlug),
+            "modifold" => GetModifoldModAsync(modIdOrSlug),
+            _ => Task.FromException<ModInfo?>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    private async Task<ModInfo?> GetModifoldModAsync(string projectId)
+        => await _modifoldClient.GetModAsync(projectId);
+
+    /// <inheritdoc/>
+    public Task<List<ModDependency>> GetModDependenciesAsync(string source, string modId, string fileId)
+        => source switch
+        {
+            "curseforge" => GetModDependenciesAsync(modId, fileId),
+            "modifold" => Task.FromResult(new List<ModDependency>()),
+            _ => Task.FromException<List<ModDependency>>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<bool> InstallModFileToInstanceAsync(
+        string source, string modId, string fileId, string instancePath, Action<string, string>? onProgress = null)
+        => source switch
+        {
+            "curseforge" => InstallModFileToInstanceAsync(modId, fileId, instancePath, onProgress),
+            "modifold" => InstallModifoldFileAsync(modId, fileId, instancePath, onProgress),
+            _ => Task.FromException<bool>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    private async Task<bool> InstallModifoldFileAsync(
+        string projectId, string fileId, string instancePath, Action<string, string>? onProgress)
+    {
+        string? temporaryPath = null;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(projectId) ||
+                projectId.Any(character => !char.IsLetterOrDigit(character) && character is not '-' and not '_'))
+                return false;
+
+            var gameVersion = ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath);
+            var resolved = await _modifoldClient.ResolveInstallFileAsync(projectId, fileId, gameVersion);
+            if (resolved is null)
+                return false;
+
+            var (mod, file) = resolved.Value;
+            if (!Uri.TryCreate(file.DownloadUrl, UriKind.Absolute, out var downloadUri) ||
+                downloadUri.Scheme != Uri.UriSchemeHttps)
+                return false;
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!extension.Equals(".jar", StringComparison.OrdinalIgnoreCase) &&
+                !extension.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            var modsPath = GetOrCreateModsDirectory(instancePath);
+            var safeName = Path.GetFileName(file.FileName);
+            var fileName = $"modifold-{projectId}-{safeName}";
+            var filePath = Path.Combine(modsPath, fileName);
+            temporaryPath = Path.Combine(modsPath, $".hyprism-{Guid.NewGuid():N}.download");
+            onProgress?.Invoke("downloading", fileName);
+            using (var response = await _httpClient.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead))
+            {
+                response.EnsureSuccessStatusCode();
+                await using var output = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write);
+                await response.Content.CopyToAsync(output);
+                if (output.Length == 0)
+                    return false;
+            }
+
+            File.Move(temporaryPath, filePath, true);
+            temporaryPath = null;
+            onProgress?.Invoke("installing", fileName);
+            var manifest = HytaleModManifestReader.Read(filePath);
+            var mods = GetInstanceInstalledMods(instancePath);
+            mods.RemoveAll(installed => installed.Id == $"local-{fileName}");
+            var previous = mods.Where(installed =>
+                installed.Id == $"modifold-{projectId}" ||
+                (installed.Source == "modifold" && installed.SourceProjectId == projectId)).ToList();
+            mods.RemoveAll(installed => previous.Contains(installed));
+            mods.Add(new InstalledMod
+            {
+                Id = $"modifold-{projectId}",
+                Source = "modifold",
+                SourceProjectId = projectId,
+                PageUrl = mod.PageUrl,
+                Name = mod.Name,
+                Slug = mod.Slug,
+                Version = file.DisplayName,
+                FileId = file.Id,
+                FileName = fileName,
+                Enabled = true,
+                Author = mod.Author,
+                Description = mod.Summary,
+                IconUrl = mod.IconUrl,
+                FileDate = file.FileDate,
+                ReleaseType = file.ReleaseType,
+                ManifestId = manifest?.ManifestId ?? string.Empty,
+                ManifestVersion = manifest?.Version ?? string.Empty,
+                ManifestDependencies = manifest?.Dependencies ?? [],
+                ManifestOptionalDependencies = manifest?.OptionalDependencies ?? [],
+                ManifestLoadBefore = manifest?.LoadBefore ?? [],
+                Screenshots = mod.Screenshots
+            });
+            await SaveInstanceModsAsync(instancePath, mods);
+
+            foreach (var old in previous)
+            {
+                if (old.FileName == fileName || string.IsNullOrWhiteSpace(old.FileName))
+                    continue;
+                var oldPath = Path.Combine(modsPath, Path.GetFileName(old.FileName));
+                try
+                {
+                    if (File.Exists(oldPath))
+                        File.Delete(oldPath);
+                    if (File.Exists(oldPath + ".disabled"))
+                        File.Delete(oldPath + ".disabled");
+                }
+                catch (IOException ex)
+                {
+                    Logger.Warning("ModManager", $"Could not remove previous Modifold file: {ex.Message}");
+                }
+            }
+
+            onProgress?.Invoke("complete", fileName);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("ModManager", $"Modifold install failed: {ex.Message}");
+            return false;
+        }
+        finally
+        {
+            if (temporaryPath is not null && File.Exists(temporaryPath))
+                File.Delete(temporaryPath);
+        }
     }
 
     /// <inheritdoc/>
