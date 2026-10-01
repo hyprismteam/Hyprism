@@ -61,7 +61,7 @@ public sealed class InstanceSectionRenderTests
         var modManager = new Mock<IModManager>();
         var console = new GameConsoleService();
         var installGate = new TaskCompletionSource<bool>();
-        Action<string, string>? installProgress = null;
+        Action<int, string, string>? installProgress = null;
 
         instances.Setup(service => service.GetCachedInstances()).Returns([instance]);
         instances.Setup(service => service.GetSelectedInstance()).Returns(instance);
@@ -194,9 +194,10 @@ public sealed class InstanceSectionRenderTests
                     RelationType = CurseForgeDependencyRelationType.RequiredDependency
                 }
             ]);
-        modManager.Setup(service => service.InstallModFileToInstanceAsync(
-                "10", "900", instancePath, It.IsAny<Action<string, string>?>()))
-            .Returns((string _, string _, string _, Action<string, string>? progressCallback) =>
+        modManager.Setup(service => service.InstallModFilesToInstanceAsync(
+                It.IsAny<IReadOnlyList<ModFileInfo>>(), instancePath,
+                It.IsAny<Action<int, string, string>?>(), It.IsAny<CancellationToken>()))
+            .Returns((IReadOnlyList<ModFileInfo> _, string _, Action<int, string, string>? progressCallback, CancellationToken _) =>
             {
                 installProgress = progressCallback;
                 return installGate.Task;
@@ -391,7 +392,7 @@ public sealed class InstanceSectionRenderTests
         Assert.True(viewModel.HasSelectedCatalogMods);
         var catalogTopInstall = Assert.Single(
             view.GetVisualDescendants().OfType<Border>(),
-            border => border.Classes.Contains("catalogInstallTopBar"));
+            border => border.Classes.Contains("catalogInstallTopBar") && border.IsEffectivelyVisible);
         var catalogTopInstallAction = Assert.Single(
             catalogTopInstall.GetVisualDescendants().OfType<Button>(),
             button => button.Classes.Contains("catalogInstallTopBarAction"));
@@ -476,17 +477,34 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains("visible", catalogTopInstall.Classes);
 
         var installTask = viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
-        var installScreen = modsView.FindControl<Border>("ModCatalogInstallScreen");
-        Assert.NotNull(installScreen);
-        await WaitUntilAsync(() => viewModel.IsInstallingSelectedCatalogMods && installScreen!.IsEffectivelyVisible);
+        Assert.Null(modsView.FindControl<Border>("ModCatalogInstallScreen"));
+        await WaitUntilAsync(() => viewModel.Instances.IsManagedInstanceInstallingMods && viewModel.IsInstanceOverviewSection);
+        var overview = Assert.Single(view.GetVisualDescendants().OfType<InstanceOverviewView>());
+        var catalogRow = overview.FindControl<Button>("ModCatalogRow")!;
+        var statusButton = overview.FindControl<Button>("ModCatalogInstallStatusButton")!;
+        Assert.False(catalogRow.IsEnabled);
+        Assert.Contains("active", statusButton.Classes);
+        Assert.Contains("cancelArmed", statusButton.Classes);
+        Assert.Same(viewModel.Instances.CancelModCatalogInstallationCommand, statusButton.Command);
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        Assert.True(viewModel.IsInstanceOverviewSection);
         Assert.Equal("0/1", viewModel.ModCatalogInstallProgressText);
-        Assert.Single(viewModel.ModCatalogInstallItems);
-        installProgress!.Invoke("downloading", "catalog-mod.jar");
+        installProgress!.Invoke(0, "downloading", "catalog-mod.jar");
         Dispatcher.UIThread.RunJobs();
-        Assert.Equal(28, viewModel.ModCatalogInstallItems[0].Progress);
+        Assert.Equal(28, viewModel.ModCatalogInstallProgress);
+        Assert.Equal("28%", viewModel.Instances.ModCatalogInstallMetricText);
+        await WaitUntilAsync(() => statusButton.IsEffectivelyVisible && Math.Abs(statusButton.Bounds.Width - 180) < 0.1);
+        var statusPreviewPath = Environment.GetEnvironmentVariable("HYPRISM_MOD_INSTALL_RENDER_OUTPUT");
+        if (!string.IsNullOrWhiteSpace(statusPreviewPath))
+            window.CaptureRenderedFrame()!.Save(statusPreviewPath, PngBitmapEncoderOptions.Default);
         installGate.SetResult(true);
         await installTask;
-        await WaitUntilAsync(() => !viewModel.IsInstallingSelectedCatalogMods && !installScreen!.IsVisible);
+        Assert.False(viewModel.Instances.IsManagedInstanceInstallingMods);
+        Assert.True(catalogRow.IsEnabled);
+        Assert.DoesNotContain("active", statusButton.Classes);
+        Assert.Empty(viewModel.ModCatalogInstallItems);
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        await WaitUntilAsync(() => modsView.IsEffectivelyVisible);
 
         var listPreviewPath = Environment.GetEnvironmentVariable("HYPRISM_MOD_CATALOG_LIST_RENDER_OUTPUT");
         if (!string.IsNullOrWhiteSpace(listPreviewPath))
@@ -794,7 +812,7 @@ public sealed class InstanceSectionRenderTests
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
         await WaitUntilAsync(() => view.GetVisualDescendants()
-            .OfType<ModCatalogPreviewView>().Any());
+            .OfType<ModCatalogPreviewView>().Any(page => page.IsEffectivelyVisible));
         var detailsPage = Assert.Single(view.GetVisualDescendants().OfType<ModCatalogPreviewView>());
         Assert.True(detailsPage.IsEffectivelyVisible);
         var skeletonPanel = FindPanels(view).Single(panel =>

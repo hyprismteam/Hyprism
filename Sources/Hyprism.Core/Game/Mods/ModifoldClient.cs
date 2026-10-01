@@ -81,9 +81,10 @@ internal sealed class ModifoldClient(HttpClient http)
     public async Task<(ModInfo Mod, ModFileInfo File)?> ResolveInstallFileAsync(
         string projectId,
         string fileId,
-        string? gameVersion)
+        string? gameVersion,
+        CancellationToken cancellationToken = default)
     {
-        var project = await GetProjectAsync(projectId);
+        var project = await GetProjectAsync(projectId, cancellationToken);
         var files = MapFiles(project).ToList();
         var file = string.IsNullOrWhiteSpace(fileId) || fileId == "latest"
             ? ModCompatibilityEvaluator.SelectRecommendedFile(files, gameVersion)
@@ -97,18 +98,18 @@ internal sealed class ModifoldClient(HttpClient http)
         return (MapProject(project, includeVersions: true), file);
     }
 
-    private async Task<Project> GetProjectAsync(string projectId)
-        => await GetAsync<Project>($"/projects/{Uri.EscapeDataString(projectId)}");
+    private async Task<Project> GetProjectAsync(string projectId, CancellationToken cancellationToken = default)
+        => await GetAsync<Project>($"/projects/{Uri.EscapeDataString(projectId)}", cancellationToken);
 
-    private async Task<T> GetAsync<T>(string path)
+    private async Task<T> GetAsync<T>(string path, CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, ApiBase + path);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         request.Headers.UserAgent.ParseAdd("Hyprism/1.0");
-        using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         response.EnsureSuccessStatusCode();
-        await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions)
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        return await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions, cancellationToken)
             ?? throw new JsonException("Modifold returned an empty response.");
     }
 

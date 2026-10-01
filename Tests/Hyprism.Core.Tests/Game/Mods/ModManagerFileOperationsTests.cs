@@ -187,6 +187,34 @@ public class ModManagerFileOperationsTests : IDisposable
         Assert.True(File.Exists(Path.Combine(_modsPath, installed.FileName)));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ModifoldBatchInstallation_CommitsOnlyWithoutCancellation(bool cancel)
+    {
+        await WriteInstalledModAsync("existing", "existing.jar");
+        using var httpClient = new HttpClient(new ModifoldInstallHandler(Encoding.UTF8.GetBytes("mod archive")));
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+        using var cancellation = new CancellationTokenSource();
+        var task = manager.InstallModFilesToInstanceAsync(
+            [new ModFileInfo { Source = "modifold", ModId = "FlmWzw", Id = "latest" }], _instancePath,
+            (_, stage, _) =>
+            {
+                if (cancel && stage == "complete")
+                    cancellation.Cancel();
+            }, cancellation.Token);
+        if (cancel)
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+        else
+            Assert.True(await task);
+        var installed = manager.GetInstanceInstalledMods(_instancePath);
+        Assert.Contains(installed, mod => mod.Id == "existing");
+        Assert.Equal(!cancel, installed.Any(mod => mod.Source == "modifold"));
+        Assert.Equal("not a real jar", await File.ReadAllTextAsync(Path.Combine(_modsPath, "existing.jar")));
+        Assert.Empty(Directory.GetDirectories(Path.Combine(_instancePath, "UserData"), ".hyprism-mod-install-*"));
+    }
+
     [Fact]
     public async Task GetModCategoriesAsync_ReturnsAllFallbackCategoriesWithoutAnApiKey()
     {
@@ -259,6 +287,65 @@ public class ModManagerFileOperationsTests : IDisposable
         var dependency = Assert.Single(root.Dependencies);
         Assert.Equal("20", dependency.ModId);
         Assert.Equal(CurseForgeDependencyRelationType.RequiredDependency, dependency.RelationType);
+    }
+
+    [Theory]
+    [InlineData("cancel")]
+    [InlineData("failure")]
+    [InlineData("success")]
+    public async Task InstallModFilesToInstanceAsync_CommitsOrDiscardsEntireBatch(string outcome)
+    {
+        await WriteInstalledModAsync("cf-10", "old-root.jar");
+        await File.WriteAllTextAsync(Path.Combine(_modsPath, "preserved.zip.disabled"), "preserved");
+        var original = Directory.GetFiles(_modsPath).ToDictionary(path => Path.GetFileName(path), File.ReadAllBytes);
+        var configStore = new JsonConfigStore(_tempDir);
+        configStore.Configuration.CurseForgeKey = "test-key";
+        using var httpClient = new HttpClient(new DependencyHandler(
+        [
+            CreateFileResponse(10, 100, "root.jar", "Root Mod", "https://cdn.test/root.jar",
+                "{\"modId\":20,\"fileId\":200,\"relationType\":4}"),
+            CreateFileResponse(20, 200, "dependency.jar", "Dependency Mod", "https://cdn.test/dependency.jar")
+        ]));
+        var manager = new ModManager(httpClient, _tempDir, configStore,
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+        using var cancellation = new CancellationTokenSource();
+        var stagedRootCompleted = false;
+        Action<int, string, string> progress = (_, stage, _) =>
+        {
+            if (stage != "complete")
+                return;
+            stagedRootCompleted = true;
+            foreach (var (name, bytes) in original)
+                Assert.Equal(bytes, File.ReadAllBytes(Path.Combine(_modsPath, name!)));
+            Assert.False(File.Exists(Path.Combine(_modsPath, "dependency.jar")));
+            if (outcome == "cancel")
+                cancellation.Cancel();
+        };
+        List<ModFileInfo> files = [new() { Source = "curseforge", ModId = "10", Id = "100" }];
+        if (outcome == "failure")
+            files.Add(new() { Source = "modifold", ModId = "../invalid", Id = "latest" });
+
+        var task = manager.InstallModFilesToInstanceAsync(files, _instancePath, progress, cancellation.Token);
+        if (outcome == "cancel")
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+        else
+            Assert.Equal(outcome == "success", await task);
+        Assert.True(stagedRootCompleted);
+        Assert.Empty(Directory.GetDirectories(Path.Combine(_instancePath, "UserData"), ".hyprism-mod-install-*"));
+        Assert.Equal("preserved", await File.ReadAllTextAsync(Path.Combine(_modsPath, "preserved.zip.disabled")));
+        if (outcome == "success")
+        {
+            Assert.False(File.Exists(Path.Combine(_modsPath, "old-root.jar")));
+            Assert.True(File.Exists(Path.Combine(_modsPath, "root.jar")));
+            Assert.True(File.Exists(Path.Combine(_modsPath, "dependency.jar")));
+            Assert.Contains(manager.GetInstanceInstalledMods(_instancePath), mod => mod.CurseForgeId == "10");
+        }
+        else
+        {
+            Assert.Equal(original.Keys.Order(), Directory.GetFiles(_modsPath).Select(Path.GetFileName).Order());
+            foreach (var (name, bytes) in original)
+                Assert.Equal(bytes, await File.ReadAllBytesAsync(Path.Combine(_modsPath, name!)));
+        }
     }
 
     [Fact]

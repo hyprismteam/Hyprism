@@ -103,6 +103,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private readonly object _modCatalogPreviewBitmapsLock = new();
     private bool _isModCatalogPreviewImageFadingOut;
     private bool _modCatalogInstallAccepted;
+    private CancellationTokenSource? _modCatalogInstallCancellation;
+    private string? _installingModsInstanceId;
+    private IReadOnlyList<ModCatalogItemViewModel> _activeModInstallItems = [];
     private string? _modCatalogGameVersion;
     private const int ModCatalogPageSize = 24;
     private const int MaxConsoleLines = 3000;
@@ -421,6 +424,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanInstallSelectedCatalogMods))]
     [NotifyPropertyChangedFor(nameof(CanOpenModCatalogInstallConfirmation))]
+    [NotifyPropertyChangedFor(nameof(CanInstallModCatalogPreview))]
+    [NotifyPropertyChangedFor(nameof(IsManagedInstanceInstallingMods))]
+    [NotifyPropertyChangedFor(nameof(CanBrowseManagedInstanceMods))]
     private bool _isInstallingSelectedCatalogMods;
 
     [ObservableProperty]
@@ -429,6 +435,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ModCatalogInstallProgressText))]
+    [NotifyPropertyChangedFor(nameof(ModCatalogInstallMetricText))]
     private double _modCatalogInstallProgress;
 
     [ObservableProperty]
@@ -635,12 +642,18 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         SelectedModCatalogPreview is { } item &&
         ModCatalogPreviewScreenshotIndex < item.ScreenshotUrls.Count - 1;
     public bool CanInstallModCatalogPreview =>
+        !IsInstallingSelectedCatalogMods &&
         SelectedModCatalogPreview is { IsInstalling: false } &&
         SelectedModCatalogPreviewFile is { CanInstall: true };
     public int SelectedCatalogModCount => ModCatalogItems.Count(item => item.IsSelected);
     public bool HasSelectedCatalogMods => SelectedCatalogModCount > 0;
     public bool CanInstallSelectedCatalogMods => HasSelectedCatalogMods && !IsInstallingSelectedCatalogMods;
     public bool CanOpenModCatalogInstallConfirmation => HasSelectedCatalogMods && !IsInstallingSelectedCatalogMods;
+    public bool IsManagedInstanceInstallingMods => IsInstallingSelectedCatalogMods &&
+        string.Equals(_managedInstance?.Id, _installingModsInstanceId, StringComparison.Ordinal);
+    public bool CanBrowseManagedInstanceMods => IsManagedInstanceInstalled && !IsManagedInstanceInstallingMods;
+    public string ModCatalogInstallingLabel => _localizer["launch.state.install"];
+    public string ModCatalogInstallMetricText => $"{(int)ModCatalogInstallProgress}%";
     public string ModCatalogInstallProgressText =>
         $"{ModCatalogInstallCompletedCount}/{ModCatalogInstallItems.Count}";
     public string SelectedModCountText =>
@@ -970,6 +983,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SelectInstanceSection(string? section)
     {
+        if (section == "browse" && !CanBrowseManagedInstanceMods)
+            return;
+
         if (section is not ("mods" or "browse" or "worlds" or "logs"))
             return;
 
@@ -1013,9 +1029,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void CloseInstanceSection()
     {
-        if (IsInstallingSelectedCatalogMods)
-            return;
-
         Volatile.Write(ref _logsInstanceId, null);
         InvalidateLogsRebuild();
         InstanceSection = string.Empty;
@@ -1144,106 +1157,120 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             DisposeModCatalogInstallItems();
     }
 
-    internal void CompleteModCatalogInstallation()
-    {
-        DisposeModCatalogInstallItems();
-        _modCatalogInstallAccepted = false;
-    }
-
     [RelayCommand]
     private async Task InstallSelectedCatalogModsAsync()
     {
-        if (!CanInstallSelectedCatalogMods || _modManager is null ||
-            _managedInstance?.IsInstalled != true)
-        {
+        if (!CanInstallSelectedCatalogMods)
             return;
-        }
-
-        var instancePath = _instances.GetInstancePathById(_managedInstance.Id);
-        if (string.IsNullOrWhiteSpace(instancePath))
-            return;
-
         if (_modCatalogInstallItems.Count == 0)
             PrepareModCatalogInstallItems();
 
-        var installItems = _modCatalogInstallItems.ToArray();
-        if (installItems.Length == 0)
+        var items = _modCatalogInstallItems.Select(item => item.CatalogItem).ToArray();
+        var files = items.Select(item => new ModFileInfo
+        {
+            Source = item.Source, ModId = item.Id, Id = item.RecommendedFileId
+        }).ToArray();
+        await InstallCatalogFilesAsync(files, items);
+    }
+
+    private async Task InstallCatalogFilesAsync(IReadOnlyList<ModFileInfo> files,
+        IReadOnlyList<ModCatalogItemViewModel> items)
+    {
+        if (IsInstallingSelectedCatalogMods || files.Count == 0 || _modManager is null ||
+            _managedInstance is not { IsInstalled: true } instance ||
+            IsInstanceBusy(instance.Id) || IsManagedInstanceRunning || IsManagedInstanceExporting ||
+            IsApplyingModUpdates || InstalledMods.Any(item => item.IsBusy))
             return;
 
+        var instancePath = _instances.GetInstancePathById(instance.Id);
+        if (string.IsNullOrWhiteSpace(instancePath))
+            return;
+
+        using var cancellation = new CancellationTokenSource();
+        _modCatalogInstallCancellation = cancellation;
+        _installingModsInstanceId = instance.Id;
+        _activeModInstallItems = items;
         _modCatalogInstallAccepted = true;
         IsModCatalogInstallConfirmationOpen = false;
-        IsInstallingSelectedCatalogMods = true;
         ModCatalogInstallCompletedCount = 0;
         ModCatalogInstallProgress = 0;
-        InstanceContentError = string.Empty;
-        var failed = false;
+        CloseInstanceSection();
+        IsInstallingSelectedCatalogMods = true;
+        BeginInstanceActivity(instance.Id);
+        foreach (var item in items)
+            item.IsInstalling = true;
         try
         {
-            for (var index = 0; index < installItems.Length; index++)
+            Action<int, string, string> progress = (index, stage, _) => Dispatcher.UIThread.Post(() =>
             {
-                var installItem = installItems[index];
-                var item = installItem.CatalogItem;
-                if (!item.CanSelect)
+                if (!ReferenceEquals(_modCatalogInstallCancellation, cancellation) ||
+                    cancellation.IsCancellationRequested)
+                    return;
+                var percent = stage switch
                 {
-                    installItem.Fail();
-                    failed = true;
+                    "downloading" => 28,
+                    "installing" => 72,
+                    "complete" => 100,
+                    _ => 5
+                };
+                ModCatalogInstallProgress = Math.Max(ModCatalogInstallProgress,
+                    (index * 100d + percent) / files.Count);
+                if (stage == "complete")
                     ModCatalogInstallCompletedCount = index + 1;
-                    ModCatalogInstallProgress = (index + 1) * 100d / installItems.Length;
-                    continue;
-                }
-
-                item.IsInstalling = true;
-                installItem.Begin();
-                try
+            });
+            var installed = await _modManager.InstallModFilesToInstanceAsync(files, instancePath, progress, cancellation.Token);
+            if (installed)
+            {
+                for (var index = 0; index < items.Count; index++)
                 {
-                    Action<string, string> progress = (stage, _) => Dispatcher.UIThread.Post(() =>
-                            {
-                                if (stage.Equals("downloading", StringComparison.OrdinalIgnoreCase))
-                                    installItem.SetProgress(28);
-                                else if (stage.Equals("installing", StringComparison.OrdinalIgnoreCase))
-                                    installItem.SetProgress(72);
-                                else if (stage.Equals("complete", StringComparison.OrdinalIgnoreCase))
-                                    installItem.Complete();
-                            });
-                    var installed = item.Source == "modifold"
-                        ? await _modManager.InstallModFileToInstanceAsync(
-                            item.Source, item.Id, item.RecommendedFileId, instancePath, progress)
-                        : await _modManager.InstallModFileToInstanceAsync(
-                            item.Id, item.RecommendedFileId, instancePath, progress);
-                    if (!installed)
-                    {
-                        installItem.Fail();
-                        failed = true;
-                        continue;
-                    }
-
-                    item.IsInstalled = true;
-                    item.InstalledFileId = item.RecommendedFileId;
-                    item.IsSelected = false;
-                    installItem.Complete();
+                    items[index].IsInstalled = true;
+                    items[index].InstalledFileId = files[index].Id;
+                    items[index].IsSelected = false;
                 }
-                catch
-                {
-                    installItem.Fail();
-                    failed = true;
-                }
-                finally
-                {
-                    item.IsInstalling = false;
-                    ModCatalogInstallCompletedCount = index + 1;
-                    ModCatalogInstallProgress = (index + 1) * 100d / installItems.Length;
-                }
+                ModCatalogInstallProgress = 100;
+                ModCatalogInstallCompletedCount = files.Count;
             }
-
-            await LoadInstalledModsAsync();
-            if (failed)
-                InstanceContentError = _localizer["modManager.installFailed"];
+            if (string.Equals(_managedInstance?.Id, instance.Id, StringComparison.Ordinal))
+            {
+                await LoadInstalledModsAsync();
+                if (!installed)
+                    InstanceContentError = _localizer["modManager.installFailed"];
+            }
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+            // The mod manager discards the complete staged batch.
+        }
+        catch (Exception exception)
+        {
+            if (string.Equals(_managedInstance?.Id, instance.Id, StringComparison.Ordinal))
+                InstanceContentError = exception.Message;
         }
         finally
         {
+            _modCatalogInstallCancellation = null;
+            _installingModsInstanceId = null;
+            foreach (var item in items)
+                item.IsInstalling = false;
+            _activeModInstallItems = [];
             IsInstallingSelectedCatalogMods = false;
+            EndInstanceActivity(instance.Id);
+            DisposeModCatalogInstallItems();
+            foreach (var item in items)
+            {
+                if (!ModCatalogItems.Contains(item))
+                    item.Dispose();
+            }
+            _modCatalogInstallAccepted = false;
             NotifyCatalogSelectionChanged();
         }
+    }
+
+    [RelayCommand]
+    private void CancelModCatalogInstallation()
+    {
+        if (IsManagedInstanceInstallingMods)
+            _modCatalogInstallCancellation?.Cancel();
     }
 
     [RelayCommand]
@@ -1358,47 +1385,14 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task InstallModCatalogPreviewAsync()
     {
-        var item = SelectedModCatalogPreview;
-        var file = SelectedModCatalogPreviewFile;
-        if (item is null || file is null || item.IsInstalling || !file.CanInstall ||
-            _modManager is null || _managedInstance?.IsInstalled != true)
-        {
-            return;
-        }
-
-        var instancePath = _instances.GetInstancePathById(_managedInstance.Id);
-        if (string.IsNullOrWhiteSpace(instancePath))
+        if (!CanInstallModCatalogPreview || SelectedModCatalogPreview is not { } item ||
+            SelectedModCatalogPreviewFile is not { } file)
             return;
 
-        item.IsInstalling = true;
-        OnPropertyChanged(nameof(CanInstallModCatalogPreview));
-        InstanceContentError = string.Empty;
-        try
+        await InstallCatalogFilesAsync([new ModFileInfo
         {
-            var installed = item.Source == "modifold"
-                ? await _modManager.InstallModFileToInstanceAsync(item.Source, item.Id, file.Id, instancePath)
-                : await _modManager.InstallModFileToInstanceAsync(item.Id, file.Id, instancePath);
-            if (!installed)
-            {
-                InstanceContentError = _localizer["instances.mods.installFailed"];
-                return;
-            }
-
-            item.IsInstalled = true;
-            item.InstalledFileId = file.Id;
-            foreach (var previewFile in ModCatalogPreviewFiles)
-                previewFile.IsInstalled = ReferenceEquals(previewFile, file);
-            await LoadInstalledModsAsync();
-        }
-        catch (Exception ex)
-        {
-            InstanceContentError = ex.Message;
-        }
-        finally
-        {
-            item.IsInstalling = false;
-            OnPropertyChanged(nameof(CanInstallModCatalogPreview));
-        }
+            Source = item.Source, ModId = item.Id, Id = file.Id
+        }], [item]);
     }
 
     [RelayCommand]
@@ -2167,7 +2161,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         IsModCatalogPreviewOpen = false;
         SelectedModCatalogPreview = null;
         if (previewItem is not null && !_modCatalogItems.Contains(previewItem) &&
-            !_modCatalogInstallItems.Any(item => ReferenceEquals(item.CatalogItem, previewItem)))
+            !_modCatalogInstallItems.Any(item => ReferenceEquals(item.CatalogItem, previewItem)) &&
+            !_activeModInstallItems.Contains(previewItem))
             previewItem.Dispose();
         SelectedModCatalogPreviewFile = null;
         _modCatalogPreviewFiles.Clear();
@@ -3344,7 +3339,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         VisibleInstalledMods.Clear();
         DisposeModCatalogInstallItems();
         foreach (var item in ModCatalogItems)
-            item.Dispose();
+        {
+            if (!_activeModInstallItems.Contains(item))
+                item.Dispose();
+        }
         ModCatalogItems.Clear();
         ResetModCatalogPreview();
         InstanceWorlds.Clear();
@@ -3671,7 +3669,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void DisposeModCatalogInstallItems()
     {
-        _modDependencyIconsCancellation.Cancel();
+        if (IsInstallingSelectedCatalogMods)
+            return;
+        if (Volatile.Read(ref _isDisposed) == 0)
+            _modDependencyIconsCancellation.Cancel();
         foreach (var installItem in _modCatalogInstallItems)
         {
             installItem.Dispose();
@@ -3906,6 +3907,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void UpdateManagedInstancePresentation()
     {
+        OnPropertyChanged(nameof(IsManagedInstanceInstallingMods));
+        OnPropertyChanged(nameof(CanBrowseManagedInstanceMods));
         NotifyExportStateChanged();
         ManagedInstanceIcon = _allInstances.FirstOrDefault(item => item.Id == _managedInstance?.Id)?.Icon;
         OnPropertyChanged(nameof(IsManagedInstanceInstalled));
@@ -4236,6 +4239,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     {
         _instanceImportCancellation?.Cancel();
         _instanceExportCancellation?.Cancel();
+        _modCatalogInstallCancellation?.Cancel();
         ReplaceEditInstanceIcon(null);
         foreach (var item in _allInstances)
             item.Icon?.Dispose();
@@ -4260,7 +4264,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         DisposeModCatalogInstallItems();
         _modDependencyIconsCancellation.Dispose();
         foreach (var item in ModCatalogItems)
-            item.Dispose();
+        {
+            if (!_activeModInstallItems.Contains(item))
+                item.Dispose();
+        }
         Interlocked.Exchange(ref _pendingProgressUpdate, null);
         _progress.DownloadProgressChanged -= OnDownloadProgressChanged;
         _progress.OperationErrorOccurred -= OnOperationErrorOccurred;

@@ -21,7 +21,6 @@ public sealed partial class InstanceModsView : UserControl
     public const double ModCatalogContentMaxWidth = 820;
 
     private static readonly TimeSpan ModCatalogSearchFadeDuration = MotionDurations.ContentFade;
-    private readonly WizardScreenTransition _installTransition;
     private INotifyPropertyChanged? _viewModel;
     private TopLevel? _searchInputTopLevel;
     private CancellationTokenSource? _modCatalogLoadingCancellation;
@@ -30,9 +29,6 @@ public sealed partial class InstanceModsView : UserControl
     public InstanceModsView()
     {
         InitializeComponent();
-        _installTransition = new WizardScreenTransition(
-            ModCatalogBrowseContent,
-            ModCatalogInstallScreen);
         DragDrop.SetAllowDrop(ModsDropZone, true);
         ModsDropZone.AddHandler(DragDrop.DragEnterEvent, OnModFilesDragEntered);
         ModsDropZone.AddHandler(DragDrop.DragLeaveEvent, OnModFilesDragLeft);
@@ -98,7 +94,6 @@ public sealed partial class InstanceModsView : UserControl
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
 
         ApplyModCatalogLoadingStateImmediately();
-        ApplyModCatalogInstallStateImmediately();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -110,37 +105,7 @@ public sealed partial class InstanceModsView : UserControl
             else
                 _ = HideModCatalogLoadingAsync();
         }
-
-        if (args.PropertyName is nameof(InstancesViewModel.IsInstallingSelectedCatalogMods))
-        {
-            if (DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true })
-                _ = PlayModCatalogInstallOpenAnimationAsync();
-            else
-                _ = PlayModCatalogInstallCloseAnimationAsync();
-        }
-
     }
-
-    private void ApplyModCatalogInstallStateImmediately()
-    {
-        if (DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true })
-            _installTransition.ShowWizardImmediately();
-        else
-            _installTransition.ShowOverviewImmediately();
-    }
-
-    private Task PlayModCatalogInstallOpenAnimationAsync()
-        => _installTransition.OpenAsync(
-            () => DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true });
-
-    private Task PlayModCatalogInstallCloseAnimationAsync()
-        => _installTransition.CloseAsync(
-            () => DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: false },
-            () =>
-            {
-                if (DataContext is InstancesViewModel viewModel)
-                    viewModel.CompleteModCatalogInstallation();
-            });
 
     private void ApplyModCatalogLoadingStateImmediately()
     {

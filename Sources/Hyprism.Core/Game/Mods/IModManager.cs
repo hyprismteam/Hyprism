@@ -65,6 +65,16 @@ public interface IModManager
     /// <returns>Whether the file was installed.</returns>
     Task<bool> InstallModFileToInstanceAsync(string source, string modId, string fileId, string instancePath, Action<string, string>? onProgress = null);
 
+    /// <summary>Installs a batch and its dependencies as one transaction.</summary>
+    /// <remarks>Failure or cancellation discards all changes in the batch. Existing files and metadata are preserved.</remarks>
+    /// <param name="files">Catalog files identified by source, project ID, and file ID.</param>
+    /// <param name="instancePath">Target instance directory.</param>
+    /// <param name="onProgress">Optional callback with the zero-based file index, stage, and detail.</param>
+    /// <param name="cancellationToken">Cancels preparation and downloads before the batch is committed.</param>
+    /// <returns>Whether the entire batch was installed.</returns>
+    /// <exception cref="OperationCanceledException">The operation was cancelled before commit.</exception>
+    Task<bool> InstallModFilesToInstanceAsync(IReadOnlyList<ModFileInfo> files, string instancePath, Action<int, string, string>? onProgress, CancellationToken cancellationToken);
+
     /// <summary>
     /// Gets the list of mods installed in a game instance
     /// </summary>

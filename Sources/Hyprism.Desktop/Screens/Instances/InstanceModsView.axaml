@@ -13,6 +13,7 @@ SPDX-License-Identifier: GPL-3.0-only
              x:DataType="instances:InstancesViewModel">
   <Grid>
               <Grid x:Name="InstalledModsSection"
+                    IsEnabled="{Binding !IsManagedInstanceInstallingMods}"
                     IsVisible="{Binding IsDisplayedInstanceModsSection}"
                     MaxWidth="{x:Static controls:AdaptiveMasterDetailHost.DefaultContentMaxWidth}"
                     HorizontalAlignment="Stretch"
@@ -263,24 +264,6 @@ SPDX-License-Identifier: GPL-3.0-only
                       IsTabStop="False"
                       RowDefinitions="Auto,Auto,*"
                       RowSpacing="10">
-                  <Grid.Transitions>
-                    <Transitions>
-                      <DoubleTransition Property="Opacity" Duration="0:0:0.19">
-                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
-                      </DoubleTransition>
-                    </Transitions>
-                  </Grid.Transitions>
-                  <Grid.RenderTransform>
-                    <TranslateTransform>
-                      <TranslateTransform.Transitions>
-                        <Transitions>
-                          <DoubleTransition Property="X" Duration="0:0:0.19">
-                            <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
-                          </DoubleTransition>
-                        </Transitions>
-                      </TranslateTransform.Transitions>
-                    </TranslateTransform>
-                  </Grid.RenderTransform>
                   <Grid>
                     <controls:ModalTextField x:Name="ModCatalogSearchField">
                       <Grid>
@@ -466,90 +449,6 @@ SPDX-License-Identifier: GPL-3.0-only
                   </Border>
                 </Grid>
 
-                <Border x:Name="ModCatalogInstallScreen"
-                        Grid.RowSpan="2"
-                        Classes="wizardScreen"
-                        IsVisible="False"
-                        Opacity="0">
-                  <Border.RenderTransform>
-                    <TranslateTransform />
-                  </Border.RenderTransform>
-                  <controls:SmoothScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                                VerticalScrollBarVisibility="Auto">
-                    <StackPanel MaxWidth="620"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Margin="28"
-                                Spacing="12">
-                      <TextBlock Text="{Binding ModCatalogInstallTitle}"
-                                 FontSize="25"
-                                 FontWeight="Bold"
-                                 HorizontalAlignment="Center"
-                                 TextAlignment="Center" />
-                      <TextBlock Text="{Binding ModCatalogInstallProgressText}"
-                                 Classes="muted"
-                                 HorizontalAlignment="Center" />
-                      <ProgressBar Value="{Binding ModCatalogInstallProgress}"
-                                   Maximum="100"
-                                   Height="6" />
-                      <Border Classes="formGroup modCatalogInstallTable">
-                        <StackPanel>
-                          <Border Classes="dataTableHeader">
-                            <Grid ColumnDefinitions="*,1.3*,1.4*" ColumnSpacing="16">
-                              <TextBlock Text="{Binding ModCatalogFileNameColumn}" />
-                              <TextBlock Grid.Column="1" Text="{Binding ModCatalogInstallVersionColumn}" />
-                              <TextBlock Grid.Column="2" />
-                            </Grid>
-                          </Border>
-                          <ItemsControl ItemsSource="{Binding ModCatalogInstallItems}">
-                            <ItemsControl.ItemTemplate>
-                              <DataTemplate x:DataType="instances:ModCatalogInstallItemViewModel">
-                                <Border Classes="modCatalogInstallTableRow">
-                                  <Grid ColumnDefinitions="*,1.3*,1.4*" ColumnSpacing="16">
-                                    <Grid ColumnDefinitions="38,*" ColumnSpacing="16">
-                                      <Border Classes="modCatalogInstallIcon">
-                                        <Grid>
-                                          <TextBlock Text="{Binding Initial}"
-                                                     IsVisible="{Binding !ShowsIcon}"
-                                                     HorizontalAlignment="Center"
-                                                     VerticalAlignment="Center" />
-                                          <Image Source="{Binding Icon}"
-                                                 IsVisible="{Binding ShowsIcon}"
-                                                 Stretch="UniformToFill"
-                                                 ClipToBounds="True" />
-                                        </Grid>
-                                      </Border>
-                                      <TextBlock Grid.Column="1"
-                                                 Text="{Binding Name}"
-                                                 Classes="dataTableValue link"
-                                                 TextTrimming="CharacterEllipsis"
-                                                 VerticalAlignment="Center" />
-                                    </Grid>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Version}"
-                                               Classes="dataTableValue"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center" />
-                                    <StackPanel Grid.Column="2"
-                                                VerticalAlignment="Center"
-                                                Spacing="5">
-                                      <ProgressBar Value="{Binding Progress}"
-                                                   Maximum="100"
-                                                   Height="5" />
-                                      <TextBlock Text="{Binding ProgressText}"
-                                                 Classes="dataTableValue"
-                                                 HorizontalAlignment="Right" />
-                                    </StackPanel>
-                                  </Grid>
-                                </Border>
-                              </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                          </ItemsControl>
-                        </StackPanel>
-                      </Border>
-                    </StackPanel>
-                  </controls:SmoothScrollViewer>
-                </Border>
               </Grid>
 
   </Grid>

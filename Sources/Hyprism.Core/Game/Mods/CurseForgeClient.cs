@@ -81,17 +81,18 @@ internal sealed class CurseForgeClient
     public async Task<CurseForgeFile?> ResolveFileAsync(
         string modId,
         string? fileId,
-        string? preferredGameVersion = null)
+        string? preferredGameVersion = null,
+        CancellationToken cancellationToken = default)
     {
         if (!string.IsNullOrWhiteSpace(fileId))
         {
             var fileEndpoint = $"/v1/mods/{modId}/files/{fileId}";
             using var fileRequest = CreateRequest(HttpMethod.Get, fileEndpoint);
-            using var fileResponse = await _http.SendAsync(fileRequest);
+            using var fileResponse = await _http.SendAsync(fileRequest, cancellationToken);
 
             if (fileResponse.IsSuccessStatusCode)
             {
-                var fileJson = await fileResponse.Content.ReadAsStringAsync();
+                var fileJson = await fileResponse.Content.ReadAsStringAsync(cancellationToken);
                 var cfFileResp = JsonSerializer.Deserialize<CurseForgeFileResponse>(fileJson, JsonOptions);
                 if (cfFileResp?.Data != null)
                     return cfFileResp.Data;
@@ -103,7 +104,7 @@ internal sealed class CurseForgeClient
 
         var filesEndpoint = $"/v1/mods/{modId}/files?pageSize=50";
         using var filesRequest = CreateRequest(HttpMethod.Get, filesEndpoint);
-        using var filesResponse = await _http.SendAsync(filesRequest);
+        using var filesResponse = await _http.SendAsync(filesRequest, cancellationToken);
 
         if (!filesResponse.IsSuccessStatusCode)
         {
@@ -111,7 +112,7 @@ internal sealed class CurseForgeClient
             return null;
         }
 
-        var filesJson = await filesResponse.Content.ReadAsStringAsync();
+        var filesJson = await filesResponse.Content.ReadAsStringAsync(cancellationToken);
         var filesResp = JsonSerializer.Deserialize<CurseForgeFilesResponse>(filesJson, JsonOptions);
         var files = filesResp?.Data ?? [];
         var latest = files.FirstOrDefault(file =>
@@ -133,14 +134,15 @@ internal sealed class CurseForgeClient
     /// </para>
     /// </summary>
     /// <returns>A task that completes with the resolved download url, or null when unavailable</returns>
-    public async Task<string?> ResolveDownloadUrlAsync(string modId, string fileId, string? directUrl, string? fileName)
+    public async Task<string?> ResolveDownloadUrlAsync(string modId, string fileId, string? directUrl, string? fileName,
+        CancellationToken cancellationToken = default)
     {
         if (!string.IsNullOrWhiteSpace(directUrl))
             return directUrl;
 
         var endpoint = $"/v1/mods/{modId}/files/{fileId}/download-url";
         using var request = CreateRequest(HttpMethod.Get, endpoint);
-        using var response = await _http.SendAsync(request);
+        using var response = await _http.SendAsync(request, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -153,7 +155,7 @@ internal sealed class CurseForgeClient
             return null;
         }
 
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
         var downloadUrlResp = JsonSerializer.Deserialize<CurseForgeDownloadUrlResponse>(json, JsonOptions);
         if (!string.IsNullOrWhiteSpace(downloadUrlResp?.Data))
             return downloadUrlResp.Data;
