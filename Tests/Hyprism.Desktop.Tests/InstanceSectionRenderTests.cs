@@ -413,11 +413,21 @@ public sealed class InstanceSectionRenderTests
             Assert.IsAssignableFrom<IEnumerable<ITransition>>(catalogTopInstall.Transitions),
             transition => transition is TransformOperationsTransition);
         viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
-        var installModal = view.FindControl<OverlayModal>("ModCatalogInstallModal");
-        Assert.NotNull(installModal);
-        Assert.Equal(674, installModal!.ShoulderMaxWidth);
-        await WaitUntilAsync(() => viewModel.HasModCatalogInstallConfirmation && installModal!.IsEffectivelyVisible);
-        var installContent = Assert.Single(installModal.GetVisualDescendants().OfType<ModCatalogInstallView>());
+        var installPage = view.FindControl<Grid>("InstanceModCatalogInstallPage");
+        var sectionPages = view.FindControl<Grid>("InstanceSectionPages");
+        Assert.NotNull(installPage);
+        Assert.NotNull(sectionPages);
+        Assert.Null(view.FindControl<OverlayModal>("ModCatalogInstallModal"));
+        await WaitUntilAsync(() => viewModel.HasModCatalogInstallConfirmation &&
+            installPage!.IsEffectivelyVisible && !sectionPages!.IsVisible &&
+            Math.Abs(Assert.IsType<TranslateTransform>(installPage.RenderTransform).X) < 0.1);
+        Assert.Null(view.FindControl<Grid>("InstancesLayout")!.Effect);
+        Assert.InRange(Assert.IsType<TranslateTransform>(installPage!.RenderTransform).X, -0.1, 0.1);
+        var installContent = Assert.Single(installPage.GetVisualDescendants().OfType<ModCatalogInstallView>());
+        Assert.Equal(InstanceModsView.ModCatalogContentMaxWidth, installContent.MaxWidth);
+        var installBackButton = view.FindControl<Button>("ModCatalogInstallBackButton");
+        Assert.NotNull(installBackButton);
+        Assert.Same(viewModel.Instances.NavigateBackFromInstanceContentCommand, installBackButton!.Command);
         var installTable = installContent.FindControl<Border>("ModCatalogInstallTable");
         Assert.NotNull(installTable);
         window.UpdateLayout();
@@ -425,10 +435,10 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => installTable!.GetVisualDescendants().OfType<Border>()
             .Any(border => border.Classes.Contains("modCatalogInstallTableRow")));
         Assert.Contains(
-            installModal!.GetVisualDescendants().OfType<TextBlock>(),
+            installPage!.GetVisualDescendants().OfType<TextBlock>(),
             textBlock => textBlock.Text == viewModel.ModCatalogInstallPreviewTitle);
         Assert.Contains(
-            installModal.GetVisualDescendants().OfType<TextBlock>(),
+            installPage.GetVisualDescendants().OfType<TextBlock>(),
             textBlock => textBlock.Text == viewModel.ModCatalogInstallDependenciesColumn);
         Assert.Equal("Catalog Mod 1.0", viewModel.ModCatalogInstallItems[0].Version);
         await WaitUntilAsync(() => viewModel.ModCatalogInstallItems[0].DependencyCount == 1);
@@ -468,8 +478,35 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(
             installResetButton.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("dataActionIcon"));
-        viewModel.CloseModCatalogInstallConfirmationCommand.Execute(null);
-        await WaitUntilAsync(() => !viewModel.HasModCatalogInstallConfirmation);
+        window.Width = 680;
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+        await WaitUntilAsync(() => view.Classes.Contains("compact"));
+        Assert.True(installPage.IsEffectivelyVisible);
+        Assert.False(sectionPages!.IsVisible);
+        Assert.Equal(double.PositiveInfinity, installContent.MaxWidth);
+        var escape = new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape };
+        installPage.RaiseEvent(escape);
+        Assert.True(escape.Handled);
+        await WaitUntilAsync(() => !installPage.IsVisible && viewModel.ModCatalogInstallItems.Count == 0);
+        Assert.True(viewModel.IsInstanceBrowseSection);
+        Assert.True(viewModel.HasSelectedCatalogMods);
+        Assert.True(sectionPages.IsVisible);
+        Assert.Null(view.FindControl<Grid>("InstancesLayout")!.Effect);
+
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        window.Width = 1180;
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+        await WaitUntilAsync(() => view.Classes.Contains("wide"));
+        Assert.True(installPage.IsEffectivelyVisible);
+        Assert.False(sectionPages.IsVisible);
+        Assert.Equal(InstanceModsView.ModCatalogContentMaxWidth, installContent.MaxWidth);
+        installBackButton.Command!.Execute(null);
+        await WaitUntilAsync(() => !installPage.IsVisible && viewModel.ModCatalogInstallItems.Count == 0);
+        Assert.True(viewModel.IsInstanceBrowseSection);
+        Assert.True(viewModel.HasSelectedCatalogMods);
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
         Assert.Contains("hidden", catalogTopInstall.Classes);
         Assert.False(catalogTopInstall.IsHitTestVisible);
@@ -689,6 +726,34 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => viewModel.Instances.IsLogsTracingEnabled);
         Assert.True(levelPopup.IsRequestedOpen);
         Assert.Equal("+3", viewModel.Instances.LogsAdditionalLevelCountText);
+
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        Assert.False(viewModel.HasModCatalogInstallConfirmation);
+        await WaitUntilAsync(() => !installPage.IsVisible);
+        viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
+        await WaitUntilAsync(() => view.FindControl<Grid>("InstancesOverview")!.IsHitTestVisible);
+        Assert.True(viewModel.HasSelectedCatalogMods);
+
+        var otherInstance = new InstanceInfo
+        {
+            Id = "other-render-instance", Name = "Other Render Instance", Branch = "release",
+            Version = 21, IsInstalled = true
+        };
+        instances.Setup(service => service.GetCachedInstances()).Returns([instance, otherInstance]);
+        instances.Setup(service => service.GetInstancePathById(otherInstance.Id)).Returns(instancePath);
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        viewModel.Instances.OpenInstanceDetailsCommand.Execute(otherInstance.Id);
+        await WaitUntilAsync(() => !installPage.IsVisible);
+        Assert.False(viewModel.HasModCatalogInstallConfirmation);
+        Assert.Empty(viewModel.ModCatalogInstallItems);
+        Assert.False(viewModel.HasSelectedCatalogMods);
+        Assert.True(viewModel.IsInstanceOverviewSection);
+        Assert.Equal(otherInstance.Name, viewModel.Instances.ManagedInstanceName);
     }
 
     [AvaloniaFact]

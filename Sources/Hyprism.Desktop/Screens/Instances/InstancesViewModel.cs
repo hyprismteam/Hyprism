@@ -854,6 +854,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void OpenInstanceCreatorAt(InstanceWizardStage stage)
     {
+        CloseModCatalogInstallConfirmation();
         CanReturnToInstanceChoice = stage == InstanceWizardStage.Choice;
         InstanceWizardStage = stage;
         IsInstanceCreatorOpen = true;
@@ -1041,7 +1042,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void NavigateBackFromInstanceContent()
     {
-        if (HasModCatalogPreview)
+        if (HasModCatalogInstallConfirmation)
+            CloseModCatalogInstallConfirmation();
+        else if (HasModCatalogPreview)
             CloseModCatalogPreview();
         else
             CloseInstanceSection();
@@ -3335,6 +3338,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void RefreshManagedInstanceContent()
     {
+        IsModCatalogInstallConfirmationOpen = false;
         InstalledMods.Clear();
         VisibleInstalledMods.Clear();
         DisposeModCatalogInstallItems();

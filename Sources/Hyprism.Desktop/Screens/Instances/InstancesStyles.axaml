@@ -958,32 +958,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Height" Value="40" />
   </Style>
 
-  <Style Selector="instances|InstancesView controls|OverlayModal.modCatalogInstallModal">
-    <Setter Property="SheetMaxWidth" Value="620" />
-    <Setter Property="SheetMaxHeight" Value="560" />
-    <Setter Property="SheetMargin" Value="20,20,20,0" />
-    <Setter Property="ShoulderMaxWidth" Value="674" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact controls|OverlayModal.modCatalogInstallModal">
-    <Setter Property="SheetMaxWidth" Value="560" />
-    <Setter Property="SheetMaxHeight" Value="520" />
-    <Setter Property="SheetMargin" Value="12,36,12,0" />
-    <Setter Property="ShoulderMaxWidth" Value="608" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Border.instanceModPreviewContent">
-    <Setter Property="Padding" Value="20" />
-    <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
-    <Setter Property="CornerRadius" Value="18,18,0,0" />
-    <Setter Property="ClipToBounds" Value="True" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact Border.instanceModPreviewContent">
-    <Setter Property="Padding" Value="16" />
-    <Setter Property="CornerRadius" Value="16,16,0,0" />
-  </Style>
-
   <Style Selector="instances|InstancesView Border.modCatalogInstallTable">
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="12" />
@@ -992,7 +966,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Border.modCatalogInstallTableRow">
     <Setter Property="Padding" Value="18,11" />
-    <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBrush}" />
     <Setter Property="BorderThickness" Value="0,0,0,3" />
   </Style>
@@ -1086,18 +1060,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Cursor" Value="Hand" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Border.instanceModPreviewBodyOutline">
-    <Setter Property="Margin" Value="0,0,0,42" />
-    <Setter Property="BorderBrush" Value="{DynamicResource MainCardStrokeBrush}" />
-    <Setter Property="BorderThickness" Value="1,1,1,0" />
-    <Setter Property="CornerRadius" Value="18,18,0,0" />
-    <Setter Property="IsHitTestVisible" Value="False" />
-  </Style>
-
-  <Style Selector="instances|InstancesView.compact Border.instanceModPreviewBodyOutline">
-    <Setter Property="CornerRadius" Value="16,16,0,0" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instancePreviewHero">
@@ -1201,38 +1163,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView Border.instanceCompatibilitySummary TextBlock">
     <Setter Property="FontSize" Value="12" />
     <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instancePreviewClose">
-    <Setter Property="Width" Value="32" />
-    <Setter Property="Height" Value="32" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Background" Value="#A61A1C20" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="9" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Border Background="{TemplateBinding Background}"
-                CornerRadius="{TemplateBinding CornerRadius}">
-          <ContentPresenter Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center" />
-        </Border>
-      </ControlTemplate>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instancePreviewClose:pointerover">
-    <Setter Property="Background" Value="#D626292E" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instancePreviewClose Path">
-    <Setter Property="Width" Value="14" />
-    <Setter Property="Height" Value="14" />
-    <Setter Property="Stretch" Value="Uniform" />
-    <Setter Property="Fill" Value="{DynamicResource TextSecondaryBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instancePreviewImageSwitch">

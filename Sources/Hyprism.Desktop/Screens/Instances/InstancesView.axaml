@@ -107,12 +107,7 @@ SPDX-License-Identifier: GPL-3.0-only
         <Grid IsVisible="{Binding HasInstances}" ClipToBounds="True">
           <instances:InstanceOverviewView x:Name="InstanceOverviewContentView" />
 
-          <Grid x:Name="InstanceSectionScreen"
-                IsVisible="False"
-                Opacity="0"
-                RowDefinitions="Auto,*"
-                Background="{DynamicResource SurfaceBrush}"
-                ZIndex="2">
+          <Grid x:Name="InstanceSectionPages" ZIndex="2">
             <Grid.Transitions>
               <Transitions>
                 <DoubleTransition Property="Opacity" Duration="0:0:0.18">
@@ -121,7 +116,7 @@ SPDX-License-Identifier: GPL-3.0-only
               </Transitions>
             </Grid.Transitions>
             <Grid.RenderTransform>
-              <TranslateTransform X="28">
+              <TranslateTransform>
                 <TranslateTransform.Transitions>
                   <Transitions>
                     <DoubleTransition Property="X" Duration="0:0:0.18">
@@ -131,97 +126,204 @@ SPDX-License-Identifier: GPL-3.0-only
                 </TranslateTransform.Transitions>
               </TranslateTransform>
             </Grid.RenderTransform>
+            <Grid x:Name="InstanceSectionScreen"
+                  IsVisible="False"
+                  Opacity="0"
+                  RowDefinitions="Auto,*"
+                  Background="{DynamicResource SurfaceBrush}"
+                  ZIndex="2">
+              <Grid.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+                    <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                  </DoubleTransition>
+                </Transitions>
+              </Grid.Transitions>
+              <Grid.RenderTransform>
+                <TranslateTransform X="28">
+                  <TranslateTransform.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="X" Duration="0:0:0.18">
+                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                      </DoubleTransition>
+                    </Transitions>
+                  </TranslateTransform.Transitions>
+                </TranslateTransform>
+              </Grid.RenderTransform>
 
-            <Border Classes="detailToolbar compact scrolled">
-              <Grid ColumnDefinitions="*,Auto,*">
-                <Button Classes="detailBack"
-                        HorizontalAlignment="Left"
-                        Command="{Binding NavigateBackFromInstanceContentCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="9">
-                    <Path Width="12" Height="12" Stretch="Uniform" Data="{StaticResource NextIcon}">
-                      <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
-                    </Path>
-                    <TextBlock Text="{Binding BackLabel}" />
-                  </StackPanel>
-                </Button>
-                <controls:FadingTextBlock Grid.Column="1"
-                           Classes="detailToolbarTitle"
-                           Text="{Binding DisplayedInstanceSectionTitle}"
-                           Margin="12,0"
-                           MaxWidth="280"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False" />
-                <Border Grid.Column="2"
-                        Classes="managerCompactSplitAction catalogInstallTopBar"
-                        Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
-                        Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding CanShowModCatalogInstallAction}"
-                        IsHitTestVisible="{Binding CanOpenModCatalogInstallConfirmation}">
-                  <Button Classes="managerCompactActionPart main catalogInstallTopBarAction"
-                          IsEnabled="{Binding CanOpenModCatalogInstallConfirmation}"
-                          Command="{Binding OpenModCatalogInstallConfirmationCommand}">
-                    <TextBlock Text="{Binding InstallLabel}"
-                               VerticalAlignment="Center" />
-                  </Button>
-                </Border>
-                <Border Grid.Column="2"
-                        Classes="logsShowFolderAction"
-                        Classes.visible="{Binding CanShowLogsInFolder}"
-                        Classes.hidden="{Binding !CanShowLogsInFolder}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding IsDisplayedInstanceLogsSection}"
-                        IsHitTestVisible="{Binding CanShowLogsInFolder}">
-                  <Button x:Name="LogsShowFolderButton"
-                          Classes="articleAction"
-                          IsEnabled="{Binding CanShowLogsInFolder}"
-                          HorizontalAlignment="Right"
-                          VerticalContentAlignment="Center"
-                          Command="{Binding ShowLogsInFolderCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
-                      <TextBlock Text="{Binding LogsShowInFolderLabel}" VerticalAlignment="Center" />
-                      <Path Width="14"
-                            Height="14"
-                            Margin="0,2,0,0"
-                            Stretch="Uniform"
-                            VerticalAlignment="Center"
-                            Data="{StaticResource FolderOpenIcon}" />
+              <Border Classes="detailToolbar compact scrolled">
+                <Grid ColumnDefinitions="*,Auto,*">
+                  <Button Classes="detailBack"
+                          HorizontalAlignment="Left"
+                          Command="{Binding NavigateBackFromInstanceContentCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="9">
+                      <Path Width="12" Height="12" Stretch="Uniform" Data="{StaticResource NextIcon}">
+                        <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
+                      </Path>
+                      <TextBlock Text="{Binding BackLabel}" />
                     </StackPanel>
                   </Button>
-                </Border>
+                  <controls:FadingTextBlock Grid.Column="1"
+                             Classes="detailToolbarTitle"
+                             Text="{Binding DisplayedInstanceSectionTitle}"
+                             Margin="12,0"
+                             MaxWidth="280"
+                             FontSize="16"
+                             FontWeight="SemiBold"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             IsHitTestVisible="False" />
+                  <Border Grid.Column="2"
+                          Classes="managerCompactSplitAction catalogInstallTopBar"
+                          Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
+                          Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          IsVisible="{Binding CanShowModCatalogInstallAction}"
+                          IsHitTestVisible="{Binding CanOpenModCatalogInstallConfirmation}">
+                    <Button Classes="managerCompactActionPart main catalogInstallTopBarAction"
+                            IsEnabled="{Binding CanOpenModCatalogInstallConfirmation}"
+                            Command="{Binding OpenModCatalogInstallConfirmationCommand}">
+                      <TextBlock Text="{Binding InstallLabel}"
+                                 VerticalAlignment="Center" />
+                    </Button>
+                  </Border>
+                  <Border Grid.Column="2"
+                          Classes="logsShowFolderAction"
+                          Classes.visible="{Binding CanShowLogsInFolder}"
+                          Classes.hidden="{Binding !CanShowLogsInFolder}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          IsVisible="{Binding IsDisplayedInstanceLogsSection}"
+                          IsHitTestVisible="{Binding CanShowLogsInFolder}">
+                    <Button x:Name="LogsShowFolderButton"
+                            Classes="articleAction"
+                            IsEnabled="{Binding CanShowLogsInFolder}"
+                            HorizontalAlignment="Right"
+                            VerticalContentAlignment="Center"
+                            Command="{Binding ShowLogsInFolderCommand}">
+                      <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding LogsShowInFolderLabel}" VerticalAlignment="Center" />
+                        <Path Width="14"
+                              Height="14"
+                              Margin="0,2,0,0"
+                              Stretch="Uniform"
+                              VerticalAlignment="Center"
+                              Data="{StaticResource FolderOpenIcon}" />
+                      </StackPanel>
+                    </Button>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <Grid Grid.Row="1" Margin="24,18,24,28">
+                <instances:InstanceModsView x:Name="InstanceModsContentView" />
+
+                <instances:InstanceWorldsView />
+
+                <instances:InstanceLogsView x:Name="InstanceLogsContentView" />
+
+                <TextBlock Text="{Binding InstanceContentError}"
+                           IsVisible="{Binding HasInstanceContentError}"
+                           Foreground="{DynamicResource DangerSoftBrush}"
+                           Background="{DynamicResource SurfaceElevatedBrush}"
+                           Padding="12,8"
+                           Margin="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           TextWrapping="Wrap" />
               </Grid>
-            </Border>
+            </Grid>
 
-            <Grid Grid.Row="1" Margin="24,18,24,28">
-              <instances:InstanceModsView x:Name="InstanceModsContentView" />
+            <Grid x:Name="InstanceModCatalogPreviewPage"
+                  IsVisible="False"
+                  Opacity="0"
+                  RowDefinitions="Auto,*"
+                  Background="{DynamicResource SurfaceBrush}"
+                  ZIndex="3">
+              <Grid.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.18">
+                    <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                  </DoubleTransition>
+                </Transitions>
+              </Grid.Transitions>
+              <Grid.RenderTransform>
+                <TranslateTransform X="36">
+                  <TranslateTransform.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="X" Duration="0:0:0.18">
+                        <DoubleTransition.Easing><easing:CubicEaseInOut /></DoubleTransition.Easing>
+                      </DoubleTransition>
+                    </Transitions>
+                  </TranslateTransform.Transitions>
+                </TranslateTransform>
+              </Grid.RenderTransform>
 
-              <instances:InstanceWorldsView />
+              <Border Classes="detailToolbar compact scrolled">
+                <Grid ColumnDefinitions="*,Auto,*">
+                  <Button Classes="detailBack"
+                          HorizontalAlignment="Left"
+                          Command="{Binding NavigateBackFromInstanceContentCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="9">
+                      <Path Width="12" Height="12" Stretch="Uniform" Data="{StaticResource NextIcon}">
+                        <Path.RenderTransform><RotateTransform Angle="180" /></Path.RenderTransform>
+                      </Path>
+                      <TextBlock Text="{Binding BackLabel}" />
+                    </StackPanel>
+                  </Button>
+                  <controls:FadingTextBlock Grid.Column="1"
+                                            Classes="detailToolbarTitle"
+                                            Text="{Binding SelectedModCatalogPreview.Name}"
+                                            Margin="12,0"
+                                            MaxWidth="420"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            IsHitTestVisible="False" />
+                  <Border Grid.Column="2"
+                          Classes="managerCompactSplitAction catalogInstallTopBar"
+                          Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
+                          Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          IsVisible="{Binding CanShowModCatalogInstallAction}"
+                          IsHitTestVisible="{Binding CanOpenModCatalogInstallConfirmation}">
+                    <Button Classes="managerCompactActionPart main catalogInstallTopBarAction"
+                            IsEnabled="{Binding CanOpenModCatalogInstallConfirmation}"
+                            Command="{Binding OpenModCatalogInstallConfirmationCommand}">
+                      <TextBlock Text="{Binding InstallLabel}" VerticalAlignment="Center" />
+                    </Button>
+                  </Border>
+                </Grid>
+              </Border>
 
-              <instances:InstanceLogsView x:Name="InstanceLogsContentView" />
-
-              <TextBlock Text="{Binding InstanceContentError}"
-                         IsVisible="{Binding HasInstanceContentError}"
-                         Foreground="{DynamicResource DangerSoftBrush}"
-                         Background="{DynamicResource SurfaceElevatedBrush}"
-                         Padding="12,8"
-                         Margin="12"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Bottom"
-                         TextWrapping="Wrap" />
+              <Grid Grid.Row="1" Margin="24,18,24,28">
+                <instances:ModCatalogPreviewView x:Name="InstanceModCatalogPreviewContentView"
+                                                 HorizontalAlignment="Stretch" />
+                <TextBlock Text="{Binding InstanceContentError}"
+                           IsVisible="{Binding HasInstanceContentError}"
+                           Foreground="{DynamicResource DangerSoftBrush}"
+                           Background="{DynamicResource SurfaceElevatedBrush}"
+                           Padding="12,8"
+                           Margin="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           TextWrapping="Wrap" />
+              </Grid>
             </Grid>
           </Grid>
 
-          <Grid x:Name="InstanceModCatalogPreviewPage"
+          <Grid x:Name="InstanceModCatalogInstallPage"
                 IsVisible="False"
+                IsHitTestVisible="False"
+                Focusable="True"
+                IsTabStop="False"
                 Opacity="0"
                 RowDefinitions="Auto,*"
                 Background="{DynamicResource SurfaceBrush}"
-                ZIndex="3">
+                ZIndex="4">
             <Grid.Transitions>
               <Transitions>
                 <DoubleTransition Property="Opacity" Duration="0:0:0.18">
@@ -240,10 +342,10 @@ SPDX-License-Identifier: GPL-3.0-only
                 </TranslateTransform.Transitions>
               </TranslateTransform>
             </Grid.RenderTransform>
-
             <Border Classes="detailToolbar compact scrolled">
               <Grid ColumnDefinitions="*,Auto,*">
-                <Button Classes="detailBack"
+                <Button x:Name="ModCatalogInstallBackButton"
+                        Classes="detailBack"
                         HorizontalAlignment="Left"
                         Command="{Binding NavigateBackFromInstanceContentCommand}">
                   <StackPanel Orientation="Horizontal" Spacing="9">
@@ -255,7 +357,7 @@ SPDX-License-Identifier: GPL-3.0-only
                 </Button>
                 <controls:FadingTextBlock Grid.Column="1"
                                           Classes="detailToolbarTitle"
-                                          Text="{Binding SelectedModCatalogPreview.Name}"
+                                          Text="{Binding ModCatalogInstallPreviewTitle}"
                                           Margin="12,0"
                                           MaxWidth="420"
                                           FontSize="16"
@@ -263,25 +365,10 @@ SPDX-License-Identifier: GPL-3.0-only
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           IsHitTestVisible="False" />
-                <Border Grid.Column="2"
-                        Classes="managerCompactSplitAction catalogInstallTopBar"
-                        Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
-                        Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding CanShowModCatalogInstallAction}"
-                        IsHitTestVisible="{Binding CanOpenModCatalogInstallConfirmation}">
-                  <Button Classes="managerCompactActionPart main catalogInstallTopBarAction"
-                          IsEnabled="{Binding CanOpenModCatalogInstallConfirmation}"
-                          Command="{Binding OpenModCatalogInstallConfirmationCommand}">
-                    <TextBlock Text="{Binding InstallLabel}" VerticalAlignment="Center" />
-                  </Button>
-                </Border>
               </Grid>
             </Border>
-
             <Grid Grid.Row="1" Margin="24,18,24,28">
-              <instances:ModCatalogPreviewView x:Name="InstanceModCatalogPreviewContentView"
+              <instances:ModCatalogInstallView x:Name="InstanceModCatalogInstallContentView"
                                                HorizontalAlignment="Stretch" />
               <TextBlock Text="{Binding InstanceContentError}"
                          IsVisible="{Binding HasInstanceContentError}"
@@ -401,17 +488,6 @@ SPDX-License-Identifier: GPL-3.0-only
       </controls:OverlayModal.ModalContent>
     </controls:OverlayModal>
 
-    <controls:OverlayModal x:Name="ModCatalogInstallModal"
-                           BackdropTarget="{Binding ElementName=InstancesLayout}"
-                           Classes="modCatalogInstallModal"
-                           IsOpen="{Binding HasModCatalogInstallConfirmation}"
-                           DismissCommand="{Binding CloseModCatalogInstallConfirmationCommand}"
-                           Closed="OnModCatalogInstallModalClosed"
-                           ZIndex="210">
-      <controls:OverlayModal.ModalContent>
-        <instances:ModCatalogInstallView />
-      </controls:OverlayModal.ModalContent>
-    </controls:OverlayModal>
     <controls:OverlayModal x:Name="InstanceEditModal"
                            IsOpen="{Binding IsEditingInstance}"
                            DismissCommand="{Binding CancelEditManagedInstanceCommand}"

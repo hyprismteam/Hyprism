@@ -13,6 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Hyprism.Core.Accounts;
 using Hyprism.Core.Game.Sources;
+using Hyprism.Core.Game.Mods;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Models;
 using Hyprism.Desktop.Controls;
@@ -162,6 +163,41 @@ public sealed class DocumentationScreenshotTests
 
         await CapturePageAsync("instances", "instances.png");
         var instancesView = window.GetVisualDescendants().OfType<InstancesView>().Single();
+        var sampleMods = new[]
+        {
+            new ModCatalogItemViewModel("paths", "Better paths", "Example author", "", "1.3.0",
+                recommendedFileId: "paths-1.3", recommendedVersionLabel: "1.3.0",
+                compatibility: ModCompatibilityStatus.Compatible,
+                dependencies: [new ModDependency
+                {
+                    ModId = "library", Name = "Shared library", Version = "2.1.0",
+                    RelationType = CurseForgeDependencyRelationType.RequiredDependency
+                }]),
+            new ModCatalogItemViewModel("storage", "Storage tools", "Example author", "", "1.0.2",
+                recommendedFileId: "storage-1.0", recommendedVersionLabel: "1.0.2",
+                compatibility: ModCompatibilityStatus.Compatible)
+        };
+        foreach (var mod in sampleMods)
+        {
+            viewModel.Instances.ModCatalogItems.Add(mod);
+            viewModel.Instances.ToggleModCatalogSelectionCommand.Execute(mod);
+        }
+        viewModel.Instances.SelectInstanceSectionCommand.Execute("browse");
+        await WaitFramesAsync(20);
+        await viewModel.Instances.OpenModCatalogInstallConfirmationCommand.ExecuteAsync(null);
+        var installPage = instancesView.FindControl<Grid>("InstanceModCatalogInstallPage")!;
+        var sectionPages = instancesView.FindControl<Grid>("InstanceSectionPages")!;
+        await AvaloniaTestWait.UntilAsync(
+            () => installPage.IsEffectivelyVisible && installPage.Opacity >= 0.99 && !sectionPages.IsVisible,
+            "mod installation confirmation page to open");
+        await WaitFramesAsync(6);
+        Capture(window, Path.Combine(outputDirectory, "mod-install-confirmation.png"));
+        viewModel.Instances.ClearModCatalogSelectionCommand.Execute(null);
+        await AvaloniaTestWait.UntilAsync(() => !installPage.IsVisible,
+            "mod installation confirmation page to close");
+        viewModel.Instances.CloseInstanceSectionCommand.Execute(null);
+        await WaitFramesAsync(20);
+
         viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
         await WaitFramesAsync(20);
         var creator = instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView")!;

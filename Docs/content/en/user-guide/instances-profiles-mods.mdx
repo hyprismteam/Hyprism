@@ -110,13 +110,15 @@ Press **Esc** or click outside the search field to end text entry. The query sta
 
 Choose **CurseForge** or **Modifold** in the source selector. Both sources offer category filtering. The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes.
 
-To install several mods together, select the compatible catalog entries and select **Install** at the right of the top bar. Review each mod, its icon, and the version that will be installed in the **Preview** sheet. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. The sheet closes and the catalog shows installation progress until the selected mods finish
+To install several mods together, select the compatible catalog entries and select **Install** at the right of the top bar. Review each mod, its icon, and the version that will be installed on the **Preview** page. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. Use **Back** or **Esc** to return to the catalog while keeping your selection. Installation returns you to the instance overview, which shows progress until the selected mods finish.
+
+![Mod installation preview with versions, dependencies, and Back and Install controls](/img/user/en/mod-install-confirmation.png)
 
 ## Mod dependencies
 
 Hyprism reads dependency relations from CurseForge mod files. Required dependencies are resolved recursively and installed before the selected mod. Optional dependencies are not installed automatically, while an incompatible mod relation stops installation when the conflicting mod is already installed. Modifold dependencies are not installed automatically.
 
-The **Preview** sheet warns that required dependencies may add extra downloads. Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata
+The **Preview** page warns that required dependencies may add extra downloads. Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata.
 
 Hyprism also reads the Hytale `manifest.json` inside JAR and ZIP mods. It keeps the declared plugin identifier and version ranges in the instance manifest and prevents removing a mod while another installed mod declares it as a required dependency. If a local archive declares a dependency, install that dependency separately before using the local mod
 
