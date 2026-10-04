@@ -15,12 +15,24 @@ SPDX-License-Identifier: GPL-3.0-only
               <Grid x:Name="InstalledModsSection"
                     IsEnabled="{Binding !IsManagedInstanceInstallingMods}"
                     IsVisible="{Binding IsDisplayedInstanceModsSection}"
-                    MaxWidth="{x:Static controls:AdaptiveMasterDetailHost.DefaultContentMaxWidth}"
+                    MaxWidth="{x:Static instances:InstanceModsView.ModCatalogContentMaxWidth}"
                     HorizontalAlignment="Stretch"
-                    RowDefinitions="Auto,Auto,*,Auto"
+                    Focusable="True"
+                    IsTabStop="False"
+                    RowDefinitions="Auto,Auto,Auto,*"
                     RowSpacing="10">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                  <TextBox Classes="instanceSearch" PlaceholderText="{Binding InstanceModsSearchHint}" Text="{Binding InstalledModsSearchQuery, Mode=TwoWay}" />
+                <controls:ModalTextField x:Name="InstalledModsSearchField">
+                  <TextBox x:Name="InstalledModsSearchBox"
+                           Classes="installedModsSearch"
+                           PlaceholderText="{Binding InstanceModsSearchHint}"
+                           Text="{Binding InstalledModsSearchQuery, Mode=TwoWay}" />
+                </controls:ModalTextField>
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <TextBlock Text="{Binding InstanceModsFooterText}"
+                             Classes="muted"
+                             FontSize="12"
+                             VerticalAlignment="Center"
+                             TextTrimming="CharacterEllipsis" />
                   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                     <Button Classes="instanceToolbarIconButton"
                             Command="{Binding ImportModsCommand}"
@@ -40,13 +52,6 @@ SPDX-License-Identifier: GPL-3.0-only
                         <Path Classes="instanceToolbarIcon"
                               Data="{StaticResource DownloadIcon}"
                               IsVisible="{Binding !IsCheckingModUpdates}" />
-                        <Border Classes="instanceBadge update"
-                                IsVisible="{Binding HasModUpdates}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Margin="0,-6,-6,0">
-                          <TextBlock Text="{Binding ModUpdateCountText}" />
-                        </Border>
                       </Grid>
                     </Button>
                     <Button Classes="instanceToolbarIconButton"
@@ -66,15 +71,16 @@ SPDX-License-Identifier: GPL-3.0-only
                   </StackPanel>
                 </Grid>
 
-                <StackPanel Grid.Row="1" Spacing="8">
-                  <Border Classes="instanceAlertBar"
+                <StackPanel Grid.Row="2" Spacing="10">
+                  <Border Classes="instanceAlertBar update"
                           IsVisible="{Binding HasModUpdates}">
                     <Grid ColumnDefinitions="*,Auto">
                       <TextBlock Text="{Binding InstanceModsUpdatesAvailableText}"
+                                 Classes="instanceAlertText"
                                  VerticalAlignment="Center"
                                  TextTrimming="CharacterEllipsis" />
                       <Button Grid.Column="1"
-                              Classes="instanceToolbarAction primarySmall"
+                              Classes="primary instanceBulkUpdateAction"
                               IsEnabled="{Binding !IsApplyingModUpdates}"
                               Command="{Binding UpdateAllModsWithUpdatesCommand}">
                         <Grid>
@@ -90,38 +96,41 @@ SPDX-License-Identifier: GPL-3.0-only
 
                   <Border Classes="instanceAlertBar"
                           IsVisible="{Binding HasModSelection}">
-                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="6">
+                    <StackPanel Spacing="8">
                       <TextBlock Text="{Binding SelectedModCountText}"
-                                 VerticalAlignment="Center"
-                                 Margin="0,0,8,0" />
-                      <Button Grid.Column="1" Classes="instanceBulkAction" Command="{Binding EnableSelectedModsCommand}">
-                        <TextBlock Text="{Binding InstanceModsEnableSelectedLabel}" />
-                      </Button>
-                      <Button Grid.Column="2" Classes="instanceBulkAction" Command="{Binding DisableSelectedModsCommand}">
-                        <TextBlock Text="{Binding InstanceModsDisableSelectedLabel}" />
-                      </Button>
-                      <Button Grid.Column="3" Classes="instanceBulkAction danger" Command="{Binding DeleteSelectedModsCommand}">
-                        <TextBlock Text="{Binding InstanceModsDeleteSelectedLabel}" />
-                      </Button>
-                      <Button Grid.Column="5" Classes="instanceBulkAction" Command="{Binding ClearInstalledModsSelectionCommand}">
-                        <TextBlock Text="{Binding InstanceModsClearSelectionLabel}" />
-                      </Button>
-                    </Grid>
+                                 Classes="instanceAlertText"
+                                 VerticalAlignment="Center" />
+                      <WrapPanel Orientation="Horizontal" Margin="0,0,-6,-6">
+                        <Button Classes="instanceBulkAction" Command="{Binding EnableSelectedModsCommand}">
+                          <TextBlock Text="{Binding InstanceModsEnableSelectedLabel}" />
+                        </Button>
+                        <Button Classes="instanceBulkAction" Command="{Binding DisableSelectedModsCommand}">
+                          <TextBlock Text="{Binding InstanceModsDisableSelectedLabel}" />
+                        </Button>
+                        <Button Classes="instanceBulkAction danger" Command="{Binding DeleteSelectedModsCommand}">
+                          <TextBlock Text="{Binding InstanceModsDeleteSelectedLabel}" />
+                        </Button>
+                        <Button Classes="instanceBulkAction" Command="{Binding ClearInstalledModsSelectionCommand}">
+                          <TextBlock Text="{Binding InstanceModsClearSelectionLabel}" />
+                        </Button>
+                      </WrapPanel>
+                    </StackPanel>
                   </Border>
                 </StackPanel>
 
-                <Border Grid.Row="2" Classes="instanceContentPanel">
+                <Border Grid.Row="3" Classes="instanceContentPanel catalog">
                   <Grid x:Name="ModsDropZone">
-                    <Grid.RowDefinitions>
-                      <RowDefinition Height="*" />
-                      <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <ProgressBar IsVisible="{Binding IsInstanceModsLoading}" IsIndeterminate="True" Width="180" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Path Classes="instanceToolbarSpinner"
+                          Data="M9,1 A8,8 0 1 1 1,9"
+                          IsVisible="{Binding IsInstanceModsLoading}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          controls:RotatingVisual.IsActive="{Binding IsInstanceModsLoading}" />
                     <StackPanel IsVisible="{Binding IsInstalledModsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
                       <Image Width="48" Height="48" Source="avares://Hyprism.Desktop/Assets/Fluent/puzzle.png" />
                       <TextBlock Text="{Binding InstanceModsEmptyTitle}" FontSize="19" FontWeight="SemiBold" TextAlignment="Center" />
                       <TextBlock Text="{Binding InstanceModsEmptyHint}" Classes="muted" MaxWidth="390" TextAlignment="Center" TextWrapping="Wrap" />
-                      <Button Classes="instanceToolbarAction primarySmall"
+                      <Button Classes="primary instanceBulkUpdateAction"
                               HorizontalAlignment="Center"
                               Margin="0,6,0,0"
                               Command="{Binding SelectInstanceSectionCommand}"
@@ -129,16 +138,18 @@ SPDX-License-Identifier: GPL-3.0-only
                         <TextBlock Text="{Binding InstanceBrowseTitle}" />
                       </Button>
                     </StackPanel>
-                    <ListBox IsVisible="{Binding HasInstalledMods}"
+                    <ListBox x:Name="InstalledModsList"
+                             IsVisible="{Binding HasInstalledMods}"
                              ItemsSource="{Binding VisibleInstalledMods}"
                              Classes="instanceVirtualizedList"
+                             Classes.loading="{Binding IsInstanceModsLoading}"
                              Margin="10,10,10,0">
                       <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="instances:InstanceModItemViewModel">
-                          <Border Classes="instanceModRow"
+                          <Border Classes="instanceModRow catalog installed"
                                   Classes.selected="{Binding IsSelected}"
                                   Classes.disabled="{Binding !IsEnabled}">
-                            <Grid ColumnDefinitions="Auto,44,*,Auto,Auto" ColumnSpacing="12">
+                            <Grid ColumnDefinitions="Auto,56,*,Auto" ColumnSpacing="12">
                               <CheckBox Classes="instanceSelectCheck uiSelectionCheck"
                                         AutomationProperties.Name="{Binding Name}"
                                         IsChecked="{Binding IsSelected, Mode=TwoWay}"
@@ -163,80 +174,81 @@ SPDX-License-Identifier: GPL-3.0-only
                                       controls:RotatingVisual.IsActive="{Binding IsBusy}" />
                               </Panel>
                               <StackPanel Grid.Column="2" Spacing="3" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="7">
-                                  <Button Classes="instanceModNameLink"
-                                          Command="{Binding DataContext.OpenInstalledModPageCommand, ElementName=InstanceModsRoot}"
-                                          CommandParameter="{Binding}"
-                                          ToolTip.Tip="{Binding DataContext.InstanceModsOpenPageTooltip, ElementName=InstanceModsRoot}">
-                                    <TextBlock Text="{Binding Name}"
-                                               FontWeight="SemiBold"
-                                               MaxWidth="320"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="NoWrap" />
-                                  </Button>
-                                  <Border Classes="instanceBadge update" IsVisible="{Binding ShowsUpdateBadge}">
-                                    <TextBlock Text="{Binding UpdateBadgeText}" />
+                                <Button Classes="instanceModNameLink"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Command="{Binding DataContext.OpenInstalledModPageCommand, ElementName=InstanceModsRoot}"
+                                        CommandParameter="{Binding}"
+                                        ToolTip.Tip="{Binding DataContext.InstanceModsOpenPageTooltip, ElementName=InstanceModsRoot}">
+                                  <TextBlock Text="{Binding Name}"
+                                             FontWeight="SemiBold"
+                                             TextTrimming="CharacterEllipsis"
+                                             TextWrapping="NoWrap" />
+                                </Button>
+                                <TextBlock Text="{Binding Version}" Classes="muted" FontSize="12"
+                                           TextTrimming="CharacterEllipsis" />
+                                <WrapPanel Orientation="Horizontal">
+                                  <Border Classes="instanceCatalogAuthorBadge" HorizontalAlignment="Left"
+                                          Padding="7,3" Margin="0,0,7,0">
+                                    <TextBlock Text="{Binding Author}" Classes="instanceCatalogAuthorName"
+                                               MaxWidth="180"
+                                               TextTrimming="CharacterEllipsis" />
+                                  </Border>
+                                  <Border Classes="instanceBadge update" IsVisible="{Binding ShowsUpdateBadge}" Margin="0,0,7,0">
+                                    <TextBlock Text="{Binding UpdateBadgeText}" MaxWidth="90" TextTrimming="CharacterEllipsis" />
                                   </Border>
                                   <Border Classes="instanceBadge release" IsVisible="{Binding ShowsReleaseBadge}">
                                     <TextBlock Text="{Binding ReleaseBadge}" />
                                   </Border>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="7">
-                                  <TextBlock Text="{Binding Version}" Classes="muted" FontSize="12" />
-                                  <TextBlock Text="·" Classes="muted" FontSize="12" />
-                                  <TextBlock Text="{Binding Author}" Classes="muted" FontSize="12" />
-                                </StackPanel>
+                                </WrapPanel>
                               </StackPanel>
-                              <ToggleSwitch Grid.Column="3"
-                                            Classes="uiToggle instanceModToggle"
-                                            IsChecked="{Binding IsEnabled, Mode=OneWay}"
-                                            IsEnabled="{Binding CanInteract}"
-                                            Command="{Binding DataContext.ToggleModCommand, ElementName=InstanceModsRoot}"
-                                            CommandParameter="{Binding}"
-                                            ToolTip.Tip="{Binding DataContext.InstanceModsToggleTooltip, ElementName=InstanceModsRoot}" />
-                              <Button Grid.Column="4"
-                                      x:Name="InstalledModDeleteButton"
-                                      Classes="instanceRowIconButton"
-                                      ToolTip.Tip="{Binding DataContext.InstanceModsDeleteTooltip, ElementName=InstanceModsRoot}">
-                                <Button.Flyout>
-                                  <Flyout Placement="LeftEdgeAlignedTop">
-                                    <Border Classes="instanceDeleteConfirmation">
-                                      <StackPanel Width="240" Spacing="10">
-                                        <TextBlock Text="{Binding DataContext.InstanceModsDeleteTitle, ElementName=InstanceModsRoot}"
-                                                   FontSize="15"
-                                                   FontWeight="SemiBold"
-                                                   TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{Binding DataContext.InstanceModsDeleteHint, ElementName=InstanceModsRoot}"
-                                                   Classes="muted"
-                                                   TextWrapping="Wrap" />
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-                                          <Button Classes="instanceConfirmAction"
-                                                  Click="OnCloseModDeleteFlyoutClicked">
-                                            <TextBlock Text="{Binding DataContext.CancelLabel, ElementName=InstanceModsRoot}" />
-                                          </Button>
-                                          <Button Classes="instanceConfirmAction danger"
-                                                  Command="{Binding DataContext.DeleteModCommand, ElementName=InstanceModsRoot}"
-                                                  CommandParameter="{Binding}"
-                                                  Click="OnCloseModDeleteFlyoutClicked">
-                                            <TextBlock Text="{Binding DataContext.InstanceModsDeleteLabel, ElementName=InstanceModsRoot}" />
-                                          </Button>
-                                        </StackPanel>
+                              <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8"
+                                          VerticalAlignment="Center">
+                                <ToggleSwitch Classes="uiToggle instanceModToggle"
+                                              IsChecked="{Binding IsEnabled, Mode=OneWay}"
+                                              IsEnabled="{Binding CanInteract}"
+                                              Command="{Binding DataContext.ToggleModCommand, ElementName=InstanceModsRoot}"
+                                              CommandParameter="{Binding}"
+                                              ToolTip.Tip="{Binding DataContext.InstanceModsToggleTooltip, ElementName=InstanceModsRoot}" />
+                                <Button x:Name="InstalledModDeleteButton"
+                                        Classes="instanceRowIconButton"
+                                        ToolTip.Tip="{Binding DataContext.InstanceModsDeleteTooltip, ElementName=InstanceModsRoot}">
+                                  <Button.Flyout>
+                                    <Flyout Placement="LeftEdgeAlignedTop">
+                                      <Border Classes="instanceDeleteConfirmation">
+                                        <StackPanel Width="240" Spacing="10">
+                                          <TextBlock Text="{Binding DataContext.InstanceModsDeleteTitle, ElementName=InstanceModsRoot}"
+                                                     FontSize="15"
+                                                     FontWeight="SemiBold"
+                                                     TextTrimming="CharacterEllipsis" />
+                                          <TextBlock Text="{Binding DataContext.InstanceModsDeleteHint, ElementName=InstanceModsRoot}"
+                                                     Classes="muted"
+                                                     TextWrapping="Wrap" />
+                                          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                                            <Button Classes="instanceConfirmAction"
+                                                    Click="OnCloseModDeleteFlyoutClicked">
+                                              <TextBlock Text="{Binding DataContext.CancelLabel, ElementName=InstanceModsRoot}" />
+                                            </Button>
+                                            <Button Classes="instanceConfirmAction danger"
+                                                    Command="{Binding DataContext.DeleteModCommand, ElementName=InstanceModsRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    Click="OnCloseModDeleteFlyoutClicked">
+                                              <TextBlock Text="{Binding DataContext.InstanceModsDeleteLabel, ElementName=InstanceModsRoot}" />
+                                            </Button>
+                                          </StackPanel>
                                       </StackPanel>
                                     </Border>
                                   </Flyout>
                                 </Button.Flyout>
                                 <Path Classes="instanceRowIcon" Data="{StaticResource DeleteIcon}" />
                               </Button>
+                              </StackPanel>
                             </Grid>
                           </Border>
                         </DataTemplate>
                       </ListBox.ItemTemplate>
                     </ListBox>
-                    <Border Grid.Row="1" Classes="instanceListFooter" IsVisible="{Binding HasInstalledMods}">
-                      <TextBlock Text="{Binding InstanceModsFooterText}" Classes="muted" FontSize="12" />
-                    </Border>
                     <Border x:Name="ModDropOverlay"
-                            Grid.RowSpan="2"
                             Classes="instanceDropOverlay"
                             IsVisible="False">
                       <StackPanel HorizontalAlignment="Center"

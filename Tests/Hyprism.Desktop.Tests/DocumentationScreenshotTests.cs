@@ -163,6 +163,42 @@ public sealed class DocumentationScreenshotTests
 
         await CapturePageAsync("instances", "instances.png");
         var instancesView = window.GetVisualDescendants().OfType<InstancesView>().Single();
+        var installedMods = new[]
+        {
+            new InstanceModItemViewModel("paths", "Better paths", "1.3.0", "Example author", true)
+            {
+                IsSelected = true, UpdateVersion = "1.4.0"
+            },
+            new InstanceModItemViewModel("storage", "Storage tools", "1.0.2", "Example author", false),
+            new InstanceModItemViewModel("library", "Shared library", "2.1.0", "Example author", true)
+        };
+        foreach (var mod in installedMods)
+            viewModel.Instances.InstalledMods.Add(mod);
+        viewModel.Instances.InstalledModsSearchQuery = "Example";
+        viewModel.Instances.InstalledModsSearchQuery = string.Empty;
+        viewModel.Instances.SelectedModCount = 1;
+        viewModel.Instances.ModUpdateCount = 1;
+        viewModel.Instances.SelectInstanceSectionCommand.Execute("mods");
+        await WaitFramesAsync(20);
+        Capture(window, Path.Combine(outputDirectory, "installed-mods.png"));
+        var selectedInstanceButton = instancesView.GetVisualDescendants().OfType<Button>()
+            .First(button => button.Classes.Contains("managerListItem") &&
+                button.DataContext is InstanceItemViewModel { Id: "instance-aurora" });
+        selectedInstanceButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        window.Width = 1024;
+        window.UpdateLayout();
+        await WaitFramesAsync(20);
+        Capture(window, Path.Combine(outputDirectory, "installed-mods-compact.png"));
+        window.Width = WindowWidth;
+        window.UpdateLayout();
+        viewModel.Instances.ClearInstalledModsSelectionCommand.Execute(null);
+        viewModel.Instances.SelectedModCount = 0;
+        viewModel.Instances.ModUpdateCount = 0;
+        viewModel.Instances.CloseInstanceSectionCommand.Execute(null);
+        await WaitFramesAsync(20);
+        viewModel.Instances.InstalledMods.Clear();
+        viewModel.Instances.InstalledModsSearchQuery = "Example";
+        viewModel.Instances.InstalledModsSearchQuery = string.Empty;
         var sampleMods = new[]
         {
             new ModCatalogItemViewModel("paths", "Better paths", "Example author", "", "1.3.0",

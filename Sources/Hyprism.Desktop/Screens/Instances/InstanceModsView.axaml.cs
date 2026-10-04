@@ -54,34 +54,42 @@ public sealed partial class InstanceModsView : UserControl
         base.OnDetachedFromVisualTree(e);
     }
 
-    public bool TryEndCatalogSearchInput()
+    public bool TryEndSearchInput()
     {
-        if (!IsCatalogSearchInputFocused())
+        var field = GetFocusedSearchField();
+        if (field is null)
             return false;
 
-        ModCatalogBrowseContent.Focus();
+        (ReferenceEquals(field, InstalledModsSearchField) ? InstalledModsSection : ModCatalogBrowseContent).Focus();
         return true;
     }
 
-    private bool IsCatalogSearchInputFocused()
-        => ModCatalogSearchBox.IsEffectivelyVisible &&
-           ReferenceEquals(TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement(), ModCatalogSearchBox);
+    private ModalTextField? GetFocusedSearchField()
+    {
+        var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        if (InstalledModsSearchBox.IsEffectivelyVisible && ReferenceEquals(focused, InstalledModsSearchBox))
+            return InstalledModsSearchField;
+        return ModCatalogSearchBox.IsEffectivelyVisible && ReferenceEquals(focused, ModCatalogSearchBox)
+            ? ModCatalogSearchField
+            : null;
+    }
 
     private void OnSearchInputTopLevelPointerPressed(object? sender, PointerPressedEventArgs args)
     {
-        if (!IsCatalogSearchInputFocused() || args.Source is Visual source &&
-            (ReferenceEquals(source, ModCatalogSearchField) || ModCatalogSearchField.IsVisualAncestorOf(source)))
+        var field = GetFocusedSearchField();
+        if (field is null || args.Source is Visual source &&
+            (ReferenceEquals(source, field) || field.IsVisualAncestorOf(source)))
         {
             return;
         }
 
-        ModCatalogBrowseContent.Focus();
+        TryEndSearchInput();
     }
 
-    public void SetMaximumWidth(double installedModsWidth, double catalogWidth)
+    public void SetMaximumWidth(double width)
     {
-        InstalledModsSection.MaxWidth = installedModsWidth;
-        ModCatalogSection.MaxWidth = catalogWidth;
+        InstalledModsSection.MaxWidth = width;
+        ModCatalogSection.MaxWidth = width;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs args)

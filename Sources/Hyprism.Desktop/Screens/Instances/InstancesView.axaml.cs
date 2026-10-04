@@ -272,7 +272,7 @@ public sealed partial class InstancesView : UserControl
 
     private Task PlayModCatalogInstallOpenAnimationAsync()
     {
-        InstanceModsContentView.TryEndCatalogSearchInput();
+        InstanceModsContentView.TryEndSearchInput();
         Func<bool> shouldRemainOpen =
             () => DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: true };
         Action onOpened = () =>
@@ -335,7 +335,7 @@ public sealed partial class InstancesView : UserControl
         if (args.Key is not Key.Escape)
             return;
 
-        if (InstanceModsContentView.TryEndCatalogSearchInput())
+        if (InstanceModsContentView.TryEndSearchInput())
         {
             args.Handled = true;
             return;
@@ -440,13 +440,10 @@ public sealed partial class InstancesView : UserControl
 
     private void UpdateInstanceSectionContentWidth()
     {
-        var maxWidth = _layoutHost.IsCompact
-            ? double.PositiveInfinity
-            : AdaptiveMasterDetailHost.DefaultContentMaxWidth;
         var catalogMaxWidth = _layoutHost.IsCompact
             ? double.PositiveInfinity
             : InstanceModsView.ModCatalogContentMaxWidth;
-        InstanceModsContentView.SetMaximumWidth(maxWidth, catalogMaxWidth);
+        InstanceModsContentView.SetMaximumWidth(catalogMaxWidth);
         InstanceLogsContentView.SetMaximumWidth(catalogMaxWidth);
         InstanceModCatalogPreviewContentView.MaxWidth = catalogMaxWidth;
         InstanceModCatalogInstallContentView.MaxWidth = catalogMaxWidth;

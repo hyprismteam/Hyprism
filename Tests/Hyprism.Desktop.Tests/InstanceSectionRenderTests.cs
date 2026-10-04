@@ -729,7 +729,7 @@ public sealed class InstanceSectionRenderTests
         Assert.True(instancesLayout!.IsHitTestVisible);
         Assert.Null(instancesLayout.Effect);
 
-        Assert.Equal(720, modsView.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
+        Assert.Equal(820, modsView.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
         Assert.Equal(820, modsView.FindControl<Grid>("ModCatalogSection")?.MaxWidth);
         Assert.Equal(820, view.FindControl<InstanceLogsView>("InstanceLogsContentView")?
             .FindControl<Grid>("InstanceLogsSection")?.MaxWidth);
