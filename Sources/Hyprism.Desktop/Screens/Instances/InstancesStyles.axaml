@@ -1029,24 +1029,14 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.modCatalogInstallConfirmAction">
-    <Setter Property="Height" Value="42" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="10" />
-    <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="Transitions">
       <Transitions>
         <BrushTransition Property="Background" Duration="0:0:0.18" />
       </Transitions>
     </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.modCatalogInstallConfirmAction:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlKnobHoverBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.modCatalogInstallResetAction">

@@ -98,7 +98,8 @@ public sealed class WizardScreenTransition
         Func<bool> shouldRemainOpen,
         Action? onSlideStarted,
         Action? onOpened,
-        double horizontalOffset)
+        double horizontalOffset,
+        bool slideOverview = false)
     {
         var cancellationToken = BeginAnimation();
         _overview.IsHitTestVisible = false;
@@ -112,10 +113,11 @@ public sealed class WizardScreenTransition
                 return;
 
             onSlideStarted?.Invoke();
-            await RunCompactOverlaySlideAsync(
-                GetTranslation(_wizard),
-                0,
-                cancellationToken);
+            await Task.WhenAll(
+                RunCompactOverlaySlideAsync(GetTranslation(_wizard), 0, cancellationToken),
+                slideOverview
+                    ? RunCompactOverlaySlideAsync(GetTranslation(_overview), -horizontalOffset, cancellationToken)
+                    : Task.CompletedTask);
             if (cancellationToken.IsCancellationRequested || !shouldRemainOpen())
                 return;
 
@@ -168,7 +170,8 @@ public sealed class WizardScreenTransition
     public async Task CloseCompactOverlayAsync(
         Func<bool> shouldRemainClosed,
         Action? onClosed,
-        double horizontalOffset)
+        double horizontalOffset,
+        bool slideOverview = false)
     {
         var cancellationToken = BeginAnimation();
         if (!_wizard.IsVisible)
@@ -178,15 +181,16 @@ public sealed class WizardScreenTransition
             return;
         }
 
-        RevealOverviewBehindWizard();
+        RevealOverviewBehindWizard(slideOverview ? -horizontalOffset : 0);
         _wizard.IsHitTestVisible = false;
 
         try
         {
-            await RunCompactOverlaySlideAsync(
-                GetTranslation(_wizard),
-                horizontalOffset,
-                cancellationToken);
+            await Task.WhenAll(
+                RunCompactOverlaySlideAsync(GetTranslation(_wizard), horizontalOffset, cancellationToken),
+                slideOverview
+                    ? RunCompactOverlaySlideAsync(GetTranslation(_overview), 0, cancellationToken)
+                    : Task.CompletedTask);
             if (cancellationToken.IsCancellationRequested || !shouldRemainClosed())
                 return;
 
@@ -411,7 +415,7 @@ public sealed class WizardScreenTransition
         wizardTranslation.Transitions = wizardTranslationTransitions;
     }
 
-    private void RevealOverviewBehindWizard()
+    private void RevealOverviewBehindWizard(double offset = 0)
     {
         var translation = GetTranslation(_overview);
         var overviewTransitions = _overview.Transitions;
@@ -421,7 +425,7 @@ public sealed class WizardScreenTransition
         _overview.IsVisible = true;
         _overview.Opacity = 1;
         _overview.IsHitTestVisible = false;
-        translation.X = 0;
+        translation.X = offset;
         _overview.Transitions = overviewTransitions;
         translation.Transitions = translationTransitions;
     }

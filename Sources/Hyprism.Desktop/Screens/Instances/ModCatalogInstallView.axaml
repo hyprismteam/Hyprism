@@ -15,9 +15,6 @@ SPDX-License-Identifier: GPL-3.0-only
                                  HorizontalScrollBarVisibility="Disabled"
                                  VerticalScrollBarVisibility="Auto">
       <StackPanel Spacing="10">
-        <TextBlock Text="{Binding ModCatalogInstallDependencyHint}"
-                   Classes="dataTableValue"
-                   TextWrapping="Wrap" />
         <Border x:Name="ModCatalogInstallTable"
                 Classes="instancePreviewVersionTable modCatalogInstallTable">
           <StackPanel>
@@ -138,7 +135,7 @@ SPDX-License-Identifier: GPL-3.0-only
       </Button>
       <Button x:Name="ModCatalogInstallConfirmButton"
               Grid.Column="1"
-              Classes="instanceInstall modCatalogInstallConfirmAction"
+              Classes="primary modCatalogInstallConfirmAction"
               IsEnabled="{Binding CanInstallSelectedCatalogMods}"
               Command="{Binding InstallSelectedCatalogModsCommand}"
               HorizontalAlignment="Stretch">

@@ -74,6 +74,8 @@ Use a component from this catalog before adding a new selector or helper to a sc
 
 `WizardHost` handles Escape in the active wizard: it releases a focused text field, cancels a registered operation, returns to the previous step, or closes the wizard. Screens register their step commands and close action. When the master-detail layout crosses its compact breakpoint, screens synchronize the host with the current wizard state to finish an interrupted transition. A wizard with no active transition keeps its current step and reveal animation during the layout change. Opening a wizard or a step transition configured to replay the reveal starts playback.
 
+`WizardScreenTransition` can move both pages during a compact slide with `slideOverview`. The mod installation confirmation uses this option when opening from or returning to the catalog, keeping the catalog toolbar and its actions attached to the moving page. Returning to the instance after starting installation keeps the instance stationary behind the outgoing confirmation page.
+
 The ownership chain is `token -> theme or class -> component -> screen`. Keep shared values, control appearance, reusable structure, and screen state in those respective layers.
 
 `FadingPopup` preserves an explicitly configured placement. Popups with `PlacementGap` use adaptive placement above or below their target.

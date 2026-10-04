@@ -36,8 +36,10 @@ namespace Hyprism.Desktop.Tests;
 
 public sealed class InstanceSectionRenderTests
 {
-    [AvaloniaFact]
-    public async Task ModsBrowseAndLogsSectionsRenderInteractiveRows()
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ModsBrowseAndLogsSectionsRenderInteractiveRows(bool compactInstallation)
     {
         const string instancePath = "/tmp/hyprism-section-render-test";
         var instance = new InstanceInfo
@@ -472,6 +474,28 @@ public sealed class InstanceSectionRenderTests
         var installConfirmButton = installContent.FindControl<Button>("ModCatalogInstallConfirmButton");
         Assert.NotNull(installConfirmButton);
         Assert.Same(viewModel.InstallSelectedCatalogModsCommand, installConfirmButton!.Command);
+        Assert.DoesNotContain(installContent.GetVisualDescendants().OfType<TextBlock>(),
+            text => text.Text == viewModel.Instances.ModCatalogInstallDependencyHint);
+        var buttonCenter = installConfirmButton.TranslatePoint(
+            new Point(installConfirmButton.Bounds.Width / 2, installConfirmButton.Bounds.Height / 2), window)!.Value;
+        var accent = Color.Parse("#176B52");
+        var hoverAccent = Color.Parse("#238568");
+        var pressedAccent = Color.Parse("#104834");
+        window.Resources["AccentBrush"] = new SolidColorBrush(accent);
+        window.Resources["AccentHoverBrush"] = new SolidColorBrush(hoverAccent);
+        window.Resources["PrimaryPressedBrush"] = new SolidColorBrush(pressedAccent);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == accent);
+        window.MouseMove(buttonCenter);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == hoverAccent);
+        var confirmBorder = Assert.Single(installConfirmButton.GetVisualDescendants().OfType<Border>());
+        Assert.Equal(hoverAccent, Assert.IsAssignableFrom<ISolidColorBrush>(confirmBorder.Background).Color);
+        window.MouseDown(buttonCenter, MouseButton.Left);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == pressedAccent);
+        window.MouseMove(new Point(0, 0));
+        window.MouseUp(new Point(0, 0), MouseButton.Left);
+        window.Resources.Remove("AccentBrush");
+        window.Resources.Remove("AccentHoverBrush");
+        window.Resources.Remove("PrimaryPressedBrush");
         var installResetButton = installContent.FindControl<Button>("ModCatalogInstallResetButton");
         Assert.NotNull(installResetButton);
         Assert.Same(viewModel.ClearModCatalogSelectionCommand, installResetButton!.Command);
@@ -513,7 +537,35 @@ public sealed class InstanceSectionRenderTests
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
         Assert.Contains("visible", catalogTopInstall.Classes);
 
+        if (compactInstallation)
+        {
+            window.Width = 680;
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+        }
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible &&
+            Math.Abs(Assert.IsType<TranslateTransform>(installPage.RenderTransform).X) < 0.1);
         var installTask = viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
+        Assert.True(installPage.IsVisible);
+        Assert.False(installPage.IsHitTestVisible);
+        Assert.False(sectionPages.IsVisible);
+        var returningHub = view.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!.HubScreen;
+        await WaitUntilAsync(() => !installPage.IsVisible && returningHub.IsHitTestVisible);
+        if (!compactInstallation)
+        {
+            await WaitUntilAsync(() => returningHub.Opacity > 0.05);
+            Assert.InRange(returningHub.Opacity, 0.05, 0.99);
+            Assert.InRange(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X, -28, -0.01);
+            await WaitUntilAsync(() => returningHub.Opacity >= 0.99 &&
+                Math.Abs(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X) < 0.1);
+        }
+        if (compactInstallation)
+        {
+            window.Width = 1180;
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+        }
         Assert.Null(modsView.FindControl<Border>("ModCatalogInstallScreen"));
         await WaitUntilAsync(() => viewModel.Instances.IsManagedInstanceInstallingMods && viewModel.IsInstanceOverviewSection);
         var overview = Assert.Single(view.GetVisualDescendants().OfType<InstanceOverviewView>());

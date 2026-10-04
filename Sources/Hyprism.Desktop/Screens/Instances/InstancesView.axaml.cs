@@ -26,6 +26,7 @@ public sealed partial class InstancesView : UserControl
     private readonly ReorderableListController _instanceReorder;
     private readonly WizardScreenTransition _modCatalogPreviewTransition;
     private readonly WizardScreenTransition _modCatalogInstallTransition;
+    private readonly WizardScreenTransition _modCatalogInstallToInstanceTransition;
     private INotifyPropertyChanged? _viewModel;
     private bool _creatorOpenedFromCompactList;
     private bool _creatorTransitionActive;
@@ -44,6 +45,9 @@ public sealed partial class InstancesView : UserControl
             InstanceModCatalogPreviewPage);
         _modCatalogInstallTransition = new WizardScreenTransition(
             InstanceSectionPages,
+            InstanceModCatalogInstallPage);
+        _modCatalogInstallToInstanceTransition = new WizardScreenTransition(
+            InstanceHubScreen,
             InstanceModCatalogInstallPage);
         InstanceOverviewContentView.BackRequested += OnCompactInstanceBackClicked;
         InstanceListContentView.InstanceClicked += OnInstanceClicked;
@@ -148,6 +152,16 @@ public sealed partial class InstancesView : UserControl
 
         if (args.PropertyName is nameof(InstancesViewModel.InstanceSection))
         {
+            if (InstanceModCatalogInstallPage.IsVisible &&
+                DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true, IsInstanceOverviewSection: true })
+            {
+                CancelSectionAnimation();
+                _modCatalogInstallTransition.Cancel();
+                InstanceSectionPages.IsVisible = false;
+                (DataContext as InstancesViewModel)?.CompleteInstanceSectionClose();
+                return;
+            }
+
             if (InstanceModCatalogPreviewPage.IsVisible || InstanceModCatalogInstallPage.IsVisible)
             {
                 ApplySectionStateImmediately();
@@ -245,6 +259,7 @@ public sealed partial class InstancesView : UserControl
 
     private void ApplyModCatalogInstallStateImmediately()
     {
+        _modCatalogInstallToInstanceTransition.Cancel();
         if (DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: true })
         {
             _modCatalogInstallTransition.ShowWizardImmediately();
@@ -270,21 +285,37 @@ public sealed partial class InstancesView : UserControl
                 shouldRemainOpen,
                 onSlideStarted: null,
                 onOpened,
-                horizontalOffset: GetSectionSlideDistance())
+                horizontalOffset: GetSectionSlideDistance(),
+                slideOverview: true)
             : _modCatalogInstallTransition.OpenAsync(shouldRemainOpen, onOpened);
     }
 
     private Task PlayModCatalogInstallCloseAnimationAsync()
     {
+        var returningToInstance = DataContext is InstancesViewModel { IsInstanceOverviewSection: true };
+        var transition = returningToInstance
+            ? _modCatalogInstallToInstanceTransition
+            : _modCatalogInstallTransition;
         Func<bool> shouldRemainClosed =
             () => DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: false };
-        Action onClosed = () => (DataContext as InstancesViewModel)?.CompleteModCatalogInstallConfirmationClose();
+        Action onClosed = () =>
+        {
+            if (returningToInstance)
+            {
+                InstanceSectionScreen.IsVisible = false;
+                InstanceSectionScreen.IsHitTestVisible = false;
+                _modCatalogInstallTransition.ShowOverviewImmediately();
+            }
+
+            (DataContext as InstancesViewModel)?.CompleteModCatalogInstallConfirmationClose();
+        };
         return _layoutHost.IsCompact
-            ? _modCatalogInstallTransition.CloseCompactOverlayAsync(
+            ? transition.CloseCompactOverlayAsync(
                 shouldRemainClosed,
                 onClosed,
-                horizontalOffset: GetSectionSlideDistance())
-            : _modCatalogInstallTransition.CloseAsync(shouldRemainClosed, onClosed);
+                horizontalOffset: GetSectionSlideDistance(),
+                slideOverview: !returningToInstance)
+            : transition.CloseAsync(shouldRemainClosed, onClosed);
     }
 
     private void OnInstanceDeleteModalClosed(object? sender, EventArgs args)

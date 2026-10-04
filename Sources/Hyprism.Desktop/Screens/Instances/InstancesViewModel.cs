@@ -1194,11 +1194,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         _installingModsInstanceId = instance.Id;
         _activeModInstallItems = items;
         _modCatalogInstallAccepted = true;
-        IsModCatalogInstallConfirmationOpen = false;
         ModCatalogInstallCompletedCount = 0;
         ModCatalogInstallProgress = 0;
-        CloseInstanceSection();
         IsInstallingSelectedCatalogMods = true;
+        CloseInstanceSection();
         BeginInstanceActivity(instance.Id);
         foreach (var item in items)
             item.IsInstalling = true;
