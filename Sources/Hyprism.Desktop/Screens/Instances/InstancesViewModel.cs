@@ -72,7 +72,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private bool _managedInstanceActionStartedWithInstall;
     private bool _isManagedInstanceCancellationArmed;
     private string? _modsLoadedForInstanceId;
-    private string? _worldsLoadedForInstanceId;
     private readonly object _pendingConsoleLock = new();
     private readonly List<GameConsoleLine> _pendingConsoleLines = [];
     private readonly HashSet<GameConsoleLine> _logsDisplayedLines = new(ReferenceEqualityComparer.Instance);
@@ -195,6 +194,12 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private bool _isManagedInstanceDeletionOpen;
 
     [ObservableProperty]
+    private InstanceModItemViewModel? _pendingModDeletion;
+
+    [ObservableProperty]
+    private bool _isModDeletionOpen;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasInstanceDeletionError))]
     private string _instanceDeletionError = string.Empty;
 
@@ -301,6 +306,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsInstanceWorldsEmpty))]
+    [NotifyPropertyChangedFor(nameof(IsInstanceWorldsInitialLoading))]
     private bool _isInstanceWorldsLoading;
 
     [ObservableProperty]
@@ -389,7 +395,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasModCatalogPreview))]
-    [NotifyPropertyChangedFor(nameof(CanShowModCatalogInstallAction))]
     private bool _isModCatalogPreviewOpen;
 
     [ObservableProperty]
@@ -493,6 +498,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             Interval = TimeSpan.FromMilliseconds(200)
         };
         _managedInstanceActionTimer.Tick += OnManagedInstanceActionTimerTick;
+        _worldsRefreshTimer.Tick += OnWorldsRefreshTimerTick;
 
         if (_gameConsole is not null)
             _gameConsole.LineReceived += OnConsoleLineReceived;
@@ -629,7 +635,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool ShouldShowModCatalogSearchAction => ModCatalogSearchQuery.Trim().Length > 3;
     public bool CanSearchModCatalog => ShouldShowModCatalogSearchAction && !IsModCatalogLoading;
     public bool HasModCatalogPreview => IsModCatalogPreviewOpen;
-    public bool CanShowModCatalogInstallAction => IsDisplayedInstanceBrowseSection && !HasModCatalogPreview;
+    public bool CanShowModCatalogInstallAction => IsDisplayedInstanceBrowseSection;
     public bool IsModCatalogPreviewMounted => SelectedModCatalogPreview is not null;
     public bool HasModCatalogInstallConfirmation => IsModCatalogInstallConfirmationOpen;
     public bool HasModCatalogPreviewImage => ModCatalogPreviewImage is not null;
@@ -783,6 +789,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     public bool HasExportableMods => InstalledMods.Count > 0;
     public bool HasModCatalogItems => ModCatalogItems.Count > 0;
     public bool HasInstanceWorlds => InstanceWorlds.Count > 0;
+    public bool IsInstanceWorldsInitialLoading => IsInstanceWorldsLoading && !HasInstanceWorlds;
     public bool IsInstalledModsEmpty =>
         IsManagedInstanceInstalled && !IsInstanceModsLoading && !HasInstalledMods;
     public bool IsModCatalogEmpty =>
@@ -804,6 +811,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         BuildModCatalogSortOptions();
         BuildModCatalogSourceOptions();
         NotifyLogsStateChanged();
+        _ = LoadInstanceWorldsAsync();
 
         if (!IsInstanceOverviewSection)
             DisplayedInstanceSectionTitle = InstanceSectionTitle;
@@ -1020,8 +1028,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             if (ModCatalogItems.Count == 0)
                 _ = SearchModCatalogAsync();
         }
-        else if (section == "worlds" && !IsInstanceWorldsLoading &&
-                 !string.Equals(_worldsLoadedForInstanceId, _managedInstance?.Id, StringComparison.Ordinal))
+        else if (section == "worlds")
             _ = LoadInstanceWorldsAsync();
         else if (section == "logs")
             PrepareLogsForCurrentInstance();
@@ -1397,10 +1404,6 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }], [item]);
     }
 
-    [RelayCommand]
-    private Task RefreshInstanceWorldsAsync()
-        => LoadInstanceWorldsAsync();
-
     #region Installed mod management
 
     [RelayCommand]
@@ -1438,6 +1441,42 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private void RequestModDeletion(InstanceModItemViewModel? item)
+    {
+        if (item is null || item.IsBusy || !InstalledMods.Contains(item) || IsManagedInstanceInstallingMods)
+            return;
+
+        InstanceContentError = string.Empty;
+        PendingModDeletion = item;
+        IsModDeletionOpen = true;
+    }
+
+    [RelayCommand]
+    private void CancelModDeletion() => IsModDeletionOpen = false;
+
+    public void CompleteModDeletionClose()
+    {
+        if (!IsModDeletionOpen)
+            PendingModDeletion = null;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmModDeletionAsync()
+    {
+        if (PendingModDeletion is not { } item || !InstalledMods.Contains(item) || IsManagedInstanceInstallingMods)
+            return;
+
+        await DeleteModAsync(item);
+        if (!ReferenceEquals(PendingModDeletion, item) || !IsModDeletionOpen)
+            return;
+
+        if (string.IsNullOrEmpty(InstanceContentError))
+            IsModDeletionOpen = false;
+        else
+            PendingModDeletion = InstalledMods.FirstOrDefault(mod => mod.Id == item.Id);
+    }
+
+    [RelayCommand]
     private async Task DeleteModAsync(InstanceModItemViewModel? item)
     {
         if (item is null || item.IsBusy ||
@@ -1457,7 +1496,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             var removed = await Task.Run(
                 () => _modManager.RemoveInstalledModAsync(instancePath, item.Id));
             if (!removed)
+            {
                 InstanceContentError = _localizer["instances.mods.deleteFailed"];
+                return;
+            }
         }
         finally
         {
@@ -3326,6 +3368,18 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
         UpdateSelectedInstancePresentation();
         UpdateManagedInstancePresentation();
+        var worldsPath = _managedInstance?.IsInstalled == true
+            ? _instances.GetInstancePathById(_managedInstance.Id)
+            : null;
+        if (!string.Equals(requestedManagedInstanceId, managedInstanceId, StringComparison.Ordinal) ||
+            !string.Equals(_worldsWatcher?.Path, worldsPath, StringComparison.Ordinal))
+        {
+            StopWorldsSynchronization();
+            ClearInstanceWorlds();
+            NotifyInstanceContentCollectionsChanged();
+            StartWorldsSynchronization();
+            _ = LoadInstanceWorldsAsync();
+        }
     }
 
     private void RefreshInstanceInstalledState(InstanceInfo instance)
@@ -3337,6 +3391,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
     private void RefreshManagedInstanceContent()
     {
+        StopWorldsSynchronization();
+        CancelModDeletion();
         IsModCatalogInstallConfirmationOpen = false;
         InstalledMods.Clear();
         VisibleInstalledMods.Clear();
@@ -3348,9 +3404,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         }
         ModCatalogItems.Clear();
         ResetModCatalogPreview();
-        InstanceWorlds.Clear();
+        ClearInstanceWorlds();
         _modsLoadedForInstanceId = null;
-        _worldsLoadedForInstanceId = null;
         _modUpdatesById.Clear();
         ModUpdateCount = 0;
         SelectedModCount = 0;
@@ -3361,6 +3416,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         if (_managedInstance?.IsInstalled != true)
             return;
 
+        StartWorldsSynchronization();
         _ = LoadInstalledModsAsync();
         _ = LoadInstanceWorldsAsync();
 
@@ -3401,7 +3457,8 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
                         mod.CurseForgeId,
                         mod.ReleaseType,
                         mod.Source,
-                        mod.PageUrl);
+                        mod.PageUrl,
+                        GetModReleaseLabel(mod.ReleaseType));
                     if (_modUpdatesById.TryGetValue(mod.Id, out var update))
                         item.UpdateVersion = update.LatestVersion;
                     item.PropertyChanged += OnInstalledModItemPropertyChanged;
@@ -3560,67 +3617,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         NotifyInstanceContentCollectionsChanged();
     }
 
-    private async Task LoadInstanceWorldsAsync()
-    {
-        if (_managedInstance?.IsInstalled != true)
-            return;
-
-        var instanceId = _managedInstance.Id;
-        var instancePath = _instances.GetInstancePathById(instanceId);
-        if (string.IsNullOrWhiteSpace(instancePath))
-            return;
-
-        IsInstanceWorldsLoading = true;
-        InstanceContentError = string.Empty;
-        try
-        {
-            var worlds = await Task.Run(() => ReadInstanceWorlds(instancePath));
-            if (!string.Equals(_managedInstance?.Id, instanceId, StringComparison.Ordinal))
-                return;
-
-            _instanceWorlds.ReplaceRange(worlds);
-            _worldsLoadedForInstanceId = instanceId;
-            NotifyInstanceContentCollectionsChanged();
-        }
-        catch (Exception ex)
-        {
-            InstanceContentError = ex.Message;
-        }
-        finally
-        {
-            IsInstanceWorldsLoading = false;
-        }
-    }
-
-    private IReadOnlyList<InstanceWorldItemViewModel> ReadInstanceWorlds(string instancePath)
-    {
-        var savesPath = Path.Combine(instancePath, "UserData", "Saves");
-        if (!Directory.Exists(savesPath))
-            return [];
-
-        return Directory.EnumerateDirectories(savesPath)
-            .Select(path => new DirectoryInfo(path))
-            .OrderByDescending(directory => directory.LastWriteTimeUtc)
-            .Select(directory => new InstanceWorldItemViewModel(
-                directory.Name,
-                directory.LastWriteTime.ToString("d", System.Globalization.CultureInfo.CurrentCulture),
-                FormatBytes(GetDirectorySize(directory))))
-            .ToList();
-    }
-
-    private static long GetDirectorySize(DirectoryInfo directory)
-    {
-        try
-        {
-            return directory.EnumerateFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
-        }
-        catch
-        {
-            return 0;
-        }
-    }
-
-    private static string FormatBytes(long bytes)
+    private static string FormatBytes(long bytes, System.Globalization.CultureInfo culture)
     {
         string[] units = ["B", "KB", "MB", "GB"];
         var value = Math.Max(0, bytes);
@@ -3632,7 +3629,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             unitIndex++;
         }
 
-        return $"{displayValue:0.#} {units[unitIndex]}";
+        return $"{displayValue.ToString("0.#", culture)} {units[unitIndex]}";
     }
 
     private void RefreshCatalogInstalledState(IReadOnlyCollection<InstalledMod> installedMods)
@@ -3714,6 +3711,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(HasExportableMods));
         OnPropertyChanged(nameof(HasModCatalogItems));
         OnPropertyChanged(nameof(HasInstanceWorlds));
+        OnPropertyChanged(nameof(IsInstanceWorldsInitialLoading));
         OnPropertyChanged(nameof(IsInstalledModsEmpty));
         OnPropertyChanged(nameof(IsModCatalogEmpty));
         OnPropertyChanged(nameof(IsInstanceWorldsEmpty));
@@ -4157,7 +4155,10 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
             foreach (var item in AllInstances.Where(item => item.Id == process.InstanceId))
                 item.IsRunning = _gameProcess.IsInstanceRunning(process.InstanceId);
             if (string.Equals(_managedInstance?.Id, process.InstanceId, StringComparison.OrdinalIgnoreCase))
+            {
                 _isManagedInstanceRunning = _gameProcess.IsInstanceRunning(process.InstanceId);
+                _ = LoadInstanceWorldsAsync();
+            }
             IsGameRunning = _gameProcess.IsGameRunning();
             UpdateManagedInstanceActionTimer();
             IsActivityVisible = false;
@@ -4247,6 +4248,9 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         foreach (var item in _allInstances)
             item.Icon?.Dispose();
         Interlocked.Exchange(ref _isDisposed, 1);
+        StopWorldsSynchronization();
+        ClearInstanceWorlds();
+        _worldsRefreshTimer.Tick -= OnWorldsRefreshTimerTick;
         Volatile.Write(ref _logsInstanceId, null);
         InvalidateLogsRebuild();
         _managedInstanceActionTimer.Stop();

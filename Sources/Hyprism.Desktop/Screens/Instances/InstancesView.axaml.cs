@@ -129,6 +129,7 @@ public sealed partial class InstancesView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs args)
     {
+        InstalledModsMenuPopup.IsRequestedOpen = false;
         if (_viewModel is not null)
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
 
@@ -147,6 +148,10 @@ public sealed partial class InstancesView : UserControl
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (args.PropertyName is nameof(InstancesViewModel.InstanceSection) or
+            nameof(InstancesViewModel.HasModSelection) or nameof(InstancesViewModel.IsManagedInstanceInstallingMods))
+            InstalledModsMenuPopup.IsRequestedOpen = false;
+
         if (args.PropertyName is nameof(InstancesViewModel.HasInstances))
             UpdateLayout(Bounds.Width);
 
@@ -323,6 +328,18 @@ public sealed partial class InstancesView : UserControl
         if (DataContext is InstancesViewModel viewModel)
             viewModel.CompleteManagedInstanceDeletionClose();
     }
+
+    private void OnModDeleteModalClosed(object? sender, EventArgs args)
+        => (DataContext as InstancesViewModel)?.CompleteModDeletionClose();
+
+    private void OnToggleInstalledModsMenuClicked(object? sender, RoutedEventArgs args)
+    {
+        InstanceModsContentView.TryEndSearchInput();
+        InstalledModsMenuPopup.IsRequestedOpen = !InstalledModsMenuPopup.IsRequestedOpen;
+    }
+
+    private void OnCloseInstalledModsMenuClicked(object? sender, RoutedEventArgs args)
+        => InstalledModsMenuPopup.IsRequestedOpen = false;
 
     private void OnInstanceEditModalClosed(object? sender, EventArgs args)
     {
@@ -524,6 +541,18 @@ public sealed partial class InstancesView : UserControl
 
     public bool TryNavigateBack()
     {
+        if (DataContext is InstancesViewModel { IsModDeletionOpen: true } viewModelWithDeletion)
+        {
+            viewModelWithDeletion.CancelModDeletionCommand.Execute(null);
+            return true;
+        }
+
+        if (InstalledModsMenuPopup.IsRequestedOpen)
+        {
+            InstalledModsMenuPopup.IsRequestedOpen = false;
+            return true;
+        }
+
         if (TryCloseModCatalogInstallConfirmation() || TryCloseModCatalogPreview())
             return true;
 

@@ -6,10 +6,8 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using Hyprism.Desktop.Controls;
@@ -307,14 +305,4 @@ public sealed partial class InstanceModsView : UserControl
         }
     }
 
-    private void OnCloseModDeleteFlyoutClicked(object? sender, RoutedEventArgs args)
-    {
-        if (sender is not Control control)
-            return;
-
-        var popup = control.FindAncestorOfType<Popup>() ??
-            control.GetLogicalAncestors().OfType<Popup>().FirstOrDefault();
-        if (popup is not null)
-            popup.IsOpen = false;
-    }
 }

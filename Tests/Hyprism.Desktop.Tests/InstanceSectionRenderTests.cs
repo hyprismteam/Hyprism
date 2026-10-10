@@ -244,7 +244,7 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(modRows[0].GetVisualDescendants(), element => element is ToggleSwitch);
         Assert.Contains(
             modRows[0].GetVisualDescendants(),
-            element => element is Button button && button.Classes.Contains("instanceRowIconButton"));
+            element => element is Button button && button.Classes.Contains("installedModDeleteAction"));
 
         viewModel.SelectInstanceSectionCommand.Execute("browse");
         await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1);

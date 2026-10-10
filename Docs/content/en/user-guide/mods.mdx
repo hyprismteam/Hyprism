@@ -5,12 +5,12 @@ description: Install, import, update, enable, and remove mods for an instance
 
 # Mods
 
-Mods belong to one [instance](/user-guide/instances-profiles-mods). Open the instance before managing its content so the game version and destination are unambiguous
+Mods belong to one [instance](/user-guide/instances-profiles-mods). Open the instance before managing its content so the game version and destination are unambiguous.
 
 ## Discover mods
 
-1. Open an installed instance
-2. Select **Discover mods**
+1. Open an installed instance.
+2. Select **Discover mods**.
 3. Choose **CurseForge** or **Modifold** from the source selector. Enter at least four characters in the search field above the filters, then press **Enter** or select the search icon that appears inside the field. Choose a category or sort order when needed.
 4. Select a result to open its separate overview page and inspect its files, supported versions, screenshots, and author.
 5. Select a compatible file and install it, or use **Back** to return to the catalog.
@@ -25,32 +25,36 @@ Hyprism retrieves catalog data and files from [CurseForge](https://www.curseforg
 
 1. Open an installed instance and select **Installed mods**.
 2. Enter a mod name or author in the search field at the top. The list updates while you type. Press **Esc** or click outside the field to end text entry and keep the query.
-3. Use the buttons below the search field to **Add mod**, **Check for updates**, or **Refresh** the list. Hover an icon to see its action name.
-4. Select the checkboxes beside mods to show bulk actions above the list. These actions wrap onto another row when they do not fit in a compact window.
+3. Use the buttons beside the search field to **Add mod** or **Check for updates**. Hover an icon to see its action name. The list refreshes automatically after importing, installing, deleting, or updating mods.
+4. Select the checkboxes beside mods, then open the three-dot menu at the right of the top bar to enable, disable, delete, or clear the selection.
 
-Each row shows the mod name, installed version, and author. The switch and delete button are on the right; available updates appear beside the author.
+Each row shows the mod name, installed version, author, and release type. The switch and delete button are on the right; available updates appear beside the author. Release badges are green, beta badges are purple, and alpha badges are yellow.
 
-![Installed mods with search, update notice, bulk actions, and row switches](/img/user/en/installed-mods.png)
+![Installed mods with search, import and update buttons, selection menu, and row switches](/img/user/en/installed-mods.png)
 
-![Compact installed mods page with the same search, bulk actions, and row controls](/img/user/en/installed-mods-compact.png)
+![Compact installed mods page with the selection menu open at the right of the top bar](/img/user/en/installed-mods-compact.png)
+
+To delete one mod, select the trash icon on its row. Check the mod name in the confirmation overlay and select **Delete** to remove its file from the instance, or **Cancel** to keep it.
+
+![Mod deletion confirmation with the mod name and Cancel and Delete buttons](/img/user/en/installed-mod-delete.png)
 
 ## Import local files
 
-Open **Installed mods**, then use the import action or drop `.jar` and `.zip` files onto the list. Hyprism copies accepted files into the selected instance
+Open **Installed mods**, then use the import action or drop `.jar` and `.zip` files onto the list. Hyprism copies accepted files into the selected instance.
 
-Only import mods from sources you trust. A mod executes with the permissions of the game process
+Only import mods from sources you trust. A mod executes with the permissions of the game process.
 
 ## Enable, disable, and delete
 
-- Use the switch on a row to enable or disable one mod
-- Select several rows for bulk enable, disable, or delete actions
-- Deleting a mod removes its file from the instance after confirmation
-- Search filters the installed list by mod name or author
+- Use the switch on a row to enable or disable one mod.
+- Select several rows and open the three-dot menu for bulk enable, disable, or delete actions. Bulk deletion removes the selected files from the instance.
+- Use the trash icon on a row to delete one mod after confirmation.
+- Search filters the installed list by mod name or author.
 
-Disabled files stay in the instance so they can be enabled again without downloading
+Disabled files stay in the instance so they can be enabled again without downloading.
 
 ## Update mods
 
 Select **Check for updates** to compare installed CurseForge files with compatible releases. When updates are available, update one mod or use **Update all**. Modifold updates are not included in this check.
 
-Back up the instance before a major mod change when a world depends on that mod. Hyprism does not guarantee save compatibility between mod versions
+Back up the instance before a major mod change when a world depends on that mod. Hyprism does not guarantee save compatibility between mod versions.

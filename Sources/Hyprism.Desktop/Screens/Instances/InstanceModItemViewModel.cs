@@ -16,7 +16,8 @@ public sealed partial class InstanceModItemViewModel(
     string curseForgeId = "",
     int releaseType = 1,
     string source = "",
-    string pageUrl = "") : ObservableObject
+    string pageUrl = "",
+    string releaseLabel = "") : ObservableObject
 {
     public string Id { get; } = id;
     public string Name { get; } = name;
@@ -41,14 +42,16 @@ public sealed partial class InstanceModItemViewModel(
             ? $"https://www.curseforge.com/hytale/mods/{CurseForgeId}"
             : $"https://www.curseforge.com/hytale/mods/search?search={Uri.EscapeDataString(Name)}";
 
-    public string ReleaseBadge => ReleaseType switch
-    {
-        2 => "beta",
-        3 => "alpha",
-        _ => string.Empty
-    };
+    public bool IsRelease => ReleaseType is not (2 or 3);
+    public bool IsBeta => ReleaseType == 2;
+    public bool IsAlpha => ReleaseType == 3;
 
-    public bool ShowsReleaseBadge => ReleaseType is 2 or 3;
+    public string ReleaseBadge => !string.IsNullOrWhiteSpace(releaseLabel) ? releaseLabel : ReleaseType switch
+    {
+        2 => "Beta",
+        3 => "Alpha",
+        _ => "Release"
+    };
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanInteract))]

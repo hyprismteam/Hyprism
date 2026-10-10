@@ -6,41 +6,61 @@ SPDX-License-Identifier: GPL-3.0-only
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:instances="using:Hyprism.Desktop.Screens.Instances"
+             xmlns:controls="using:Hyprism.Desktop.Controls"
              x:Class="Hyprism.Desktop.Screens.Instances.InstanceWorldsView"
              x:Name="InstanceWorldsRoot"
              x:DataType="instances:InstancesViewModel">
-  <Grid IsVisible="{Binding IsDisplayedInstanceWorldsSection}" RowDefinitions="Auto,*" RowSpacing="12">
-                <Button HorizontalAlignment="Right" Classes="instanceToolbarAction" Command="{Binding RefreshInstanceWorldsCommand}" IsEnabled="{Binding !IsInstanceWorldsLoading}">
-                  <TextBlock Text="{Binding RefreshLabel}" />
-                </Button>
-                <Border Grid.Row="1" Classes="instanceContentPanel">
-                  <Grid>
-                    <ProgressBar IsVisible="{Binding IsInstanceWorldsLoading}" IsIndeterminate="True" Width="180" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <StackPanel IsVisible="{Binding IsInstanceWorldsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
-                      <Image Width="48" Height="48" Source="avares://Hyprism.Desktop/Assets/Fluent/data.png" />
-                      <TextBlock Text="{Binding InstanceWorldsEmptyTitle}" FontSize="19" FontWeight="SemiBold" />
-                      <TextBlock Text="{Binding InstanceWorldsEmptyHint}" Classes="muted" MaxWidth="400" TextAlignment="Center" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ListBox IsVisible="{Binding HasInstanceWorlds}"
-                             ItemsSource="{Binding InstanceWorlds}"
-                             Classes="instanceVirtualizedList"
-                             Margin="10">
-                        <ListBox.ItemTemplate>
-                          <DataTemplate x:DataType="instances:InstanceWorldItemViewModel">
-                            <Border Classes="instanceModRow">
-                              <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="12">
-                                <Border Classes="instanceModIcon"><TextBlock Text="{Binding Initial}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" /></Border>
-                                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
-                                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                  <TextBlock Text="{Binding LastModified}" Classes="muted" FontSize="12" />
-                                </StackPanel>
-                                <TextBlock Grid.Column="2" Text="{Binding Size}" Classes="muted" FontSize="12" VerticalAlignment="Center" />
-                              </Grid>
-                            </Border>
-                          </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                  </Grid>
-                </Border>
-              </Grid>
+  <Grid IsVisible="{Binding IsDisplayedInstanceWorldsSection}"
+        MaxWidth="{x:Static instances:InstanceModsView.ModCatalogContentMaxWidth}"
+        HorizontalAlignment="Stretch">
+    <Border Classes="instanceContentPanel catalog">
+      <Grid>
+        <Path Classes="instanceToolbarSpinner"
+              Data="M9,1 A8,8 0 1 1 1,9"
+              IsVisible="{Binding IsInstanceWorldsInitialLoading}"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              controls:RotatingVisual.IsActive="{Binding IsInstanceWorldsInitialLoading}" />
+        <StackPanel IsVisible="{Binding IsInstanceWorldsEmpty}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Margin="20" Spacing="9">
+          <Image Width="48" Height="48" Source="avares://Hyprism.Desktop/Assets/Fluent/data.png" />
+          <TextBlock Text="{Binding InstanceWorldsEmptyTitle}" FontSize="19" FontWeight="SemiBold"
+                     TextAlignment="Center" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding InstanceWorldsEmptyHint}" Classes="muted" MaxWidth="400"
+                     TextAlignment="Center" TextWrapping="Wrap" />
+        </StackPanel>
+        <ListBox x:Name="InstanceWorldsList" IsVisible="{Binding HasInstanceWorlds}"
+                 ItemsSource="{Binding InstanceWorlds}" Classes="instanceVirtualizedList"
+                 Margin="10,10,10,0">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="instances:InstanceWorldItemViewModel">
+              <Border Classes="instanceModRow catalog">
+                <Grid ColumnDefinitions="100,*" ColumnSpacing="12">
+                  <Border Classes="instanceModIcon instanceWorldPreview" ClipToBounds="True">
+                    <Panel>
+                      <Image Source="{Binding Preview}" Stretch="UniformToFill"
+                             IsVisible="{Binding HasPreview}" />
+                      <Image Width="32" Height="32" Source="avares://Hyprism.Desktop/Assets/Fluent/data.png"
+                             IsVisible="{Binding !HasPreview}" />
+                    </Panel>
+                  </Border>
+                  <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis" />
+                    <WrapPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding LastModified}" Classes="muted" FontSize="12"
+                                 VerticalAlignment="Center" Margin="0,0,10,0" />
+                      <Border Classes="instanceCatalogAuthorBadge" Padding="7,3">
+                        <TextBlock Text="{Binding Size}" Classes="instanceCatalogAuthorName" />
+                      </Border>
+                    </WrapPanel>
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Border>
+  </Grid>
 </UserControl>

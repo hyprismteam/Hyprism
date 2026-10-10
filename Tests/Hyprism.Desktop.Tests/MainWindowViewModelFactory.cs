@@ -32,7 +32,8 @@ internal static class MainWindowViewModelFactory
         IMirrorCatalog? mirrorCatalog = null,
         IGameVersionCatalog? versionCatalog = null,
         string language = "en-US",
-        bool emptyInstances = false)
+        bool emptyInstances = false,
+        string? instancePath = null)
     {
         var progress = new Mock<IProgressReporter>();
         var instances = new Mock<IInstanceRepository>();
@@ -71,7 +72,8 @@ internal static class MainWindowViewModelFactory
         instances.Setup(service => service.GetSelectedInstance())
             .Returns(emptyInstances ? null : installedInstance);
         instances.Setup(service => service.GetInstancePathById(It.IsAny<string>()))
-            .Returns("/tmp/hyprism-docs-instance");
+            .Returns((string id) => id == installedInstance.Id && instancePath is not null
+                ? instancePath : "/tmp/hyprism-docs-instance");
         instances.Setup(service => service.IsClientPresent(It.IsAny<string>()))
             .Returns(true);
 

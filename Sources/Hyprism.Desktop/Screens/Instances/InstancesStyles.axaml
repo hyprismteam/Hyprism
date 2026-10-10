@@ -269,34 +269,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Transitions" Value="{x:Null}" />
   </Style>
 
-  <Style Selector="instances|InstancesView Border.instanceDeleteConfirmation">
-    <Setter Property="Padding" Value="4" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceConfirmAction">
-    <Setter Property="Height" Value="34" />
-    <Setter Property="Padding" Value="12,0" />
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="8" />
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="RenderTransform" Value="{x:Null}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceConfirmAction.danger">
-    <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceConfirmAction:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceConfirmAction.danger:pointerover">
-    <Setter Property="Background" Value="{DynamicResource DangerActionHoverBrush}" />
-  </Style>
-
   <Style Selector="instances|InstancesView Border.instanceMenuGroup">
     <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
     <Setter Property="CornerRadius" Value="14" />
@@ -756,46 +728,6 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Foreground" Value="{DynamicResource SuccessSoftBrush}" />
   </Style>
 
-  <Style Selector="instances|InstancesView Button.instanceBulkAction">
-    <Setter Property="Height" Value="34" />
-    <Setter Property="Padding" Value="12,0" />
-    <Setter Property="Margin" Value="0,0,6,6" />
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="CornerRadius" Value="11" />
-    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Background" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceBulkAction:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceHoverBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceBulkAction:pressed">
-    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceBulkAction.danger">
-    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceBulkAction.danger:pointerover">
-    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceBulkAction.danger:pressed">
-    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
-  </Style>
-
   <Style Selector="instances|InstancesView CheckBox.instanceSelectCheck">
     <Setter Property="Width" Value="20" />
     <Setter Property="Height" Value="20" />
@@ -833,6 +765,16 @@ SPDX-License-Identifier: GPL-3.0-only
 
   <Style Selector="instances|InstancesView Border.instanceModRow.catalog Border.instanceModIcon Image">
     <Setter Property="Width" Value="56" />
+    <Setter Property="Height" Value="56" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.instanceModRow.catalog Border.instanceWorldPreview">
+    <Setter Property="Width" Value="100" />
+    <Setter Property="Height" Value="56" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Border.instanceModRow.catalog Border.instanceWorldPreview Image">
+    <Setter Property="Width" Value="100" />
     <Setter Property="Height" Value="56" />
   </Style>
 
@@ -939,48 +881,16 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="TextDecorations" Value="Underline" />
   </Style>
 
-  <Style Selector="instances|InstancesView ToggleSwitch.instanceModToggle">
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceRowIconButton">
+  <Style Selector="instances|InstancesView Button.installedModDeleteAction">
     <Setter Property="Width" Value="36" />
     <Setter Property="Height" Value="36" />
     <Setter Property="Padding" Value="0" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="11" />
     <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Background" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
   </Style>
 
-  <Style Selector="instances|InstancesView Button.instanceRowIconButton:pointerover">
-    <Setter Property="Background" Value="{DynamicResource DangerSoftSurfaceBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceRowIconButton:pressed">
-    <Setter Property="Background" Value="{DynamicResource DangerSurfaceHoverBrush}" />
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceRowIconButton Path.instanceRowIcon">
-    <Setter Property="Width" Value="15" />
-    <Setter Property="Height" Value="15" />
-    <Setter Property="Stretch" Value="Uniform" />
-    <Setter Property="Fill" Value="{DynamicResource TextMutedBrush}" />
-    <Setter Property="Transitions">
-      <Transitions>
-        <BrushTransition Property="Fill" Duration="0:0:0.16" />
-      </Transitions>
-    </Setter>
-  </Style>
-
-  <Style Selector="instances|InstancesView Button.instanceRowIconButton:pointerover Path.instanceRowIcon">
-    <Setter Property="Fill" Value="{DynamicResource DangerSoftBrush}" />
+  <Style Selector="instances|InstancesView ToggleSwitch.instanceModToggle">
+    <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
   <Style Selector="instances|InstancesView Border.instanceListFooter">

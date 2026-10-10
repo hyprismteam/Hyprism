@@ -174,6 +174,7 @@ SPDX-License-Identifier: GPL-3.0-only
                              VerticalAlignment="Center"
                              IsHitTestVisible="False" />
                   <Border Grid.Column="2"
+                          x:Name="ModCatalogTopBarInstallAction"
                           Classes="managerCompactSplitAction catalogInstallTopBar"
                           Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
                           Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
@@ -188,6 +189,49 @@ SPDX-License-Identifier: GPL-3.0-only
                                  VerticalAlignment="Center" />
                     </Button>
                   </Border>
+                  <Border Grid.Column="2"
+                          Classes="catalogInstallTopBar"
+                          Classes.visible="{Binding HasModSelection}"
+                          Classes.hidden="{Binding !HasModSelection}"
+                          HorizontalAlignment="Right" VerticalAlignment="Center"
+                          IsVisible="{Binding IsDisplayedInstanceModsSection}"
+                          IsHitTestVisible="{Binding HasModSelection}"
+                          IsEnabled="{Binding !IsManagedInstanceInstallingMods}">
+                    <Button x:Name="InstalledModsMoreButton"
+                            Classes="managerCompactActionPart menu standalone"
+                            ToolTip.Tip="{Binding SelectedModCountText}"
+                            AutomationProperties.Name="{Binding SelectedModCountText}"
+                            Click="OnToggleInstalledModsMenuClicked">
+                      <PathIcon Classes="managerCompactActionMenuIcon" Data="{StaticResource MoreVerticalIcon}" />
+                    </Button>
+                  </Border>
+                  <controls:FadingPopup x:Name="InstalledModsMenuPopup"
+                                        Grid.Column="2"
+                                        Placement="BottomEdgeAlignedRight"
+                                        PlacementTarget="InstalledModsMoreButton"
+                                        VerticalOffset="8">
+                    <Border Classes="uiPopupSurface managerCompactActionFlyout">
+                      <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding SelectedModCountText}" Classes="muted" Margin="12,8" />
+                        <Button Classes="managerCompactMenuAction"
+                                Command="{Binding EnableSelectedModsCommand}" Click="OnCloseInstalledModsMenuClicked">
+                          <TextBlock Text="{Binding InstanceModsEnableSelectedLabel}" />
+                        </Button>
+                        <Button Classes="managerCompactMenuAction"
+                                Command="{Binding DisableSelectedModsCommand}" Click="OnCloseInstalledModsMenuClicked">
+                          <TextBlock Text="{Binding InstanceModsDisableSelectedLabel}" />
+                        </Button>
+                        <Button Classes="managerCompactMenuAction danger"
+                                Command="{Binding DeleteSelectedModsCommand}" Click="OnCloseInstalledModsMenuClicked">
+                          <TextBlock Text="{Binding InstanceModsDeleteSelectedLabel}" />
+                        </Button>
+                        <Button Classes="managerCompactMenuAction"
+                                Command="{Binding ClearInstalledModsSelectionCommand}" Click="OnCloseInstalledModsMenuClicked">
+                          <TextBlock Text="{Binding InstanceModsClearSelectionLabel}" />
+                        </Button>
+                      </StackPanel>
+                    </Border>
+                  </controls:FadingPopup>
                   <Border Grid.Column="2"
                           Classes="logsShowFolderAction"
                           Classes.visible="{Binding CanShowLogsInFolder}"
@@ -282,20 +326,6 @@ SPDX-License-Identifier: GPL-3.0-only
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             IsHitTestVisible="False" />
-                  <Border Grid.Column="2"
-                          Classes="managerCompactSplitAction catalogInstallTopBar"
-                          Classes.visible="{Binding CanOpenModCatalogInstallConfirmation}"
-                          Classes.hidden="{Binding !CanOpenModCatalogInstallConfirmation}"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Center"
-                          IsVisible="{Binding CanShowModCatalogInstallAction}"
-                          IsHitTestVisible="{Binding CanOpenModCatalogInstallConfirmation}">
-                    <Button Classes="managerCompactActionPart main catalogInstallTopBarAction"
-                            IsEnabled="{Binding CanOpenModCatalogInstallConfirmation}"
-                            Command="{Binding OpenModCatalogInstallConfirmationCommand}">
-                      <TextBlock Text="{Binding InstallLabel}" VerticalAlignment="Center" />
-                    </Button>
-                  </Border>
                 </Grid>
               </Border>
 
@@ -607,6 +637,48 @@ SPDX-License-Identifier: GPL-3.0-only
       </controls:OverlayModal.ModalContent>
     </controls:OverlayModal>
 
+    <controls:OverlayModal x:Name="ModDeleteModal"
+                           IsOpen="{Binding IsModDeletionOpen}"
+                           DismissCommand="{Binding CancelModDeletionCommand}"
+                           Closed="OnModDeleteModalClosed"
+                           SheetMaxWidth="480" SheetMaxHeight="420"
+                           SheetMargin="12,20,12,0" ShoulderMaxWidth="522"
+                           HiddenOffset="500" ZIndex="220">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding InstanceModsDeleteTitle}" FontSize="22" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1" Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelModDeletionCommand}"
+                        ToolTip.Tip="{Binding CancelLabel}" AutomationProperties.Name="{Binding CancelLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <TextBlock Text="{Binding InstanceModsDeleteHint}" Classes="muted" TextWrapping="Wrap" />
+              <Border Background="{DynamicResource ControlSurfaceBrush}" CornerRadius="11" Padding="14,12">
+                <TextBlock Text="{Binding PendingModDeletion.Name}" FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+              </Border>
+              <TextBlock Text="{Binding InstanceContentError}" IsVisible="{Binding HasInstanceContentError}"
+                         Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelModDeletionCommand}">
+                  <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+                <Button Classes="wizardAction danger" Command="{Binding ConfirmModDeletionCommand}"
+                        IsEnabled="{Binding !PendingModDeletion.IsBusy}">
+                  <TextBlock Text="{Binding InstanceModsDeleteLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
     <controls:OverlayModal x:Name="InstanceDeleteModal"
                            IsOpen="{Binding IsManagedInstanceDeletionOpen}"
                            DismissCommand="{Binding CancelManagedInstanceDeletionCommand}"

@@ -501,7 +501,6 @@ public sealed partial class MainWindowViewModel
     public IAsyncRelayCommand ShowPreviousModCatalogScreenshotCommand => Instances.ShowPreviousModCatalogScreenshotCommand;
     public IAsyncRelayCommand ShowNextModCatalogScreenshotCommand => Instances.ShowNextModCatalogScreenshotCommand;
     public IAsyncRelayCommand InstallModCatalogPreviewCommand => Instances.InstallModCatalogPreviewCommand;
-    public IAsyncRelayCommand RefreshInstanceWorldsCommand => Instances.RefreshInstanceWorldsCommand;
     public IAsyncRelayCommand ToggleModCommand => Instances.ToggleModCommand;
     public IAsyncRelayCommand DeleteModCommand => Instances.DeleteModCommand;
     public IRelayCommand SelectAllInstalledModsCommand => Instances.SelectAllInstalledModsCommand;
