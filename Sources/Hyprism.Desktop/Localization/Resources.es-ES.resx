@@ -3114,4 +3114,7 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
   </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>¿Eliminar «{0}» y todos los datos de este mundo? Esta acción no se puede deshacer</value>
+  </data>
 </root>

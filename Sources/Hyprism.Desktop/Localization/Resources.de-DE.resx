@@ -3114,4 +3114,7 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
   </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>„{0}“ und alle Daten dieser Welt löschen? Diese Aktion kann nicht rückgängig gemacht werden</value>
+  </data>
 </root>

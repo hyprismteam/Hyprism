@@ -90,6 +90,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     private string _selectedCurseForgeCategory = "all";
     private string _selectedModifoldCategory = "all";
     private int _modCatalogPage;
+    private string _modCatalogLoadedQuery = string.Empty;
     private int _modCatalogSearchVersion;
     private CancellationTokenSource _modIconsCancellation = new();
     private CancellationTokenSource _modDependencyIconsCancellation = new();
@@ -302,6 +303,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsModCatalogEmpty))]
     [NotifyPropertyChangedFor(nameof(CanSearchModCatalog))]
+    [NotifyPropertyChangedFor(nameof(CanLoadMoreModCatalog))]
     private bool _isModCatalogLoading;
 
     [ObservableProperty]
@@ -1084,7 +1086,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private Task LoadMoreModCatalogAsync()
         => CanLoadMoreModCatalog
-            ? LoadModCatalogAsync(ModCatalogSearchQuery, true)
+            ? LoadModCatalogAsync(_modCatalogLoadedQuery, true)
             : Task.CompletedTask;
 
     [RelayCommand]
@@ -3494,6 +3496,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         else
         {
             IsModCatalogLoading = true;
+            HasMoreModCatalog = false;
             ResetModCatalogPreview();
         }
         InstanceContentError = string.Empty;
@@ -3578,6 +3581,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
                 _modCatalogItems.AddRange(items);
             else
             {
+                _modCatalogLoadedQuery = query.Trim();
                 RestartModIconFetch();
                 foreach (var existingItem in _modCatalogItems)
                     existingItem.Dispose();
@@ -3586,7 +3590,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
 
             _modCatalogPage = page;
             HasMoreModCatalog = result.HasMore ??
-                (_modCatalogItems.Count < result.TotalCount && result.Mods.Count > 0);
+                (page * ModCatalogPageSize + result.Mods.Count < result.TotalCount && result.Mods.Count > 0);
             FetchCatalogModIcons(items);
             NotifyInstanceContentCollectionsChanged();
             NotifyCatalogSelectionChanged();
@@ -4056,6 +4060,7 @@ public sealed partial class InstancesViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsManagedInstanceCancellationArmed));
         OnPropertyChanged(nameof(CanRunManagedInstanceAction));
         OnPropertyChanged(nameof(CanDeleteManagedInstance));
+        OnPropertyChanged(nameof(CanDeleteWorld));
         OnPropertyChanged(nameof(CanEditManagedInstance));
     }
 

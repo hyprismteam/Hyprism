@@ -414,12 +414,33 @@ public sealed class DocumentationScreenshotTests
             Directory.CreateDirectory(temporaryPath);
             await AvaloniaTestWait.UntilAsync(() => worldsViewModel.Instances.InstanceWorlds.Count == 4,
                 "temporary save to appear");
-            Directory.Delete(temporaryPath);
+            var temporaryWorld = worldsViewModel.Instances.InstanceWorlds.Single(world => world.Name == "Temporary world");
+            worldsViewModel.Instances.RequestWorldDeletionCommand.Execute(temporaryWorld);
+            Assert.True(worldsViewModel.Instances.IsWorldDeletionOpen);
+            worldsViewModel.Instances.CancelWorldDeletionCommand.Execute(null);
+            Assert.True(Directory.Exists(temporaryPath));
+            worldsViewModel.Instances.RequestWorldDeletionCommand.Execute(temporaryWorld);
+            await worldsViewModel.Instances.ConfirmWorldDeletionCommand.ExecuteAsync(null);
+            Assert.False(Directory.Exists(temporaryPath));
             await AvaloniaTestWait.UntilAsync(() => worldsViewModel.Instances.InstanceWorlds.Count == 3 &&
                 worldsViewModel.Instances.InstanceWorlds.All(world => world.Name != "Expedition renamed") &&
                 !worldsViewModel.Instances.IsInstanceWorldsLoading, "removed save to disappear from filesystem events");
             await WaitFramesAsync(20);
             Capture(worldsWindow, Path.Combine(outputDirectory, "worlds.png"));
+            var worldsView = worldsWindow.GetVisualDescendants().OfType<InstanceWorldsView>().Single();
+            var optionsButton = worldsView.GetVisualDescendants().OfType<Button>().First(button =>
+                button.Classes.Contains("worldOptions") && button.DataContext is InstanceWorldItemViewModel { Name: "Expedition" });
+            optionsButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await WaitFramesAsync(8);
+            Capture(worldsWindow, Path.Combine(outputDirectory, "worlds-options.png"));
+            Assert.True(worldsView.CloseOptionsMenu());
+            worldsViewModel.Instances.RequestWorldDeletionCommand.Execute(
+                worldsViewModel.Instances.InstanceWorlds.Single(world => world.Name == "Expedition"));
+            var worldsScreen = worldsWindow.GetVisualDescendants().OfType<InstancesView>().Single();
+            await WaitForModalAsync(worldsScreen.FindControl<OverlayModal>("WorldDeleteModal")!);
+            Capture(worldsWindow, Path.Combine(outputDirectory, "worlds-delete.png"));
+            worldsViewModel.Instances.CancelWorldDeletionCommand.Execute(null);
+            await WaitFramesAsync(20);
             var worldInstanceButton = worldsWindow.GetVisualDescendants().OfType<Button>()
                 .First(button => button.Classes.Contains("managerListItem") &&
                     button.DataContext is InstanceItemViewModel { Id: "instance-aurora" });

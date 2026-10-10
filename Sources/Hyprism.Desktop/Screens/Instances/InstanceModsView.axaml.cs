@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Hyprism.Desktop.Controls;
 
@@ -110,6 +111,17 @@ public sealed partial class InstanceModsView : UserControl
                 ShowModCatalogLoading();
             else
                 _ = HideModCatalogLoadingAsync();
+        }
+
+        if (args.PropertyName is nameof(InstancesViewModel.CanLoadMoreModCatalog))
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (DataContext is not InstancesViewModel { HasInstanceContentError: false })
+                    return;
+                var scrollViewer = ModCatalogList.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+                TryLoadMoreModCatalog(scrollViewer);
+            }, DispatcherPriority.Loaded);
         }
     }
 
@@ -290,16 +302,17 @@ public sealed partial class InstanceModsView : UserControl
 
     private void OnModCatalogScrollChanged(object? sender, ScrollChangedEventArgs args)
     {
-        if (args.OffsetDelta.Y >= 0 ||
-            sender is not ScrollViewer scrollViewer ||
-            DataContext is not InstancesViewModel viewModel ||
-            !viewModel.CanLoadMoreModCatalog)
-        {
-            return;
-        }
+        if (args.OffsetDelta.Y >= 0 && args.Source is ScrollViewer scrollViewer)
+            TryLoadMoreModCatalog(scrollViewer);
+    }
 
-        if (scrollViewer.Offset.Y + scrollViewer.Viewport.Height >=
-            scrollViewer.Extent.Height - 220)
+    private void TryLoadMoreModCatalog(ScrollViewer? scrollViewer)
+    {
+        if (ModCatalogSection.IsEffectivelyVisible &&
+            DataContext is InstancesViewModel { CanLoadMoreModCatalog: true } viewModel &&
+            viewModel.LoadMoreModCatalogCommand.CanExecute(null) &&
+            (!viewModel.HasModCatalogItems || scrollViewer is { Viewport.Height: > 0 } &&
+             scrollViewer.Offset.Y + scrollViewer.Viewport.Height >= scrollViewer.Extent.Height - 220))
         {
             viewModel.LoadMoreModCatalogCommand.Execute(null);
         }

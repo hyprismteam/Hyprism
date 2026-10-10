@@ -12,7 +12,8 @@ public sealed record InstanceWorldItemViewModel(
     Bitmap? Preview = null,
     string? PreviewPath = null,
     DateTime PreviewModifiedUtc = default,
-    long PreviewLength = 0) : IDisposable
+    long PreviewLength = 0,
+    string? FolderPath = null) : IDisposable
 {
     public bool HasPreview => Preview is not null;
 

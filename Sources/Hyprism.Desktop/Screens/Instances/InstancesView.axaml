@@ -263,7 +263,7 @@ SPDX-License-Identifier: GPL-3.0-only
               <Grid Grid.Row="1" Margin="24,18,24,28">
                 <instances:InstanceModsView x:Name="InstanceModsContentView" />
 
-                <instances:InstanceWorldsView />
+                <instances:InstanceWorldsView x:Name="InstanceWorldsContentView" />
 
                 <instances:InstanceLogsView x:Name="InstanceLogsContentView" />
 
@@ -670,6 +670,49 @@ SPDX-License-Identifier: GPL-3.0-only
                 </Button>
                 <Button Classes="wizardAction danger" Command="{Binding ConfirmModDeletionCommand}"
                         IsEnabled="{Binding !PendingModDeletion.IsBusy}">
+                  <TextBlock Text="{Binding InstanceModsDeleteLabel}" />
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="editorModalOutline" />
+        </Grid>
+      </controls:OverlayModal.ModalContent>
+    </controls:OverlayModal>
+    <controls:OverlayModal x:Name="WorldDeleteModal"
+                           IsOpen="{Binding IsWorldDeletionOpen}"
+                           DismissCommand="{Binding CancelWorldDeletionCommand}"
+                           Closed="OnWorldDeleteModalClosed"
+                           SheetMaxWidth="480" SheetMaxHeight="420"
+                           SheetMargin="12,20,12,0" ShoulderMaxWidth="522"
+                           HiddenOffset="500" ZIndex="220">
+      <controls:OverlayModal.ModalContent>
+        <Grid>
+          <Border Classes="editorModalContent">
+            <StackPanel Spacing="16">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Text="{Binding ManagedInstanceDeleteTitle}" FontSize="22" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1" Classes="editorModalClose mirrorRemove"
+                        Command="{Binding CancelWorldDeletionCommand}" IsEnabled="{Binding !IsDeletingWorld}"
+                        ToolTip.Tip="{Binding CancelLabel}" AutomationProperties.Name="{Binding CancelLabel}">
+                  <PathIcon Data="{StaticResource CloseIcon}" Width="15" Height="15" />
+                </Button>
+              </Grid>
+              <TextBlock Text="{Binding WorldDeleteHint}" Classes="muted" TextWrapping="Wrap" />
+              <Border Background="{DynamicResource ControlSurfaceBrush}" CornerRadius="11" Padding="14,12">
+                <TextBlock Text="{Binding PendingWorldDeletion.Name}" FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+              </Border>
+              <TextBlock Text="{Binding InstanceContentError}" IsVisible="{Binding HasInstanceContentError}"
+                         Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Classes="wizardAction" Command="{Binding CancelWorldDeletionCommand}"
+                        IsEnabled="{Binding !IsDeletingWorld}">
+                  <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+                <Button Classes="wizardAction danger" Command="{Binding ConfirmWorldDeletionCommand}"
+                        IsEnabled="{Binding CanDeleteWorld}">
                   <TextBlock Text="{Binding InstanceModsDeleteLabel}" />
                 </Button>
               </StackPanel>

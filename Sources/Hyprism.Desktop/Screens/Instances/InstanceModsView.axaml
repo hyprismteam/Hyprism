@@ -29,12 +29,12 @@ SPDX-License-Identifier: GPL-3.0-only
                              Text="{Binding InstalledModsSearchQuery, Mode=TwoWay}" />
                   </controls:ModalTextField>
                   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                    <Button Classes="instanceToolbarIconButton"
+                    <Button Classes="managerAction instanceToolbarIconButton"
                             Command="{Binding ImportModsCommand}"
                             ToolTip.Tip="{Binding InstanceModsAddLabel}">
                       <Path Classes="instanceToolbarIcon" Data="{StaticResource AddIcon}" />
                     </Button>
-                    <Button Classes="instanceToolbarIconButton update"
+                    <Button Classes="managerAction instanceToolbarIconButton update"
                             IsEnabled="{Binding !IsCheckingModUpdates}"
                             Command="{Binding CheckModUpdatesCommand}"
                             ToolTip.Tip="{Binding InstanceModsCheckUpdatesLabel}">
@@ -389,11 +389,12 @@ SPDX-License-Identifier: GPL-3.0-only
                         </Path.RenderTransform>
                       </Path>
                     </Border>
-                    <Border Grid.Row="1" Classes="instanceLoadMoreBar" IsVisible="{Binding IsLoadingMoreModCatalog}">
-                      <StackPanel Orientation="Horizontal" Spacing="9" HorizontalAlignment="Center">
+                    <Border Grid.Row="1" Classes="instanceLoadMoreBar" Height="36">
+                      <StackPanel Orientation="Horizontal" Spacing="9" HorizontalAlignment="Center"
+                                  IsVisible="{Binding IsLoadingMoreModCatalog}">
                         <Path Classes="instanceToolbarSpinner"
                               Data="M9,1 A8,8 0 1 1 1,9"
-                              controls:RotatingVisual.IsActive="True" />
+                              controls:RotatingVisual.IsActive="{Binding IsLoadingMoreModCatalog}" />
                         <TextBlock Text="{Binding InstanceBrowseLoadingMoreLabel}" Classes="muted" FontSize="12" VerticalAlignment="Center" />
                       </StackPanel>
                     </Border>

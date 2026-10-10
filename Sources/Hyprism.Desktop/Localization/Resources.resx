@@ -3150,4 +3150,7 @@ You may need to reinstall the game if switching drives</value>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
   </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>Delete "{0}" and all of this world's data? This action cannot be undone</value>
+  </data>
 </root>

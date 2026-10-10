@@ -8,6 +8,7 @@ using Hyprism.Core.Application.Progress;
 using Hyprism.Core.Game;
 using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Game.Launch;
+using Hyprism.Core.Game.Mods;
 using Hyprism.Core.Game.Sources;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Models;
@@ -33,7 +34,8 @@ internal static class MainWindowViewModelFactory
         IGameVersionCatalog? versionCatalog = null,
         string language = "en-US",
         bool emptyInstances = false,
-        string? instancePath = null)
+        string? instancePath = null,
+        IModManager? modManager = null)
     {
         var progress = new Mock<IProgressReporter>();
         var instances = new Mock<IInstanceRepository>();
@@ -253,6 +255,7 @@ internal static class MainWindowViewModelFactory
             gitHubClient: gitHub.Object,
             mirrorCatalog: mirrorCatalog,
             versionCatalog: versionCatalog,
+            modManager: modManager,
             gpuProvider: gpuProvider.Object);
     }
 

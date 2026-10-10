@@ -4,6 +4,8 @@
 using Avalonia.Threading;
 using Avalonia.Media.Imaging;
 using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Hyprism.Desktop.Screens.Instances;
 
@@ -18,8 +20,106 @@ public sealed partial class InstancesViewModel
     private long _worldsReadVersion;
     private bool _worldsRefreshPending;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(WorldDeleteHint))]
+    private InstanceWorldItemViewModel? _pendingWorldDeletion;
+
+    [ObservableProperty]
+    private bool _isWorldDeletionOpen;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanDeleteWorld))]
+    private bool _isDeletingWorld;
+
+    public string WorldOpenFolderLabel => _localizer["common.openFolder"];
+    public string WorldDeleteHint => _localizer.Format("instances.worlds.deleteHint", PendingWorldDeletion?.Name ?? string.Empty);
+    public bool CanDeleteWorld => !IsManagedInstanceRunning && !IsDeletingWorld;
+
+    private string? GetWorldFolderPath(InstanceWorldItemViewModel? world)
+    {
+        if (world?.FolderPath is not { } path || _managedInstance?.IsInstalled != true)
+            return null;
+        var instancePath = _instances.GetInstancePathById(_managedInstance.Id);
+        if (string.IsNullOrWhiteSpace(instancePath) ||
+            !string.Equals(Path.GetDirectoryName(path), Path.Combine(instancePath, "UserData", "Saves"),
+                StringComparison.Ordinal) || !Directory.Exists(path))
+            return null;
+        return (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0 ? path : null;
+    }
+
+    [RelayCommand]
+    private async Task OpenWorldFolderAsync(InstanceWorldItemViewModel? world)
+    {
+        try
+        {
+            if (GetWorldFolderPath(world) is { } path)
+                await _uriLauncher.LaunchDirectoryAsync(path);
+        }
+        catch (Exception ex)
+        {
+            InstanceContentError = ex.Message;
+        }
+    }
+
+    [RelayCommand]
+    private void RequestWorldDeletion(InstanceWorldItemViewModel? world)
+    {
+        if (world is null || !CanDeleteWorld)
+            return;
+        world = InstanceWorlds.FirstOrDefault(item => item.FolderPath == world.FolderPath);
+        if (world is null)
+            return;
+        InstanceContentError = string.Empty;
+        PendingWorldDeletion = world;
+        IsWorldDeletionOpen = true;
+    }
+
+    [RelayCommand]
+    private void CancelWorldDeletion()
+    {
+        if (!IsDeletingWorld)
+            IsWorldDeletionOpen = false;
+    }
+
+    public void CompleteWorldDeletionClose()
+    {
+        if (!IsWorldDeletionOpen)
+            PendingWorldDeletion = null;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmWorldDeletionAsync()
+    {
+        if (!CanDeleteWorld || PendingWorldDeletion is not { } world)
+            return;
+        IsDeletingWorld = true;
+        InstanceContentError = string.Empty;
+        var instanceId = _managedInstance?.Id;
+        try
+        {
+            if (GetWorldFolderPath(world) is { } path)
+                await Task.Run(() => Directory.Delete(path, recursive: true));
+            if (ReferenceEquals(PendingWorldDeletion, world) &&
+                string.Equals(_managedInstance?.Id, instanceId, StringComparison.Ordinal))
+            {
+                IsWorldDeletionOpen = false;
+                await LoadInstanceWorldsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (string.Equals(_managedInstance?.Id, instanceId, StringComparison.Ordinal))
+                InstanceContentError = ex.Message;
+        }
+        finally
+        {
+            IsDeletingWorld = false;
+        }
+    }
+
     private void ClearInstanceWorlds()
     {
+        IsWorldDeletionOpen = false;
         foreach (var world in InstanceWorlds)
             world.Dispose();
         InstanceWorlds.Clear();
@@ -147,7 +247,7 @@ public sealed partial class InstancesViewModel
         var previousWorlds = InstanceWorlds.ToArray();
         var version = ++_worldsReadVersion;
         IsInstanceWorldsLoading = true;
-        if (IsInstanceWorldsSection)
+        if (IsInstanceWorldsSection && !IsWorldDeletionOpen)
             InstanceContentError = string.Empty;
         try
         {
@@ -236,11 +336,12 @@ public sealed partial class InstancesViewModel
                         modified.ToLocalTime().ToString("g", culture), FormatBytes(size, culture),
                         PreviewPath: hasPreviewFile ? previewFile.FullName : null,
                         PreviewModifiedUtc: hasPreviewFile ? previewFile.LastWriteTimeUtc : default,
-                        PreviewLength: hasPreviewFile ? previewFile.Length : 0);
+                        PreviewLength: hasPreviewFile ? previewFile.Length : 0,
+                        FolderPath: directory.FullName);
                     var previous = previousWorlds.FirstOrDefault(world => world.Name == item.Name &&
                         world.LastModified == item.LastModified && world.Size == item.Size &&
                         world.PreviewPath == item.PreviewPath && world.PreviewModifiedUtc == item.PreviewModifiedUtc &&
-                        world.PreviewLength == item.PreviewLength);
+                        world.PreviewLength == item.PreviewLength && world.FolderPath == item.FolderPath);
                     worlds.Add((previous ?? item with { Preview = LoadWorldPreview(item.PreviewPath) }, modified));
                 }
                 catch (DirectoryNotFoundException) { }

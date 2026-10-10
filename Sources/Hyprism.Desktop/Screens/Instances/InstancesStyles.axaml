@@ -423,6 +423,11 @@ SPDX-License-Identifier: GPL-3.0-only
   <Style Selector="instances|InstancesView Button.instanceBulkUpdateAction">
     <Setter Property="Height" Value="40" />
     <Setter Property="Padding" Value="14,0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.16" />
+      </Transitions>
+    </Setter>
   </Style>
 
   <Style Selector="instances|InstancesView Button.modCatalogSearchAction">
@@ -631,7 +636,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceToolbarIconButton:pointerover">
-    <Setter Property="Background" Value="{DynamicResource ControlTrackHoverBrush}" />
+    <Setter Property="Background" Value="{DynamicResource ControlSurfaceActiveBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView Button.instanceToolbarIconButton:pressed">
@@ -887,6 +892,11 @@ SPDX-License-Identifier: GPL-3.0-only
     <Setter Property="Padding" Value="0" />
     <Setter Property="CornerRadius" Value="11" />
     <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="instances|InstancesView Button.installedModDeleteAction:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ControlGroupBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DangerSoftBrush}" />
   </Style>
 
   <Style Selector="instances|InstancesView ToggleSwitch.instanceModToggle">

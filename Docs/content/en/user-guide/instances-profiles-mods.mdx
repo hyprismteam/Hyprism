@@ -104,7 +104,16 @@ See [Mods](/user-guide/mods) for the complete mod workflow
 2. Each row shows the latest world preview, the save folder name, its latest local modification time, and its size. The most recently changed saves appear first.
 3. Create a world in the game, or copy an existing save folder into the selected instance's `UserData/Saves` directory while the game is closed. New saves appear automatically. Renaming, removing, or changing a save also updates the list automatically.
 
-The preview updates when the game saves a new image. Worlds without an available preview show a placeholder icon.
+The preview updates when the game saves a new image. Worlds without an available preview show a map icon.
+
+Use the vertical three-dot button at the end of a world row to open its options.
+
+- Choose **Open Folder** to view that save in the system file manager.
+- With the game closed, choose **Delete**, review the world name in **Confirmation**, then choose **Delete** again. This permanently removes the save folder and all of its contents. Back up any files you want to keep first. The list updates automatically; if deletion fails, the confirmation stays open and displays the error.
+
+![World options with Open Folder and Delete actions](/img/user/en/worlds-options.png)
+
+![World deletion confirmation with the save name and irreversible deletion warning](/img/user/en/worlds-delete.png)
 
 If the list is empty, create a world in this instance first. Worlds in another instance are shown only when you select that instance.
 
@@ -125,6 +134,8 @@ If the list is empty, create a world in this instance first. Worlds in another i
 Press **Esc** or click outside the search field to end text entry. The query stays in the field.
 
 Choose **CurseForge** or **Modifold** in the source selector. Both sources offer category filtering. The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes.
+
+Scroll down to see more results. The next page loads automatically near the end of the list, with a loading indicator below the results. New entries appear below the existing ones without moving your current position.
 
 To install several mods together, select the compatible catalog entries and select **Install** at the right of the top bar. Review each mod, its icon, and the version that will be installed on the **Preview** page. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. Use **Back** or **Esc** to return to the catalog while keeping your selection. Installation returns you to the instance overview, which shows progress until the selected mods finish.
 

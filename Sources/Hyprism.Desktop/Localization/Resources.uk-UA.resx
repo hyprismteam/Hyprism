@@ -3114,4 +3114,7 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
   </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>Видалити «{0}» та всі дані цього світу? Цю дію не можна скасувати</value>
+  </data>
 </root>

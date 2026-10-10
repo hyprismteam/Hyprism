@@ -148,6 +148,9 @@ public sealed partial class InstancesView : UserControl
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (args.PropertyName is nameof(InstancesViewModel.InstanceSection) or nameof(InstancesViewModel.HasInstanceWorlds))
+            InstanceWorldsContentView.CloseOptionsMenu();
+
         if (args.PropertyName is nameof(InstancesViewModel.InstanceSection) or
             nameof(InstancesViewModel.HasModSelection) or nameof(InstancesViewModel.IsManagedInstanceInstallingMods))
             InstalledModsMenuPopup.IsRequestedOpen = false;
@@ -331,6 +334,9 @@ public sealed partial class InstancesView : UserControl
 
     private void OnModDeleteModalClosed(object? sender, EventArgs args)
         => (DataContext as InstancesViewModel)?.CompleteModDeletionClose();
+
+    private void OnWorldDeleteModalClosed(object? sender, EventArgs args)
+        => (DataContext as InstancesViewModel)?.CompleteWorldDeletionClose();
 
     private void OnToggleInstalledModsMenuClicked(object? sender, RoutedEventArgs args)
     {
@@ -541,6 +547,15 @@ public sealed partial class InstancesView : UserControl
 
     public bool TryNavigateBack()
     {
+        if (DataContext is InstancesViewModel { IsWorldDeletionOpen: true } worldViewModel)
+        {
+            worldViewModel.CancelWorldDeletionCommand.Execute(null);
+            return true;
+        }
+
+        if (InstanceWorldsContentView.CloseOptionsMenu())
+            return true;
+
         if (DataContext is InstancesViewModel { IsModDeletionOpen: true } viewModelWithDeletion)
         {
             viewModelWithDeletion.CancelModDeletionCommand.Execute(null);
