@@ -35,7 +35,7 @@ SPDX-License-Identifier: GPL-3.0-only
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets/**" />
+    <AvaloniaResource Include="Assets/**" Exclude="@(AvaloniaXaml)" />
   </ItemGroup>
 
 </Project>
