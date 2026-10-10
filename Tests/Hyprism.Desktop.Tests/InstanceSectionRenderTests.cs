@@ -36,8 +36,10 @@ namespace Hyprism.Desktop.Tests;
 
 public sealed class InstanceSectionRenderTests
 {
-    [AvaloniaFact]
-    public async Task ModsBrowseAndLogsSectionsRenderInteractiveRows()
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ModsBrowseAndLogsSectionsRenderInteractiveRows(bool compactInstallation)
     {
         const string instancePath = "/tmp/hyprism-section-render-test";
         var instance = new InstanceInfo
@@ -61,7 +63,7 @@ public sealed class InstanceSectionRenderTests
         var modManager = new Mock<IModManager>();
         var console = new GameConsoleService();
         var installGate = new TaskCompletionSource<bool>();
-        Action<string, string>? installProgress = null;
+        Action<int, string, string>? installProgress = null;
 
         instances.Setup(service => service.GetCachedInstances()).Returns([instance]);
         instances.Setup(service => service.GetSelectedInstance()).Returns(instance);
@@ -134,6 +136,20 @@ public sealed class InstanceSectionRenderTests
                 ],
                 TotalCount = 2
             });
+        modManager.Setup(service => service.SearchModsAsync(
+                "modifold", It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),
+                It.IsAny<string[]>(), It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(new ModSearchResult
+            {
+                Mods = [new ModInfo
+                {
+                    Source = "modifold", Id = "MF1", Name = "Modifold Mod",
+                    LatestFileId = "latest",
+                    LatestFiles = [new ModFileInfo { Source = "modifold", Id = "latest" }]
+                }],
+                TotalCount = 1,
+                HasMore = false
+            });
         modManager.Setup(service => service.GetModFilesAsync("10", 0, 10))
             .ReturnsAsync(new ModFilesResult
             {
@@ -180,9 +196,10 @@ public sealed class InstanceSectionRenderTests
                     RelationType = CurseForgeDependencyRelationType.RequiredDependency
                 }
             ]);
-        modManager.Setup(service => service.InstallModFileToInstanceAsync(
-                "10", "900", instancePath, It.IsAny<Action<string, string>?>()))
-            .Returns((string _, string _, string _, Action<string, string>? progressCallback) =>
+        modManager.Setup(service => service.InstallModFilesToInstanceAsync(
+                It.IsAny<IReadOnlyList<ModFileInfo>>(), instancePath,
+                It.IsAny<Action<int, string, string>?>(), It.IsAny<CancellationToken>()))
+            .Returns((IReadOnlyList<ModFileInfo> _, string _, Action<int, string, string>? progressCallback, CancellationToken _) =>
             {
                 installProgress = progressCallback;
                 return installGate.Task;
@@ -227,7 +244,7 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(modRows[0].GetVisualDescendants(), element => element is ToggleSwitch);
         Assert.Contains(
             modRows[0].GetVisualDescendants(),
-            element => element is Button button && button.Classes.Contains("instanceRowIconButton"));
+            element => element is Button button && button.Classes.Contains("installedModDeleteAction"));
 
         viewModel.SelectInstanceSectionCommand.Execute("browse");
         await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1);
@@ -314,49 +331,70 @@ public sealed class InstanceSectionRenderTests
         var comboCount = view.GetVisualDescendants()
             .OfType<ComboBox>()
             .Count(combo => combo.IsEffectivelyVisible && combo.Classes.Contains("instanceFilterCombo"));
-        Assert.Equal(2, comboCount);
+        Assert.Equal(3, comboCount);
         var filterCombos = view.GetVisualDescendants()
             .OfType<ComboBox>()
             .Where(combo => combo.IsEffectivelyVisible && combo.Classes.Contains("instanceFilterCombo"))
             .ToList();
-        var searchBox = view.GetVisualDescendants()
-            .OfType<TextBox>()
-            .Single(textBox => textBox.IsEffectivelyVisible && textBox.Classes.Contains("instanceSearch"));
+        Assert.Contains(filterCombos, combo =>
+            ReferenceEquals(combo.ItemsSource, viewModel.Instances.ModCatalogSourceOptions));
+        Assert.Equal(["curseforge", "modifold"],
+            viewModel.Instances.ModCatalogSourceOptions.Select(option => option.Value));
+        viewModel.Instances.SelectedModCatalogSource =
+            viewModel.Instances.ModCatalogSourceOptions.Single(option => option.Value == "modifold");
+        await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1 &&
+            viewModel.ModCatalogItems[0].Source == "modifold");
+        Assert.False(viewModel.Instances.IsCurseForgeCatalogSource);
+        Assert.Contains(viewModel.Instances.ModCatalogCategories,
+            option => option.Value == "Utility");
+        viewModel.Instances.SelectedModCatalogCategory =
+            viewModel.Instances.ModCatalogCategories.Single(option => option.Value == "Utility");
+        await WaitUntilAsync(() => modManager.Invocations.Any(invocation =>
+            invocation.Method.Name == nameof(IModManager.SearchModsAsync) &&
+            invocation.Arguments.Count == 7 &&
+            invocation.Arguments[0] is "modifold" &&
+            invocation.Arguments[4] is string[] categories && categories.Contains("Utility")));
+        viewModel.Instances.SelectedModCatalogSource =
+            viewModel.Instances.ModCatalogSourceOptions.Single(option => option.Value == "curseforge");
+        await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1 &&
+            viewModel.ModCatalogItems[0].Source == "curseforge");
+        var modsView = Assert.IsType<InstanceModsView>(view.FindControl<InstanceModsView>("InstanceModsContentView"));
+        var searchBox = Assert.IsType<TextBox>(modsView.FindControl<TextBox>("ModCatalogSearchBox"));
         Assert.Contains("catalogSearch", searchBox.Classes);
         Assert.Equal(new Thickness(0), searchBox.BorderThickness);
-        var modsView = Assert.IsType<InstanceModsView>(view.FindControl<InstanceModsView>("InstanceModsContentView"));
         var searchButton = Assert.IsType<Button>(modsView.FindControl<Button>("ModCatalogSearchButton"));
+        Assert.Same(searchBox.Parent, searchButton.Parent);
+        Assert.Equal(HorizontalAlignment.Right, searchButton.HorizontalAlignment);
         Assert.Contains("hidden", searchButton.Classes);
         Assert.False(searchButton.IsHitTestVisible);
+        Assert.False(searchButton.IsEnabled);
         viewModel.ModCatalogSearchQuery = "abcd";
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
         Assert.Contains("visible", searchButton.Classes);
         Assert.True(searchButton.IsHitTestVisible);
         Assert.Equal(34, searchButton.Width);
-        await WaitUntilAsync(() => searchButton.Opacity >= 0.99);
+        Assert.True(searchButton.IsEnabled);
         var searchCallsBeforeButtonClick = modManager.Invocations.Count(invocation =>
             invocation.Method.Name == nameof(IModManager.SearchModsAsync));
-        var searchButtonPoint = searchButton.TranslatePoint(
-            new Point(searchButton.Bounds.Width / 2, searchButton.Bounds.Height / 2),
-            window);
-        Assert.NotNull(searchButtonPoint);
-        window.MouseMove(searchButtonPoint!.Value);
-        Dispatcher.UIThread.RunJobs();
-        Assert.True(searchButton.IsPointerOver);
-        window.MouseDown(searchButtonPoint!.Value, MouseButton.Left);
-        window.MouseUp(searchButtonPoint.Value, MouseButton.Left);
+        Assert.Same(viewModel.SearchModCatalogCommand, searchButton.Command);
+        searchButton.Command!.Execute(null);
         await WaitUntilAsync(() => modManager.Invocations.Count(invocation =>
             invocation.Method.Name == nameof(IModManager.SearchModsAsync)) > searchCallsBeforeButtonClick);
         viewModel.ModCatalogSearchQuery = string.Empty;
-        var filterRow = Assert.IsType<Grid>(searchBox.Parent?.Parent);
+        Assert.Contains("hidden", searchButton.Classes);
+        Assert.False(searchButton.IsHitTestVisible);
+        var filterRow = Assert.IsType<Grid>(filterCombos[0].Parent);
         Assert.All(filterCombos, combo => Assert.Same(filterRow, combo.Parent));
+        Assert.Equal(1, Grid.GetRow(filterRow));
 
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
         Assert.True(viewModel.HasSelectedCatalogMods);
         var catalogTopInstall = Assert.Single(
             view.GetVisualDescendants().OfType<Border>(),
-            border => border.Classes.Contains("catalogInstallTopBar"));
+            border => border.Classes.Contains("catalogInstallTopBar") && border.IsEffectivelyVisible);
         var catalogTopInstallAction = Assert.Single(
             catalogTopInstall.GetVisualDescendants().OfType<Button>(),
             button => button.Classes.Contains("catalogInstallTopBarAction"));
@@ -376,14 +414,22 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(
             Assert.IsAssignableFrom<IEnumerable<ITransition>>(catalogTopInstall.Transitions),
             transition => transition is TransformOperationsTransition);
-        Assert.Contains("hidden", searchButton.Classes);
-        Assert.False(searchButton.IsHitTestVisible);
         viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
-        var installModal = view.FindControl<OverlayModal>("ModCatalogInstallModal");
-        Assert.NotNull(installModal);
-        Assert.Equal(674, installModal!.ShoulderMaxWidth);
-        await WaitUntilAsync(() => viewModel.HasModCatalogInstallConfirmation && installModal!.IsEffectivelyVisible);
-        var installContent = Assert.Single(installModal.GetVisualDescendants().OfType<ModCatalogInstallView>());
+        var installPage = view.FindControl<Grid>("InstanceModCatalogInstallPage");
+        var sectionPages = view.FindControl<Grid>("InstanceSectionPages");
+        Assert.NotNull(installPage);
+        Assert.NotNull(sectionPages);
+        Assert.Null(view.FindControl<OverlayModal>("ModCatalogInstallModal"));
+        await WaitUntilAsync(() => viewModel.HasModCatalogInstallConfirmation &&
+            installPage!.IsEffectivelyVisible && !sectionPages!.IsVisible &&
+            Math.Abs(Assert.IsType<TranslateTransform>(installPage.RenderTransform).X) < 0.1);
+        Assert.Null(view.FindControl<Grid>("InstancesLayout")!.Effect);
+        Assert.InRange(Assert.IsType<TranslateTransform>(installPage!.RenderTransform).X, -0.1, 0.1);
+        var installContent = Assert.Single(installPage.GetVisualDescendants().OfType<ModCatalogInstallView>());
+        Assert.Equal(InstanceModsView.ModCatalogContentMaxWidth, installContent.MaxWidth);
+        var installBackButton = view.FindControl<Button>("ModCatalogInstallBackButton");
+        Assert.NotNull(installBackButton);
+        Assert.Same(viewModel.Instances.NavigateBackFromInstanceContentCommand, installBackButton!.Command);
         var installTable = installContent.FindControl<Border>("ModCatalogInstallTable");
         Assert.NotNull(installTable);
         window.UpdateLayout();
@@ -391,10 +437,10 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => installTable!.GetVisualDescendants().OfType<Border>()
             .Any(border => border.Classes.Contains("modCatalogInstallTableRow")));
         Assert.Contains(
-            installModal!.GetVisualDescendants().OfType<TextBlock>(),
+            installPage!.GetVisualDescendants().OfType<TextBlock>(),
             textBlock => textBlock.Text == viewModel.ModCatalogInstallPreviewTitle);
         Assert.Contains(
-            installModal.GetVisualDescendants().OfType<TextBlock>(),
+            installPage.GetVisualDescendants().OfType<TextBlock>(),
             textBlock => textBlock.Text == viewModel.ModCatalogInstallDependenciesColumn);
         Assert.Equal("Catalog Mod 1.0", viewModel.ModCatalogInstallItems[0].Version);
         await WaitUntilAsync(() => viewModel.ModCatalogInstallItems[0].DependencyCount == 1);
@@ -428,32 +474,126 @@ public sealed class InstanceSectionRenderTests
         var installConfirmButton = installContent.FindControl<Button>("ModCatalogInstallConfirmButton");
         Assert.NotNull(installConfirmButton);
         Assert.Same(viewModel.InstallSelectedCatalogModsCommand, installConfirmButton!.Command);
+        Assert.DoesNotContain(installContent.GetVisualDescendants().OfType<TextBlock>(),
+            text => text.Text == viewModel.Instances.ModCatalogInstallDependencyHint);
+        var buttonCenter = installConfirmButton.TranslatePoint(
+            new Point(installConfirmButton.Bounds.Width / 2, installConfirmButton.Bounds.Height / 2), window)!.Value;
+        var accent = Color.Parse("#176B52");
+        var hoverAccent = Color.Parse("#238568");
+        var pressedAccent = Color.Parse("#104834");
+        window.Resources["AccentBrush"] = new SolidColorBrush(accent);
+        window.Resources["AccentHoverBrush"] = new SolidColorBrush(hoverAccent);
+        window.Resources["PrimaryPressedBrush"] = new SolidColorBrush(pressedAccent);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == accent);
+        window.MouseMove(buttonCenter);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == hoverAccent);
+        var confirmBorder = Assert.Single(installConfirmButton.GetVisualDescendants().OfType<Border>());
+        Assert.Equal(hoverAccent, Assert.IsAssignableFrom<ISolidColorBrush>(confirmBorder.Background).Color);
+        window.MouseDown(buttonCenter, MouseButton.Left);
+        await WaitUntilAsync(() => Assert.IsAssignableFrom<ISolidColorBrush>(installConfirmButton.Background).Color == pressedAccent);
+        window.MouseMove(new Point(0, 0));
+        window.MouseUp(new Point(0, 0), MouseButton.Left);
+        window.Resources.Remove("AccentBrush");
+        window.Resources.Remove("AccentHoverBrush");
+        window.Resources.Remove("PrimaryPressedBrush");
         var installResetButton = installContent.FindControl<Button>("ModCatalogInstallResetButton");
         Assert.NotNull(installResetButton);
         Assert.Same(viewModel.ClearModCatalogSelectionCommand, installResetButton!.Command);
         Assert.Contains(
             installResetButton.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
             path => path.Classes.Contains("dataActionIcon"));
-        viewModel.CloseModCatalogInstallConfirmationCommand.Execute(null);
-        await WaitUntilAsync(() => !viewModel.HasModCatalogInstallConfirmation);
+        window.Width = 680;
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+        await WaitUntilAsync(() => view.Classes.Contains("compact"));
+        Assert.True(installPage.IsEffectivelyVisible);
+        Assert.False(sectionPages!.IsVisible);
+        Assert.Equal(double.PositiveInfinity, installContent.MaxWidth);
+        var escape = new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape };
+        installPage.RaiseEvent(escape);
+        Assert.True(escape.Handled);
+        await WaitUntilAsync(() => !installPage.IsVisible && viewModel.ModCatalogInstallItems.Count == 0);
+        Assert.True(viewModel.IsInstanceBrowseSection);
+        Assert.True(viewModel.HasSelectedCatalogMods);
+        Assert.True(sectionPages.IsVisible);
+        Assert.Null(view.FindControl<Grid>("InstancesLayout")!.Effect);
+
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        window.Width = 1180;
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+        await WaitUntilAsync(() => view.Classes.Contains("wide"));
+        Assert.True(installPage.IsEffectivelyVisible);
+        Assert.False(sectionPages.IsVisible);
+        Assert.Equal(InstanceModsView.ModCatalogContentMaxWidth, installContent.MaxWidth);
+        installBackButton.Command!.Execute(null);
+        await WaitUntilAsync(() => !installPage.IsVisible && viewModel.ModCatalogInstallItems.Count == 0);
+        Assert.True(viewModel.IsInstanceBrowseSection);
+        Assert.True(viewModel.HasSelectedCatalogMods);
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
         Assert.Contains("hidden", catalogTopInstall.Classes);
         Assert.False(catalogTopInstall.IsHitTestVisible);
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
         Assert.Contains("visible", catalogTopInstall.Classes);
 
+        if (compactInstallation)
+        {
+            window.Width = 680;
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+        }
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible &&
+            Math.Abs(Assert.IsType<TranslateTransform>(installPage.RenderTransform).X) < 0.1);
         var installTask = viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
-        var installScreen = modsView.FindControl<Border>("ModCatalogInstallScreen");
-        Assert.NotNull(installScreen);
-        await WaitUntilAsync(() => viewModel.IsInstallingSelectedCatalogMods && installScreen!.IsEffectivelyVisible);
+        Assert.True(installPage.IsVisible);
+        Assert.False(installPage.IsHitTestVisible);
+        Assert.False(sectionPages.IsVisible);
+        var returningHub = view.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!.HubScreen;
+        await WaitUntilAsync(() => !installPage.IsVisible && returningHub.IsHitTestVisible);
+        if (!compactInstallation)
+        {
+            await WaitUntilAsync(() => returningHub.Opacity > 0.05);
+            Assert.InRange(returningHub.Opacity, 0.05, 1);
+            Assert.InRange(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X, -28, -0.01);
+            await WaitUntilAsync(() => returningHub.Opacity >= 0.99 &&
+                Math.Abs(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X) < 0.1);
+        }
+        if (compactInstallation)
+        {
+            window.Width = 1180;
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+        }
+        Assert.Null(modsView.FindControl<Border>("ModCatalogInstallScreen"));
+        await WaitUntilAsync(() => viewModel.Instances.IsManagedInstanceInstallingMods && viewModel.IsInstanceOverviewSection);
+        var overview = Assert.Single(view.GetVisualDescendants().OfType<InstanceOverviewView>());
+        var catalogRow = overview.FindControl<Button>("ModCatalogRow")!;
+        var statusButton = overview.FindControl<Button>("ModCatalogInstallStatusButton")!;
+        Assert.False(catalogRow.IsEnabled);
+        Assert.Contains("active", statusButton.Classes);
+        Assert.Contains("cancelArmed", statusButton.Classes);
+        Assert.Same(viewModel.Instances.CancelModCatalogInstallationCommand, statusButton.Command);
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        Assert.True(viewModel.IsInstanceOverviewSection);
         Assert.Equal("0/1", viewModel.ModCatalogInstallProgressText);
-        Assert.Single(viewModel.ModCatalogInstallItems);
-        installProgress!.Invoke("downloading", "catalog-mod.jar");
+        installProgress!.Invoke(0, "downloading", "catalog-mod.jar");
         Dispatcher.UIThread.RunJobs();
-        Assert.Equal(28, viewModel.ModCatalogInstallItems[0].Progress);
+        Assert.Equal(28, viewModel.ModCatalogInstallProgress);
+        Assert.Equal("28%", viewModel.Instances.ModCatalogInstallMetricText);
+        await WaitUntilAsync(() => statusButton.IsEffectivelyVisible && Math.Abs(statusButton.Bounds.Width - 180) < 0.1);
+        var statusPreviewPath = Environment.GetEnvironmentVariable("HYPRISM_MOD_INSTALL_RENDER_OUTPUT");
+        if (!string.IsNullOrWhiteSpace(statusPreviewPath))
+            window.CaptureRenderedFrame()!.Save(statusPreviewPath, PngBitmapEncoderOptions.Default);
         installGate.SetResult(true);
         await installTask;
-        await WaitUntilAsync(() => !viewModel.IsInstallingSelectedCatalogMods && !installScreen!.IsVisible);
+        Assert.False(viewModel.Instances.IsManagedInstanceInstallingMods);
+        Assert.True(catalogRow.IsEnabled);
+        Assert.DoesNotContain("active", statusButton.Classes);
+        Assert.Empty(viewModel.ModCatalogInstallItems);
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        await WaitUntilAsync(() => modsView.IsEffectivelyVisible);
 
         var listPreviewPath = Environment.GetEnvironmentVariable("HYPRISM_MOD_CATALOG_LIST_RENDER_OUTPUT");
         if (!string.IsNullOrWhiteSpace(listPreviewPath))
@@ -469,15 +609,10 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => view.GetVisualDescendants()
             .OfType<ItemsControl>()
             .Any(items => items.IsEffectivelyVisible && items.Classes.Contains("instancePreviewFiles")));
-        var modal = view.FindControl<OverlayModal>("ModCatalogModal");
-        var preview = modal?.FindControl<Grid>("OverlayModalSheet");
-        Assert.NotNull(preview);
+        var preview = Assert.Single(view.GetVisualDescendants().OfType<ModCatalogPreviewView>());
         Assert.True(preview.IsEffectivelyVisible);
         var instancesLayout = view.FindControl<Grid>("InstancesLayout");
-        Assert.NotNull(modal);
-        Assert.True(modal.IsVisible);
-        var blurEffect = Assert.IsType<BlurEffect>(instancesLayout?.Effect);
-        Assert.NotEmpty(Assert.IsAssignableFrom<IEnumerable<ITransition>>(blurEffect.Transitions));
+        Assert.Null(instancesLayout?.Effect);
         Assert.True(modsView.FindControl<Grid>("ModCatalogSection")?.IsVisible);
         Assert.Contains(
             preview.GetVisualDescendants(),
@@ -509,12 +644,10 @@ public sealed class InstanceSectionRenderTests
             button => Assert.Null(ToolTip.GetTip(button)));
         var curseForgeAction = Assert.Single(
             preview.GetVisualDescendants().OfType<Button>(),
-            button => button.Classes.Contains("modPreviewCurseForgeAction"));
+            button => button.Classes.Contains("modPreviewSourceAction"));
         Assert.Same(viewModel.OpenCatalogModPageCommand, curseForgeAction.Command);
-        Assert.Contains(
-            curseForgeAction.GetVisualDescendants(),
-            element => element is Avalonia.Controls.Shapes.Path path &&
-                path.Classes.Contains("modPreviewCurseForgeIcon"));
+        Assert.Contains(curseForgeAction.GetVisualDescendants(),
+            element => element is TextBlock text && text.Text == "Open mod on CurseForge");
         Assert.Equal(HorizontalAlignment.Center, curseForgeAction.HorizontalContentAlignment);
         Assert.Equal(HorizontalAlignment.Stretch, curseForgeAction.HorizontalAlignment);
         Assert.Equal(VerticalAlignment.Stretch, curseForgeAction.VerticalContentAlignment);
@@ -567,17 +700,6 @@ public sealed class InstanceSectionRenderTests
         Assert.Contains(
             Assert.IsAssignableFrom<IEnumerable<ITransition>>(installAction.Transitions),
             transition => transition is BrushTransition);
-        var curseForgeIcon = Assert.Single(
-            curseForgeAction.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>(),
-            path => path.Classes.Contains("modPreviewCurseForgeIcon"));
-        Assert.Equal(23, curseForgeIcon.Width);
-        Assert.Equal(5, Assert.IsType<TranslateTransform>(curseForgeIcon.RenderTransform).Y);
-        var shoulderScale = Assert.IsType<ScaleTransform>(
-            modal?.FindControl<Grid>("OverlayModalShoulders")?.RenderTransform);
-        Assert.NotEmpty(Assert.IsAssignableFrom<IEnumerable<ITransition>>(shoulderScale.Transitions));
-        var shoulderMask = modal!.FindControl<Grid>("OverlayModalShoulderMask");
-        Assert.NotNull(shoulderMask);
-        Assert.Equal(3, shoulderMask.Height);
 
         var previewPath = Environment.GetEnvironmentVariable("HYPRISM_MOD_CATALOG_RENDER_OUTPUT");
         if (!string.IsNullOrWhiteSpace(previewPath))
@@ -590,9 +712,7 @@ public sealed class InstanceSectionRenderTests
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
         await WaitUntilAsync(() => view.Classes.Contains("compact"));
-        Assert.Equal(560, modal.SheetMaxWidth);
-        Assert.Equal(608, modal.ShoulderMaxWidth);
-        Assert.Equal(520, modal.SheetMaxHeight);
+        Assert.True(preview.IsEffectivelyVisible);
         var compactPreviewPath = Environment.GetEnvironmentVariable(
             "HYPRISM_MOD_CATALOG_COMPACT_RENDER_OUTPUT");
         if (!string.IsNullOrWhiteSpace(compactPreviewPath))
@@ -605,11 +725,11 @@ public sealed class InstanceSectionRenderTests
         Assert.True(view.TryNavigateBack());
         Assert.False(viewModel.HasModCatalogPreview);
         Assert.True(viewModel.IsInstanceBrowseSection);
-        await WaitUntilAsync(() => !modal.IsVisible);
+        await WaitUntilAsync(() => !preview.IsEffectivelyVisible);
         Assert.True(instancesLayout!.IsHitTestVisible);
         Assert.Null(instancesLayout.Effect);
 
-        Assert.Equal(720, modsView.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
+        Assert.Equal(820, modsView.FindControl<Grid>("InstalledModsSection")?.MaxWidth);
         Assert.Equal(820, modsView.FindControl<Grid>("ModCatalogSection")?.MaxWidth);
         Assert.Equal(820, view.FindControl<InstanceLogsView>("InstanceLogsContentView")?
             .FindControl<Grid>("InstanceLogsSection")?.MaxWidth);
@@ -658,10 +778,38 @@ public sealed class InstanceSectionRenderTests
         await WaitUntilAsync(() => viewModel.Instances.IsLogsTracingEnabled);
         Assert.True(levelPopup.IsRequestedOpen);
         Assert.Equal("+3", viewModel.Instances.LogsAdditionalLevelCountText);
+
+        viewModel.SelectInstanceSectionCommand.Execute("browse");
+        viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        Assert.False(viewModel.HasModCatalogInstallConfirmation);
+        await WaitUntilAsync(() => !installPage.IsVisible);
+        viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
+        await WaitUntilAsync(() => view.FindControl<Grid>("InstancesOverview")!.IsHitTestVisible);
+        Assert.True(viewModel.HasSelectedCatalogMods);
+
+        var otherInstance = new InstanceInfo
+        {
+            Id = "other-render-instance", Name = "Other Render Instance", Branch = "release",
+            Version = 21, IsInstalled = true
+        };
+        instances.Setup(service => service.GetCachedInstances()).Returns([instance, otherInstance]);
+        instances.Setup(service => service.GetInstancePathById(otherInstance.Id)).Returns(instancePath);
+        viewModel.OpenModCatalogInstallConfirmationCommand.Execute(null);
+        await WaitUntilAsync(() => installPage.IsEffectivelyVisible && !sectionPages.IsVisible);
+        viewModel.Instances.OpenInstanceDetailsCommand.Execute(otherInstance.Id);
+        await WaitUntilAsync(() => !installPage.IsVisible);
+        Assert.False(viewModel.HasModCatalogInstallConfirmation);
+        Assert.Empty(viewModel.ModCatalogInstallItems);
+        Assert.False(viewModel.HasSelectedCatalogMods);
+        Assert.True(viewModel.IsInstanceOverviewSection);
+        Assert.Equal(otherInstance.Name, viewModel.Instances.ManagedInstanceName);
     }
 
     [AvaloniaFact]
-    public async Task ModPreviewModalShowsSkeletonAndPreloadsAllScreenshots()
+    public async Task ModDetailsPageShowsSkeletonAndPreloadsAllScreenshots()
     {
         const string instancePath = "/tmp/hyprism-preview-skeleton-test";
         var instance = new InstanceInfo
@@ -755,8 +903,7 @@ public sealed class InstanceSectionRenderTests
             gameConsole: console);
 
         var view = new InstancesView { DataContext = viewModel.Instances };
-        var modal = view.FindControl<OverlayModal>("ModCatalogModal");
-        Assert.NotNull(modal);
+        Assert.Null(view.FindControl<OverlayModal>("ModCatalogModal"));
         var window = new Window
         {
             Width = 1180,
@@ -781,6 +928,10 @@ public sealed class InstanceSectionRenderTests
         Assert.False(viewModel.IsModCatalogPreviewFilesContentVisible);
         window.UpdateLayout();
         Dispatcher.UIThread.RunJobs();
+        await WaitUntilAsync(() => view.GetVisualDescendants()
+            .OfType<ModCatalogPreviewView>().Any(page => page.IsEffectivelyVisible));
+        var detailsPage = Assert.Single(view.GetVisualDescendants().OfType<ModCatalogPreviewView>());
+        Assert.True(detailsPage.IsEffectivelyVisible);
         var skeletonPanel = FindPanels(view).Single(panel =>
             panel.Classes.Contains("modPreviewFilesSkeleton"));
         Assert.True(skeletonPanel.IsVisible);
@@ -834,21 +985,14 @@ public sealed class InstanceSectionRenderTests
             "next mod catalog screenshot request to complete");
         Assert.Equal(2, imageHandler.Requests);
 
-        var closingImage = viewModel.ModCatalogPreviewImage;
         viewModel.CloseModCatalogPreviewCommand.Execute(null);
         Assert.False(viewModel.HasModCatalogPreview);
         Assert.True(viewModel.IsModCatalogPreviewMounted);
-        Assert.Equal(1d, modal.FindControl<Grid>("OverlayModalSheet")!.Opacity);
-        Assert.Same(closingImage, viewModel.ModCatalogPreviewImage);
+        Assert.NotNull(viewModel.ModCatalogPreviewImage);
         var closingPreviewPath = Environment.GetEnvironmentVariable(
             "HYPRISM_MOD_PREVIEW_CLOSING_RENDER_OUTPUT");
         if (!string.IsNullOrWhiteSpace(closingPreviewPath))
         {
-            var closingSheet = Assert.IsType<Grid>(modal.FindControl<Grid>("OverlayModalSheet"));
-            var closingTranslation = Assert.IsType<TranslateTransform>(closingSheet.RenderTransform);
-            await AvaloniaTestWait.UntilAsync(
-                () => closingTranslation.IsAnimating(TranslateTransform.YProperty),
-                "mod catalog preview close animation to start");
             window.CaptureRenderedFrame()!.Save(closingPreviewPath, PngBitmapEncoderOptions.Default);
         }
         await WaitUntilAsync(() => viewModel.ModCatalogPreviewImage is null);

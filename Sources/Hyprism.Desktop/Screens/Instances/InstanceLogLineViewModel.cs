@@ -17,4 +17,8 @@ public sealed record InstanceLogLineViewModel(
     public bool IsSystem => Level == "INFO";
 }
 
-public sealed record InstanceListOptionViewModel(string Value, string Display);
+public sealed record InstanceListOptionViewModel(string Value, string Display)
+{
+    public bool IsCurseForgeSource => Value == "curseforge";
+    public bool IsModifoldSource => Value == "modifold";
+}

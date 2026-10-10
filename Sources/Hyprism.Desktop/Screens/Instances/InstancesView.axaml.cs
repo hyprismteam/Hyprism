@@ -24,6 +24,9 @@ public sealed partial class InstancesView : UserControl
     private readonly WizardHost _creatorWizard;
     private readonly AdaptiveMasterDetailHost _layoutHost;
     private readonly ReorderableListController _instanceReorder;
+    private readonly WizardScreenTransition _modCatalogPreviewTransition;
+    private readonly WizardScreenTransition _modCatalogInstallTransition;
+    private readonly WizardScreenTransition _modCatalogInstallToInstanceTransition;
     private INotifyPropertyChanged? _viewModel;
     private bool _creatorOpenedFromCompactList;
     private bool _creatorTransitionActive;
@@ -37,6 +40,15 @@ public sealed partial class InstancesView : UserControl
     public InstancesView()
     {
         InitializeComponent();
+        _modCatalogPreviewTransition = new WizardScreenTransition(
+            InstanceSectionScreen,
+            InstanceModCatalogPreviewPage);
+        _modCatalogInstallTransition = new WizardScreenTransition(
+            InstanceSectionPages,
+            InstanceModCatalogInstallPage);
+        _modCatalogInstallToInstanceTransition = new WizardScreenTransition(
+            InstanceHubScreen,
+            InstanceModCatalogInstallPage);
         InstanceOverviewContentView.BackRequested += OnCompactInstanceBackClicked;
         InstanceListContentView.InstanceClicked += OnInstanceClicked;
         InstanceListContentView.CreateRequested += OnOpenCreatorClicked;
@@ -117,6 +129,7 @@ public sealed partial class InstancesView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs args)
     {
+        InstalledModsMenuPopup.IsRequestedOpen = false;
         if (_viewModel is not null)
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
 
@@ -135,15 +148,54 @@ public sealed partial class InstancesView : UserControl
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (args.PropertyName is nameof(InstancesViewModel.InstanceSection) or nameof(InstancesViewModel.HasInstanceWorlds))
+            InstanceWorldsContentView.CloseOptionsMenu();
+
+        if (args.PropertyName is nameof(InstancesViewModel.InstanceSection) or
+            nameof(InstancesViewModel.HasModSelection) or nameof(InstancesViewModel.IsManagedInstanceInstallingMods))
+            InstalledModsMenuPopup.IsRequestedOpen = false;
+
         if (args.PropertyName is nameof(InstancesViewModel.HasInstances))
             UpdateLayout(Bounds.Width);
 
         if (args.PropertyName is nameof(InstancesViewModel.InstanceSection))
         {
+            if (InstanceModCatalogInstallPage.IsVisible &&
+                DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true, IsInstanceOverviewSection: true })
+            {
+                CancelSectionAnimation();
+                _modCatalogInstallTransition.Cancel();
+                InstanceSectionPages.IsVisible = false;
+                (DataContext as InstancesViewModel)?.CompleteInstanceSectionClose();
+                return;
+            }
+
+            if (InstanceModCatalogPreviewPage.IsVisible || InstanceModCatalogInstallPage.IsVisible)
+            {
+                ApplySectionStateImmediately();
+                return;
+            }
+
             if (DataContext is InstancesViewModel { IsInstanceOverviewSection: true })
                 _ = PlaySectionCloseAnimationAsync();
             else
                 _ = PlaySectionOpenAnimationAsync();
+        }
+
+        if (args.PropertyName is nameof(InstancesViewModel.IsModCatalogPreviewOpen))
+        {
+            if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+                _ = PlayModCatalogPreviewOpenAnimationAsync();
+            else
+                _ = PlayModCatalogPreviewCloseAnimationAsync();
+        }
+
+        if (args.PropertyName is nameof(InstancesViewModel.IsModCatalogInstallConfirmationOpen))
+        {
+            if (DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: true })
+                _ = PlayModCatalogInstallOpenAnimationAsync();
+            else
+                _ = PlayModCatalogInstallCloseAnimationAsync();
         }
 
         if (args.PropertyName is nameof(InstancesViewModel.IsInstanceCreatorOpen))
@@ -156,16 +208,122 @@ public sealed partial class InstancesView : UserControl
 
     }
 
-    private void OnModCatalogModalClosed(object? sender, EventArgs args)
+    private void ApplyModCatalogPreviewStateImmediately(bool showHub)
     {
-        if (DataContext is InstancesViewModel viewModel)
-            viewModel.CompleteModCatalogPreviewClose();
+        if (DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true })
+        {
+            _modCatalogPreviewTransition.ShowWizardImmediately();
+            return;
+        }
+
+        if (!showHub)
+        {
+            _modCatalogPreviewTransition.ShowOverviewImmediately();
+        }
+        else
+        {
+            _modCatalogPreviewTransition.Cancel();
+            var translation = (TranslateTransform)InstanceModCatalogPreviewPage.RenderTransform!;
+            var transitions = InstanceModCatalogPreviewPage.Transitions;
+            var translationTransitions = translation.Transitions;
+            InstanceModCatalogPreviewPage.Transitions = null;
+            translation.Transitions = null;
+            InstanceModCatalogPreviewPage.IsVisible = false;
+            InstanceModCatalogPreviewPage.IsHitTestVisible = false;
+            InstanceModCatalogPreviewPage.Opacity = 0;
+            translation.X = 36;
+            InstanceModCatalogPreviewPage.Transitions = transitions;
+            translation.Transitions = translationTransitions;
+        }
+
+        (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
     }
 
-    private void OnModCatalogInstallModalClosed(object? sender, EventArgs args)
+    private Task PlayModCatalogPreviewOpenAnimationAsync()
     {
-        if (DataContext is InstancesViewModel viewModel)
-            viewModel.CompleteModCatalogInstallConfirmationClose();
+        Func<bool> shouldRemainOpen =
+            () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: true };
+        return _layoutHost.IsCompact
+            ? _modCatalogPreviewTransition.OpenCompactOverlayAsync(
+                shouldRemainOpen,
+                onSlideStarted: null,
+                onOpened: null,
+                horizontalOffset: GetSectionSlideDistance())
+            : _modCatalogPreviewTransition.OpenAsync(shouldRemainOpen);
+    }
+
+    private Task PlayModCatalogPreviewCloseAnimationAsync()
+    {
+        Func<bool> shouldRemainClosed =
+            () => DataContext is InstancesViewModel { IsModCatalogPreviewOpen: false };
+        Action onClosed = () => (DataContext as InstancesViewModel)?.CompleteModCatalogPreviewClose();
+        return _layoutHost.IsCompact
+            ? _modCatalogPreviewTransition.CloseCompactOverlayAsync(
+                shouldRemainClosed,
+                onClosed,
+                horizontalOffset: GetSectionSlideDistance())
+            : _modCatalogPreviewTransition.CloseAsync(shouldRemainClosed, onClosed);
+    }
+
+    private void ApplyModCatalogInstallStateImmediately()
+    {
+        _modCatalogInstallToInstanceTransition.Cancel();
+        if (DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: true })
+        {
+            _modCatalogInstallTransition.ShowWizardImmediately();
+            return;
+        }
+
+        _modCatalogInstallTransition.ShowOverviewImmediately();
+        (DataContext as InstancesViewModel)?.CompleteModCatalogInstallConfirmationClose();
+    }
+
+    private Task PlayModCatalogInstallOpenAnimationAsync()
+    {
+        InstanceModsContentView.TryEndSearchInput();
+        Func<bool> shouldRemainOpen =
+            () => DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: true };
+        Action onOpened = () =>
+        {
+            InstanceSectionPages.IsVisible = false;
+            InstanceModCatalogInstallPage.Focus();
+        };
+        return _layoutHost.IsCompact
+            ? _modCatalogInstallTransition.OpenCompactOverlayAsync(
+                shouldRemainOpen,
+                onSlideStarted: null,
+                onOpened,
+                horizontalOffset: GetSectionSlideDistance(),
+                slideOverview: true)
+            : _modCatalogInstallTransition.OpenAsync(shouldRemainOpen, onOpened);
+    }
+
+    private Task PlayModCatalogInstallCloseAnimationAsync()
+    {
+        var returningToInstance = DataContext is InstancesViewModel { IsInstanceOverviewSection: true };
+        var transition = returningToInstance
+            ? _modCatalogInstallToInstanceTransition
+            : _modCatalogInstallTransition;
+        Func<bool> shouldRemainClosed =
+            () => DataContext is InstancesViewModel { HasModCatalogInstallConfirmation: false };
+        Action onClosed = () =>
+        {
+            if (returningToInstance)
+            {
+                InstanceSectionScreen.IsVisible = false;
+                InstanceSectionScreen.IsHitTestVisible = false;
+                _modCatalogInstallTransition.ShowOverviewImmediately();
+            }
+
+            (DataContext as InstancesViewModel)?.CompleteModCatalogInstallConfirmationClose();
+        };
+        return _layoutHost.IsCompact
+            ? transition.CloseCompactOverlayAsync(
+                shouldRemainClosed,
+                onClosed,
+                horizontalOffset: GetSectionSlideDistance(),
+                slideOverview: !returningToInstance)
+            : transition.CloseAsync(shouldRemainClosed, onClosed);
     }
 
     private void OnInstanceDeleteModalClosed(object? sender, EventArgs args)
@@ -173,6 +331,21 @@ public sealed partial class InstancesView : UserControl
         if (DataContext is InstancesViewModel viewModel)
             viewModel.CompleteManagedInstanceDeletionClose();
     }
+
+    private void OnModDeleteModalClosed(object? sender, EventArgs args)
+        => (DataContext as InstancesViewModel)?.CompleteModDeletionClose();
+
+    private void OnWorldDeleteModalClosed(object? sender, EventArgs args)
+        => (DataContext as InstancesViewModel)?.CompleteWorldDeletionClose();
+
+    private void OnToggleInstalledModsMenuClicked(object? sender, RoutedEventArgs args)
+    {
+        InstanceModsContentView.TryEndSearchInput();
+        InstalledModsMenuPopup.IsRequestedOpen = !InstalledModsMenuPopup.IsRequestedOpen;
+    }
+
+    private void OnCloseInstalledModsMenuClicked(object? sender, RoutedEventArgs args)
+        => InstalledModsMenuPopup.IsRequestedOpen = false;
 
     private void OnInstanceEditModalClosed(object? sender, EventArgs args)
     {
@@ -182,8 +355,16 @@ public sealed partial class InstancesView : UserControl
 
     private void OnInstancesKeyDown(object? sender, KeyEventArgs args)
     {
-        if (args.Key is not Key.Escape ||
-            (!TryCloseModCatalogPreview() && !TryCloseModCatalogInstallConfirmation()))
+        if (args.Key is not Key.Escape)
+            return;
+
+        if (InstanceModsContentView.TryEndSearchInput())
+        {
+            args.Handled = true;
+            return;
+        }
+
+        if (!TryCloseModCatalogInstallConfirmation() && !TryCloseModCatalogPreview())
             return;
 
         args.Handled = true;
@@ -282,14 +463,13 @@ public sealed partial class InstancesView : UserControl
 
     private void UpdateInstanceSectionContentWidth()
     {
-        var maxWidth = _layoutHost.IsCompact
-            ? double.PositiveInfinity
-            : AdaptiveMasterDetailHost.DefaultContentMaxWidth;
         var catalogMaxWidth = _layoutHost.IsCompact
             ? double.PositiveInfinity
             : InstanceModsView.ModCatalogContentMaxWidth;
-        InstanceModsContentView.SetMaximumWidth(maxWidth, catalogMaxWidth);
+        InstanceModsContentView.SetMaximumWidth(catalogMaxWidth);
         InstanceLogsContentView.SetMaximumWidth(catalogMaxWidth);
+        InstanceModCatalogPreviewContentView.MaxWidth = catalogMaxWidth;
+        InstanceModCatalogInstallContentView.MaxWidth = catalogMaxWidth;
     }
 
     private void OnInstanceClicked(object? sender, RoutedEventArgs args)
@@ -367,7 +547,28 @@ public sealed partial class InstancesView : UserControl
 
     public bool TryNavigateBack()
     {
-        if (TryCloseModCatalogPreview() || TryCloseModCatalogInstallConfirmation())
+        if (DataContext is InstancesViewModel { IsWorldDeletionOpen: true } worldViewModel)
+        {
+            worldViewModel.CancelWorldDeletionCommand.Execute(null);
+            return true;
+        }
+
+        if (InstanceWorldsContentView.CloseOptionsMenu())
+            return true;
+
+        if (DataContext is InstancesViewModel { IsModDeletionOpen: true } viewModelWithDeletion)
+        {
+            viewModelWithDeletion.CancelModDeletionCommand.Execute(null);
+            return true;
+        }
+
+        if (InstalledModsMenuPopup.IsRequestedOpen)
+        {
+            InstalledModsMenuPopup.IsRequestedOpen = false;
+            return true;
+        }
+
+        if (TryCloseModCatalogInstallConfirmation() || TryCloseModCatalogPreview())
             return true;
 
         if (_creatorWizard.TryNavigateBack())
@@ -619,6 +820,8 @@ public sealed partial class InstancesView : UserControl
         hubTranslation.Transitions = hubTranslationTransitions;
         sectionTranslation.Transitions = sectionTranslationTransitions;
         SetSectionTranslationDuration(compact ? CompactSectionSlideDuration : WideSectionSlideDuration);
+        ApplyModCatalogPreviewStateImmediately(showHub);
+        ApplyModCatalogInstallStateImmediately();
     }
 
     private async Task PlayCompactSectionOpenAnimationAsync()

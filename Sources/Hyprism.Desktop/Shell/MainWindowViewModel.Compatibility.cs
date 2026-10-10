@@ -421,7 +421,6 @@ public sealed partial class MainWindowViewModel
     public string InstalledLabel => Instances.InstalledLabel;
     public string EnabledLabel => Instances.EnabledLabel;
     public string DisabledLabel => Instances.DisabledLabel;
-    public string InstanceContentBackLabel => Instances.InstanceContentBackLabel;
     public string ManagedInstancePlayLabel => Instances.ManagedInstancePlayLabel;
     public string ManagedInstanceInstallLabel => Instances.ManagedInstanceInstallLabel;
     public string ManagedInstanceOpenFolderLabel => Instances.ManagedInstanceOpenFolderLabel;
@@ -502,7 +501,6 @@ public sealed partial class MainWindowViewModel
     public IAsyncRelayCommand ShowPreviousModCatalogScreenshotCommand => Instances.ShowPreviousModCatalogScreenshotCommand;
     public IAsyncRelayCommand ShowNextModCatalogScreenshotCommand => Instances.ShowNextModCatalogScreenshotCommand;
     public IAsyncRelayCommand InstallModCatalogPreviewCommand => Instances.InstallModCatalogPreviewCommand;
-    public IAsyncRelayCommand RefreshInstanceWorldsCommand => Instances.RefreshInstanceWorldsCommand;
     public IAsyncRelayCommand ToggleModCommand => Instances.ToggleModCommand;
     public IAsyncRelayCommand DeleteModCommand => Instances.DeleteModCommand;
     public IRelayCommand SelectAllInstalledModsCommand => Instances.SelectAllInstalledModsCommand;

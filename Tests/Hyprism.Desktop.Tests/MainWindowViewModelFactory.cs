@@ -8,6 +8,7 @@ using Hyprism.Core.Application.Progress;
 using Hyprism.Core.Game;
 using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Game.Launch;
+using Hyprism.Core.Game.Mods;
 using Hyprism.Core.Game.Sources;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Core.Models;
@@ -32,7 +33,9 @@ internal static class MainWindowViewModelFactory
         IMirrorCatalog? mirrorCatalog = null,
         IGameVersionCatalog? versionCatalog = null,
         string language = "en-US",
-        bool emptyInstances = false)
+        bool emptyInstances = false,
+        string? instancePath = null,
+        IModManager? modManager = null)
     {
         var progress = new Mock<IProgressReporter>();
         var instances = new Mock<IInstanceRepository>();
@@ -71,7 +74,8 @@ internal static class MainWindowViewModelFactory
         instances.Setup(service => service.GetSelectedInstance())
             .Returns(emptyInstances ? null : installedInstance);
         instances.Setup(service => service.GetInstancePathById(It.IsAny<string>()))
-            .Returns("/tmp/hyprism-docs-instance");
+            .Returns((string id) => id == installedInstance.Id && instancePath is not null
+                ? instancePath : "/tmp/hyprism-docs-instance");
         instances.Setup(service => service.IsClientPresent(It.IsAny<string>()))
             .Returns(true);
 
@@ -251,6 +255,7 @@ internal static class MainWindowViewModelFactory
             gitHubClient: gitHub.Object,
             mirrorCatalog: mirrorCatalog,
             versionCatalog: versionCatalog,
+            modManager: modManager,
             gpuProvider: gpuProvider.Object);
     }
 

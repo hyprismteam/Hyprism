@@ -14,7 +14,10 @@ public sealed partial class InstanceModItemViewModel(
     bool isEnabled,
     string iconUrl = "",
     string curseForgeId = "",
-    int releaseType = 1) : ObservableObject
+    int releaseType = 1,
+    string source = "",
+    string pageUrl = "",
+    string releaseLabel = "") : ObservableObject
 {
     public string Id { get; } = id;
     public string Name { get; } = name;
@@ -23,6 +26,8 @@ public sealed partial class InstanceModItemViewModel(
     public string IconUrl { get; } = iconUrl;
     public string CurseForgeId { get; } = curseForgeId;
     public int ReleaseType { get; } = releaseType;
+    public string Source { get; } = source;
+    public string PageUrl { get; } = pageUrl;
 
     public string Initial => string.IsNullOrWhiteSpace(Name)
         ? "M"
@@ -31,18 +36,22 @@ public sealed partial class InstanceModItemViewModel(
     public bool HasExternalPage =>
         !string.IsNullOrWhiteSpace(CurseForgeId) || !string.IsNullOrWhiteSpace(Name);
 
-    public string CurseForgeUrl => !string.IsNullOrWhiteSpace(CurseForgeId)
-        ? $"https://www.curseforge.com/hytale/mods/{CurseForgeId}"
-        : $"https://www.curseforge.com/hytale/mods/search?search={Uri.EscapeDataString(Name)}";
+    public string CurseForgeUrl => !string.IsNullOrWhiteSpace(PageUrl)
+        ? PageUrl
+        : !string.IsNullOrWhiteSpace(CurseForgeId)
+            ? $"https://www.curseforge.com/hytale/mods/{CurseForgeId}"
+            : $"https://www.curseforge.com/hytale/mods/search?search={Uri.EscapeDataString(Name)}";
 
-    public string ReleaseBadge => ReleaseType switch
+    public bool IsRelease => ReleaseType is not (2 or 3);
+    public bool IsBeta => ReleaseType == 2;
+    public bool IsAlpha => ReleaseType == 3;
+
+    public string ReleaseBadge => !string.IsNullOrWhiteSpace(releaseLabel) ? releaseLabel : ReleaseType switch
     {
-        2 => "beta",
-        3 => "alpha",
-        _ => string.Empty
+        2 => "Beta",
+        3 => "Alpha",
+        _ => "Release"
     };
-
-    public bool ShowsReleaseBadge => ReleaseType is 2 or 3;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanInteract))]

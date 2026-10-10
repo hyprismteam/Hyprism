@@ -6,11 +6,10 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Hyprism.Desktop.Controls;
 
@@ -21,17 +20,14 @@ public sealed partial class InstanceModsView : UserControl
     public const double ModCatalogContentMaxWidth = 820;
 
     private static readonly TimeSpan ModCatalogSearchFadeDuration = MotionDurations.ContentFade;
-    private readonly WizardScreenTransition _installTransition;
     private INotifyPropertyChanged? _viewModel;
+    private TopLevel? _searchInputTopLevel;
     private CancellationTokenSource? _modCatalogLoadingCancellation;
     private bool _modDropActive;
 
     public InstanceModsView()
     {
         InitializeComponent();
-        _installTransition = new WizardScreenTransition(
-            ModCatalogBrowseContent,
-            ModCatalogInstallScreen);
         DragDrop.SetAllowDrop(ModsDropZone, true);
         ModsDropZone.AddHandler(DragDrop.DragEnterEvent, OnModFilesDragEntered);
         ModsDropZone.AddHandler(DragDrop.DragLeaveEvent, OnModFilesDragLeft);
@@ -39,10 +35,60 @@ public sealed partial class InstanceModsView : UserControl
         DataContextChanged += OnDataContextChanged;
     }
 
-    public void SetMaximumWidth(double installedModsWidth, double catalogWidth)
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        InstalledModsSection.MaxWidth = installedModsWidth;
-        ModCatalogSection.MaxWidth = catalogWidth;
+        base.OnAttachedToVisualTree(e);
+        _searchInputTopLevel = TopLevel.GetTopLevel(this);
+        _searchInputTopLevel?.AddHandler(
+            PointerPressedEvent,
+            OnSearchInputTopLevelPointerPressed,
+            RoutingStrategies.Tunnel,
+            handledEventsToo: true);
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        _searchInputTopLevel?.RemoveHandler(PointerPressedEvent, OnSearchInputTopLevelPointerPressed);
+        _searchInputTopLevel = null;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    public bool TryEndSearchInput()
+    {
+        var field = GetFocusedSearchField();
+        if (field is null)
+            return false;
+
+        (ReferenceEquals(field, InstalledModsSearchField) ? InstalledModsSection : ModCatalogBrowseContent).Focus();
+        return true;
+    }
+
+    private ModalTextField? GetFocusedSearchField()
+    {
+        var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        if (InstalledModsSearchBox.IsEffectivelyVisible && ReferenceEquals(focused, InstalledModsSearchBox))
+            return InstalledModsSearchField;
+        return ModCatalogSearchBox.IsEffectivelyVisible && ReferenceEquals(focused, ModCatalogSearchBox)
+            ? ModCatalogSearchField
+            : null;
+    }
+
+    private void OnSearchInputTopLevelPointerPressed(object? sender, PointerPressedEventArgs args)
+    {
+        var field = GetFocusedSearchField();
+        if (field is null || args.Source is Visual source &&
+            (ReferenceEquals(source, field) || field.IsVisualAncestorOf(source)))
+        {
+            return;
+        }
+
+        TryEndSearchInput();
+    }
+
+    public void SetMaximumWidth(double width)
+    {
+        InstalledModsSection.MaxWidth = width;
+        ModCatalogSection.MaxWidth = width;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs args)
@@ -55,7 +101,6 @@ public sealed partial class InstanceModsView : UserControl
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
 
         ApplyModCatalogLoadingStateImmediately();
-        ApplyModCatalogInstallStateImmediately();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -68,35 +113,17 @@ public sealed partial class InstanceModsView : UserControl
                 _ = HideModCatalogLoadingAsync();
         }
 
-        if (args.PropertyName is nameof(InstancesViewModel.IsInstallingSelectedCatalogMods))
+        if (args.PropertyName is nameof(InstancesViewModel.CanLoadMoreModCatalog))
         {
-            if (DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true })
-                _ = PlayModCatalogInstallOpenAnimationAsync();
-            else
-                _ = PlayModCatalogInstallCloseAnimationAsync();
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (DataContext is not InstancesViewModel { HasInstanceContentError: false })
+                    return;
+                var scrollViewer = ModCatalogList.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+                TryLoadMoreModCatalog(scrollViewer);
+            }, DispatcherPriority.Loaded);
         }
     }
-
-    private void ApplyModCatalogInstallStateImmediately()
-    {
-        if (DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true })
-            _installTransition.ShowWizardImmediately();
-        else
-            _installTransition.ShowOverviewImmediately();
-    }
-
-    private Task PlayModCatalogInstallOpenAnimationAsync()
-        => _installTransition.OpenAsync(
-            () => DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: true });
-
-    private Task PlayModCatalogInstallCloseAnimationAsync()
-        => _installTransition.CloseAsync(
-            () => DataContext is InstancesViewModel { IsInstallingSelectedCatalogMods: false },
-            () =>
-            {
-                if (DataContext is InstancesViewModel viewModel)
-                    viewModel.CompleteModCatalogInstallation();
-            });
 
     private void ApplyModCatalogLoadingStateImmediately()
     {
@@ -247,10 +274,8 @@ public sealed partial class InstanceModsView : UserControl
     private void OnCatalogSearchKeyDown(object? sender, KeyEventArgs args)
     {
         if (args.Key is not (Key.Enter or Key.Return) ||
-            DataContext is not InstancesViewModel viewModel)
-        {
+            DataContext is not InstancesViewModel { CanSearchModCatalog: true } viewModel)
             return;
-        }
 
         args.Handled = true;
         viewModel.SearchModCatalogCommand.Execute(null);
@@ -277,29 +302,20 @@ public sealed partial class InstanceModsView : UserControl
 
     private void OnModCatalogScrollChanged(object? sender, ScrollChangedEventArgs args)
     {
-        if (args.OffsetDelta.Y >= 0 ||
-            sender is not ScrollViewer scrollViewer ||
-            DataContext is not InstancesViewModel viewModel ||
-            !viewModel.CanLoadMoreModCatalog)
-        {
-            return;
-        }
+        if (args.OffsetDelta.Y >= 0 && args.Source is ScrollViewer scrollViewer)
+            TryLoadMoreModCatalog(scrollViewer);
+    }
 
-        if (scrollViewer.Offset.Y + scrollViewer.Viewport.Height >=
-            scrollViewer.Extent.Height - 220)
+    private void TryLoadMoreModCatalog(ScrollViewer? scrollViewer)
+    {
+        if (ModCatalogSection.IsEffectivelyVisible &&
+            DataContext is InstancesViewModel { CanLoadMoreModCatalog: true } viewModel &&
+            viewModel.LoadMoreModCatalogCommand.CanExecute(null) &&
+            (!viewModel.HasModCatalogItems || scrollViewer is { Viewport.Height: > 0 } &&
+             scrollViewer.Offset.Y + scrollViewer.Viewport.Height >= scrollViewer.Extent.Height - 220))
         {
             viewModel.LoadMoreModCatalogCommand.Execute(null);
         }
     }
 
-    private void OnCloseModDeleteFlyoutClicked(object? sender, RoutedEventArgs args)
-    {
-        if (sender is not Control control)
-            return;
-
-        var popup = control.FindAncestorOfType<Popup>() ??
-            control.GetLogicalAncestors().OfType<Popup>().FirstOrDefault();
-        if (popup is not null)
-            popup.IsOpen = false;
-    }
 }

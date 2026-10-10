@@ -14,13 +14,14 @@ namespace Hyprism.Core.Game.Mods;
 
 /// <summary>
 /// Manages game modifications including searching, installing, updating, and tracking.
-/// Integrates with CurseForge API for mod discovery and downloading.
+/// Integrates with supported mod catalogs for discovery and downloading.
 /// </summary>
 public partial class ModManager : IModManager
 {
     private readonly HttpClient _httpClient;
     private readonly string _appDir;
     private readonly CurseForgeClient _cfClient;
+    private readonly ModifoldClient _modifoldClient;
 
     private static readonly SemaphoreSlim _modManifestLock = new(1, 1);
 
@@ -80,6 +81,253 @@ public partial class ModManager : IModManager
         _instances = instances;
         _progressNotificationService = progressNotificationService;
         _cfClient = new CurseForgeClient(httpClient, () => _configStore.Configuration.CurseForgeKey);
+        _modifoldClient = new ModifoldClient(httpClient);
+    }
+
+    /// <inheritdoc/>
+    public Task<ModSearchResult> SearchModsAsync(
+        string source, string query, int page, int pageSize, string[] categories, int sortField, int sortOrder)
+        => source switch
+        {
+            "curseforge" => SearchModsAsync(query, page, pageSize, categories, sortField, sortOrder),
+            "modifold" => _modifoldClient.SearchAsync(query, page, pageSize, sortField,
+                categories.FirstOrDefault()),
+            _ => Task.FromException<ModSearchResult>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<ModFilesResult> GetModFilesAsync(string source, string modId, int page, int pageSize)
+        => source switch
+        {
+            "curseforge" => GetModFilesAsync(modId, page, pageSize),
+            "modifold" => _modifoldClient.GetFilesAsync(modId, page, pageSize),
+            _ => Task.FromException<ModFilesResult>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<ModInfo?> GetModAsync(string source, string modIdOrSlug)
+        => source switch
+        {
+            "curseforge" => GetModAsync(modIdOrSlug),
+            "modifold" => GetModifoldModAsync(modIdOrSlug),
+            _ => Task.FromException<ModInfo?>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    private async Task<ModInfo?> GetModifoldModAsync(string projectId)
+        => await _modifoldClient.GetModAsync(projectId);
+
+    /// <inheritdoc/>
+    public Task<List<ModDependency>> GetModDependenciesAsync(string source, string modId, string fileId)
+        => source switch
+        {
+            "curseforge" => GetModDependenciesAsync(modId, fileId),
+            "modifold" => GetModifoldDependenciesAsync(modId, fileId),
+            _ => Task.FromException<List<ModDependency>>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public Task<bool> InstallModFileToInstanceAsync(
+        string source, string modId, string fileId, string instancePath, Action<string, string>? onProgress = null)
+        => source switch
+        {
+            "curseforge" => InstallModFileToInstanceAsync(modId, fileId, instancePath, onProgress),
+            "modifold" => InstallModFilesToInstanceAsync(
+                [new ModFileInfo { Source = "modifold", ModId = modId, Id = fileId }], instancePath,
+                onProgress is null ? null : (_, stage, detail) => onProgress(stage, detail), CancellationToken.None),
+            _ => Task.FromException<bool>(new ArgumentOutOfRangeException(nameof(source)))
+        };
+
+    /// <inheritdoc/>
+    public async Task<bool> InstallModFilesToInstanceAsync(IReadOnlyList<ModFileInfo> files, string instancePath,
+        Action<int, string, string>? onProgress, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (files.Count == 0)
+            return false;
+
+        var modsPath = GetOrCreateModsDirectory(instancePath);
+        var transactionPath = Path.Combine(instancePath, "UserData", $".hyprism-mod-install-{Guid.NewGuid():N}");
+        var stagedModsPath = Path.Combine(transactionPath, "UserData", "Mods");
+        var backupPath = Path.Combine(transactionPath, "original-mods");
+        var gameVersion = ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath);
+        var originalNeedsRecovery = false;
+        var modifoldFiles = files.Where(file => file.Source == "modifold").ToArray();
+        var modifoldPlans = new Dictionary<string, List<(ModInfo Mod, ModFileInfo File)>>(StringComparer.Ordinal);
+        try
+        {
+            await Task.Run(() => LauncherUtilities.CopyDirectory(modsPath, stagedModsPath), cancellationToken);
+            var legacyManifest = Path.Combine(instancePath, "Client", "mods", "manifest.json");
+            if (File.Exists(legacyManifest))
+            {
+                var stagedLegacyPath = Path.Combine(transactionPath, "Client", "mods");
+                Directory.CreateDirectory(stagedLegacyPath);
+                File.Copy(legacyManifest, Path.Combine(stagedLegacyPath, "manifest.json"));
+            }
+
+            for (var index = 0; index < files.Count; index++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var file = files[index];
+                var fileIndex = index;
+                Action<string, string> progress = (stage, detail) =>
+                {
+                    if (stage != "complete")
+                        onProgress?.Invoke(fileIndex, stage, detail);
+                };
+                var installed = file.Source switch
+                {
+                    "curseforge" => await InstallCurseForgeFileAsync(file.ModId, file.Id, transactionPath,
+                        progress, cancellationToken, gameVersion),
+                    "modifold" => await InstallModifoldFileAsync(file.ModId, file.Id, transactionPath,
+                        progress, cancellationToken, gameVersion, modifoldFiles, modifoldPlans),
+                    _ => throw new ArgumentOutOfRangeException(nameof(files), file.Source, "Unknown mod source.")
+                };
+                if (!installed)
+                    return false;
+                onProgress?.Invoke(fileIndex, "complete", file.Id);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            Directory.Move(modsPath, backupPath);
+            originalNeedsRecovery = true;
+            try
+            {
+                Directory.Move(stagedModsPath, modsPath);
+                originalNeedsRecovery = false;
+            }
+            catch
+            {
+                Directory.Move(backupPath, modsPath);
+                originalNeedsRecovery = false;
+                throw;
+            }
+            return true;
+        }
+        finally
+        {
+            // Preserve the original directory if restoring it failed.
+            if (originalNeedsRecovery)
+                Logger.Error("ModManager", $"Original mods retained at {backupPath}");
+            else if (Directory.Exists(transactionPath))
+            {
+                try
+                {
+                    Directory.Delete(transactionPath, true);
+                }
+                catch (IOException exception)
+                {
+                    Logger.Warning("ModManager", $"Could not remove mod installation workspace: {exception.Message}");
+                }
+            }
+        }
+    }
+
+    private async Task<bool> InstallRawModifoldFileAsync(
+        ModInfo mod, ModFileInfo file, string instancePath, Action<string, string>? onProgress,
+        CancellationToken cancellationToken)
+    {
+        string? temporaryPath = null;
+        try
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var projectId = mod.Id;
+            if (!Uri.TryCreate(file.DownloadUrl, UriKind.Absolute, out var downloadUri) ||
+                downloadUri.Scheme != Uri.UriSchemeHttps)
+                return false;
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!extension.Equals(".jar", StringComparison.OrdinalIgnoreCase) &&
+                !extension.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            var modsPath = GetOrCreateModsDirectory(instancePath);
+            var safeName = Path.GetFileName(file.FileName);
+            var fileName = $"modifold-{projectId}-{safeName}";
+            var filePath = Path.Combine(modsPath, fileName);
+            temporaryPath = Path.Combine(modsPath, $".hyprism-{Guid.NewGuid():N}.download");
+            onProgress?.Invoke("downloading", fileName);
+            using (var response = await _httpClient.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+            {
+                response.EnsureSuccessStatusCode();
+                await using var output = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write);
+                await response.Content.CopyToAsync(output, cancellationToken);
+                if (output.Length == 0)
+                    return false;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            File.Move(temporaryPath, filePath, true);
+            temporaryPath = null;
+            onProgress?.Invoke("installing", fileName);
+            var manifest = HytaleModManifestReader.Read(filePath);
+            var mods = GetInstanceInstalledMods(instancePath);
+            mods.RemoveAll(installed => installed.Id == $"local-{fileName}");
+            var previous = mods.Where(installed =>
+                installed.Id == $"modifold-{projectId}" ||
+                (installed.Source == "modifold" && installed.SourceProjectId == projectId)).ToList();
+            mods.RemoveAll(installed => previous.Contains(installed));
+            mods.Add(new InstalledMod
+            {
+                Id = $"modifold-{projectId}",
+                Source = "modifold",
+                SourceProjectId = projectId,
+                PageUrl = mod.PageUrl,
+                Name = mod.Name,
+                Slug = mod.Slug,
+                Version = file.DisplayName,
+                FileId = file.Id,
+                FileName = fileName,
+                Enabled = true,
+                Author = mod.Author,
+                Description = mod.Summary,
+                IconUrl = mod.IconUrl,
+                FileDate = file.FileDate,
+                ReleaseType = file.ReleaseType,
+                Dependencies = file.Dependencies,
+                ManifestId = manifest?.ManifestId ?? string.Empty,
+                ManifestVersion = manifest?.Version ?? string.Empty,
+                ManifestDependencies = manifest?.Dependencies ?? [],
+                ManifestOptionalDependencies = manifest?.OptionalDependencies ?? [],
+                ManifestLoadBefore = manifest?.LoadBefore ?? [],
+                Screenshots = mod.Screenshots
+            });
+            await SaveInstanceModsAsync(instancePath, mods);
+
+            foreach (var old in previous)
+            {
+                if (old.FileName == fileName || string.IsNullOrWhiteSpace(old.FileName))
+                    continue;
+                var oldPath = Path.Combine(modsPath, Path.GetFileName(old.FileName));
+                try
+                {
+                    if (File.Exists(oldPath))
+                        File.Delete(oldPath);
+                    if (File.Exists(oldPath + ".disabled"))
+                        File.Delete(oldPath + ".disabled");
+                }
+                catch (IOException ex)
+                {
+                    Logger.Warning("ModManager", $"Could not remove previous Modifold file: {ex.Message}");
+                }
+            }
+
+            onProgress?.Invoke("complete", fileName);
+            return true;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("ModManager", $"Modifold install failed: {ex.Message}");
+            return false;
+        }
+        finally
+        {
+            if (temporaryPath is not null && File.Exists(temporaryPath))
+                File.Delete(temporaryPath);
+        }
     }
 
     /// <inheritdoc/>
@@ -227,16 +475,21 @@ public partial class ModManager : IModManager
     }
 
     /// <inheritdoc/>
-    public async Task<bool> InstallModFileToInstanceAsync(string slugOrId, string fileIdOrVersion, string instancePath, Action<string, string>? onProgress = null)
+    public Task<bool> InstallModFileToInstanceAsync(string slugOrId, string fileIdOrVersion, string instancePath, Action<string, string>? onProgress = null)
+        => InstallCurseForgeFileAsync(slugOrId, fileIdOrVersion, instancePath, onProgress, CancellationToken.None,
+            ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath));
+
+    private async Task<bool> InstallCurseForgeFileAsync(string slugOrId, string fileIdOrVersion, string instancePath,
+        Action<string, string>? onProgress, CancellationToken cancellationToken, string? instanceGameVersion)
     {
         if (!_cfClient.HasApiKey())
             return false;
 
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var requestedFileId = string.IsNullOrWhiteSpace(fileIdOrVersion) ? null : fileIdOrVersion.Trim();
-            var instanceGameVersion = ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath);
-            var rootFile = await _cfClient.ResolveFileAsync(slugOrId, requestedFileId, instanceGameVersion);
+            var rootFile = await _cfClient.ResolveFileAsync(slugOrId, requestedFileId, instanceGameVersion, cancellationToken);
             if (rootFile is null)
             {
                 Logger.Warning("ModManager", $"File info missing for mod {slugOrId} file '{fileIdOrVersion}'");
@@ -254,7 +507,12 @@ public partial class ModManager : IModManager
                 completed,
                 resolvedDependencies,
                 onProgress,
+                cancellationToken,
                 isRoot: true);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (ModDependencyException ex)
         {
@@ -276,8 +534,10 @@ public partial class ModManager : IModManager
         HashSet<string> completed,
         Dictionary<string, CurseForgeFile> resolvedDependencies,
         Action<string, string>? onProgress,
+        CancellationToken cancellationToken,
         bool isRoot)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var fileKey = $"{file.ModId}:{file.Id}";
         if (!visiting.Add(fileKey))
             throw new ModDependencyException($"Circular mod dependency detected at {fileKey}");
@@ -317,7 +577,7 @@ public partial class ModManager : IModManager
                 dependencyFile = await _cfClient.ResolveFileAsync(
                     dependency.ModId.ToString(),
                     dependency.FileId > 0 ? dependency.FileId.ToString() : null,
-                    instanceGameVersion) ?? throw new ModDependencyException(
+                    instanceGameVersion, cancellationToken) ?? throw new ModDependencyException(
                         $"Required dependency {dependency.ModId} could not be resolved");
                 resolvedDependencies[dependencyKey] = dependencyFile;
             }
@@ -331,6 +591,7 @@ public partial class ModManager : IModManager
                     completed,
                     resolvedDependencies,
                     onProgress,
+                    cancellationToken,
                     isRoot: false))
             {
                 return false;
@@ -341,11 +602,12 @@ public partial class ModManager : IModManager
         if (!completed.Add(fileKey) && !isRoot)
             return true;
 
-        return await InstallRawModFileAsync(file, instancePath, onProgress);
+        return await InstallRawModFileAsync(file, instancePath, onProgress, cancellationToken);
     }
 
-    private async Task<bool> InstallRawModFileAsync(CurseForgeFile cfFile, string instancePath, Action<string, string>? onProgress = null)
+    private async Task<bool> InstallRawModFileAsync(CurseForgeFile cfFile, string instancePath, Action<string, string>? onProgress = null, CancellationToken cancellationToken = default)
     {
+        string? temporaryPath = null;
         if (!_cfClient.HasApiKey()) return false;
 
         try
@@ -359,7 +621,7 @@ public partial class ModManager : IModManager
                 return false;
             }
 
-            var downloadUrl = await _cfClient.ResolveDownloadUrlAsync(numericModId, resolvedFileId, cfFile.DownloadUrl, cfFile.FileName);
+            var downloadUrl = await _cfClient.ResolveDownloadUrlAsync(numericModId, resolvedFileId, cfFile.DownloadUrl, cfFile.FileName, cancellationToken);
             if (string.IsNullOrWhiteSpace(downloadUrl))
             {
                 Logger.Warning("ModManager", $"File info missing or no download URL for mod {numericModId} file {resolvedFileId}");
@@ -375,16 +637,17 @@ public partial class ModManager : IModManager
             EnsureModsDirectory(modsPath);
 
             var filePath = Path.Combine(modsPath, fileName);
+            temporaryPath = Path.Combine(modsPath, $".hyprism-{Guid.NewGuid():N}.download");
 
             const int maxDownloadAttempts = 3;
             var downloaded = false;
             for (var attempt = 1; attempt <= maxDownloadAttempts; attempt++)
             {
-                using var downloadResponse = await _httpClient.GetAsync(downloadUrl);
+                using var downloadResponse = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 if (downloadResponse.IsSuccessStatusCode)
                 {
-                    await using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-                    await downloadResponse.Content.CopyToAsync(fs);
+                    await using var fs = new FileStream(temporaryPath, FileMode.Create, FileAccess.Write);
+                    await downloadResponse.Content.CopyToAsync(fs, cancellationToken);
                     downloaded = true;
                     break;
                 }
@@ -392,7 +655,7 @@ public partial class ModManager : IModManager
                 Logger.Warning("ModManager", $"Download returned {downloadResponse.StatusCode} for mod {numericModId} file {resolvedFileId} (attempt {attempt}/{maxDownloadAttempts})");
                 if (attempt < maxDownloadAttempts)
                 {
-                    await Task.Delay(300 * attempt);
+                    await Task.Delay(300 * attempt, cancellationToken);
                 }
             }
 
@@ -408,19 +671,26 @@ public partial class ModManager : IModManager
             {
                 var modEndpoint = $"/v1/mods/{numericModId}";
                 using var modRequest = _cfClient.CreateRequest(HttpMethod.Get, modEndpoint);
-                using var modResponse = await _httpClient.SendAsync(modRequest);
+                using var modResponse = await _httpClient.SendAsync(modRequest, cancellationToken);
                 if (modResponse.IsSuccessStatusCode)
                 {
-                    var modJson = await modResponse.Content.ReadAsStringAsync();
+                    var modJson = await modResponse.Content.ReadAsStringAsync(cancellationToken);
                     var modResp = JsonSerializer.Deserialize<CurseForgeModResponse>(modJson, _jsonOptions);
                     modInfo = modResp?.Data;
                 }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
                 Logger.Debug("ModManager", $"Could not load CurseForge metadata for {numericModId}: {ex.Message}");
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+            File.Move(temporaryPath, filePath, true);
+            temporaryPath = null;
             var mods = GetInstanceInstalledMods(instancePath);
 
             var oldMods = mods.Where(m =>
@@ -504,10 +774,19 @@ public partial class ModManager : IModManager
 
             return true;
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             Logger.Error("ModManager", $"Install failed: {ex.Message}");
             return false;
+        }
+        finally
+        {
+            if (temporaryPath is not null && File.Exists(temporaryPath))
+                File.Delete(temporaryPath);
         }
     }
 
@@ -1243,14 +1522,18 @@ public partial class ModManager : IModManager
 
     private static bool DependsOn(InstalledMod candidate, InstalledMod dependency)
     {
-        var curseForgeMatch = !string.IsNullOrWhiteSpace(dependency.CurseForgeId) &&
+        var dependencySource = string.IsNullOrWhiteSpace(dependency.Source) ? "curseforge" : dependency.Source;
+        var dependencyProjectId = dependencySource == "curseforge"
+            ? dependency.CurseForgeId : dependency.SourceProjectId;
+        var catalogMatch = !string.IsNullOrWhiteSpace(dependencyProjectId) &&
             candidate.Dependencies.Any(relation =>
                 relation.RelationType == CurseForgeDependencyRelationType.RequiredDependency &&
-                string.Equals(relation.ModId, dependency.CurseForgeId, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(relation.Source, dependencySource, StringComparison.Ordinal) &&
+                string.Equals(relation.ModId, dependencyProjectId, StringComparison.OrdinalIgnoreCase) &&
                 (string.IsNullOrWhiteSpace(relation.FileId) ||
                  string.IsNullOrWhiteSpace(dependency.FileId) ||
                  string.Equals(relation.FileId, dependency.FileId, StringComparison.OrdinalIgnoreCase)));
-        if (curseForgeMatch)
+        if (catalogMatch)
             return true;
 
         return !string.IsNullOrWhiteSpace(dependency.ManifestId) &&

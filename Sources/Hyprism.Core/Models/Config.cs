@@ -60,7 +60,7 @@ public class Config
     public string InstanceDirectory { get; set; } = "";
 
     /// <summary>
-    /// If true, the launcher will close after successfully launching the game
+    /// Legacy stored preference retained for configuration compatibility. Desktop does not use it.
     /// </summary>
     public bool CloseAfterLaunch { get; set; } = false;
 

@@ -102,7 +102,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] private SettingChoiceViewModel _selectedTheme;
     [ObservableProperty] private SettingChoiceViewModel _selectedGpuPreference;
     private readonly IReadOnlyList<GpuAdapterInfo> _detectedGpuAdapters = [];
-    [ObservableProperty] private bool _closeAfterLaunch;
     [ObservableProperty] private bool _showAlphaMods;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAuthServerVisible))]
@@ -285,7 +284,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         _selectedTheme = FindChoice(Themes, DesktopTheme.Normalize(settings.Theme));
         _selectedTheme.IsSelected = true;
         _selectedGpuPreference = ResolveGpuChoice(settings.GpuPreference);
-        _closeAfterLaunch = settings.CloseAfterLaunch;
         _showAlphaMods = settings.ShowAlphaMods;
         _onlineMode = settings.OnlineMode;
         _useCustomJava = settings.UseCustomJava;
@@ -412,8 +410,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     public string SaveLabel { get; private set; } = string.Empty;
     public string LanguageLabel { get; private set; } = string.Empty;
     public string LanguageHint { get; private set; } = string.Empty;
-    public string CloseAfterLaunchLabel { get; private set; } = string.Empty;
-    public string CloseAfterLaunchHint { get; private set; } = string.Empty;
     public string AlphaModsLabel { get; private set; } = string.Empty;
     public string AlphaModsHint { get; private set; } = string.Empty;
     public string DownloadsInfo { get; private set; } = string.Empty;
@@ -562,8 +558,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         SaveLabel = _localizer["common.save"];
         LanguageLabel = _localizer["settings.languageSettings.interfaceLanguage"];
         LanguageHint = _localizer["settings.languageSettings.interfaceLanguageHint"];
-        CloseAfterLaunchLabel = _localizer["settings.generalSettings.closeLauncher"];
-        CloseAfterLaunchHint = _localizer["settings.generalSettings.closeLauncherHint"];
         AlphaModsLabel = _localizer["settings.generalSettings.showAlphaMods"];
         AlphaModsHint = _localizer["settings.generalSettings.showAlphaModsHint"];
         DownloadsInfo = _localizer["settings.downloads.howDownloadsWorkDescription"];
@@ -766,7 +760,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         _settings.AccentColor = color.Id;
         DesktopTheme.ApplyAccent(color.Id);
     }
-    partial void OnCloseAfterLaunchChanged(bool value) => _settings.CloseAfterLaunch = value;
     partial void OnShowAlphaModsChanged(bool value) => _settings.ShowAlphaMods = value;
     partial void OnOnlineModeChanged(bool value)
     {

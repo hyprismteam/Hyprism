@@ -20,6 +20,10 @@ dotnet build Hyprism.slnx
 
 The solution builds Core, Desktop, Local Node, and their test projects
 
+### Desktop resources
+
+Avalonia automatically includes `.axaml` and `.paml` files as `AvaloniaXaml` items. The Desktop project's `Assets/**` resource glob excludes these items so each resource is embedded once. Keep this exclusion when changing the asset layout.
+
 ## Run Desktop
 
 ```bash

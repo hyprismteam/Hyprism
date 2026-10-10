@@ -109,6 +109,113 @@ public class ModManagerFileOperationsTests : IDisposable
     }
 
     [Fact]
+    public async Task ModifoldCatalog_MapsProjectsAndFilesWithoutCredentials()
+    {
+        var handler = new StaticJsonHandler("""
+            {
+              "projects": [{
+                "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+                "project_type": "mod", "summary": "Sea creatures",
+                "game_versions": ["0.6.8"], "tags": ["Utility", "Adventure"],
+                "owner": { "username": "Creator" }
+              }],
+              "pagination": { "hasMore": true }
+            }
+            """);
+        using var httpClient = new HttpClient(handler);
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+
+        var result = await manager.SearchModsAsync("modifold", "mermaids", 0, 20, [], 2, 1);
+
+        var mod = Assert.Single(result.Mods);
+        Assert.Equal("modifold", mod.Source);
+        Assert.Equal("Creator", mod.Author);
+        Assert.Equal("https://modifold.com/mod/mermaids", mod.PageUrl);
+        Assert.Equal("latest", mod.LatestFileId);
+        Assert.Equal(["Utility", "Adventure"], mod.Categories);
+        Assert.True(result.HasMore);
+        Assert.Null(handler.LastAuthorization);
+        Assert.Equal("api.modifold.com", handler.LastRequestUri?.Host);
+
+        await manager.SearchModsAsync("modifold", "mermaids", 0, 20, ["Utility"], 2, 1);
+        Assert.Contains("tags=Utility", handler.LastRequestUri?.Query);
+
+        handler.Json = """
+            {
+              "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+              "tags": "Utility,Adventure",
+              "versions": [{
+                "id": "jQi6xA", "version_number": "3.4.3",
+                "download_url": "https://cdn.modifold.com/mod.jar",
+                "game_versions": "0.6.8,0.6.7", "release_channel": "release"
+              }]
+            }
+            """;
+        var files = await manager.GetModFilesAsync("modifold", mod.Id, 0, 10);
+        var file = Assert.Single(files.Files);
+        Assert.Equal("jQi6xA", file.Id);
+        Assert.Equal(["0.6.8", "0.6.7"], file.GameVersions);
+        Assert.Null(handler.LastAuthorization);
+
+        var details = await manager.GetModAsync("modifold", mod.Id);
+        Assert.Equal(["Utility", "Adventure"], details?.Categories);
+    }
+
+    [Fact]
+    public async Task ModifoldInstall_PersistsSourceAndDoesNotDuplicateScannedFile()
+    {
+        using var archiveStream = new MemoryStream();
+        using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
+        {
+            using var writer = new StreamWriter(archive.CreateEntry("manifest.json").Open());
+            await writer.WriteAsync("""{"Group":"Example","Name":"SeaMod","Version":"1.0"}""");
+        }
+
+        using var httpClient = new HttpClient(new ModifoldInstallHandler(archiveStream.ToArray()));
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+
+        Assert.True(await manager.InstallModFileToInstanceAsync(
+            "modifold", "FlmWzw", "latest", _instancePath));
+
+        var installed = Assert.Single(manager.GetInstanceInstalledMods(_instancePath));
+        Assert.Equal("modifold", installed.Source);
+        Assert.Equal("FlmWzw", installed.SourceProjectId);
+        Assert.Equal("jQi6xA", installed.FileId);
+        Assert.Equal("Example:SeaMod", installed.ManifestId);
+        Assert.True(File.Exists(Path.Combine(_modsPath, installed.FileName)));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ModifoldBatchInstallation_CommitsOnlyWithoutCancellation(bool cancel)
+    {
+        await WriteInstalledModAsync("existing", "existing.jar");
+        using var httpClient = new HttpClient(new ModifoldInstallHandler(Encoding.UTF8.GetBytes("mod archive")));
+        var manager = new ModManager(httpClient, _tempDir, new JsonConfigStore(_tempDir),
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+        using var cancellation = new CancellationTokenSource();
+        var task = manager.InstallModFilesToInstanceAsync(
+            [new ModFileInfo { Source = "modifold", ModId = "FlmWzw", Id = "latest" }], _instancePath,
+            (_, stage, _) =>
+            {
+                if (cancel && stage == "complete")
+                    cancellation.Cancel();
+            }, cancellation.Token);
+        if (cancel)
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+        else
+            Assert.True(await task);
+        var installed = manager.GetInstanceInstalledMods(_instancePath);
+        Assert.Contains(installed, mod => mod.Id == "existing");
+        Assert.Equal(!cancel, installed.Any(mod => mod.Source == "modifold"));
+        Assert.Equal("not a real jar", await File.ReadAllTextAsync(Path.Combine(_modsPath, "existing.jar")));
+        Assert.Empty(Directory.GetDirectories(Path.Combine(_instancePath, "UserData"), ".hyprism-mod-install-*"));
+    }
+
+    [Fact]
     public async Task GetModCategoriesAsync_ReturnsAllFallbackCategoriesWithoutAnApiKey()
     {
         var categories = await _manager.GetModCategoriesAsync();
@@ -180,6 +287,65 @@ public class ModManagerFileOperationsTests : IDisposable
         var dependency = Assert.Single(root.Dependencies);
         Assert.Equal("20", dependency.ModId);
         Assert.Equal(CurseForgeDependencyRelationType.RequiredDependency, dependency.RelationType);
+    }
+
+    [Theory]
+    [InlineData("cancel")]
+    [InlineData("failure")]
+    [InlineData("success")]
+    public async Task InstallModFilesToInstanceAsync_CommitsOrDiscardsEntireBatch(string outcome)
+    {
+        await WriteInstalledModAsync("cf-10", "old-root.jar");
+        await File.WriteAllTextAsync(Path.Combine(_modsPath, "preserved.zip.disabled"), "preserved");
+        var original = Directory.GetFiles(_modsPath).ToDictionary(path => Path.GetFileName(path), File.ReadAllBytes);
+        var configStore = new JsonConfigStore(_tempDir);
+        configStore.Configuration.CurseForgeKey = "test-key";
+        using var httpClient = new HttpClient(new DependencyHandler(
+        [
+            CreateFileResponse(10, 100, "root.jar", "Root Mod", "https://cdn.test/root.jar",
+                "{\"modId\":20,\"fileId\":200,\"relationType\":4}"),
+            CreateFileResponse(20, 200, "dependency.jar", "Dependency Mod", "https://cdn.test/dependency.jar")
+        ]));
+        var manager = new ModManager(httpClient, _tempDir, configStore,
+            new Mock<IInstanceRepository>().Object, new Mock<IProgressReporter>().Object);
+        using var cancellation = new CancellationTokenSource();
+        var stagedRootCompleted = false;
+        Action<int, string, string> progress = (_, stage, _) =>
+        {
+            if (stage != "complete")
+                return;
+            stagedRootCompleted = true;
+            foreach (var (name, bytes) in original)
+                Assert.Equal(bytes, File.ReadAllBytes(Path.Combine(_modsPath, name!)));
+            Assert.False(File.Exists(Path.Combine(_modsPath, "dependency.jar")));
+            if (outcome == "cancel")
+                cancellation.Cancel();
+        };
+        List<ModFileInfo> files = [new() { Source = "curseforge", ModId = "10", Id = "100" }];
+        if (outcome == "failure")
+            files.Add(new() { Source = "modifold", ModId = "../invalid", Id = "latest" });
+
+        var task = manager.InstallModFilesToInstanceAsync(files, _instancePath, progress, cancellation.Token);
+        if (outcome == "cancel")
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+        else
+            Assert.Equal(outcome == "success", await task);
+        Assert.True(stagedRootCompleted);
+        Assert.Empty(Directory.GetDirectories(Path.Combine(_instancePath, "UserData"), ".hyprism-mod-install-*"));
+        Assert.Equal("preserved", await File.ReadAllTextAsync(Path.Combine(_modsPath, "preserved.zip.disabled")));
+        if (outcome == "success")
+        {
+            Assert.False(File.Exists(Path.Combine(_modsPath, "old-root.jar")));
+            Assert.True(File.Exists(Path.Combine(_modsPath, "root.jar")));
+            Assert.True(File.Exists(Path.Combine(_modsPath, "dependency.jar")));
+            Assert.Contains(manager.GetInstanceInstalledMods(_instancePath), mod => mod.CurseForgeId == "10");
+        }
+        else
+        {
+            Assert.Equal(original.Keys.Order(), Directory.GetFiles(_modsPath).Select(Path.GetFileName).Order());
+            foreach (var (name, bytes) in original)
+                Assert.Equal(bytes, await File.ReadAllBytesAsync(Path.Combine(_modsPath, name!)));
+        }
     }
 
     [Fact]
@@ -361,13 +527,43 @@ public class ModManagerFileOperationsTests : IDisposable
 
     private sealed class StaticJsonHandler(string json) : HttpMessageHandler
     {
+        public string Json { get; set; } = json;
+        public Uri? LastRequestUri { get; private set; }
+        public System.Net.Http.Headers.AuthenticationHeaderValue? LastAuthorization { get; private set; }
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            LastRequestUri = request.RequestUri;
+            LastAuthorization = request.Headers.Authorization;
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(Json),
+                RequestMessage = request
+            });
+        }
+    }
+
+    private sealed class ModifoldInstallHandler(byte[] archive) : HttpMessageHandler
+    {
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
             => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(json),
-                RequestMessage = request
+                Content = request.RequestUri?.Host == "api.modifold.com"
+                    ? new StringContent("""
+                        {
+                          "id": "FlmWzw", "slug": "mermaids", "title": "Mermaids",
+                          "versions": [{
+                            "id": "jQi6xA", "version_number": "1.0",
+                            "download_url": "https://cdn.modifold.com/mod.jar",
+                            "game_versions": "0.6.8"
+                          }]
+                        }
+                        """)
+                    : new ByteArrayContent(archive)
             });
     }
 }

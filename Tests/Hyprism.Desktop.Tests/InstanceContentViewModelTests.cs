@@ -102,9 +102,16 @@ public sealed class InstanceContentViewModelTests
                 ],
                 TotalCount = 1
             });
-        modManager.Setup(service => service.InstallModFileToInstanceAsync(
-                "202", "303", instancePath, It.IsAny<Action<string, string>?>()))
-            .ReturnsAsync(true);
+        var installGate = new TaskCompletionSource<bool>();
+        CancellationToken installCancellation = default;
+        modManager.Setup(service => service.InstallModFilesToInstanceAsync(
+                It.Is<IReadOnlyList<ModFileInfo>>(files => files.Count == 1 && files[0].ModId == "202" && files[0].Id == "303"),
+                instancePath, It.IsAny<Action<int, string, string>?>(), It.IsAny<CancellationToken>()))
+            .Returns((IReadOnlyList<ModFileInfo> _, string _, Action<int, string, string>? _, CancellationToken token) =>
+            {
+                installCancellation = token;
+                return installGate.Task.WaitAsync(token);
+            });
         launchCoordinator.Setup(service => service.LaunchAsync(
                 managed.Id,
                 It.IsAny<AuthUriPresenter?>()))
@@ -152,11 +159,30 @@ public sealed class InstanceContentViewModelTests
         viewModel.SelectInstanceSectionCommand.Execute("browse");
         await WaitUntilAsync(() => viewModel.ModCatalogItems.Count == 1);
         viewModel.ToggleModCatalogSelectionCommand.Execute(viewModel.ModCatalogItems[0]);
-        await viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
+        var installingItem = viewModel.ModCatalogItems[0];
+        var installTask = viewModel.InstallSelectedCatalogModsCommand.ExecuteAsync(null);
+        Assert.True(viewModel.IsInstanceOverviewSection);
+        Assert.True(viewModel.Instances.IsManagedInstanceInstallingMods);
+        Assert.False(viewModel.Instances.CanRunManagedInstanceAction);
+        Assert.False(viewModel.Instances.CanExportManagedInstance);
+        viewModel.OpenInstanceDetailsCommand.Execute(other.Id);
+        Assert.False(viewModel.Instances.IsManagedInstanceInstallingMods);
+        viewModel.Instances.CancelModCatalogInstallationCommand.Execute(null);
+        Assert.False(installCancellation.IsCancellationRequested);
+        viewModel.OpenInstanceDetailsCommand.Execute(managed.Id);
+        Assert.True(viewModel.Instances.IsManagedInstanceInstallingMods);
+        viewModel.Instances.CancelModCatalogInstallationCommand.Execute(null);
+        Assert.True(installCancellation.IsCancellationRequested);
+        await installTask;
+        Assert.False(viewModel.Instances.IsManagedInstanceInstallingMods);
+        Assert.True(viewModel.Instances.CanBrowseManagedInstanceMods);
+        Assert.False(installingItem.IsInstalled);
+        Assert.False(installingItem.IsInstalling);
 
         modManager.Verify(service => service.GetInstanceInstalledMods(instancePath), Times.AtLeastOnce);
-        modManager.Verify(service => service.InstallModFileToInstanceAsync(
-            "202", "303", instancePath, It.IsAny<Action<string, string>?>()), Times.Once);
+        modManager.Verify(service => service.InstallModFilesToInstanceAsync(
+            It.Is<IReadOnlyList<ModFileInfo>>(files => files.Count == 1 && files[0].ModId == "202" && files[0].Id == "303"),
+            instancePath, It.IsAny<Action<int, string, string>?>(), It.IsAny<CancellationToken>()), Times.Once);
 
         viewModel.OpenInstanceDetailsCommand.Execute(other.Id);
         Assert.Equal("Other Instance", viewModel.ManagedInstanceName);

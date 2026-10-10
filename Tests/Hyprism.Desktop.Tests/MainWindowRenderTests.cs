@@ -1316,7 +1316,7 @@ public sealed class MainWindowRenderTests
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("managerAction") &&
                                   button.Classes.Contains("primary") &&
-                                  !button.Classes.Contains("instanceExportStatus"));
+                                  !button.Classes.Contains("instanceOperationStatus"));
         var secondaryAction = compact
             ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
                 .FindControl<Button>("CompactInstanceMoreButton")!
@@ -2221,7 +2221,7 @@ public sealed class MainWindowRenderTests
         var window = new MainWindow
         {
             Width = 1100,
-            Height = 760,
+            Height = 700,
             DataContext = viewModel
         };
         window.Show();
@@ -3562,7 +3562,7 @@ public sealed class MainWindowRenderTests
             .First(border => border.Classes.Contains("detailToolbar"))
             .Classes);
         var instanceSectionTitle = instanceSection.GetVisualDescendants()
-            .OfType<TextBlock>()
+            .OfType<FadingTextBlock>()
             .Single(textBlock => textBlock.Classes.Contains("detailToolbarTitle"));
         var modsView = instancesView.FindControl<InstanceModsView>("InstanceModsContentView");
         var installedModsSection = modsView?.FindControl<Grid>("InstalledModsSection");
@@ -4566,9 +4566,8 @@ public sealed class MainWindowRenderTests
         Assert.Equal(4, visibleSettingsGroups.Length);
         var generalSettingsGroup = Assert.Single(visibleSettingsGroups,
             group => group.GetVisualDescendants().OfType<FormRow>()
-                .Any(row => row.Label == viewModel.Settings.CloseAfterLaunchLabel));
+                .Any(row => row.Label == viewModel.Settings.AlphaModsLabel));
         Assert.Collection(generalSettingsGroup.GetVisualDescendants().OfType<FormRow>(),
-            row => Assert.Equal(viewModel.Settings.CloseAfterLaunchLabel, row.Label),
             row => Assert.Equal(viewModel.Settings.AlphaModsLabel, row.Label));
         Assert.All(visibleSettingsGroups, group =>
         {

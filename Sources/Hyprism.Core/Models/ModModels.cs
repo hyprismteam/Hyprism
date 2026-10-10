@@ -12,17 +12,23 @@ public class ModSearchResult
     public List<ModInfo> Mods { get; set; } = [];
     /// <summary>Total number of mods matching the search query</summary>
     public int TotalCount { get; set; }
+    /// <summary>Whether the source reports another page, when available</summary>
+    public bool? HasMore { get; set; }
 }
 
-/// <summary>Represents a mod available on CurseForge, normalized for launcher display</summary>
+/// <summary>Represents a mod available from a catalog, normalized for launcher display</summary>
 public class ModInfo
 {
-    /// <summary>Mod identifier (numeric CurseForge ID as string)</summary>
+    /// <summary>Catalog that owns the mod</summary>
+    public string Source { get; set; } = "curseforge";
+    /// <summary>Project identifier in the source catalog</summary>
     public string Id { get; set; } = "";
     /// <summary>Display name of the mod</summary>
     public string Name { get; set; } = "";
     /// <summary>CurseForge URL slug</summary>
     public string Slug { get; set; } = "";
+    /// <summary>Public project page</summary>
+    public string PageUrl { get; set; } = "";
     /// <summary>Short summary / tagline</summary>
     public string Summary { get; set; } = "";
     /// <summary>Full HTML description</summary>
@@ -41,7 +47,7 @@ public class ModInfo
     public List<string> Categories { get; set; } = [];
     /// <summary>ISO 8601 timestamp of the last mod file update</summary>
     public string DateUpdated { get; set; } = "";
-    /// <summary>CurseForge file ID of the most recent release</summary>
+    /// <summary>File ID of the most recent release</summary>
     public string LatestFileId { get; set; } = "";
     /// <summary>Latest files returned with the search result</summary>
     public List<ModFileInfo> LatestFiles { get; set; } = [];
@@ -61,7 +67,9 @@ public class ModFilesResult
 /// <summary>Represents a single file/release of a mod</summary>
 public class ModFileInfo
 {
-    /// <summary>CurseForge file identifier</summary>
+    /// <summary>Catalog that owns the file</summary>
+    public string Source { get; set; } = "curseforge";
+    /// <summary>File identifier in the source catalog</summary>
     public string Id { get; set; } = "";
     /// <summary>Parent mod identifier</summary>
     public string ModId { get; set; } = "";
@@ -85,7 +93,7 @@ public class ModFileInfo
     public List<ModDependency> Dependencies { get; set; } = [];
 }
 
-/// <summary>CurseForge relation kinds used for mod dependencies</summary>
+/// <summary>Normalized catalog relation kinds using CurseForge numeric values.</summary>
 public enum CurseForgeDependencyRelationType
 {
     /// <summary>The relation type was not provided by the source</summary>
@@ -105,9 +113,11 @@ public enum CurseForgeDependencyRelationType
 /// <summary>A normalized dependency relation stored with an installed mod</summary>
 public class ModDependency
 {
-    /// <summary>Related CurseForge project identifier</summary>
+    /// <summary>Source catalog; defaults to CurseForge for older manifests.</summary>
+    public string Source { get; set; } = "curseforge";
+    /// <summary>Related project identifier in the source catalog.</summary>
     public string ModId { get; set; } = "";
-    /// <summary>Related CurseForge file identifier, when specified</summary>
+    /// <summary>Related file identifier, when specified.</summary>
     public string FileId { get; set; } = "";
     /// <summary>Relation kind</summary>
     public CurseForgeDependencyRelationType RelationType { get; set; }
@@ -142,15 +152,21 @@ public class ModCategory
 /// <summary>Represents a mod that is installed in a game instance</summary>
 public class InstalledMod
 {
-    /// <summary>Mod identifier (CurseForge numeric ID or local prefix)</summary>
+    /// <summary>Mod identifier unique within the instance</summary>
     public string Id { get; set; } = "";
+    /// <summary>Source catalog for managed mods; empty in older manifests</summary>
+    public string Source { get; set; } = "";
+    /// <summary>Project identifier in the source catalog</summary>
+    public string SourceProjectId { get; set; } = "";
+    /// <summary>Public project page when known</summary>
+    public string PageUrl { get; set; } = "";
     /// <summary>Display name of the mod</summary>
     public string Name { get; set; } = "";
     /// <summary>CurseForge URL slug</summary>
     public string Slug { get; set; } = "";
     /// <summary>Installed version string</summary>
     public string Version { get; set; } = "";
-    /// <summary>CurseForge file identifier of the installed file</summary>
+    /// <summary>File identifier in the installed mod's source catalog.</summary>
     public string FileId { get; set; } = "";
     /// <summary>JAR file name on disk (without path)</summary>
     public string FileName { get; set; } = "";
@@ -190,7 +206,7 @@ public class InstalledMod
     /// </summary>
     public string DisabledOriginalExtension { get; set; } = "";
 
-    /// <summary>CurseForge relations declared by the installed file</summary>
+    /// <summary>Catalog relations declared by the installed file.</summary>
     public List<ModDependency> Dependencies { get; set; } = [];
 
     /// <summary>Hytale plugin identifier read from the installed manifest</summary>

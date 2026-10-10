@@ -24,7 +24,9 @@ public sealed partial class ModCatalogItemViewModel(
     string compatibilityLabel = "",
     string authorAvatarUrl = "",
     string recommendedVersionLabel = "",
-    IReadOnlyList<ModDependency>? dependencies = null) : ObservableObject, IDisposable
+    IReadOnlyList<ModDependency>? dependencies = null,
+    string source = "curseforge",
+    string pageUrl = "") : ObservableObject, IDisposable
 {
     public string Id { get; } = id;
     public string Name { get; } = name;
@@ -33,6 +35,13 @@ public sealed partial class ModCatalogItemViewModel(
     public string Summary { get; } = summary;
     public string LatestFileId { get; } = latestFileId;
     public string Slug { get; } = slug;
+    public string Source { get; } = source;
+    public string SourceDisplayName => Source == "modifold" ? "Modifold" : "CurseForge";
+    public string PageUrl { get; } = string.IsNullOrWhiteSpace(pageUrl)
+        ? string.IsNullOrWhiteSpace(slug)
+            ? $"https://www.curseforge.com/hytale/mods/{id}"
+            : $"https://www.curseforge.com/hytale/mods/{slug}"
+        : pageUrl;
     public string IconUrl { get; } = iconUrl;
     public int DownloadCount { get; } = downloadCount;
     public IReadOnlyList<string> ScreenshotUrls { get; } = screenshotUrls ?? [];
@@ -58,9 +67,7 @@ public sealed partial class ModCatalogItemViewModel(
         ? "?"
         : Author[..1].ToUpperInvariant();
 
-    public string CurseForgeUrl => string.IsNullOrWhiteSpace(Slug)
-        ? $"https://www.curseforge.com/hytale/mods/{Id}"
-        : $"https://www.curseforge.com/hytale/mods/{Slug}";
+    public string CurseForgeUrl => PageUrl;
 
     public string DownloadCountLabel => FormatDownloads(DownloadCount);
 

@@ -82,6 +82,12 @@ SPDX-FileCopyrightText = "Overwolf Ltd."
 SPDX-License-Identifier = "LicenseRef-CurseForge"
 
 [[annotations]]
+path = "Sources/Hyprism.Desktop/Assets/Brands/Modifold*"
+precedence = "override"
+SPDX-FileCopyrightText = "Modifold or its licensors"
+SPDX-License-Identifier = "LicenseRef-Modifold"
+
+[[annotations]]
 path = "Sources/Hyprism.Desktop/Assets/Brands/Avalonia*"
 precedence = "override"
 SPDX-FileCopyrightText = "AvaloniaUI OÜ"

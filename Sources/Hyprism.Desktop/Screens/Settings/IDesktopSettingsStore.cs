@@ -20,9 +20,6 @@ public interface IDesktopSettingsStore
     /// <summary>Gets or sets the accent color for primary actions</summary>
     string AccentColor { get; set; }
 
-    /// <summary>Gets or sets whether Desktop closes after starting the game</summary>
-    bool CloseAfterLaunch { get; set; }
-
     /// <summary>Gets or sets whether the news page is disabled</summary>
     /// <summary>Gets or sets whether authenticated game mode is enabled</summary>
     bool OnlineMode { get; set; }

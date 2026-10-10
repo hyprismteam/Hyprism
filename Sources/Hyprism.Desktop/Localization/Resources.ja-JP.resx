@@ -1041,6 +1041,33 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>CurseForgeでMODを開く</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>最新の互換バージョン</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>冒険</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>コスメティック</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>呪い</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>装飾</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>経済</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>装備</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>食料</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>ゲームメカニクス</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>ライブラリ</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>魔法</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>管理</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>ミニゲーム</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>モブ</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>最適化</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>ソーシャル</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>ストレージ</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>テクノロジー</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>テクスチャパック</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>交通</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>ユーティリティ</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>ワールド生成</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>ModifoldでMODを開く</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Modフォルダ</value>
   </data>
@@ -1856,12 +1883,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.general" xml:space="preserve">
     <value>一般</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>ランチャーを閉じる</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>ゲーム起動時に閉じます。</value>
   </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>保存場所</value>
@@ -2991,21 +3012,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.sort" xml:space="preserve">
     <value>Sort</value>
   </data>
-  <data name="instances.browse.sortRelevancy" xml:space="preserve">
-    <value>Relevancy</value>
-  </data>
-  <data name="instances.browse.sortPopularity" xml:space="preserve">
-    <value>Popularity</value>
-  </data>
-  <data name="instances.browse.sortLatestUpdate" xml:space="preserve">
-    <value>Last updated</value>
-  </data>
-  <data name="instances.browse.sortCreationDate" xml:space="preserve">
-    <value>Creation date</value>
-  </data>
-  <data name="instances.browse.sortTotalDownloads" xml:space="preserve">
-    <value>Total downloads</value>
-  </data>
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
@@ -3128,5 +3134,8 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
+  </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>「{0}」とこのワールドのすべてのデータを削除しますか？この操作は元に戻せません</value>
   </data>
 </root>

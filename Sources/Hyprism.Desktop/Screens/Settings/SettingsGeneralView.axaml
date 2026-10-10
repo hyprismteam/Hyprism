@@ -27,14 +27,9 @@ SPDX-License-Identifier: GPL-3.0-only
               <StackPanel Spacing="10">
                 <TextBlock Text="{Binding GeneralTitle}" Classes="settingsCategoryHeading" />
                 <Border Classes="formGroup">
-                  <StackPanel>
-                  <controls:FormRow Label="{Binding CloseAfterLaunchLabel}" Hint="{Binding CloseAfterLaunchHint}">
-                    <ToggleSwitch Classes="uiToggle" IsChecked="{Binding CloseAfterLaunch}" />
-                  </controls:FormRow>
                   <controls:FormRow Classes="last" Label="{Binding AlphaModsLabel}" Hint="{Binding AlphaModsHint}">
                     <ToggleSwitch Classes="uiToggle" IsChecked="{Binding ShowAlphaMods}" />
                   </controls:FormRow>
-                  </StackPanel>
                 </Border>
               </StackPanel>
 

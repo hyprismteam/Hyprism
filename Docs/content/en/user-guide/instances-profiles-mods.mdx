@@ -92,29 +92,60 @@ Dragging a card by its handle changes and saves the list order. Opening a card c
 | Section | Use it for |
 | --- | --- |
 | **Installed mods** | Enable, disable, update, import, or remove mods in this instance |
-| **Discover mods** | Find compatible CurseForge files and install them into this instance |
+| **Discover mods** | Find compatible CurseForge or Modifold files and install them into this instance |
 | **Worlds** | View saves found under the instance user data |
 | **Logs** | Follow live output from the game running in this instance |
 
 See [Mods](/user-guide/mods) for the complete mod workflow
 
+## Saved worlds
+
+1. Open **Instances**, select an installed instance, and open **Worlds**.
+2. Each row shows the latest world preview, the save folder name, its latest local modification time, and its size. The most recently changed saves appear first.
+3. Create a world in the game, or copy an existing save folder into the selected instance's `UserData/Saves` directory while the game is closed. New saves appear automatically. Renaming, removing, or changing a save also updates the list automatically.
+
+The preview updates when the game saves a new image. Worlds without an available preview show a map icon.
+
+Use the vertical three-dot button at the end of a world row to open its options.
+
+- Choose **Open Folder** to view that save in the system file manager.
+- With the game closed, choose **Delete**, review the world name in **Confirmation**, then choose **Delete** again. This permanently removes the save folder and all of its contents. Back up any files you want to keep first. The list updates automatically; if deletion fails, the confirmation stays open and displays the error.
+
+![World options with Open Folder and Delete actions](/img/user/en/worlds-options.png)
+
+![World deletion confirmation with the save name and irreversible deletion warning](/img/user/en/worlds-delete.png)
+
+If the list is empty, create a world in this instance first. Worlds in another instance are shown only when you select that instance.
+
+![Worlds with previews, save names, modification times, and sizes](/img/user/en/worlds.png)
+
+![Worlds in a compact window with the same save information](/img/user/en/worlds-compact.png)
+
+![Empty worlds page explaining that game saves will appear here](/img/user/en/worlds-empty.png)
+
 ## Find a mod
 
-1. Open **Instances**, select an installed instance, and open **Discover mods**
-2. Enter at least four characters in **Search the mod catalog**
-3. Press **Enter** or select the search icon that appears inside the field
-4. Optionally choose **Category** and **Sort** before searching again
-5. Select a mod, choose a compatible file, and select **Install**
+1. Open **Instances**, select an installed instance, and open **Discover mods**.
+2. Enter at least four characters in **Search the mod catalog** above the source and category filters.
+3. Press **Enter** or select the search icon that appears inside the field.
+4. Optionally choose **Category** and **Sort** before searching again.
+5. Select a mod to open its overview page, choose a compatible file, and select **Install**. Use **Back** to return to the results.
 
-The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes
+Press **Esc** or click outside the search field to end text entry. The query stays in the field.
 
-To install several mods together, select the compatible catalog entries and select **Install** in the top bar. Review each mod, its icon, and the version that will be installed in the **Preview** sheet. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. The sheet closes and the catalog shows installation progress until the selected mods finish
+Choose **CurseForge** or **Modifold** in the source selector. Both sources offer category filtering. The catalog hides mods that are already installed in the selected instance. During a new search, the current results fade out, a centered spinner appears, and the new results fade in when loading completes.
+
+Scroll down to see more results. The next page loads automatically near the end of the list, with a loading indicator below the results. New entries appear below the existing ones without moving your current position.
+
+To install several mods together, select the compatible catalog entries and select **Install** at the right of the top bar. Review each mod, its icon, and the version that will be installed on the **Preview** page. The **Dependencies** column shows `Depends on N mods`; hover the badge to see each dependency's icon, name, and version, with six entries visible at once and the rest available by scrolling. Use the reset icon to clear the selection, or select **Install** at the bottom. Use **Back** or **Esc** to return to the catalog while keeping your selection. Installation returns you to the instance overview, which shows progress until the selected mods finish.
+
+![Mod installation preview with versions, dependencies, and Back and Install controls](/img/user/en/mod-install-confirmation.png)
 
 ## Mod dependencies
 
-Hyprism reads dependency relations from CurseForge mod files. Required dependencies are resolved recursively and installed before the selected mod. Optional dependencies are not installed automatically, while an incompatible mod relation stops installation when the conflicting mod is already installed
+Hyprism reads dependency relations from CurseForge and Modifold mod files. Required dependencies are resolved recursively and installed before the selected mod. Modifold dependencies use their specified version when available, or a compatible version when none is specified. Optional and embedded dependencies are not downloaded separately. Cycles, conflicting required versions, and incompatible mods stop installation. Modifold checks conflicts against both installed mods and the selected batch before downloading its files.
 
-The **Preview** sheet warns that required dependencies may add extra downloads. Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata
+Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata.
 
 Hyprism also reads the Hytale `manifest.json` inside JAR and ZIP mods. It keeps the declared plugin identifier and version ranges in the instance manifest and prevents removing a mod while another installed mod declares it as a required dependency. If a local archive declares a dependency, install that dependency separately before using the local mod
 

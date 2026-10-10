@@ -33,6 +33,10 @@ THIRD_PARTY_HEADERS = {
         "CurseForge and the CurseForge logo are trademarks of Overwolf Ltd.",
         "SPDX-License-" "Identifier: LicenseRef-CurseForge",
     ),
+    "Sources/Hyprism.Desktop/Assets/Brands/Modifold.axaml": (
+        "Modifold branding is owned by Modifold or its licensors.",
+        "SPDX-License-" "Identifier: LicenseRef-Modifold",
+    ),
     "Sources/Hyprism.Desktop/Assets/Brands/Avalonia.axaml": (
         "Avalonia and the Avalonia logo are registered trademarks of AvaloniaUI OÜ",
         "SPDX-License-" "Identifier: LicenseRef-Avalonia",

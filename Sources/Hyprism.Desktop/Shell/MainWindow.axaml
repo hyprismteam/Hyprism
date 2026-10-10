@@ -344,11 +344,11 @@ SPDX-License-Identifier: GPL-3.0-only
                    FontWeight="Bold"
                    TextAlignment="Center" />
 
-        <TextBlock Grid.Row="2"
-                   Text="{Binding StartupLoadingStatus}"
-                   HorizontalAlignment="Center"
-                   Foreground="{DynamicResource StartupStatusBrush}"
-                   FontSize="15" />
+        <controls:FadingTextBlock Grid.Row="2"
+                                  Text="{Binding StartupLoadingStatus}"
+                                  HorizontalAlignment="Center"
+                                  Foreground="{DynamicResource StartupStatusBrush}"
+                                  FontSize="15" />
       </Grid>
 
       <StackPanel x:Name="StartupBrand"

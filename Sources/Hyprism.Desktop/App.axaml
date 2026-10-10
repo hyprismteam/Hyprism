@@ -12,6 +12,7 @@ SPDX-License-Identifier: GPL-3.0-only
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Icons/MaterialSymbols.axaml" />
         <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Brands/CurseForge.axaml" />
+        <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Brands/Modifold.axaml" />
         <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Brands/Avalonia.axaml" />
         <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Brands/DotNet.axaml" />
         <ResourceInclude Source="avares://Hyprism.Desktop/Assets/Brands/YouTube.axaml" />

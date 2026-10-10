@@ -1041,6 +1041,33 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>Відкрити мод на CurseForge</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>Остання сумісна версія</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>Пригоди</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>Косметика</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>Прокляте</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>Декор</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>Економіка</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>Спорядження</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>Їжа</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>Ігрові механіки</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>Бібліотека</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>Магія</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>Керування</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>Мінігра</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>Моби</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>Оптимізація</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>Соціальне</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>Сховище</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>Технології</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>Пакети текстур</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>Транспорт</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>Утиліти</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>Генерація світу</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>Відкрити мод на Modifold</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Папка модів</value>
   </data>
@@ -1856,12 +1883,6 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="settings.general" xml:space="preserve">
     <value>Загальні</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Закрити лаунчер</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Закрити після запуску гри</value>
   </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Сховище лаунчера</value>
@@ -2991,21 +3012,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="instances.browse.sort" xml:space="preserve">
     <value>Sort</value>
   </data>
-  <data name="instances.browse.sortRelevancy" xml:space="preserve">
-    <value>Relevancy</value>
-  </data>
-  <data name="instances.browse.sortPopularity" xml:space="preserve">
-    <value>Popularity</value>
-  </data>
-  <data name="instances.browse.sortLatestUpdate" xml:space="preserve">
-    <value>Last updated</value>
-  </data>
-  <data name="instances.browse.sortCreationDate" xml:space="preserve">
-    <value>Creation date</value>
-  </data>
-  <data name="instances.browse.sortTotalDownloads" xml:space="preserve">
-    <value>Total downloads</value>
-  </data>
   <data name="instances.browse.loadingMore" xml:space="preserve">
     <value>Loading more results</value>
   </data>
@@ -3128,5 +3134,8 @@ SPDX-License-Identifier: GPL-3.0-only
   </data>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
     <value>Select a JSON or ZIP package</value>
+  </data>
+  <data name="instances.worlds.deleteHint" xml:space="preserve">
+    <value>Видалити «{0}» та всі дані цього світу? Цю дію не можна скасувати</value>
   </data>
 </root>

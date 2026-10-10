@@ -27,6 +27,27 @@ SPDX-License-Identifier: GPL-3.0-only
                  TextTrimming="CharacterEllipsis" />
     </DataTemplate>
 
+    <DataTemplate x:Key="ModCatalogSourceOptionTemplate" x:DataType="instances:InstanceListOptionViewModel">
+      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <Path Width="16" Height="16" Stretch="Uniform"
+              Fill="#F16436"
+              VerticalAlignment="Center"
+              Data="{StaticResource CurseForgeBrandIcon}"
+              IsVisible="{Binding IsCurseForgeSource}">
+          <Path.RenderTransform>
+            <TranslateTransform Y="4" />
+          </Path.RenderTransform>
+        </Path>
+        <Path Width="16" Height="16" Stretch="Uniform"
+              VerticalAlignment="Center"
+              Fill="{DynamicResource TextPrimaryBrush}"
+              Data="{StaticResource ModifoldBrandIcon}"
+              IsVisible="{Binding IsModifoldSource}" />
+        <TextBlock Text="{Binding Display}" VerticalAlignment="Center"
+                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </DataTemplate>
+
     <DataTemplate x:Key="ManagedInstanceActionTemplate" x:DataType="instances:InstancesViewModel">
       <Grid Classes="managedActionContent">
         <StackPanel Classes="managedActionIdle"
