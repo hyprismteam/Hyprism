@@ -1041,6 +1041,33 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>Modu CurseForge'da aç</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>En yeni uyumlu sürüm</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>Macera</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>Kozmetik</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>Lanetli</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>Dekorasyon</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>Ekonomi</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>Ekipman</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>Yiyecek</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>Oyun mekanikleri</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>Kütüphane</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>Büyü</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>Yönetim</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>Mini oyun</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>Yaratıklar</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>Optimizasyon</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>Sosyal</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>Depolama</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>Teknoloji</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>Doku paketleri</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>Ulaşım</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>Yardımcı araçlar</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>Dünya oluşturma</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>Modu Modifold'da aç</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Mod Klasörünü Aç</value>
   </data>

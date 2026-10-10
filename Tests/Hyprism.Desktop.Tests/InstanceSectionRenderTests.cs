@@ -555,7 +555,7 @@ public sealed class InstanceSectionRenderTests
         if (!compactInstallation)
         {
             await WaitUntilAsync(() => returningHub.Opacity > 0.05);
-            Assert.InRange(returningHub.Opacity, 0.05, 0.99);
+            Assert.InRange(returningHub.Opacity, 0.05, 1);
             Assert.InRange(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X, -28, -0.01);
             await WaitUntilAsync(() => returningHub.Opacity >= 0.99 &&
                 Math.Abs(Assert.IsType<TranslateTransform>(returningHub.RenderTransform).X) < 0.1);

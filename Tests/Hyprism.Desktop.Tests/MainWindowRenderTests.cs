@@ -1316,7 +1316,7 @@ public sealed class MainWindowRenderTests
             : instancesView.GetVisualDescendants().OfType<Button>()
                 .Single(button => button.Classes.Contains("managerAction") &&
                                   button.Classes.Contains("primary") &&
-                                  !button.Classes.Contains("instanceExportStatus"));
+                                  !button.Classes.Contains("instanceOperationStatus"));
         var secondaryAction = compact
             ? instancesView.FindControl<InstanceOverviewView>("InstanceOverviewContentView")!
                 .FindControl<Button>("CompactInstanceMoreButton")!
@@ -2221,7 +2221,7 @@ public sealed class MainWindowRenderTests
         var window = new MainWindow
         {
             Width = 1100,
-            Height = 760,
+            Height = 700,
             DataContext = viewModel
         };
         window.Show();

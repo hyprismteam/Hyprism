@@ -1041,6 +1041,33 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>CurseForge에서 모드 열기</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>최신 호환 버전</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>모험</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>치장 아이템</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>저주</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>장식</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>경제</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>장비</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>음식</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>게임 메커니즘</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>라이브러리</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>마법</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>관리</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>미니게임</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>몹</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>최적화</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>소셜</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>저장소</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>기술</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>텍스처 팩</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>운송</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>유틸리티</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>월드 생성</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>Modifold에서 모드 열기</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>모드 폴더 열기</value>
   </data>

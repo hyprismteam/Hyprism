@@ -1041,6 +1041,33 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>Apri mod su CurseForge</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>Ultima versione compatibile</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>Avventura</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>Cosmetici</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>Maledizioni</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>Decorazione</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>Economia</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>Equipaggiamento</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>Cibo</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>Meccaniche di gioco</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>Libreria</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>Magia</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>Gestione</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>Minigioco</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>Mob</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>Ottimizzazione</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>Sociale</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>Archiviazione</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>Tecnologia</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>Pacchetti di texture</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>Trasporti</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>Utilità</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>Generazione del mondo</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>Apri il mod su Modifold</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Apri cartella mod</value>
   </data>

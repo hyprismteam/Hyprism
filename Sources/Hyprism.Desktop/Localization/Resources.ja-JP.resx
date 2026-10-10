@@ -1041,6 +1041,33 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="modManager.openCurseforge" xml:space="preserve">
     <value>CurseForgeでMODを開く</value>
   </data>
+  <data name="modManager.latestCompatibleVersion" xml:space="preserve">
+    <value>最新の互換バージョン</value>
+  </data>
+  <data name="modManager.modifoldCategory.adventure" xml:space="preserve"><value>冒険</value></data>
+  <data name="modManager.modifoldCategory.cosmetics" xml:space="preserve"><value>コスメティック</value></data>
+  <data name="modManager.modifoldCategory.cursed" xml:space="preserve"><value>呪い</value></data>
+  <data name="modManager.modifoldCategory.decoration" xml:space="preserve"><value>装飾</value></data>
+  <data name="modManager.modifoldCategory.economy" xml:space="preserve"><value>経済</value></data>
+  <data name="modManager.modifoldCategory.equipment" xml:space="preserve"><value>装備</value></data>
+  <data name="modManager.modifoldCategory.food" xml:space="preserve"><value>食料</value></data>
+  <data name="modManager.modifoldCategory.game_mechanics" xml:space="preserve"><value>ゲームメカニクス</value></data>
+  <data name="modManager.modifoldCategory.library" xml:space="preserve"><value>ライブラリ</value></data>
+  <data name="modManager.modifoldCategory.magic" xml:space="preserve"><value>魔法</value></data>
+  <data name="modManager.modifoldCategory.management" xml:space="preserve"><value>管理</value></data>
+  <data name="modManager.modifoldCategory.minigame" xml:space="preserve"><value>ミニゲーム</value></data>
+  <data name="modManager.modifoldCategory.mobs" xml:space="preserve"><value>モブ</value></data>
+  <data name="modManager.modifoldCategory.optimization" xml:space="preserve"><value>最適化</value></data>
+  <data name="modManager.modifoldCategory.social" xml:space="preserve"><value>ソーシャル</value></data>
+  <data name="modManager.modifoldCategory.storage" xml:space="preserve"><value>ストレージ</value></data>
+  <data name="modManager.modifoldCategory.technology" xml:space="preserve"><value>テクノロジー</value></data>
+  <data name="modManager.modifoldCategory.texture_packs" xml:space="preserve"><value>テクスチャパック</value></data>
+  <data name="modManager.modifoldCategory.transportation" xml:space="preserve"><value>交通</value></data>
+  <data name="modManager.modifoldCategory.utility" xml:space="preserve"><value>ユーティリティ</value></data>
+  <data name="modManager.modifoldCategory.world_generation" xml:space="preserve"><value>ワールド生成</value></data>
+  <data name="modManager.openModifold" xml:space="preserve">
+    <value>ModifoldでMODを開く</value>
+  </data>
   <data name="modManager.openModsFolder" xml:space="preserve">
     <value>Modフォルダ</value>
   </data>
