@@ -2163,12 +2163,6 @@ You may need to reinstall the game if switching drives</value>
   <data name="settings.general" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Close after launch</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Close launcher when game starts</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Launcher Storage</value>
   </data>

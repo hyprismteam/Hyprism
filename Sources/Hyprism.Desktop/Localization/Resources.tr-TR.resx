@@ -1857,12 +1857,6 @@ Sürücü değiştirirseniz oyunu yeniden yüklemeniz gerekebilir</value>
   <data name="settings.general" xml:space="preserve">
     <value>Genel</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Başlatmadan sonra kapat</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Oyun başladığında başlatıcıyı kapat</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Başlatıcı Depolama</value>
   </data>

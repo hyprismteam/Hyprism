@@ -1857,12 +1857,6 @@ Es posible que necesites reinstalar el juego si cambias de unidad</value>
   <data name="settings.general" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Cerrar tras iniciar</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Cerrar al iniciar el juego</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Almacenamiento</value>
   </data>

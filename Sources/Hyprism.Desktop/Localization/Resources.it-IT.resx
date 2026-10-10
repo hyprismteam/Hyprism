@@ -1857,12 +1857,6 @@ Potrebbe essere necessario reinstallare il gioco se si cambia drive</value>
   <data name="settings.general" xml:space="preserve">
     <value>Generale</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Chiudi dopo il lancio</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Chiudi il launcher all'avvio del gioco</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>File dati del launcher</value>
   </data>

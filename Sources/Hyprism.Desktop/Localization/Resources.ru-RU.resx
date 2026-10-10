@@ -2160,12 +2160,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.general" xml:space="preserve">
     <value>Общие</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Закрывать после запуска</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Закрывать лаунчер при запуске игры</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Папка лаунчера</value>
   </data>

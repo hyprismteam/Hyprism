@@ -93,7 +93,7 @@ public class ModFileInfo
     public List<ModDependency> Dependencies { get; set; } = [];
 }
 
-/// <summary>CurseForge relation kinds used for mod dependencies</summary>
+/// <summary>Normalized catalog relation kinds using CurseForge numeric values.</summary>
 public enum CurseForgeDependencyRelationType
 {
     /// <summary>The relation type was not provided by the source</summary>
@@ -113,9 +113,11 @@ public enum CurseForgeDependencyRelationType
 /// <summary>A normalized dependency relation stored with an installed mod</summary>
 public class ModDependency
 {
-    /// <summary>Related CurseForge project identifier</summary>
+    /// <summary>Source catalog; defaults to CurseForge for older manifests.</summary>
+    public string Source { get; set; } = "curseforge";
+    /// <summary>Related project identifier in the source catalog.</summary>
     public string ModId { get; set; } = "";
-    /// <summary>Related CurseForge file identifier, when specified</summary>
+    /// <summary>Related file identifier, when specified.</summary>
     public string FileId { get; set; } = "";
     /// <summary>Relation kind</summary>
     public CurseForgeDependencyRelationType RelationType { get; set; }
@@ -164,7 +166,7 @@ public class InstalledMod
     public string Slug { get; set; } = "";
     /// <summary>Installed version string</summary>
     public string Version { get; set; } = "";
-    /// <summary>CurseForge file identifier of the installed file</summary>
+    /// <summary>File identifier in the installed mod's source catalog.</summary>
     public string FileId { get; set; } = "";
     /// <summary>JAR file name on disk (without path)</summary>
     public string FileName { get; set; } = "";
@@ -204,7 +206,7 @@ public class InstalledMod
     /// </summary>
     public string DisabledOriginalExtension { get; set; } = "";
 
-    /// <summary>CurseForge relations declared by the installed file</summary>
+    /// <summary>Catalog relations declared by the installed file.</summary>
     public List<ModDependency> Dependencies { get; set; } = [];
 
     /// <summary>Hytale plugin identifier read from the installed manifest</summary>

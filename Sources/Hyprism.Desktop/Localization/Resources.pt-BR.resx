@@ -1857,12 +1857,6 @@ Você pode precisar reinstalar o jogo se trocar de unidade</value>
   <data name="settings.general" xml:space="preserve">
     <value>Geral</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Fechar após iniciar</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Fechar o launcher quando o jogo iniciar</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Armazenamento do Launcher</value>
   </data>

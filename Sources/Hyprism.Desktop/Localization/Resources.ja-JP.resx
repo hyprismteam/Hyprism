@@ -1857,12 +1857,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.general" xml:space="preserve">
     <value>一般</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>ランチャーを閉じる</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>ゲーム起動時に閉じます。</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>保存場所</value>
   </data>

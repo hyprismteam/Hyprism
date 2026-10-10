@@ -1857,12 +1857,6 @@ SPDX-License-Identifier: GPL-3.0-only
   <data name="settings.general" xml:space="preserve">
     <value>Агульныя</value>
   </data>
-  <data name="settings.generalSettings.closeLauncher" xml:space="preserve">
-    <value>Закрываць пасля запуску</value>
-  </data>
-  <data name="settings.generalSettings.closeLauncherHint" xml:space="preserve">
-    <value>Закрываць лаўнчар пры старце гульні</value>
-  </data>
   <data name="settings.generalSettings.launcherStorage" xml:space="preserve">
     <value>Сховішча лаўнчара</value>
   </data>

@@ -143,7 +143,7 @@ To install several mods together, select the compatible catalog entries and sele
 
 ## Mod dependencies
 
-Hyprism reads dependency relations from CurseForge mod files. Required dependencies are resolved recursively and installed before the selected mod. Optional dependencies are not installed automatically, while an incompatible mod relation stops installation when the conflicting mod is already installed. Modifold dependencies are not installed automatically.
+Hyprism reads dependency relations from CurseForge and Modifold mod files. Required dependencies are resolved recursively and installed before the selected mod. Modifold dependencies use their specified version when available, or a compatible version when none is specified. Optional and embedded dependencies are not downloaded separately. Cycles, conflicting required versions, and incompatible mods stop installation. Modifold checks conflicts against both installed mods and the selected batch before downloading its files.
 
 Dependencies installed by the launcher appear in **Installed mods** with their own version and file metadata.
 

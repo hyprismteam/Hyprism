@@ -62,13 +62,6 @@ public sealed class DesktopSettingsStore : IDesktopSettingsStore
     }
 
     /// <inheritdoc/>
-    public bool CloseAfterLaunch
-    {
-        get => _configStore.Configuration.CloseAfterLaunch;
-        set => Save(config => config.CloseAfterLaunch = value);
-    }
-
-    /// <inheritdoc/>
     public bool OnlineMode
     {
         get => _configStore.Configuration.OnlineMode;

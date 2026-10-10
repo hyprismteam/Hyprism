@@ -62,6 +62,18 @@ internal sealed class ModifoldClient(HttpClient http)
     public async Task<ModInfo> GetModAsync(string projectId)
         => MapProject(await GetProjectAsync(projectId), includeVersions: true);
 
+    /// <summary>Reads required dependency metadata for an installation preview.</summary>
+    /// <param name="projectId">Project identifier.</param>
+    /// <param name="fileId">Version identifier or <c>latest</c>.</param>
+    /// <returns>Required relations declared by the selected version.</returns>
+    public async Task<List<ModDependency>> GetDependenciesAsync(string projectId, string fileId)
+    {
+        var resolved = await ResolveInstallFileAsync(projectId, fileId, null);
+        return resolved?.File.Dependencies
+            .Where(dependency => dependency.RelationType == CurseForgeDependencyRelationType.RequiredDependency)
+            .ToList() ?? [];
+    }
+
     /// <summary>Reads files for one Modifold project.</summary>
     /// <param name="projectId">Project identifier.</param>
     /// <param name="page">Zero-based page number.</param>
@@ -85,11 +97,15 @@ internal sealed class ModifoldClient(HttpClient http)
         CancellationToken cancellationToken = default)
     {
         var project = await GetProjectAsync(projectId, cancellationToken);
+        if ((!string.IsNullOrWhiteSpace(project.ProjectType) && project.ProjectType != "mod") ||
+            string.IsNullOrWhiteSpace(project.Id) ||
+            project.Id.Any(character => !char.IsLetterOrDigit(character) && character is not '-' and not '_'))
+            return null;
         var files = MapFiles(project).ToList();
         var file = string.IsNullOrWhiteSpace(fileId) || fileId == "latest"
             ? ModCompatibilityEvaluator.SelectRecommendedFile(files, gameVersion)
             : files.FirstOrDefault(candidate => candidate.Id == fileId);
-        if (file is null ||
+        if (file is null || string.IsNullOrWhiteSpace(file.Id) ||
             ModCompatibilityEvaluator.Evaluate(gameVersion, file.GameVersions) == ModCompatibilityStatus.Incompatible)
         {
             return null;
@@ -184,7 +200,24 @@ internal sealed class ModifoldClient(HttpClient http)
                     _ => 1
                 },
                 GameVersions = ReadStringList(version.GameVersions),
-                DownloadCount = (int)Math.Min(int.MaxValue, version.Downloads)
+                DownloadCount = (int)Math.Min(int.MaxValue, version.Downloads),
+                Dependencies = version.Dependencies?.Select(dependency => new ModDependency
+                {
+                    Source = "modifold",
+                    ModId = dependency.ProjectId ?? string.Empty,
+                    FileId = dependency.VersionId ?? string.Empty,
+                    Name = dependency.ProjectTitle ?? dependency.ProjectSlug ?? dependency.ProjectId ?? string.Empty,
+                    Version = dependency.VersionNumber ?? string.Empty,
+                    IconUrl = dependency.ProjectIconUrl ?? string.Empty,
+                    RelationType = dependency.DependencyType switch
+                    {
+                        "required" => CurseForgeDependencyRelationType.RequiredDependency,
+                        "optional" => CurseForgeDependencyRelationType.OptionalDependency,
+                        "incompatible" => CurseForgeDependencyRelationType.Incompatible,
+                        "embedded" => CurseForgeDependencyRelationType.EmbeddedLibrary,
+                        _ => CurseForgeDependencyRelationType.Unknown
+                    }
+                }).ToList() ?? []
             };
         }
     }
@@ -256,6 +289,18 @@ internal sealed class ModifoldClient(HttpClient http)
         public long Downloads { get; set; }
         public ModifoldFile? PrimaryFile { get; set; }
         public List<ModifoldFile>? Files { get; set; }
+        public List<Dependency>? Dependencies { get; set; }
+    }
+
+    private sealed class Dependency
+    {
+        public string? ProjectId { get; set; }
+        public string? VersionId { get; set; }
+        public string? DependencyType { get; set; }
+        public string? ProjectSlug { get; set; }
+        public string? ProjectTitle { get; set; }
+        public string? ProjectIconUrl { get; set; }
+        public string? VersionNumber { get; set; }
     }
 
     private sealed class ModifoldFile

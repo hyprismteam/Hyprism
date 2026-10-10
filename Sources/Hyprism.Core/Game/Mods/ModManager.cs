@@ -121,7 +121,7 @@ public partial class ModManager : IModManager
         => source switch
         {
             "curseforge" => GetModDependenciesAsync(modId, fileId),
-            "modifold" => Task.FromResult(new List<ModDependency>()),
+            "modifold" => GetModifoldDependenciesAsync(modId, fileId),
             _ => Task.FromException<List<ModDependency>>(new ArgumentOutOfRangeException(nameof(source)))
         };
 
@@ -131,8 +131,9 @@ public partial class ModManager : IModManager
         => source switch
         {
             "curseforge" => InstallModFileToInstanceAsync(modId, fileId, instancePath, onProgress),
-            "modifold" => InstallModifoldFileAsync(modId, fileId, instancePath, onProgress, CancellationToken.None,
-                ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath)),
+            "modifold" => InstallModFilesToInstanceAsync(
+                [new ModFileInfo { Source = "modifold", ModId = modId, Id = fileId }], instancePath,
+                onProgress is null ? null : (_, stage, detail) => onProgress(stage, detail), CancellationToken.None),
             _ => Task.FromException<bool>(new ArgumentOutOfRangeException(nameof(source)))
         };
 
@@ -150,6 +151,8 @@ public partial class ModManager : IModManager
         var backupPath = Path.Combine(transactionPath, "original-mods");
         var gameVersion = ModCompatibilityEvaluator.DetectInstanceGameVersion(instancePath);
         var originalNeedsRecovery = false;
+        var modifoldFiles = files.Where(file => file.Source == "modifold").ToArray();
+        var modifoldPlans = new Dictionary<string, List<(ModInfo Mod, ModFileInfo File)>>(StringComparer.Ordinal);
         try
         {
             await Task.Run(() => LauncherUtilities.CopyDirectory(modsPath, stagedModsPath), cancellationToken);
@@ -176,7 +179,7 @@ public partial class ModManager : IModManager
                     "curseforge" => await InstallCurseForgeFileAsync(file.ModId, file.Id, transactionPath,
                         progress, cancellationToken, gameVersion),
                     "modifold" => await InstallModifoldFileAsync(file.ModId, file.Id, transactionPath,
-                        progress, cancellationToken, gameVersion),
+                        progress, cancellationToken, gameVersion, modifoldFiles, modifoldPlans),
                     _ => throw new ArgumentOutOfRangeException(nameof(files), file.Source, "Unknown mod source.")
                 };
                 if (!installed)
@@ -219,23 +222,15 @@ public partial class ModManager : IModManager
         }
     }
 
-    private async Task<bool> InstallModifoldFileAsync(
-        string projectId, string fileId, string instancePath, Action<string, string>? onProgress,
-        CancellationToken cancellationToken, string? gameVersion)
+    private async Task<bool> InstallRawModifoldFileAsync(
+        ModInfo mod, ModFileInfo file, string instancePath, Action<string, string>? onProgress,
+        CancellationToken cancellationToken)
     {
         string? temporaryPath = null;
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (string.IsNullOrWhiteSpace(projectId) ||
-                projectId.Any(character => !char.IsLetterOrDigit(character) && character is not '-' and not '_'))
-                return false;
-
-            var resolved = await _modifoldClient.ResolveInstallFileAsync(projectId, fileId, gameVersion, cancellationToken);
-            if (resolved is null)
-                return false;
-
-            var (mod, file) = resolved.Value;
+            var projectId = mod.Id;
             if (!Uri.TryCreate(file.DownloadUrl, UriKind.Absolute, out var downloadUri) ||
                 downloadUri.Scheme != Uri.UriSchemeHttps)
                 return false;
@@ -288,6 +283,7 @@ public partial class ModManager : IModManager
                 IconUrl = mod.IconUrl,
                 FileDate = file.FileDate,
                 ReleaseType = file.ReleaseType,
+                Dependencies = file.Dependencies,
                 ManifestId = manifest?.ManifestId ?? string.Empty,
                 ManifestVersion = manifest?.Version ?? string.Empty,
                 ManifestDependencies = manifest?.Dependencies ?? [],
@@ -1526,14 +1522,18 @@ public partial class ModManager : IModManager
 
     private static bool DependsOn(InstalledMod candidate, InstalledMod dependency)
     {
-        var curseForgeMatch = !string.IsNullOrWhiteSpace(dependency.CurseForgeId) &&
+        var dependencySource = string.IsNullOrWhiteSpace(dependency.Source) ? "curseforge" : dependency.Source;
+        var dependencyProjectId = dependencySource == "curseforge"
+            ? dependency.CurseForgeId : dependency.SourceProjectId;
+        var catalogMatch = !string.IsNullOrWhiteSpace(dependencyProjectId) &&
             candidate.Dependencies.Any(relation =>
                 relation.RelationType == CurseForgeDependencyRelationType.RequiredDependency &&
-                string.Equals(relation.ModId, dependency.CurseForgeId, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(relation.Source, dependencySource, StringComparison.Ordinal) &&
+                string.Equals(relation.ModId, dependencyProjectId, StringComparison.OrdinalIgnoreCase) &&
                 (string.IsNullOrWhiteSpace(relation.FileId) ||
                  string.IsNullOrWhiteSpace(dependency.FileId) ||
                  string.Equals(relation.FileId, dependency.FileId, StringComparison.OrdinalIgnoreCase)));
-        if (curseForgeMatch)
+        if (catalogMatch)
             return true;
 
         return !string.IsNullOrWhiteSpace(dependency.ManifestId) &&
