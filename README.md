@@ -16,7 +16,7 @@ SPDX-License-Identifier: GPL-3.0-only
 > Hyprism has no any connection to [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher). Hyprism is an application that is being developed **INDEPENDENTLY** of the PrismLauncher project or its team
 
 > [!NOTE]
-> The launcher is switching to Avalonia UI. The current source code in `main` may contain bugs or errors. If you need the code from a previous version of the launcher, use the latest available [release](https://github.com/hyprismteam/Hyprism/releases)
+> The launcher is switched to Avalonia UI. The current source code in `main` may contain bugs or errors. If you need the code from a previous version of the launcher, use the latest 3.x.x [release](https://github.com/hyprismteam/Hyprism/releases/tag/v3.0.3)
 
 ## Installation
 
