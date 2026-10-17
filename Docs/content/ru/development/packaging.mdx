@@ -71,6 +71,14 @@ pwsh Packaging/publish-windows.ps1 all --output dist
 
 Перед созданием пакетов проверяется наличие `Hyprism Launcher.exe` и отдельного `Hyprism.LocalNode.exe`. ZIP содержит те же файлы приложения, что и установщики
 
+MSI устанавливает приложение в `Program Files\Hyprism` для всех пользователей и создаёт общие ярлыки на рабочем столе и в меню «Пуск». Оба ярлыка указывают на `Hyprism Launcher.exe`, используют каталог установки как рабочий каталог и удаляются Windows Installer при удалении приложения. EXE запускает тот же MSI. Исполняемый файл лаунчера описан явно в `Packaging/windows/Hyprism.msi.wxs` и исключён из автоматического сбора файлов по маске, чтобы попасть в пакет только один раз.
+
+Windows workflow после упаковки запускает `Scripts/test-windows-installers.ps1`. Скрипт устанавливает и удаляет пакеты MSI и EXE, проверяет, что оба общих ярлыка указывают на установленный лаунчер, и проверяет очистку. Журналы установщиков загружаются отдельным артефактом. Для повторения проверки используйте PowerShell с правами администратора на одноразовой машине Windows без установленного Hyprism.
+
+```powershell
+pwsh Scripts/test-windows-installers.ps1 -ArtifactDirectory dist
+```
+
 Windows apphost использует многомасштабный ресурс `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico`. WiX использует ту же иконку для записи MSI в списке приложений и для EXE-bootstrapper
 
 ## macOS

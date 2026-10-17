@@ -71,6 +71,14 @@ pwsh Packaging/publish-windows.ps1 all --output dist
 
 It verifies `Hyprism Launcher.exe` and the separate `Hyprism.LocalNode.exe` before producing artifacts. ZIP contains the same application payload as the installers
 
+The MSI installs into `Program Files\Hyprism` for all users and owns the shared desktop and Start menu shortcuts. Both shortcuts target `Hyprism Launcher.exe`, use the installation directory as their working directory, and are removed by Windows Installer during uninstall. The EXE bootstrapper chains the same MSI. The launcher executable is authored explicitly in `Packaging/windows/Hyprism.msi.wxs` and excluded from wildcard file harvesting so it is packaged only once.
+
+The Windows build workflow runs `Scripts/test-windows-installers.ps1` after packaging. It installs and uninstalls both MSI and EXE packages, checks that both shared shortcuts resolve to the installed launcher, and verifies cleanup. Installer logs are uploaded as a separate artifact. To repeat this check, use an elevated PowerShell session on a disposable Windows machine without an existing Hyprism installation.
+
+```powershell
+pwsh Scripts/test-windows-installers.ps1 -ArtifactDirectory dist
+```
+
 The Windows apphost uses the multi-size `Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico` resource. WiX uses the same icon for the MSI entry in Apps and Features and the EXE bootstrapper
 
 ## macOS
