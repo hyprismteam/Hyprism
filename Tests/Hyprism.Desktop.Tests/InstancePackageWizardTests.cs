@@ -8,6 +8,12 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Hyprism.Core.Game.Instances;
+using Hyprism.Core.Application.Ports;
+using Hyprism.Core.Application.Progress;
+using Hyprism.Core.Game;
+using Hyprism.Core.Game.Launch;
+using Hyprism.Desktop.Localization;
+using Hyprism.Desktop.Platform;
 using Hyprism.Core.Game.Versions;
 using Hyprism.Desktop.Controls;
 using Hyprism.Desktop.Screens.Instances;
@@ -19,6 +25,47 @@ namespace Hyprism.Desktop.Tests;
 
 public sealed class InstancePackageWizardTests
 {
+    [AvaloniaTheory]
+    [InlineData("build.pwr")]
+    [InlineData("build.PWR")]
+    [InlineData("build.zip")]
+    public async Task ImportWizardRoutesGameArchivesWithoutDownloadSources(string path)
+    {
+        var instances = new Mock<IInstanceRepository>();
+        instances.Setup(repository => repository.GetCachedInstances()).Returns([]);
+        var picker = new Mock<IFilePicker>();
+        picker.Setup(service => service.BrowseInstancePackageAsync()).ReturnsAsync(path);
+        using var httpClient = new HttpClient();
+        using var viewModel = new InstancesViewModel(
+            instances.Object,
+            Mock.Of<IGameLaunchCoordinator>(),
+            Mock.Of<IGameInstallationWorkflow>(),
+            Mock.Of<IGameProcessTracker>(),
+            Mock.Of<IProgressReporter>(),
+            Mock.Of<IExternalUriLauncher>(),
+            httpClient,
+            new StringLocalizer("en-US"),
+            filePicker: picker.Object);
+        viewModel.OpenEmptyInstanceImportCommand.Execute(null);
+
+        await viewModel.ImportInstancePackageCommand.ExecuteAsync(null);
+
+        Assert.Empty(viewModel.InstanceCreationError);
+        Assert.False(viewModel.IsJsonImportSourceWarningOpen);
+        Assert.False(viewModel.IsInstanceCreatorOpen);
+        Assert.False(viewModel.IsImportingInstancePackage);
+        if (path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            instances.Verify(repository => repository.ImportFromZipAsync(path, It.IsAny<CancellationToken>()), Times.Once);
+            instances.Verify(repository => repository.ImportFromPwrAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+        else
+        {
+            instances.Verify(repository => repository.ImportFromPwrAsync(path, It.IsAny<CancellationToken>()), Times.Once);
+            instances.Verify(repository => repository.ImportFromZipAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+    }
+
     [AvaloniaFact]
     public async Task ExportWizardUsesSharedRevealAndDefaultsToJson()
     {

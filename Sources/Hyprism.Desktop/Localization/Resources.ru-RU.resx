@@ -3067,10 +3067,10 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Импорт экземпляра</value>
   </data>
   <data name="instances.package.importHint" xml:space="preserve">
-    <value>Выберите JSON-манифест или ZIP-архив Hyprism</value>
+    <value>Выберите шаблон JSON, ZIP-архив или полную PWR-сборку</value>
   </data>
   <data name="instances.package.importChoiceHint" xml:space="preserve">
-    <value>Восстановите метаданные из JSON или файлы из ZIP</value>
+    <value>Восстановите экземпляр из JSON, ZIP или PWR</value>
   </data>
   <data name="instances.package.exportTitle" xml:space="preserve">
     <value>Экспорт экземпляра</value>
@@ -3127,7 +3127,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Выбрать файл</value>
   </data>
   <data name="instances.package.metadataOnly" xml:space="preserve">
-    <value>JSON создаёт незагруженный экземпляр. Игру можно загрузить позже из настроенного источника; для модов нужен ZIP</value>
+    <value>JSON создаёт незагруженный экземпляр. ZIP и полные сборки PWR восстанавливают файлы из пакета</value>
   </data>
   <data name="instances.package.jsonRequiresSource" xml:space="preserve">
     <value>JSON не содержит файлов игры. Добавьте зеркало в разделе «Настройки → Загрузки» или войдите в аккаунт Hytale с лицензией, затем повторите импорт</value>
@@ -3139,7 +3139,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <value>Файлы экземпляра больше недоступны</value>
   </data>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
-    <value>Выберите файл JSON или ZIP</value>
+    <value>Выберите файл JSON, ZIP или PWR</value>
   </data>
   <data name="instances.worlds.deleteHint" xml:space="preserve">
     <value>Удалить «{0}» и все данные этого мира? Это действие нельзя отменить</value>

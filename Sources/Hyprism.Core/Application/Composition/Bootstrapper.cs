@@ -98,7 +98,8 @@ public static partial class Bootstrapper
             services.AddSingleton(sp =>
                 new InstanceRepository(
                     sp.GetRequiredService<AppPathConfiguration>().AppDir,
-                    sp.GetRequiredService<IConfigStore>()));
+                    sp.GetRequiredService<IConfigStore>(),
+                    sp.GetRequiredService<IButlerClient>()));
             services.AddSingleton<IInstanceRepository>(sp => sp.GetRequiredService<InstanceRepository>());
 
             services.AddSingleton(sp =>

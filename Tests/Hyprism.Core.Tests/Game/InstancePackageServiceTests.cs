@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 using System.IO.Compression;
+using System.Runtime.InteropServices;
+using Hyprism.Core.Game.Patching;
+using Moq;
 using Hyprism.Core.Game.Instances;
 using Hyprism.Core.Infrastructure;
 using Hyprism.Core.Models;
@@ -173,6 +176,123 @@ public sealed class InstancePackageServiceTests : IDisposable
 
         Assert.Equal("original", File.ReadAllText(destination));
         Assert.Empty(Directory.EnumerateFiles(_root, "*.tmp-*"));
+    }
+
+    [Theory]
+    [InlineData("0_to_42.pwr")]
+    [InlineData("v42-linux-amd64.pwr")]
+    [InlineData("42.PWR")]
+    public async Task FullPwrCreatesInstalledInstanceWithoutTouchingExistingFiles(string filename)
+    {
+        var pwr = Path.Combine(_root, filename);
+        await File.WriteAllTextAsync(pwr, "original PWR");
+        var butler = new Mock<IButlerClient>();
+        var launcherRoot = Path.Combine(_root, "launcher");
+        var repository = new InstanceRepository(launcherRoot, new JsonConfigStore(launcherRoot), butler.Object);
+        var existing = repository.CreateInstanceMeta("release", 42, "Existing");
+        var existingPath = repository.GetInstancePathById(existing.Id)!;
+        await File.WriteAllTextAsync(Path.Combine(existingPath, "keep.txt"), "existing files");
+        butler.Setup(client => client.ApplyPwrAsync(pwr, It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+            .Returns((string _, string target, Action<int, string>? _, CancellationToken _) =>
+            {
+                WritePwrClient(target);
+                Directory.CreateDirectory(Path.Combine(target, "UserData", "Mods"));
+                File.WriteAllText(Path.Combine(target, "UserData", "Mods", "example.jar"), "mod");
+                Assert.Single(repository.GetCachedInstances());
+                return Task.CompletedTask;
+            });
+
+        await repository.ImportFromPwrAsync(pwr);
+
+        var imported = Assert.Single(repository.GetCachedInstances(), instance => instance.Id != existing.Id);
+        var path = repository.GetInstancePathById(imported.Id)!;
+        var meta = repository.GetInstanceMeta(path)!;
+        Assert.Equal(42, meta.Version);
+        Assert.Equal(42, meta.InstalledVersion);
+        Assert.Equal("release", meta.Branch);
+        Assert.True(repository.IsClientPresent(path));
+        Assert.Equal(InstanceValidationStatus.Valid, repository.ValidateGameIntegrity(path).Status);
+        Assert.Equal("mod", File.ReadAllText(Path.Combine(path, "UserData", "Mods", "example.jar")));
+        Assert.Equal("existing files", File.ReadAllText(Path.Combine(existingPath, "keep.txt")));
+        Assert.Equal("original PWR", File.ReadAllText(pwr));
+        Assert.Empty(Directory.EnumerateDirectories(Path.Combine(repository.GetInstanceRoot(), ".import")));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task FailedOrCancelledPwrImportDoesNotRegisterPartialInstance(bool cancel)
+    {
+        var pwr = Path.Combine(_root, "0_to_42.pwr");
+        await File.WriteAllTextAsync(pwr, "PWR");
+        var butler = new Mock<IButlerClient>();
+        var launcherRoot = Path.Combine(_root, "launcher");
+        var repository = new InstanceRepository(launcherRoot, new JsonConfigStore(launcherRoot), butler.Object);
+        using var cancellation = new CancellationTokenSource();
+        butler.Setup(client => client.ApplyPwrAsync(pwr, It.IsAny<string>(), null, cancellation.Token))
+            .Returns((string _, string target, Action<int, string>? _, CancellationToken token) =>
+            {
+                WritePwrClient(target);
+                if (cancel)
+                {
+                    cancellation.Cancel();
+                    token.ThrowIfCancellationRequested();
+                }
+                throw new InvalidDataException("Invalid PWR");
+            });
+
+        if (cancel)
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => repository.ImportFromPwrAsync(pwr, cancellation.Token));
+        else
+            await Assert.ThrowsAsync<InvalidDataException>(() => repository.ImportFromPwrAsync(pwr, cancellation.Token));
+
+        Assert.Empty(repository.GetCachedInstances());
+        Assert.Empty(repository.GetInstalledInstances());
+        Assert.Empty(Directory.EnumerateDirectories(Path.Combine(repository.GetInstanceRoot(), ".import")));
+    }
+
+    [Theory]
+    [InlineData("unknown.pwr")]
+    [InlineData("0.pwr")]
+    [InlineData("41_to_42.pwr")]
+    [InlineData("v41~42-linux-amd64.pwr")]
+    public async Task PwrWithoutFullBuildFilenameIsRejectedBeforeApplying(string filename)
+    {
+        var pwr = Path.Combine(_root, filename);
+        await File.WriteAllTextAsync(pwr, "PWR");
+        var butler = new Mock<IButlerClient>(MockBehavior.Strict);
+        var repository = new InstanceRepository(_root, new JsonConfigStore(_root), butler.Object);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => repository.ImportFromPwrAsync(pwr));
+
+        butler.VerifyNoOtherCalls();
+        Assert.Empty(repository.GetCachedInstances());
+    }
+
+    [Fact]
+    public async Task PwrWithoutPlatformClientIsNotRegistered()
+    {
+        var pwr = Path.Combine(_root, "42.pwr");
+        await File.WriteAllTextAsync(pwr, "PWR");
+        var butler = new Mock<IButlerClient>();
+        butler.Setup(client => client.ApplyPwrAsync(pwr, It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var repository = new InstanceRepository(_root, new JsonConfigStore(_root), butler.Object);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => repository.ImportFromPwrAsync(pwr));
+
+        Assert.Empty(repository.GetCachedInstances());
+        Assert.Empty(Directory.EnumerateDirectories(Path.Combine(repository.GetInstanceRoot(), ".import")));
+    }
+
+    private static void WritePwrClient(string target)
+    {
+        var relative = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Client/HytaleClient.exe"
+            : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "Client/Hytale.app/Contents/MacOS/HytaleClient"
+            : "Client/HytaleClient";
+        var client = Path.Combine(target, relative);
+        Directory.CreateDirectory(Path.GetDirectoryName(client)!);
+        File.WriteAllText(client, "client");
     }
 
     private void Write(string relativePath, string content)

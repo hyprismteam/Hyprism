@@ -3061,10 +3061,10 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
     <value>Import an instance</value>
   </data>
   <data name="instances.package.importHint" xml:space="preserve">
-    <value>Select a Hyprism JSON manifest or ZIP package</value>
+    <value>Select a JSON template, ZIP archive, or full PWR build</value>
   </data>
   <data name="instances.package.importChoiceHint" xml:space="preserve">
-    <value>Restore metadata from JSON or files from ZIP</value>
+    <value>Restore an instance from JSON, ZIP, or PWR</value>
   </data>
   <data name="instances.package.exportTitle" xml:space="preserve">
     <value>Export an instance</value>
@@ -3121,7 +3121,7 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
     <value>Choose file</value>
   </data>
   <data name="instances.package.metadataOnly" xml:space="preserve">
-    <value>JSON creates an uninstalled instance. Game files can be downloaded later from a configured source; mods require ZIP</value>
+    <value>JSON creates an uninstalled instance. ZIP and full PWR builds restore packaged files</value>
   </data>
   <data name="instances.package.jsonRequiresSource" xml:space="preserve">
     <value>JSON does not contain game files. Add a mirror in Settings → Downloads or sign in with a Hytale account that owns the game, then import again</value>
@@ -3133,7 +3133,7 @@ Bei Laufwerkswechsel muss das Spiel möglicherweise neu installiert werden</valu
     <value>The instance files are no longer available</value>
   </data>
   <data name="instances.package.unsupportedFile" xml:space="preserve">
-    <value>Select a JSON or ZIP package</value>
+    <value>Select a JSON, ZIP, or PWR file</value>
   </data>
   <data name="instances.worlds.deleteHint" xml:space="preserve">
     <value>„{0}“ und alle Daten dieser Welt löschen? Diese Aktion kann nicht rückgängig gemacht werden</value>

@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Hyprism.Core.Models;
+using Hyprism.Core.Game.Patching;
 
 namespace Hyprism.Core.Game.Instances;
 
@@ -28,6 +29,7 @@ public partial class InstanceRepository : IInstanceRepository
     private readonly string _appDir;
 
     private readonly IConfigStore _configStore;
+    private readonly IButlerClient? _butler;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -41,10 +43,12 @@ public partial class InstanceRepository : IInstanceRepository
     /// </summary>
     /// <param name="appDir">The application data directory path</param>
     /// <param name="configStore">The configuration service for accessing settings</param>
-    public InstanceRepository(string appDir, IConfigStore configStore)
+    /// <param name="butler">The optional patching client used to import full PWR builds.</param>
+    public InstanceRepository(string appDir, IConfigStore configStore, IButlerClient? butler = null)
     {
         _appDir = appDir;
         _configStore = configStore;
+        _butler = butler;
     }
 
     /// <inheritdoc/>
@@ -1473,7 +1477,57 @@ public partial class InstanceRepository : IInstanceRepository
 
     #endregion
 
-    #region ZIP Import
+    #region Instance import
+
+    /// <inheritdoc/>
+    public async Task ImportFromPwrAsync(string pwrPath, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!File.Exists(pwrPath))
+            throw new FileNotFoundException("The PWR build does not exist", pwrPath);
+
+        var filename = Path.GetFileNameWithoutExtension(pwrPath);
+        var patchParts = filename.Split("_to_", 2, StringSplitOptions.None);
+        if (filename.Contains('~') ||
+            (patchParts.Length == 2 && int.TryParse(patchParts[0], out var fromVersion) && fromVersion != 0))
+            throw new InvalidDataException("Select a full PWR build, not a differential update patch");
+
+        var version = TryParseVersionFromPwrFilename(filename);
+        if (version <= 0)
+            throw new InvalidDataException("The PWR filename must contain a game build number, for example 0_to_72.pwr");
+        var butler = _butler ?? throw new InvalidOperationException("Butler is required to import PWR builds");
+        var id = Guid.NewGuid().ToString();
+        var root = GetInstanceRoot();
+        var tempDir = Path.Combine(root, ".import", id);
+        Directory.CreateDirectory(tempDir);
+        try
+        {
+            await butler.ApplyPwrAsync(pwrPath, tempDir, externalCancellationToken: cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!IsClientPresent(tempDir))
+                throw new InvalidDataException("The PWR build must contain the full game client for this platform");
+
+            var meta = new InstanceMeta
+            {
+                Id = id,
+                Name = $"Imported v{version}",
+                Branch = "release",
+                Version = version,
+                InstalledVersion = version,
+                CreatedAt = DateTime.UtcNow
+            };
+            await File.WriteAllTextAsync(
+                Path.Combine(tempDir, "Meta.json"), JsonSerializer.Serialize(meta, JsonOptions), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            Directory.Move(tempDir, Path.Combine(root, id));
+            SyncInstancesWithConfig();
+            Logger.Success("InstanceRepository", $"Imported PWR instance: {id} (version: {version})");
+        }
+        finally
+        {
+            DeleteTemporaryImportDirectory(tempDir);
+        }
+    }
 
     /// <inheritdoc/>
     public async Task ImportFromZipAsync(

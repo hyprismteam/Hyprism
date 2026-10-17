@@ -46,9 +46,11 @@ The wizard closes when export starts. The instance's **Export** row shows **Expo
 
 The JSON template records the instance name, branch, build, and optional version name. A build template also records notes; a game template leaves them out. Neither contains game files or mods. ZIP includes the selected files, instance metadata, and a JSON manifest. A build archive also includes worlds and other user data.
 
-To import from an empty list, select **Import** to the left of **Select version**. If instances already exist, select **New Instance**, then **Import**. Select **Choose file** and pick a JSON or ZIP package. JSON creates an uninstalled instance definition and requires a configured download source. If no source is configured, a dialog explains how to add a mirror in **Settings → Downloads** or sign in with a Hytale account that owns the game; dismiss it and import again after setting up a source. ZIP restores the packaged files. Importing a game-only or modpack-only ZIP restores only those selected files.
+To import from an empty list, select **Import** to the left of **Select version**. If instances already exist, select **New Instance**, then **Import**. Select **Choose file** and pick a JSON template, ZIP archive, or full `.pwr` game build. JSON creates an uninstalled instance definition and requires a configured download source. If no source is configured, a dialog explains how to add a mirror in **Settings → Downloads** or sign in with a Hytale account that owns the game; dismiss it and import again after setting up a source. ZIP restores the packaged files. Importing a game-only or modpack-only ZIP restores only those selected files.
 
-![Instance import wizard with the file chooser beside Back](/img/user/en/instances-import.png)
+A PWR file must contain a full game build for your operating system and architecture. Keep the build number in its filename, such as `0_to_72.pwr`, `v72-linux-amd64.pwr`, or `72.pwr`. Hyprism creates a separate installed instance in the release branch and keeps the source file. A download source is not required; the first PWR import needs internet access if the extraction tool is not installed yet. Differential update patches require an existing build and cannot replace a full build.
+
+![Instance import wizard accepting JSON, ZIP, and full PWR builds](/img/user/en/instances-import.png)
 
 During import, hover over the progress button and select **Cancel** to stop.
 
