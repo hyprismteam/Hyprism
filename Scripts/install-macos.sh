@@ -5,7 +5,8 @@
 
 set -eu
 
-GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/Hyprism/releases/latest/download"
+GITHUB_RELEASE_API_URL="https://api.github.com/repos/hyprismteam/Hyprism/releases/latest"
+GITHUB_RELEASE_BASE_URL="https://github.com/hyprismteam/Hyprism/releases/download"
 APP_EXECUTABLE="Hyprism Launcher"
 APP_BUNDLE_NAME="Hyprism Launcher.app"
 LOCAL_NODE_EXECUTABLE="Hyprism.LocalNode"
@@ -35,7 +36,7 @@ else
     exit 1
 fi
 
-for command in awk ditto head hdiutil mktemp shasum sed tr; do
+for command in awk ditto hdiutil mktemp shasum tr; do
     if ! command -v "$command" >/dev/null 2>&1; then
         echo "The installer requires $command" >&2
         exit 1
@@ -66,11 +67,50 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 mkdir "$MOUNT_POINT"
 
-VERSION_JSON_PATH="$TEMP_DIR/version.json"
+RELEASE_JSON_PATH="$TEMP_DIR/release.json"
 echo "[*] Fetching release metadata"
-download "${GITHUB_RELEASE_BASE_URL}/version.json" "$VERSION_JSON_PATH"
+download "$GITHUB_RELEASE_API_URL" "$RELEASE_JSON_PATH"
 
-VERSION="$(sed -n 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$VERSION_JSON_PATH" | head -n 1)"
+# Read only the release tag and asset fields, keeping nested objects separate.
+RELEASE_METADATA="$(awk -v prefix="Hyprism-mac-arm64-" -v suffix=".dmg" '
+{
+    while (match($0, /"([^"\\]|\\.)*"|[][{}:,]|[^][{}:,[:space:]]+/)) {
+        token = substr($0, RSTART, RLENGTH)
+        $0 = substr($0, RSTART + RLENGTH)
+        if (closed) invalid = 1
+        if (token == "{" || token == "[") {
+            container[++depth] = token
+            key[depth] = ""
+        } else if (token == "}" || token == "]") {
+            if (depth < 1 || (token == "}" && container[depth] != "{") ||
+                (token == "]" && container[depth] != "[")) invalid = 1
+            if (token == "}" && depth == 3 && key[1] == "\"assets\"" && container[2] == "[") {
+                if (asset_name in digests) invalid = 1
+                digests[asset_name] = asset_digest
+                asset_name = asset_digest = ""
+            }
+            if (--depth == 0) closed = 1
+        } else if (previous == ":") {
+            value = substr(token, 2, length(token) - 2)
+            if (token !~ /^"/) value = ""
+            if (depth == 1 && key[1] == "\"tag_name\"") version = value
+            if (depth == 3 && key[1] == "\"assets\"" && container[2] == "[") {
+                if (key[3] == "\"name\"") asset_name = value
+                if (key[3] == "\"digest\"") asset_digest = value
+            }
+        } else if (token ~ /^"/) {
+            key[depth] = token
+        }
+        previous = token
+    }
+}
+END {
+    if (invalid || depth != 0 || !closed) exit 1
+    sub(/^v/, "", version)
+    print version " " digests[prefix version suffix]
+}
+' "$RELEASE_JSON_PATH")"
+VERSION="${RELEASE_METADATA%% *}"
 case "$VERSION" in
     ''|*[!0-9A-Za-z.+-]*)
         echo "The release metadata contains an invalid version" >&2
@@ -79,26 +119,29 @@ case "$VERSION" in
 esac
 
 ARCHIVE_NAME="Hyprism-mac-arm64-${VERSION}.dmg"
-ARCHIVE_URL="${GITHUB_RELEASE_BASE_URL}/${ARCHIVE_NAME}"
-CHECKSUM_URL="${ARCHIVE_URL}.sha256"
+ARCHIVE_URL="${GITHUB_RELEASE_BASE_URL}/v${VERSION}/${ARCHIVE_NAME}"
 ARCHIVE_PATH="$TEMP_DIR/$ARCHIVE_NAME"
-CHECKSUM_PATH="$TEMP_DIR/$ARCHIVE_NAME.sha256"
-
-echo "[*] Downloading Hyprism Launcher $VERSION"
-download "$ARCHIVE_URL" "$ARCHIVE_PATH"
-download "$CHECKSUM_URL" "$CHECKSUM_PATH"
-
-EXPECTED_SHA="$(awk 'NF { print $1; exit }' "$CHECKSUM_PATH")"
+EXPECTED_SHA="${RELEASE_METADATA#* }"
+case "$EXPECTED_SHA" in
+    sha256:*) EXPECTED_SHA="${EXPECTED_SHA#sha256:}" ;;
+    *)
+        echo "The release asset has no valid SHA-256 digest" >&2
+        exit 1
+        ;;
+esac
 case "$EXPECTED_SHA" in
     ''|*[!0-9A-Fa-f]*)
-        echo "The release checksum is invalid" >&2
+        echo "The release asset has no valid SHA-256 digest" >&2
         exit 1
         ;;
 esac
 if [ "${#EXPECTED_SHA}" -ne 64 ]; then
-    echo "The release checksum is invalid" >&2
+    echo "The release asset has no valid SHA-256 digest" >&2
     exit 1
 fi
+
+echo "[*] Downloading Hyprism Launcher $VERSION"
+download "$ARCHIVE_URL" "$ARCHIVE_PATH"
 
 ACTUAL_SHA="$(shasum -a 256 "$ARCHIVE_PATH" | awk '{ print $1 }')"
 if [ "$(printf '%s' "$EXPECTED_SHA" | tr '[:upper:]' '[:lower:]')" != "$ACTUAL_SHA" ]; then

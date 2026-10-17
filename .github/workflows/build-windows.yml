@@ -34,6 +34,19 @@ jobs:
           ./Packaging/publish-windows.ps1 all `
             --output dist
 
+      - name: Test MSI and EXE shortcuts
+        timeout-minutes: 10
+        shell: pwsh
+        run: ./Scripts/test-windows-installers.ps1 -ArtifactDirectory dist -LogDirectory "${{ runner.temp }}/hyprism-installer-tests"
+
+      - name: Upload installer test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-test-logs
+          path: ${{ runner.temp }}/hyprism-installer-tests/*.log
+          if-no-files-found: ignore
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:

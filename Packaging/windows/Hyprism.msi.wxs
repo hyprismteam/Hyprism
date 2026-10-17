@@ -12,12 +12,33 @@
       Scope="perMachine">
     <MajorUpgrade DowngradeErrorMessage="A newer version of Hyprism is already installed" />
     <MediaTemplate EmbedCab="yes" />
-    <Icon Id="HyprismIcon" SourceFile="$(var.IconPath)" />
-    <Property Id="ARPPRODUCTICON" Value="HyprismIcon" />
+    <Icon Id="Hyprism.exe" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="Hyprism.exe" />
+
+    <StandardDirectory Id="DesktopFolder" />
+    <StandardDirectory Id="ProgramMenuFolder" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="Hyprism">
-        <Files Include="$(var.PublishDir)\**" />
+        <Files Include="$(var.PublishDir)\**">
+          <Exclude Files="$(var.PublishDir)\Hyprism Launcher.exe" />
+        </Files>
+        <Component Id="LauncherExecutable">
+          <File Id="LauncherExecutable" Source="$(var.PublishDir)\Hyprism Launcher.exe" KeyPath="yes">
+            <Shortcut Id="DesktopShortcut"
+                      Directory="DesktopFolder"
+                      Name="Hyprism Launcher"
+                      Advertise="yes"
+                      WorkingDirectory="INSTALLFOLDER"
+                      Icon="Hyprism.exe" />
+            <Shortcut Id="StartMenuShortcut"
+                      Directory="ProgramMenuFolder"
+                      Name="Hyprism Launcher"
+                      Advertise="yes"
+                      WorkingDirectory="INSTALLFOLDER"
+                      Icon="Hyprism.exe" />
+          </File>
+        </Component>
       </Directory>
     </StandardDirectory>
   </Package>

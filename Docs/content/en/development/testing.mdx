@@ -44,6 +44,8 @@ The macOS entry in the Local Node matrix also publishes apphosts and checks HTTP
 
 Packaging is a separate check group. In `ci.yml`, it starts only after the Core, Desktop, and Local Node reusable workflows complete successfully
 
+The Windows packaging job also installs and removes the generated MSI and EXE packages on its disposable runner. It checks the shared desktop and Start menu shortcuts and their launcher targets, then verifies that uninstall removes them. See [Windows packaging checks](/development/packaging) to run the same check manually.
+
 Verify native compositor behavior, platform dialogs, and real game compatibility manually when those boundaries change. For a documentation-only change, run [content checks and static export](/development/documentation)
 
 Source: [Tests](../../../../Tests)
