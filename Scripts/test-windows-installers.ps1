@@ -23,6 +23,9 @@ New-Item -ItemType Directory -Path $LogDirectory -Force | Out-Null
 $installer = New-Object -ComObject WindowsInstaller.Installer
 
 function Get-ComProperty($Object, [string]$Name, [object[]]$PropertyArguments) {
+    for ($index = 0; $index -lt $PropertyArguments.Length; $index++) {
+        $PropertyArguments[$index] = $PropertyArguments[$index].PSObject.BaseObject
+    }
     $Object.GetType().InvokeMember($Name, [System.Reflection.BindingFlags]::GetProperty, $null, $Object, $PropertyArguments)
 }
 
