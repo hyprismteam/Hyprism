@@ -252,15 +252,9 @@ public sealed class DocumentationScreenshotTests
         viewModel.Instances.CloseInstanceSectionCommand.Execute(null);
         await WaitFramesAsync(20);
 
-        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        viewModel.Instances.OpenEmptyInstanceDownloadCommand.Execute(null);
         await WaitFramesAsync(20);
         var creator = instancesView.FindControl<InstanceCreatorView>("InstanceCreatorContentView")!;
-        await AvaloniaTestWait.UntilAsync(
-            () => creator.StepControl(InstanceWizardStage.Choice).IsEffectivelyVisible &&
-                  creator.StepControl(InstanceWizardStage.Choice).Opacity >= 0.99,
-            "instance creation choice to open");
-        creator.FindControl<Button>("InstanceDownloadChoiceButton")!
-            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         await AvaloniaTestWait.UntilAsync(
             () => creator.StepControl(InstanceWizardStage.Download).IsEffectivelyVisible &&
                   creator.StepControl(InstanceWizardStage.Download).Opacity >= 0.99,
@@ -287,10 +281,8 @@ public sealed class DocumentationScreenshotTests
         viewModel.Instances.CloseInstanceCreatorCommand.Execute(null);
         await WaitFramesAsync(16);
 
-        viewModel.Instances.OpenInstanceCreatorCommand.Execute(null);
+        viewModel.Instances.OpenEmptyInstanceImportCommand.Execute(null);
         await WaitFramesAsync(20);
-        creator.FindControl<Button>("InstanceImportChoiceButton")!
-            .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         await AvaloniaTestWait.UntilAsync(
             () => creator.StepControl(InstanceWizardStage.Import).IsEffectivelyVisible &&
                   creator.StepControl(InstanceWizardStage.Import).Opacity >= 0.99,

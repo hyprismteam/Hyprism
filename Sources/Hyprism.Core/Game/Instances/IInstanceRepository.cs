@@ -228,4 +228,13 @@ public interface IInstanceRepository
     /// <exception cref="FileNotFoundException">Thrown when the archive does not exist</exception>
     /// <exception cref="InvalidDataException">Thrown when the archive does not contain a valid game instance</exception>
     Task ImportFromZipAsync(string zipPath, CancellationToken cancellationToken = default);
+
+    /// <summary>Applies a full PWR build with Butler and registers it as a new installed release instance.</summary>
+    /// <param name="pwrPath">The PWR file whose name contains an explicit game build number.</param>
+    /// <param name="cancellationToken">Token used to cancel extraction and metadata I/O.</param>
+    /// <returns>A task that completes after the instance is imported.</returns>
+    /// <exception cref="FileNotFoundException">Thrown when the PWR file does not exist.</exception>
+    /// <exception cref="InvalidDataException">Thrown when the build number or platform game client is missing.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when no Butler client is configured.</exception>
+    Task ImportFromPwrAsync(string pwrPath, CancellationToken cancellationToken = default);
 }

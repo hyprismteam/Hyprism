@@ -33,7 +33,7 @@ public sealed class FilePicker(Func<TopLevel?> topLevelProvider) : IFilePicker
 
     private static readonly FilePickerFileType InstancePackageFileType = new("Hyprism instance package")
     {
-        Patterns = ["*.json", "*.zip"]
+        Patterns = ["*.json", "*.zip", "*.pwr"]
     };
 
     private static readonly FilePickerFileType ImageFileType = new("Image")

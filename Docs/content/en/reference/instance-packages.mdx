@@ -1,11 +1,11 @@
 ---
 title: Instance packages
-description: JSON templates and ZIP archives for instance transfer
+description: JSON templates, ZIP archives, and full PWR game imports
 ---
 
 # Instance packages
 
-Hyprism exports a build or game definition as a JSON template or packages selected instance files in a ZIP archive. The instance wizard imports either format. See [Instances](/user-guide/instances-profiles-mods) for the user workflow.
+Hyprism exports a build or game definition as a JSON template or packages selected instance files in a ZIP archive. The instance wizard imports either format and full PWR game builds. See [Instances](/user-guide/instances-profiles-mods) for the user workflow.
 
 ## Selection and layout
 
@@ -39,5 +39,11 @@ Every ZIP export contains a schema `1` `HyprismExport.json` manifest with `Kind`
 JSON import requires a configured download source and creates a new uninstalled instance with the source name, branch, version, version name, and notes. It does not download or restore files. ZIP export assigns a new instance ID in `Meta.json`, while the manifest retains the source ID. ZIP import extracts the archive, assigns another ID if one already exists, and registers the imported instance.
 
 Cancellation during ZIP extraction removes the temporary extraction directory before any instance files are moved into place.
+
+## Full PWR imports
+
+`IInstanceRepository.ImportFromPwrAsync` uses the registered `IButlerClient` to apply a full PWR build to an empty staging directory under `Instances/.import/<id>` on the instance filesystem. Butler is installed automatically when needed. The filename parser reads the numeric build from names such as `v72-linux-amd64`, `0_to_72`, or `72`; an unknown or nonpositive build is rejected before Butler runs. Differential filenames such as `71_to_72.pwr` and `v71~72-linux-amd64.pwr` are also rejected.
+
+After Butler succeeds, the importer requires the current platform's game client, writes fresh `Meta.json` with a new ID, the `release` branch, and matching `Version` and `InstalledVersion`, then moves the directory into place and refreshes the instance registry. Incomplete imports stay outside the registry, and failure or cancellation removes their staging directory. Existing instances and the source PWR file are preserved. PWR imports do not require a configured game download source.
 
 The implementation is in [InstancePackageService](../../../../Sources/Hyprism.Core/Game/Instances/InstancePackageService.cs) and [InstanceRepository](../../../../Sources/Hyprism.Core/Game/Instances/InstanceRepository.cs).

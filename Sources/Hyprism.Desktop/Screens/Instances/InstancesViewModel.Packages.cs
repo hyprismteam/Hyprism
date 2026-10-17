@@ -286,6 +286,10 @@ public sealed partial class InstancesViewModel
             {
                 await _instances.ImportFromZipAsync(path, cancellation.Token);
             }
+            else if (Path.GetExtension(path).Equals(".pwr", StringComparison.OrdinalIgnoreCase))
+            {
+                await _instances.ImportFromPwrAsync(path, cancellation.Token);
+            }
             else if (Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase))
             {
                 var package = await InstancePackageService.ReadJsonAsync(path, cancellation.Token);
