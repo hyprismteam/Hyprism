@@ -3,7 +3,8 @@
 
 $ErrorActionPreference = 'Stop'
 
-$githubReleaseBaseUrl = 'https://github.com/hyprismteam/Hyprism/releases/latest/download'
+$githubReleaseApiUrl = 'https://api.github.com/repos/hyprismteam/Hyprism/releases/latest'
+$githubReleaseBaseUrl = 'https://github.com/hyprismteam/Hyprism/releases/download'
 $githubIconUrl = 'https://raw.githubusercontent.com/hyprismteam/Hyprism/main/Sources/Hyprism.Desktop/Assets/Images/Hyprism.ico'
 $installerHeaders = @{ 'User-Agent' = 'Hyprism-Installer/1.0' }
 $appExecutable = 'Hyprism Launcher.exe'
@@ -71,32 +72,32 @@ New-Item -ItemType Directory -Path $temporaryDirectory -Force | Out-Null
 
 try {
     Write-Host '[*] Fetching release metadata'
-    $versionJson = Invoke-RestMethod `
-        -Uri "$githubReleaseBaseUrl/version.json" `
+    $release = Invoke-RestMethod `
+        -Uri $githubReleaseApiUrl `
         -Headers $installerHeaders `
         -UseBasicParsing
-    $version = [string]$versionJson.version
+    $version = ([string]$release.tag_name) -creplace '^v', ''
     if ($version -notmatch '^[0-9A-Za-z.+-]+$') {
         throw 'The release metadata contains an invalid version'
     }
 
     $archiveName = "Hyprism-win-x64-$version.zip"
-    $archiveUrl = "$githubReleaseBaseUrl/$archiveName"
-    $checksumUrl = "$archiveUrl.sha256"
+    $archiveUrl = "$githubReleaseBaseUrl/v$version/$archiveName"
     $archivePath = Join-Path $temporaryDirectory $archiveName
-    $checksumPath = "$archivePath.sha256"
     $payloadDirectory = Join-Path $temporaryDirectory 'payload'
     $iconPath = Join-Path $installDirectory 'Hyprism.ico'
     $targetExePath = Join-Path $installDirectory $appExecutable
 
+    $asset = $release.assets | Where-Object { $_.name -ceq $archiveName }
+    $digest = [string]$asset.digest
+    if ($digest -cnotmatch '^sha256:[0-9A-Fa-f]{64}$') {
+        throw 'The release asset has no valid SHA-256 digest'
+    }
+    $expectedHash = $digest.Substring(7)
+
     Write-Host "[*] Downloading Hyprism Launcher $version"
     Invoke-Download -Uri $archiveUrl -Destination $archivePath
-    Invoke-Download -Uri $checksumUrl -Destination $checksumPath
 
-    $expectedHash = ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -split '\s+')[0]
-    if ($expectedHash -notmatch '^[0-9A-Fa-f]{64}$') {
-        throw 'The release checksum is invalid'
-    }
     $actualHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash
     if (-not [string]::Equals($expectedHash, $actualHash, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'The downloaded archive failed SHA-256 verification'

@@ -94,6 +94,12 @@ dotnet msbuild Sources/Hyprism.Desktop/Hyprism.Desktop.csproj \
 
 A release tag must equal `v<Version>`. The release workflow rejects a mismatched tag before packaging
 
+## Release assets and integrity
+
+The release workflow uploads platform packages and `version.json` for the auto-updater. GitHub calculates each uploaded asset's SHA-256 digest and returns it in the `digest` field of the [release assets API](https://docs.github.com/en/rest/releases/assets). The workflow does not publish separate checksum files.
+
+The command-line installers fetch the latest release metadata from the GitHub API, select the package by its exact filename, and verify its SHA-256 digest before extracting or mounting it. The download URL uses the version from the same API response. A missing or invalid digest or a hash mismatch stops installation. Linux and macOS installers use `awk` to extract the release tag and asset fields; Windows uses PowerShell's built-in JSON support. No additional JSON tool is required.
+
 ## CI ownership
 
 | Workflow | Responsibility |
